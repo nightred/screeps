@@ -1,4 +1,11 @@
-
+/*
+ * Spawn common functions
+ *
+ * Provides common functions to all spawns
+ * Default creep spawn routines based on role
+ *
+ */
+ 
 StructureSpawn.prototype.createBuilder = function(energy) {
     let bodyUnits = Math.floor(energy / 200);
     let bodyParts = [];

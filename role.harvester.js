@@ -1,3 +1,10 @@
+/*
+ * Role harvester
+ *
+ * harvester role that handles energy harvesting
+ *
+ */
+ 
 var roleHarvester = {
 
     /** @param {Creep} creep **/
@@ -13,44 +20,52 @@ var roleHarvester = {
         
         if (!creep.memory.harvestTarget || creep.memory.harvestTarget == undefined) {
             if (Constant.DEBUG) {
-                console.log('ERROR - harvester ' + creep.name + ' has no harvest target');
+                console.log('DEBUG - ERROR - harvester ' + creep.name + ' has no harvest target');
             }
             
             return false;
         }
         
-        creep.manageState();
+        creep.manageState()
         
         if (!creep.memory.working) {
+            let target = Game.getObjectById(creep.memory.harvestTarget);
             
-            if (creep.harvest(Game.getObjectById(creep.memory.harvestTarget)) == ERR_NOT_IN_RANGE) {
-                creep.moveTo(Game.getObjectById(creep.memory.harvestTarget));
+            if (creep.harvest(target) == ERR_NOT_IN_RANGE) {
+                creep.moveTo(target);
             }
-            
         } else {
-            
-            if (!roleHarvester.storeEnergy(creep)) {
-                creep.moveToIdlePosition();
+            if (!creep.memory.goingTo || creep.memory.goingTo == undefined) {
+                if (!roleHarvester.storeEnergy(creep)) {
+                    creep.moveToIdlePosition();
+                    
+                    return false;
+                }
             }
             
+            let target = Game.getObjectById(creep.memory.goingTo);
+            creep.transferEnergy(target);
+            
+            return true;
         }
     },
     
+    /** @param {Creep} creep **/
     storeEnergy: function(creep) {
         
-        if (creep.storeEnergyToContainer('in')) {
+        if (creep.getTargetContainerEnergy('store', 'in', false)) {
             return true;
         }
-        if (creep.storeEnergyToSpawn()) {
+        if (creep.getTargetSpawnEnergy('store')) {
             return true;
         }
-        if (creep.storeEnergyToExtention()) {
+        if (creep.getTargetExtentionEnergy('store')) {
             return true;
         }
-        if (creep.storeEnergyToTower()) {
+        if (creep.getTargetTowerEnergy('store')) {
             return true;
         }
-        if (creep.storeEnergyToContainer()) {
+        if (creep.getTargetContainerEnergy('store')) {
             return true;
         }
         

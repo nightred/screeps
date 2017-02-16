@@ -1,4 +1,10 @@
-
+/*
+ * Creep common functions
+ *
+ * Provides common functions to all creeps
+ *
+ */
+ 
 Creep.prototype.manageState = function() {
     if (this.memory.working && this.isEnergyEmpty()) {
         this.memory.working = false;
@@ -36,189 +42,176 @@ Creep.prototype.isCarryingEnergy = function() {
     return this.carry.energy > 0;
 }
 
-Creep.prototype.storeEnergyToTower = function() {
+Creep.prototype.transferEnergy = function(target) {
+    if (!target) {
+        this.memory.goingTo = false;
+        
+        return false;
+    }
     
-    let targets = _.sortBy(this.room.find(FIND_MY_STRUCTURES, {
-        filter: (structure) => {
-            return (structure.structureType == STRUCTURE_TOWER  && 
-                structure.energy < (structure.energyCapacity - 300));
-        }
-    }), s => this.pos.getRangeTo(s));
+    if (this.transfer(target, RESOURCE_ENERGY) == ERR_NOT_IN_RANGE) {
+        this.moveTo(target);
+    } else {
+        this.memory.goingTo = false;
+        this.memory.blockContainer = false;
+    }
+        
+    return true;
+}
 
+Creep.prototype.withdrawEnergy = function(target) {
+    if (!target) {
+        this.memory.goingTo = false;
+        
+        return false;
+    }
+    
+    if (this.withdraw(target, RESOURCE_ENERGY) == ERR_NOT_IN_RANGE) {
+        this.moveTo(target);
+    } else {
+        this.memory.goingTo = false;
+    }
+        
+    return true;
+}
+
+Creep.prototype.setGoingTo = function(targets) {
     if (targets.length > 0) {
-
-        if (this.transfer(targets[0], RESOURCE_ENERGY) == ERR_NOT_IN_RANGE) {
-            this.moveTo(targets[0]);
-        }
+        this.memory.goingTo = targets[0].id;
         
         return true;
     }
+    this.memory.goingTo = false;
     
     return false;
 }
 
-Creep.prototype.storeEnergyToSpawn = function() {
+Creep.prototype.isGoingTo = function(target) {
     
-    let targetSpawn = this.room.find(FIND_MY_SPAWNS);
-
-    if (targetSpawn.length > 0) {
-        
-        if (targetSpawn[0].energy == targetSpawn[0].energyCapacity) {
-            return false;
-        }
-
-        if (this.transfer(targetSpawn[0], RESOURCE_ENERGY) == ERR_NOT_IN_RANGE) {
-            this.moveTo(targetSpawn[0]);
-        }
-        
-        return true;
-    }
+    
     
     return false;
 }
 
-Creep.prototype.storeEnergyToExtention = function() {
+Creep.prototype.getTargetTowerEnergy = function(useMode) {
+    useMode = typeof useMode !== 'undefined' ? useMode : 'store';
     
-    let targets = _.sortBy(this.room.find(FIND_MY_STRUCTURES, {
-        filter: (structure) => {
-            return (structure.structureType == STRUCTURE_EXTENSION && 
-                structure.energy < structure.energyCapacity);
-        }
-    }), s => this.pos.getRangeTo(s));
-
-    if (targets.length > 0) {
-
-        if (this.transfer(targets[0], RESOURCE_ENERGY) == ERR_NOT_IN_RANGE) {
-            this.moveTo(targets[0]);
-        }
-        
-        return true;
+    let targets = global.cacheFind.towers(this.room);
+    
+    if (useMode == 'store') {
+        targets = _.filter(targets, structure => 
+            structure.energy < 200
+        );
+    } else if (useMode == 'withdraw') {
+        targets = _.filter(targets, structure => 
+            structure.energy > 0
+        );
     }
     
-    return false;
+    targets = _.sortBy(targets, structure => this.pos.getRangeTo(structure));
+
+    return this.setGoingTo(targets);
 }
 
-Creep.prototype.storeEnergyToContainer = function(storeType, fillLevel) {
+Creep.prototype.getTargetStorageEnergy = function(useMode) {
+    useMode = typeof useMode !== 'undefined' ? useMode : 'store';
     
+    let targets = this.room.storage;
+    
+    if (useMode == 'store') {
+        targets = _.filter(targets, structure => 
+            structure.energy < structure.energyCapacity
+        );
+    } else if (useMode == 'withdraw') {
+        targets = _.filter(targets, structure => 
+            structure.energy > 0
+        );
+    }
+
+    return this.setGoingTo(targets);
+}
+
+Creep.prototype.getTargetSpawnEnergy = function(useMode) {
+    useMode = typeof useMode !== 'undefined' ? useMode : 'store';
+    
+    if (this.room.energyAvailable < Constant.ENERGY_ROOM_LIMIT && useMode == 'withdraw') {
+        return false;
+    }
+    
+    let targets = this.room.find(FIND_MY_SPAWNS);
+    
+    if (useMode == 'store') {
+        targets = _.filter(targets, structure => 
+            structure.energy < structure.energyCapacity
+        );
+    } else if (useMode == 'withdraw') {
+        targets = _.filter(targets, structure => 
+            structure.energy > 0
+        );
+    }
+
+    return this.setGoingTo(targets);
+}
+
+Creep.prototype.getTargetExtentionEnergy = function(useMode) {
+    useMode = typeof useMode !== 'undefined' ? useMode : 'store';
+    
+    if (this.room.energyAvailable < Constant.ENERGY_ROOM_LIMIT && useMode == 'withdraw') {
+        return false;
+    }
+    
+    let targets = global.cacheFind.extensions(this.room);
+    
+    if (useMode == 'store') {
+        targets = _.filter(targets, structure => 
+            structure.energy < structure.energyCapacity
+        );
+    } else if (useMode == 'withdraw') {
+        targets = _.filter(targets, structure => 
+            structure.energy > 0
+        );
+    }
+    
+    targets = _.sortBy(targets, structure => this.pos.getRangeTo(structure));
+
+    return this.setGoingTo(targets);
+}
+
+Creep.prototype.getTargetContainerEnergy = function(useMode, storeType, fillLevel) {
+    useMode = typeof useMode !== 'undefined' ? useMode : 'store';
     storeType = typeof storeType !== 'undefined' ? storeType : 'default';
     fillLevel = typeof fillLevel !== 'undefined' ? fillLevel : false;
+
+    let targets = global.cacheFind.containers(this.room);
     
-    var targets = _.sortBy(this.room.find(FIND_STRUCTURES, {
-        filter: (structure) => {
-            return (structure.structureType == STRUCTURE_CONTAINER && 
-            _.sum(structure.store) < structure.storeCapacity);
-        }
-    }), s => this.pos.getRangeTo(s));
+    if (storeType == 'in') {
+        targets = _.filter(targets, structure => structure.memory.type == 'in');
+    } else if (storeType == 'out') {
+        targets = _.filter(targets, structure => structure.memory.type == 'out');
+    } else if (storeType == 'default') {
+        targets = _.filter(targets, structure => structure.memory.type == 'default');
+    }
     
-    targets = this.filterContainerTargets(targets, storeType);
+    if (useMode == 'store') {
+        targets = _.filter(targets, structure => 
+            _.sum(structure.store) < structure.storeCapacity
+        );
+    } else if (useMode == 'withdraw') {
+        targets = _.filter(targets, structure => 
+            structure.store[RESOURCE_ENERGY] > 100
+        );
+    }
     
     if (fillLevel) {
         targets = _.sortBy(targets, structure => structure.store[RESOURCE_ENERGY]);
+        if (useMode == 'withdraw') {
+            targets.reverse();
+        }
     } else {
         targets = _.sortBy(targets, structure => this.pos.getRangeTo(structure));
     }
-    
-    if (targets.length > 0) {
-        if (this.transfer(targets[0], RESOURCE_ENERGY) == ERR_NOT_IN_RANGE) {
-            this.moveTo(targets[0]);
-        }
-        
-        return true;
-    }
-    
-    return false;
-}
 
-Creep.prototype.withdrawEnergy = function() {
-    
-    if (this.withdrawEnergyFromContainer()) {
-        return true;
-    }
-    if (this.withdrawEnergyFromExtention()) {
-        return true;
-    }
-    if (this.withdrawEnergyFromSpawn()) {
-        return true;
-    }
-    
-    return false;
-}
-
-Creep.prototype.withdrawEnergyFromContainer = function(storeType, fillLevel) {
-    
-    storeType = typeof storeType !== 'undefined' ? storeType : 'default';
-    fillLevel = typeof fillLevel !== 'undefined' ? fillLevel : false;
-    
-    var targets = this.room.find(FIND_STRUCTURES, {
-        filter: (structure) => {
-            return (structure.structureType == STRUCTURE_CONTAINER && 
-            structure.store[RESOURCE_ENERGY] > 0);
-        }
-    });
-    
-    targets = this.filterContainerTargets(targets, storeType);
-    
-    if (fillLevel) {
-        targets = _.sortBy(targets, structure => structure.store[RESOURCE_ENERGY]).reverse();
-    } else {
-        targets = _.sortBy(targets, structure => this.pos.getRangeTo(structure));
-    }
-    
-    //console.log('fill level: ' + fillLevel + ' targets: ' + targets);
-    
-    if (targets.length > 0) {
-        if (this.withdraw(targets[0], RESOURCE_ENERGY) == ERR_NOT_IN_RANGE) {
-            this.moveTo(targets[0]);
-        }
-        
-        return true;
-    }
-    
-    return false;
-}
-
-Creep.prototype.withdrawEnergyFromExtention = function() {
-    
-    if (this.room.energyAvailable < Constant.ROOM_ENERGY_LIMIT) {
-        return false;
-    }
-    
-    let targets = _.sortBy(this.room.find(FIND_MY_STRUCTURES, {
-        filter: (structure) => {
-            return ((structure.structureType == STRUCTURE_EXTENSION ) && 
-            structure.energy > 0);
-        }
-    }), s => this.pos.getRangeTo(s));
-    
-    if (targets.length > 0) {
-        if (this.withdraw(targets[0], RESOURCE_ENERGY) == ERR_NOT_IN_RANGE) {
-            this.moveTo(targets[0]);
-        }
-        
-        return true;
-    }
-    
-    return false;
-}
-
-Creep.prototype.withdrawEnergyFromSpawn = function() {
-    let targetSpawn = this.room.find(FIND_MY_SPAWNS);
-    
-    if (this.room.energyAvailable < Constant.ROOM_ENERGY_LIMIT) {
-        return false;
-    }
-    
-    if (targetSpawn != undefined) {
-        if (targetSpawn[0].energy > 0) {
-            if (this.withdraw(targetSpawn[0], RESOURCE_ENERGY) == ERR_NOT_IN_RANGE) {
-                this.moveTo(targetSpawn[0]);
-            }
-            
-            return true;
-        }
-    }
-    
-    return false;
+    return this.setGoingTo(targets);
 }
 
 Creep.prototype.getHarvestTarget = function() {
@@ -313,33 +306,3 @@ Creep.prototype.repairStructures = function() {
     return false;
 }
 
-Creep.prototype.filterContainerTargets = function(targets, storeType) {
-
-    if (!storeType == 'all') {
-        return targets;
-    }
-
-    let filtered = [];    
-    if (storeType == 'in') {
-        for (let i = 0; i < targets.length; i++) {
-            if (Constant.CONTAINERS_IN.indexOf(targets[i].id) > -1) {
-                filtered.push(targets[i]);
-            }
-        }
-    } else if (storeType == 'out') {
-        for (let i = 0; i < targets.length; i++) {
-            if (Constant.CONTAINERS_OUT.indexOf(targets[i].id) > -1) {
-                filtered.push(targets[i]);
-            }
-        }
-    } else {
-        for (let i = 0; i < targets.length; i++) {
-            if (!(Constant.CONTAINERS_IN.indexOf(targets[i].id) > -1 || Constant.CONTAINERS_OUT.indexOf(targets[i].id) > -1)) {
-                filtered.push(targets[i]);
-            }
-            
-        }
-    }
-    
-    return filtered;
-}

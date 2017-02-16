@@ -1,3 +1,15 @@
+/*
+ * Creep role managment
+ *
+ * Provides functions for each role
+ *
+ * max: the spawn limit
+ * run: the default function for the role
+ * units: list all creeps of the role
+ * isMax: is the role at the spawn limit
+ *
+ */
+
 var roleHarvester = require('role.harvester');
 var roleUpgrader = require('role.upgrader');
 var roleBuilder = require('role.builder');

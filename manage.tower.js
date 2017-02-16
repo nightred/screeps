@@ -1,9 +1,14 @@
+/*
+ * Tower managment
+ *
+ * Provides functions for towers
+ *
+ */
+ 
 var manageTower = {
     
     run: function(room)  {
-        var towers = room.find(FIND_MY_STRUCTURES, {
-            filter: (structure) => structure.structureType == STRUCTURE_TOWER
-        });
+        var towers = global.cacheFind.towers(room);
         
         if (towers.length > 0) {
             towers.forEach((tower) => manageTower.tower(tower));

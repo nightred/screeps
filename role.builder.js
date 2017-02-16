@@ -1,3 +1,11 @@
+/*
+ * Role Builder
+ *
+ * builder role that handles all construction jobs
+ * downgrades to repair when no build jobs are active
+ *
+ */
+
 var roleRepairer = require('role.repairer');
 
 var roleBuilder = {
@@ -19,28 +27,44 @@ var roleBuilder = {
             }
         }
         else {
-            if (!roleBuilder.withdrawEnergy(creep)) {
-                creep.moveToIdlePosition();
+            if (!creep.memory.goingTo || creep.memory.goingTo == undefined) {
+                if (!roleBuilder.withdrawEnergy(creep)) {
+                    if (!creep.isCarryingEnergy()) {
+                        creep.moveToIdlePosition();
+                    } else {
+                        creep.toggleState();
+                    }
+                    
+                    return false;
+                }
             }
+            
+            let target = Game.getObjectById(creep.memory.goingTo);
+            creep.withdrawEnergy(target);
+            
+            return true;
         }
     },
     
+    /** @param {Creep} creep **/
     withdrawEnergy: function(creep) {
         
-        if (creep.withdrawEnergyFromContainer('out')) {
+        if (creep.getTargetStorageEnergy('withdraw')) {
             return true;
         }
-        if (creep.withdrawEnergyFromContainer()) {
+        if (creep.getTargetContainerEnergy('withdraw')) {
             return true;
         }
-        if (creep.withdrawEnergyFromContainer('in')) {
+        if (creep.getTargetContainerEnergy('withdraw', 'out')) {
             return true;
         }
-        if (creep.withdrawEnergyFromExtention()) {
-            return true;
-        }
-        if (creep.withdrawEnergyFromSpawn()) {
-            return true;
+        if (creep.room.controller.level <= Constant.CONTROLLER_WITHDRAW_LEVEL) {
+            if (creep.getTargetExtentionEnergy()) {
+                return true;
+            }
+            if (creep.getTargetSpawnEnergy()) {
+                return true;
+            }
         }
         
         return false;

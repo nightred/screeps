@@ -1,3 +1,13 @@
+/*
+ * Role Repairer
+ *
+ * repairer role handles structures with hit damage
+ * downgrades to upgrader when no repair jobs are found
+ *
+ */
+ 
+var roleUpgrader = require('role.upgrader');
+
 var roleRepairer = {
 
     /** @param {Creep} creep **/
@@ -13,32 +23,46 @@ var roleRepairer = {
         
         if (creep.memory.working) {
             if (!creep.repairStructures()) {
+                //roleUpgrader.run(creep);
                 creep.moveToIdlePosition();
             }
         }
         else {
-            if (!roleRepairer.withdrawEnergy(creep)) {
-                creep.moveToIdlePosition();
+            if (!creep.memory.goingTo || creep.memory.goingTo == undefined) {
+                if (!roleRepairer.withdrawEnergy(creep)) {
+                    if (!creep.isCarryingEnergy()) {
+                        creep.moveToIdlePosition();
+                    } else {
+                        creep.toggleState();
+                    }
+                    
+                    return false;
+                }
             }
+            
+            let target = Game.getObjectById(creep.memory.goingTo);
+            creep.withdrawEnergy(target);
+            
+            return true;
         }
     },
     
+    /** @param {Creep} creep **/
     withdrawEnergy: function(creep) {
         
-        if (creep.withdrawEnergyFromContainer('out')) {
+        if (creep.getTargetContainerEnergy('withdraw', 'out')) {
             return true;
         }
-        if (creep.withdrawEnergyFromContainer()) {
+        if (creep.getTargetContainerEnergy('withdraw')) {
             return true;
         }
-        if (creep.withdrawEnergyFromContainer('in')) {
-            return true;
-        }
-        if (creep.withdrawEnergyFromExtention()) {
-            return true;
-        }
-        if (creep.withdrawEnergyFromSpawn()) {
-            return true;
+        if (creep.room.controller.level <= Constant.CONTROLLER_WITHDRAW_LEVEL) {
+            if (creep.getTargetExtentionEnergy()) {
+                return true;
+            }
+            if (creep.getTargetSpawnEnergy()) {
+                return true;
+            }
         }
         
         return false;

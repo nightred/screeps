@@ -1,14 +1,27 @@
+/*
+ * Creep spawn managment
+ *
+ * Checks how many creeps are active
+ * Spawns new creeps to fill out numbers as needed
+ *
+ * Priority:
+ *  harvester, upgrader, builder, hauler, repairer
+ *
+ */
+ 
 var manageCreep = {
     
     run: function(manageRole, room) {
         
         let energy = room.energyAvailable;
-        energy = energy > Constant.CREEP_SPAWN_MAX_ENERGY ? Constant.CREEP_SPAWN_MAX_ENERGY : energy;
+        energy = energy > Constant.ENERGY_CREEP_SPAWN_MAX ? Constant.ENERGY_CREEP_SPAWN_MAX : energy;
         
         for(let name in Memory.creeps) {
             if(!Game.creeps[name]) {
                 delete Memory.creeps[name];
-                console.log("INFO - clearing non-existing creep memory: " + name);
+                if (Constant.DEBUG) {
+                    console.log("DEBUG - clearing non-existing creep memory: " + name);
+                }
             }
         }
         

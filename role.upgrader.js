@@ -1,3 +1,10 @@
+/*
+ * Role Upgrader
+ *
+ * upgrader role does work on the room controller
+ *
+ */
+ 
 var roleUpgrader = {
 
     /** @param {Creep} creep **/
@@ -12,35 +19,45 @@ var roleUpgrader = {
         }
         
         if(creep.memory.working) {
-            
             if(creep.upgradeController(creep.room.controller) == ERR_NOT_IN_RANGE) {
                 creep.moveTo(creep.room.controller);
             }
-            
         } else {
-
-            if (!roleUpgrader.withdrawEnergy(creep)) {
-                creep.moveToIdlePosition();
+            if (!creep.memory.goingTo || creep.memory.goingTo == undefined) {
+                if (!roleUpgrader.withdrawEnergy(creep)) {
+                    if (!creep.isCarryingEnergy()) {
+                        creep.moveToIdlePosition();
+                    } else {
+                        creep.toggleState();
+                    }
+                    
+                    return false;
+                }
             }
+            
+            let target = Game.getObjectById(creep.memory.goingTo);
+            creep.withdrawEnergy(target);
+            
+            return true;
         }
     },
     
+    /** @param {Creep} creep **/
     withdrawEnergy: function(creep) {
         
-        if (creep.withdrawEnergyFromContainer('out')) {
+        if (creep.getTargetContainerEnergy('withdraw', 'out')) {
             return true;
         }
-        if (creep.withdrawEnergyFromContainer()) {
+        if (creep.getTargetContainerEnergy('withdraw')) {
             return true;
         }
-        if (creep.withdrawEnergyFromContainer('in')) {
-            return true;
-        }
-        if (creep.withdrawEnergyFromExtention()) {
-            return true;
-        }
-        if (creep.withdrawEnergyFromSpawn()) {
-            return true;
+        if (creep.room.controller.level <= Constant.CONTROLLER_WITHDRAW_LEVEL) {
+            if (creep.getTargetExtentionEnergy()) {
+                return true;
+            }
+            if (creep.getTargetSpawnEnergy()) {
+                return true;
+            }
         }
         
         return false;

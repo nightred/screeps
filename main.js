@@ -1,8 +1,18 @@
+/*
+ * Main Loop
+ *
+ * Main control function
+ *
+ */
+
+require('prototype.memory');
 require('prototype.creep');
 require('prototype.spawn');
 
 global.Constant = require('constants');
+global.cacheFind = require('cache.find');
 
+var manageMemory = require('manage.memory');
 var manageRole = require('manage.role');
 var manageCreep = require('manage.creep');
 var manageTower = require('manage.tower');
@@ -20,6 +30,7 @@ module.exports.loop = function () {
         }
     }
     
+    rooms.forEach((room) => manageMemory.run(room));
     rooms.forEach((room) => manageTower.run(room));
     rooms.forEach((room) => manageCreep.run(manageRole, room));
     
