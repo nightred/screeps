@@ -36,6 +36,7 @@ var Constants = {
     LIMIT_SERVICE: 1,
     
     CREEP_DESPAWN_TICKS: 40,
+    CREEP_IDLE_TIME: 10,
 
     HARVESTERS_CARRY: false,
     HARVESTERS_PER_SOURCE: 1,
@@ -46,6 +47,8 @@ var Constants = {
  * Set variables for SIM mode
  *
  */
+ 
+Constants.ENERGY_ROOM_LIMIT = !Constants.SIM ? Constants.ENERGY_ROOM_LIMIT  : 200;
 Constants.LIMIT_SERVICE     = !Constants.SIM ? Constants.LIMIT_SERVICE      : 0;
 Constants.LIMIT_BUILDERS    = !Constants.SIM ? Constants.LIMIT_BUILDERS     : 0;
 Constants.LIMIT_UPGRADERS   = !Constants.SIM ? Constants.LIMIT_UPGRADERS    : 1;

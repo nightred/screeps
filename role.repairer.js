@@ -21,17 +21,21 @@ var roleRepairer = {
             }
         }
         
+        if (creep.memory.idleStart > (Game.time - Constant.CREEP_IDLE_TIME)) {
+            creep.moveToIdlePosition();
+            
+            return false;
+        }
+        
         if (creep.memory.working) {
             if (!creep.repairStructures()) {
                 creep.memory.idleStart = Game.time;
-                creep.moveToIdlePosition();
             }
-        }
-        else {
+        } else {
             if (!creep.memory.goingTo || creep.memory.goingTo == undefined) {
                 if (!roleRepairer.withdrawEnergy(creep)) {
                     if (!creep.isCarryingEnergy()) {
-                        creep.moveToIdlePosition();
+                        creep.memory.idleStart = Game.time;
                     } else {
                         creep.toggleState();
                     }

@@ -21,12 +21,12 @@ var roleBuilder = {
             }
         }
         
+        if (creep.memory.idleStart > (Game.time - Constant.CREEP_IDLE_TIME)) {
+            creep.moveToIdlePosition();
+            
+            return false;
+        }        
         if (creep.memory.working) {
-            if (creep.memory.idleStart > (Game.time - 20)) {
-                creep.moveToIdlePosition();
-                
-                return false;
-            }
             if (!creep.buildConstructionSite()) {
                 roleRepairer.run(creep);
             }
@@ -35,7 +35,7 @@ var roleBuilder = {
             if (!creep.memory.goingTo || creep.memory.goingTo == undefined) {
                 if (!roleBuilder.withdrawEnergy(creep)) {
                     if (!creep.isCarryingEnergy()) {
-                        creep.moveToIdlePosition();
+                        creep.memory.idleStart = Game.time;
                     } else {
                         creep.toggleState();
                     }

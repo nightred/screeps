@@ -6,6 +6,32 @@
  *
  */
 
+StructureSpawn.prototype.createHarvester = function(energy) {
+    let dropHarvest = false;
+    let source = Game.getObjectById(this.room.getHarvestTarget());
+    if (source) {
+        if (source.getDropContainer()) {
+            dropHarvest = true;
+        }
+    }
+    
+    let bodyParts = [];
+    let extrasCost = 50;
+    bodyParts.push(MOVE);
+    if (!dropHarvest) {
+        bodyParts.push(CARRY);
+        extrasCost += 50;
+    }
+    
+    let workUnits = Math.floor((energy - extrasCost) / 100);
+    workUnits = workUnits > 5 ? 5 : workUnits;
+    for (let i = 0; i < workUnits; i++) {
+        bodyParts.push(WORK);
+    }
+    
+    return this.createCreep(bodyParts, undefined, {role: 'harvester', harvestTarget: source.id, dropHarvest: dropHarvest});
+}
+
 StructureSpawn.prototype.createService = function(energy) {
     let bodyUnits = Math.floor(energy / 200);
     let bodyParts = [];
@@ -32,25 +58,6 @@ StructureSpawn.prototype.createBuilder = function(energy) {
     }
     
     return this.createCreep(bodyParts, undefined, {role: 'builder'});
-}
-
-StructureSpawn.prototype.createHarvester = function(energy) {
-    let bodyParts = [];
-    let extrasCost = 50;
-    
-    bodyParts.push(MOVE);
-    if (Constant.HARVESTERS_CARRY) {
-        bodyParts.push(CARRY);
-        extrasCost += 50;
-    }
-    
-    let workUnits = Math.floor((energy - extrasCost) / 100);
-    workUnits = workUnits > 5 ? 5 : workUnits;
-    for (let i = 0; i < workUnits; i++) {
-        bodyParts.push(WORK);
-    }
-    
-    return this.createCreep(bodyParts, undefined, {role: 'harvester'});
 }
 
 StructureSpawn.prototype.createUpgrader = function(energy) {

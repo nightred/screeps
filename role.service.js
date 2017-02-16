@@ -19,24 +19,29 @@ var roleService = {
             }
         }
         
+        if (creep.memory.idleStart > (Game.time - Constant.CREEP_IDLE_TIME)) {
+            creep.moveToIdlePosition();
+            
+            return false;
+        }
+        
         if (creep.memory.working) {
             if (!creep.memory.goingTo || creep.memory.goingTo == undefined) {
                 if (!roleService.getWork(creep)) {
-                    creep.moveToIdlePosition();
+                    creep.memory.idleStart = Game.time;
                     
                     return false;
                 }
             }
             
             if (!roleService.doWork(creep)) {
-                creep.moveToIdlePosition();
+                creep.memory.idleStart = Game.time;
                 
                 return false;
             }
             
             return true;
-        }
-        else {
+        } else {
             
             if (creep.carry.energy > 0) {
                 creep.toggleState();
@@ -46,7 +51,7 @@ var roleService = {
             if (!creep.memory.goingTo || creep.memory.goingTo == undefined) {
                 if (!roleService.withdrawEnergy(creep)) {
                     if (!creep.isCarryingEnergy()) {
-                        creep.moveToIdlePosition();
+                        creep.memory.idleStart = Game.time;
                     } else {
                         creep.toggleState();
                     }

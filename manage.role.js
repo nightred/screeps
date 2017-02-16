@@ -41,7 +41,7 @@ var manageRole = {
     },
     
     builder: {
-        max:    spawn => manageRole.getRoomMax(spawn, 'builder'),
+        max:    spawn => manageRole.getRoomBuilderMax(spawn),
         run:    creep => roleBuilder.run(creep),
         units:  spawn => manageRole.getUnitsInRoomByRole(spawn, 'builder'),
         isMax:  spawn => manageRole.isUnitsInRoomMax(spawn, 'builder'),
@@ -62,7 +62,7 @@ var manageRole = {
     },
     
     getRoomMax: function(spawn, type) {
-        return spawn.memory.limits[type];
+        return spawn.room.memory.limits[type];
     },
     
     getUnitsInRoomByRole: function(spawn, type) {
@@ -74,6 +74,10 @@ var manageRole = {
     
     isUnitsInRoomMax: function(spawn, type) {
         return this[type].units(spawn).length >= this[type].max(spawn);
+    },
+    
+    getRoomBuilderMax: function(spawn) {
+        return spawn.room.getConstructionSites().length > 0 ? 1 : 0;
     },
     
 }

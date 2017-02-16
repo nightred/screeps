@@ -18,6 +18,12 @@ var roleUpgrader = {
             }
         }
         
+        if (creep.memory.idleStart > (Game.time - Constant.CREEP_IDLE_TIME)) {
+            creep.moveToIdlePosition();
+            
+            return false;
+        }
+        
         if(creep.memory.working) {
             if(creep.upgradeController(creep.room.controller) == ERR_NOT_IN_RANGE) {
                 creep.moveTo(creep.room.controller);
@@ -26,7 +32,7 @@ var roleUpgrader = {
             if (!creep.memory.goingTo || creep.memory.goingTo == undefined) {
                 if (!roleUpgrader.withdrawEnergy(creep)) {
                     if (!creep.isCarryingEnergy()) {
-                        creep.moveToIdlePosition();
+                        creep.memory.idleStart = Game.time;
                     } else {
                         creep.toggleState();
                     }

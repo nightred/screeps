@@ -11,10 +11,7 @@
  
 var manageCreep = {
     
-    spawn: function(manageRole, room) {
-        
-        let energy = room.energyAvailable;
-        energy = energy > Constant.ENERGY_CREEP_SPAWN_MAX ? Constant.ENERGY_CREEP_SPAWN_MAX : energy;
+    run: function(manageRole, room) {
         
         for(let name in Memory.creeps) {
             if(!Game.creeps[name]) {
@@ -24,6 +21,9 @@ var manageCreep = {
                 }
             }
         }
+        
+        let energy = room.energyAvailable;
+        energy = energy > Constant.ENERGY_CREEP_SPAWN_MAX ? Constant.ENERGY_CREEP_SPAWN_MAX : energy;
         
         if (!room.spawning && energy >= 200) {
             
@@ -88,7 +88,7 @@ var manageCreep = {
     },
     
     spawned: function(name, type) {
-        console.log("INFO - spawning new " + type + " named " + name + " with " + Game.creeps[name].body.length + " parts");
+        console.log("INFO - spawning " + type + " named " + name + " with " + Game.creeps[name].body.length + " parts");
     },
     
     doDeSpawn: function(creep) {

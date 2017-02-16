@@ -15,10 +15,8 @@ StructureContainer.prototype.reserveEnergy = function(energy) {
         this.memory.reservedEnergy = 0;
     }
     
-    if ((this.store[RESOURCE_ENERGY] - (this.memory.reservedEnergy + energy)) >= Constant.ENERGY_CONTAINER_MIN_WITHDRAW) {
-        this.memory.reservedEnergy += energy;
-        this.memory.reservedTime = Game.time;
-        this.balanceReserve();
+    if ((this.store[RESOURCE_ENERGY] - this.memory.reservedEnergy) >= Constant.ENERGY_CONTAINER_MIN_WITHDRAW) {
+        this.addReserve(energy);
         
         return true;
     }
@@ -27,18 +25,28 @@ StructureContainer.prototype.reserveEnergy = function(energy) {
 }
 
 StructureContainer.prototype.withdrawnEnergy = function(energy) {
-    
     if (!this.memory.reservedEnergy || this.memory.reservedEnergy == undefined) {
         this.memory.reservedEnergy = 0;
     }
-    
-    this.memory.reservedEnergy -= energy;
-    this.balanceReserve();
+    this.removeReserve(energy);
     
     return true;
 }
 
-StructureContainer.prototype.balanceReserve = function() {
+StructureContainer.prototype.addReserve = function(energy) {
+    this.memory.reservedEnergy += energy;
+    this.memory.reservedTime = Game.time;
+    
+    if (this.memory.reservedEnergy > this.store[RESOURCE_ENERGY]) {
+        this.memory.reservedEnergy = this.store[RESOURCE_ENERGY];
+    }
+
+    return true;
+}
+
+StructureContainer.prototype.removeReserve = function(energy) {
+    this.memory.reservedEnergy -= energy;
+    
     if (this.memory.reservedEnergy > this.store[RESOURCE_ENERGY]) {
         this.memory.reservedEnergy = this.store[RESOURCE_ENERGY];
     }

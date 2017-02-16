@@ -18,10 +18,16 @@ var roleHauler = {
             }
         }
         
+        if (creep.memory.idleStart > (Game.time - Constant.CREEP_IDLE_TIME)) {
+            creep.moveToIdlePosition();
+            
+            return false;
+        }
+        
         if (creep.memory.working) {
             if (!creep.memory.goingTo || creep.memory.goingTo == undefined) {
                 if (!roleHauler.storeEnergy(creep)) {
-                    creep.moveToIdlePosition();
+                    creep.memory.idleStart = Game.time;
                     
                     return false;
                 }
@@ -31,9 +37,7 @@ var roleHauler = {
             creep.transferEnergy(target);
             
             return true;
-        }
-        else {
-            
+        } else {
             if (creep.carry.energy > 0) {
                 creep.toggleState();
                 
@@ -42,7 +46,7 @@ var roleHauler = {
             if (!creep.memory.goingTo || creep.memory.goingTo == undefined) {
                 if (!roleHauler.withdrawEnergy(creep)) {
                     if (!creep.isCarryingEnergy()) {
-                        creep.moveToIdlePosition();
+                        creep.memory.idleStart = Game.time;
                     } else {
                         creep.toggleState();
                     }
@@ -58,7 +62,10 @@ var roleHauler = {
         }
     },
     
-    /** @param {Creep} creep **/
+    doEmptyInContainer: function(creep) {
+        
+    },
+    
     storeEnergy: function(creep) {
         
         if (creep.getTargetSpawnEnergy('store')) {
@@ -82,7 +89,6 @@ var roleHauler = {
         return false;
     },
     
-    /** @param {Creep} creep **/
     withdrawEnergy: function(creep) {
         
         if (creep.getTargetContainerEnergy('withdraw', 'in', true)) {

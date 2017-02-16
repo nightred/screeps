@@ -4,7 +4,33 @@
  * Provides common functions to all rooms
  *
  */
- 
+
+Room.prototype.getConstructionSites = function() {
+    return this.find(FIND_CONSTRUCTION_SITES);
+}
+
+Room.prototype.getHarvestTarget = function() {
+    let sources = [];
+    
+    for (let source of this.find(FIND_SOURCES)) {
+        let count = 0;
+        for (let roomCreep of this.find(FIND_MY_CREEPS)) {
+            if (roomCreep.memory.harvestTarget === source.id && roomCreep.memory.role == 'harvester') {
+                count++;
+            }
+        }
+        if (count < Constant.HARVESTERS_PER_SOURCE) {
+            sources.push(source);
+        }
+    }
+    
+    if (sources.length > 0) {
+        return sources[0].id;
+    }
+    
+    return false;
+}
+
 Room.prototype.getSpawn = function() {
     if (!this.memory.spawnId || this.memory.spawnId == undefined) {
         this.findSpawn();

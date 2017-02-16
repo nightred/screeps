@@ -5,6 +5,9 @@
  *
  */
 
+var Traveler = require('traveler');
+//require('jobs');
+
 require('prototype.memory');
 require('prototype.creep');
 require('prototype.spawn');
@@ -34,7 +37,7 @@ module.exports.loop = function () {
     
     rooms.forEach((room) => manageMemory.run(room));
     rooms.forEach((room) => manageTower.run(room));
-    rooms.forEach((room) => manageCreep.spawn(manageRole, room));
+    rooms.forEach((room) => manageCreep.run(manageRole, room));
     
     for(let name in Game.creeps) {
         let creep = Game.creeps[name];

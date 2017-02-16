@@ -11,7 +11,7 @@ var roleHarvester = {
     run: function(creep) {
 
         if (!creep.memory.harvestTarget || creep.memory.harvestTarget == undefined) {
-            creep.memory.harvestTarget = creep.getHarvestTarget();
+            creep.memory.harvestTarget = creep.room.getHarvestTarget();
             
             if (Constant.DEBUG) {
                 console.log('DEBUG - harvester ' + creep.name + ' target set to: ' + creep.memory.harvestTarget);
@@ -32,10 +32,10 @@ var roleHarvester = {
             }
         }
         
-        if (Constant.HARVESTERS_CARRY) {
-            this.doCarryHarvest(creep);
-        } else {
+        if (creep.memory.dropHarvest) {
             this.doDropHarvest(creep);
+        } else {
+            this.doCarryHarvest(creep);
         }
 
     },
@@ -61,7 +61,7 @@ var roleHarvester = {
     
     doCarryHarvest: function(creep) {
         let source = Game.getObjectById(creep.memory.harvestTarget);
-
+        
         if (!creep.memory.working) {
             if (creep.harvest(source) == ERR_NOT_IN_RANGE) {
                 creep.moveTo(source);
@@ -85,7 +85,7 @@ var roleHarvester = {
                 if (Constant.DEBUG) {
                     console.log('DEBUG - source: ' + source.id + ' lost local container');
                 }
-                source.clearLocalContainer();
+                source.clearContainer();
                 creep.memory.goingTo = false;
                 
                 return false;
@@ -99,13 +99,13 @@ var roleHarvester = {
     
     doDropHarvest: function(creep) {
         let source = Game.getObjectById(creep.memory.harvestTarget);
-        let target = Game.getObjectById(source.getLocalContainer());
+        let target = Game.getObjectById(source.getDropContainer());
 
         if (!target) {
             if (Constant.DEBUG) {
                 console.log('DEBUG - ERROR - harvester ' + creep.name + ' has no drop container');
             }
-            source.clearLocalContainer;
+            source.clearContainer;
             
             return false;
         }

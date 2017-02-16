@@ -268,28 +268,6 @@ Creep.prototype.getTargetContainerEnergy = function(useMode, storeType, fillLeve
     return this.setGoingTo(targets[0]);
 }
 
-Creep.prototype.getHarvestTarget = function() {
-    let sources = [];
-    
-    for (let source of this.room.find(FIND_SOURCES)) {
-        let count = 0;
-        for (let roomCreep of this.room.find(FIND_MY_CREEPS)) {
-            if (roomCreep.memory.harvestTarget === source.id && roomCreep.memory.role == 'harvester') {
-                count++;
-            }
-        }
-        if (count < Constant.HARVESTERS_PER_SOURCE) {
-            sources.push(source);
-        }
-    }
-    
-    if (sources.length > 0) {
-        return sources[0].id;
-    }
-    
-    return false;
-}
-
 Creep.prototype.collectDroppedEnergy = function () {
     let targets = _.sortBy(this.room.find(FIND_DROPPED_RESOURCES, {
         filter: resource => resource.resourceType == RESOURCE_ENERGY
@@ -323,7 +301,7 @@ Creep.prototype.isOnContainer = function() {
 }
 
 Creep.prototype.buildConstructionSite = function() {
-    let targets = _.sortBy(this.room.find(FIND_CONSTRUCTION_SITES), s => this.pos.getRangeTo(s));
+    let targets = _.sortBy(this.room.getConstructionSites(), s => this.pos.getRangeTo(s));
     if (targets.length > 0) {
         if (this.build(targets[0]) == ERR_NOT_IN_RANGE) {
             this.moveTo(targets[0]);
