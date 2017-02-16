@@ -14,6 +14,7 @@ var manageMemory = {
     run: function(room) {
         
         this.doContainers(room);
+        this.doSpawn(room);
         
         //console.log('ok - ' + room.memory.structureContainers);
         
@@ -24,8 +25,18 @@ var manageMemory = {
     
     doSpawn: function(room) {
         if (!room.memory.spawnInit) {
-            room.memory.spawnId
+            let spawn = Game.getObjectById(room.getSpawn());
+            if (!spawn) {
+                return false;
+            }
             
+            spawn.memory.limits = {};
+            spawn.memory.limits.service = Constant.LIMIT_SERVICE;
+            spawn.memory.limits.builder = Constant.LIMIT_BUILDERS;
+            spawn.memory.limits.upgrader = Constant.LIMIT_UPGRADERS;
+            spawn.memory.limits.harvester = Constant.LIMIT_HARVESTERS;
+            spawn.memory.limits.repairer = Constant.LIMIT_REPAIRERS;
+            spawn.memory.limits.hauler = Constant.LIMIT_HAULERS;
             
             room.memory.spawnInit = true;
         }

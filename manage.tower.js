@@ -8,7 +8,7 @@
 var manageTower = {
     
     run: function(room)  {
-        var towers = global.cacheFind.towers(room);
+        var towers = room.getTowers();
         
         if (towers.length > 0) {
             towers.forEach((tower) => manageTower.tower(tower));

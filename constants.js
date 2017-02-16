@@ -35,9 +35,10 @@ var Constants = {
     LIMIT_HAULERS: 3,
     LIMIT_SERVICE: 1,
     
-    CREEP_LIVE_MIN: 40,
+    CREEP_DESPAWN_TICKS: 40,
 
     HARVESTERS_CARRY: false,
+    HARVESTERS_PER_SOURCE: 1,
     
 };
 

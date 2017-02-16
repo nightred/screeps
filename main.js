@@ -13,7 +13,6 @@ require('prototype.room');
 require('prototype.structureContainer');
 
 global.Constant = require('constants');
-global.cacheFind = require('cache.find');
 
 var manageMemory = require('manage.memory');
 var manageRole = require('manage.role');

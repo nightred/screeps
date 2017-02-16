@@ -27,49 +27,53 @@ var manageCreep = {
         
         if (!room.spawning && energy >= 200) {
             
-            let targetSpawn = room.find(FIND_MY_SPAWNS);
+            let spawn = Game.getObjectById(room.getSpawn());
+            if (!spawn) {
+                return false;
+            }
+            
             let name = undefined;
             let type = null;
             
             if (room.controller.level <= Constant.CONTROLLER_WITHDRAW_LEVEL) {
-                if (!manageRole.harvester.isMax()) {
+                if (!manageRole.harvester.isMax(spawn)) {
                     type = 'harvester';
-                    name = targetSpawn[0].createHarvester(energy);
-                } else if (!manageRole.upgrader.isMax()) {
+                    name = spawn.createHarvester(energy);
+                } else if (!manageRole.upgrader.isMax(spawn)) {
                     type = 'upgrader';
-                    name = targetSpawn[0].createUpgrader(energy);
-                } else if (!manageRole.builder.isMax()) {
+                    name = spawn.createUpgrader(energy);
+                } else if (!manageRole.builder.isMax(spawn)) {
                     type = 'builder';
-                    name = targetSpawn[0].createBuilder(energy);
-                } else if (!manageRole.hauler.isMax()) {
+                    name = spawn.createBuilder(energy);
+                } else if (!manageRole.hauler.isMax(spawn)) {
                     type = 'hauler';
-                    name = targetSpawn[0].createHauler(energy);
-                } else if (!manageRole.service.isMax()) {
+                    name = spawn.createHauler(energy);
+                } else if (!manageRole.service.isMax(spawn)) {
                     type = 'service';
-                    name = targetSpawn[0].createService(energy);
-                } else if (!manageRole.repairer.isMax()) {
+                    name = spawn.createService(energy);
+                } else if (!manageRole.repairer.isMax(spawn)) {
                     type = 'repairer';
-                    name = targetSpawn[0].createRepairer(energy);
+                    name = spawn.createRepairer(energy);
                 }
             } else {
-                if (!manageRole.harvester.isMax()) {
+                if (!manageRole.harvester.isMax(spawn)) {
                     type = 'harvester';
-                    name = targetSpawn[0].createHarvester(energy);
-                } else if (!manageRole.hauler.isMax()) {
+                    name = spawn.createHarvester(energy);
+                } else if (!manageRole.hauler.isMax(spawn)) {
                     type = 'hauler';
-                    name = targetSpawn[0].createHauler(energy);
-                } else if (!manageRole.service.isMax()) {
+                    name = spawn.createHauler(energy);
+                } else if (!manageRole.service.isMax(spawn)) {
                     type = 'service';
-                    name = targetSpawn[0].createService(energy);
-                } else if (!manageRole.upgrader.isMax()) {
+                    name = spawn.createService(energy);
+                } else if (!manageRole.upgrader.isMax(spawn)) {
                     type = 'upgrader';
-                    name = targetSpawn[0].createUpgrader(energy);
-                } else if (!manageRole.repairer.isMax()) {
+                    name = spawn.createUpgrader(energy);
+                } else if (!manageRole.repairer.isMax(spawn)) {
                     type = 'repairer';
-                    name = targetSpawn[0].createRepairer(energy);
-                } else if (!manageRole.builder.isMax()) {
+                    name = spawn.createRepairer(energy);
+                } else if (!manageRole.builder.isMax(spawn)) {
                     type = 'builder';
-                    name = targetSpawn[0].createBuilder(energy);
+                    name = spawn.createBuilder(energy);
                 }
             }
             
@@ -89,23 +93,13 @@ var manageCreep = {
     
     doDeSpawn: function(creep) {
         if (!creep.memory.despawn || creep.memory.despawn == undefined) {
-            creep.memory.despawn = true;
-            creep.memory.goingTo = false;
-            creep.memory.harvestTarget = false;
-            if (Constant.DEBUG) {
-                console.log("DEBUG - end of life " + creep.memory.role + " " + creep.name);
-            }
+            creep.setDespawn();
         }
         
-        if (!creep.room.memory.spawnId || creep.room.memory.spawnId == undefined) {
-            let targets = creep.room.find(FIND_MY_SPAWNS);
-            
-            if (targets.length > 0) {
-                creep.room.memory.spawnId = targets[0].id;
-            } else {
-                creep.room.memory.spawnId = false;
-            }
-        }
+    	let target = Game.getObjectById(creep.room.getSpawn());
+    	if (!target) {
+    		return false;
+    	}
         
         if (creep.room.memory.deSpawnContainerId == undefined) {
             creep.room.memory.deSpawnContainerId = false;
@@ -127,7 +121,7 @@ var manageCreep = {
                     if (Constant.DEBUG) {
                         console.log("DEBUG - recycling " + creep.memory.role + " " + creep.name);
                     }
-                    let roomSpawn = Game.getObjectById(creep.room.memory.spawnId);
+                    let roomSpawn = Game.getObjectById(creep.room.getSpawn());
                     roomSpawn.recycleCreep(creep);
                 } else {
                     return true;

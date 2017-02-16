@@ -85,10 +85,10 @@ var roleHauler = {
     /** @param {Creep} creep **/
     withdrawEnergy: function(creep) {
         
-        //if (creep.collectDroppedEnergy()) {
-        //    return true;
-        //}
         if (creep.getTargetContainerEnergy('withdraw', 'in', true)) {
+            return true;
+        }
+        if (creep.collectDroppedEnergy()) {
             return true;
         }
         //if (creep.getTargetContainerEnergy('withdraw')) {

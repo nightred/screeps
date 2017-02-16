@@ -45,6 +45,7 @@ StructureContainer.prototype.balanceReserve = function() {
     
     if (this.memory.reservedEnergy < 0) {
         this.memory.reservedEnergy = 0;
+        this.memory.reservedTime = false;
     }
     
     return true;
