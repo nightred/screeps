@@ -42,6 +42,10 @@ Creep.prototype.isCarryingEnergy = function() {
     return this.carry.energy > 0;
 }
 
+Creep.prototype.isDespawnWarning = function() {
+    return this.ticksToLive < Constant.CREEP_LIVE_MIN;
+}
+
 Creep.prototype.transferEnergy = function(target) {
     if (!target) {
         this.memory.goingTo = false;
@@ -81,6 +85,7 @@ Creep.prototype.setGoingTo = function(targets) {
         
         return true;
     }
+
     this.memory.goingTo = false;
     
     return false;
@@ -100,7 +105,7 @@ Creep.prototype.getTargetTowerEnergy = function(useMode) {
     
     if (useMode == 'store') {
         targets = _.filter(targets, structure => 
-            structure.energy < 200
+            structure.energy < Constant.ENERGY_TOWER_MIN
         );
     } else if (useMode == 'withdraw') {
         targets = _.filter(targets, structure => 
@@ -116,18 +121,19 @@ Creep.prototype.getTargetTowerEnergy = function(useMode) {
 Creep.prototype.getTargetStorageEnergy = function(useMode) {
     useMode = typeof useMode !== 'undefined' ? useMode : 'store';
     
-    let targets = this.room.storage;
+    let targets = [];
+    targets[0] = this.room.storage;
     
     if (useMode == 'store') {
         targets = _.filter(targets, structure => 
-            structure.energy < structure.energyCapacity
+            _.sum(structure.store) < structure.storeCapacity
         );
     } else if (useMode == 'withdraw') {
         targets = _.filter(targets, structure => 
-            structure.energy > 0
+            structure.store[RESOURCE_ENERGY] > Constant.ENERGY_STORAGE_MIN_WITHDRAW
         );
     }
-
+    
     return this.setGoingTo(targets);
 }
 
@@ -194,11 +200,11 @@ Creep.prototype.getTargetContainerEnergy = function(useMode, storeType, fillLeve
     
     if (useMode == 'store') {
         targets = _.filter(targets, structure => 
-            _.sum(structure.store) < structure.storeCapacity
+            _.sum(structure.store) < (structure.storeCapacity * Constant.ENERGY_CONTAINER_MAX_PERCENT)
         );
     } else if (useMode == 'withdraw') {
         targets = _.filter(targets, structure => 
-            structure.store[RESOURCE_ENERGY] > 100
+            structure.store[RESOURCE_ENERGY] > (structure.storeCapacity * Constant.ENERGY_CONTAINER_MIN_PERCENT)
         );
     }
     
@@ -209,6 +215,11 @@ Creep.prototype.getTargetContainerEnergy = function(useMode, storeType, fillLeve
         }
     } else {
         targets = _.sortBy(targets, structure => this.pos.getRangeTo(structure));
+    }
+    
+    if (targets.length > 0) {
+
+        targets[0].reserveEnergy();
     }
 
     return this.setGoingTo(targets);

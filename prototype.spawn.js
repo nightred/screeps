@@ -5,7 +5,21 @@
  * Default creep spawn routines based on role
  *
  */
- 
+
+StructureSpawn.prototype.createService = function(energy) {
+    let bodyUnits = Math.floor(energy / 200);
+    let bodyParts = [];
+    
+    bodyUnits = bodyUnits > 5 ? 5 : bodyUnits;
+    for (let i = 0; i < bodyUnits; i++) {
+        bodyParts.push(WORK);
+        bodyParts.push(MOVE);
+        bodyParts.push(CARRY);
+    }
+    
+    return this.createCreep(bodyParts, undefined, {role: 'service'});
+}
+
 StructureSpawn.prototype.createBuilder = function(energy) {
     let bodyUnits = Math.floor(energy / 200);
     let bodyParts = [];

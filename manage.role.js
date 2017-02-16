@@ -15,6 +15,7 @@ var roleUpgrader = require('role.upgrader');
 var roleBuilder = require('role.builder');
 var roleRepairer = require('role.repairer');
 var roleHauler = require('role.hauler');
+var roleService = require('role.service');
 
 var manageRole = {
     
@@ -22,36 +23,43 @@ var manageRole = {
         max:    Constant.LIMIT_HARVESTERS,
         run:    creep => roleHarvester.run(creep),
         units:  () => _.filter(Game.creeps, (creep) => creep.memory.role == 'harvester'),
-        isMax:  () => manageRole.harvester.units().length >= manageRole.harvester.max
+        isMax:  () => manageRole.harvester.units().length >= manageRole.harvester.max,
     },
     
     upgrader: {
         max:    Constant.LIMIT_UPGRADERS,
         run:    creep => roleUpgrader.run(creep),
         units:  () => _.filter(Game.creeps, (creep) => creep.memory.role == 'upgrader'),
-        isMax:  () => manageRole.upgrader.units().length >= manageRole.upgrader.max
+        isMax:  () => manageRole.upgrader.units().length >= manageRole.upgrader.max,
+    },
+    
+    service: {
+        max:    Constant.LIMIT_SERVICE,
+        run:    creep => roleService.run(creep),
+        units:  () => _.filter(Game.creeps, (creep) => creep.memory.role == 'service'),
+        isMax:  () => manageRole.service.units().length >= manageRole.service.max,
     },
     
     builder: {
         max:    Constant.LIMIT_BUILDERS,
         run:    creep => roleBuilder.run(creep),
         units:  () => _.filter(Game.creeps, (creep) => creep.memory.role == 'builder'),
-        isMax:  () => manageRole.builder.units().length >= manageRole.builder.max
+        isMax:  () => manageRole.builder.units().length >= manageRole.builder.max,
     },
     
     hauler: {
         max:    Constant.LIMIT_HAULERS,
         run:    creep => roleHauler.run(creep),
         units:  () => _.filter(Game.creeps, (creep) => creep.memory.role == 'hauler'),
-        isMax:  () => manageRole.hauler.units().length >= manageRole.hauler.max
+        isMax:  () => manageRole.hauler.units().length >= manageRole.hauler.max,
     },
     
     repairer: {
         max:    Constant.LIMIT_REPAIRERS,
         run:    creep => roleRepairer.run(creep),
         units:  () => _.filter(Game.creeps, (creep) => creep.memory.role == 'repairer'),
-        isMax:  () => manageRole.repairer.units().length >= manageRole.repairer.max
-    }
+        isMax:  () => manageRole.repairer.units().length >= manageRole.repairer.max,
+    },
     
 }
 

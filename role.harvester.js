@@ -26,7 +26,11 @@ var roleHarvester = {
             return false;
         }
         
-        creep.manageState()
+        if (creep.manageState()) {
+            if (!creep.memory.working) {
+                creep.say('⛏️ harvest');
+            }
+        }
         
         if (!creep.memory.working) {
             let target = Game.getObjectById(creep.memory.harvestTarget);
@@ -60,9 +64,6 @@ var roleHarvester = {
             return true;
         }
         if (creep.getTargetExtentionEnergy('store')) {
-            return true;
-        }
-        if (creep.getTargetTowerEnergy('store')) {
             return true;
         }
         if (creep.getTargetContainerEnergy('store')) {

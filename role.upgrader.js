@@ -12,7 +12,7 @@ var roleUpgrader = {
         
         if (creep.manageState()) {
             if (creep.memory.working) {
-                creep.say('⚡ upgrade');
+                creep.say('📡 upgrade');
             } else {
                 creep.say('🔋 energy');
             }
@@ -52,10 +52,10 @@ var roleUpgrader = {
             return true;
         }
         if (creep.room.controller.level <= Constant.CONTROLLER_WITHDRAW_LEVEL) {
-            if (creep.getTargetExtentionEnergy()) {
+            if (creep.getTargetExtentionEnergy('withdraw')) {
                 return true;
             }
-            if (creep.getTargetSpawnEnergy()) {
+            if (creep.getTargetSpawnEnergy('withdraw')) {
                 return true;
             }
         }

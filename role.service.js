@@ -1,34 +1,38 @@
 /*
- * Role Hauler
+ * Role Service
  *
- * hauler role handles moving energy to needed locations
+ * service role handles work operations and mantinance
  *
  */
 
-var roleHauler = {
+var roleService = {
 
     /** @param {Creep} creep **/
     run: function(creep) {
         
         if (creep.manageState()) {
             if (creep.memory.working) {
-                creep.say('🚛 haul');
+                creep.say('⚙ service');
             } else {
+                creep.memory.serviceJob = false;
                 creep.say('🔋 energy');
             }
         }
         
         if (creep.memory.working) {
             if (!creep.memory.goingTo || creep.memory.goingTo == undefined) {
-                if (!roleHauler.storeEnergy(creep)) {
+                if (!roleService.getWork(creep)) {
                     creep.moveToIdlePosition();
                     
                     return false;
                 }
             }
             
-            let target = Game.getObjectById(creep.memory.goingTo);
-            creep.transferEnergy(target);
+            if (!roleService.doWork(creep)) {
+                creep.moveToIdlePosition();
+                
+                return false;
+            }
             
             return true;
         }
@@ -40,7 +44,7 @@ var roleHauler = {
                 return true;
             }
             if (!creep.memory.goingTo || creep.memory.goingTo == undefined) {
-                if (!roleHauler.withdrawEnergy(creep)) {
+                if (!roleService.withdrawEnergy(creep)) {
                     if (!creep.isCarryingEnergy()) {
                         creep.moveToIdlePosition();
                     } else {
@@ -59,23 +63,23 @@ var roleHauler = {
     },
     
     /** @param {Creep} creep **/
-    storeEnergy: function(creep) {
+    doWork: function(creep) {
         
-        if (creep.getTargetSpawnEnergy('store')) {
+        if (creep.memory.serviceJob == 'tower') {
+            let target = Game.getObjectById(creep.memory.goingTo);
+            creep.transferEnergy(target);
+            
             return true;
         }
-        if (creep.getTargetExtentionEnergy('store')) {
-            return true;
-        }
-        if (creep.getTargetContainerEnergy('store', 'out', true)) {
-            return true;
-        }
-        if (!creep.memory.blockContainer) {
-            if (creep.getTargetContainerEnergy('store')) {
-                return true;
-            }
-        }
-        if (creep.getTargetStorageEnergy('store')) {
+        
+        return false;
+    },
+    
+    /** @param {Creep} creep **/
+    getWork: function(creep) {
+        
+        if (creep.getTargetTowerEnergy('store')) {
+            creep.memory.serviceJob = 'tower';
             return true;
         }
         
@@ -85,19 +89,19 @@ var roleHauler = {
     /** @param {Creep} creep **/
     withdrawEnergy: function(creep) {
         
-        //if (creep.collectDroppedEnergy()) {
-        //    return true;
-        //}
-        if (creep.getTargetContainerEnergy('withdraw', 'in', true)) {
+        if (creep.getTargetStorageEnergy('withdraw')) {
             return true;
         }
         if (creep.getTargetContainerEnergy('withdraw')) {
             creep.memory.blockContainer = true;
             return true;
         }
+        if (creep.getTargetContainerEnergy('withdraw', 'out', false)) {
+            return true;
+        }
         
         return false;
-    }
+    },
 };
 
-module.exports = roleHauler;
+module.exports = roleService;

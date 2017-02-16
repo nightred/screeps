@@ -59,10 +59,10 @@ var roleBuilder = {
             return true;
         }
         if (creep.room.controller.level <= Constant.CONTROLLER_WITHDRAW_LEVEL) {
-            if (creep.getTargetExtentionEnergy()) {
+            if (creep.getTargetExtentionEnergy('withdraw')) {
                 return true;
             }
-            if (creep.getTargetSpawnEnergy()) {
+            if (creep.getTargetSpawnEnergy('withdraw')) {
                 return true;
             }
         }
