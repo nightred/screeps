@@ -6,13 +6,18 @@
  */
  
 StructureContainer.prototype.reserveEnergy = function(energy) {
-    
     if (!this.memory.reservedEnergy || this.memory.reservedEnergy == undefined) {
+        this.memory.reservedEnergy = 0;
+    }
+    
+    if (this.memory.reservedTime < (Game.time - 20) && this.memory.reservedTime) {
+        this.memory.reservedTime = false;
         this.memory.reservedEnergy = 0;
     }
     
     if ((this.store[RESOURCE_ENERGY] - (this.memory.reservedEnergy + energy)) >= Constant.ENERGY_CONTAINER_MIN_WITHDRAW) {
         this.memory.reservedEnergy += energy;
+        this.memory.reservedTime = Game.time;
         this.balanceReserve();
         
         return true;

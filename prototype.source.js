@@ -13,7 +13,9 @@ Source.prototype.getLocalContainer = function() {
     
     if (!this.memory.localContainerId) {
         
-        let targets = this.room.lookForAtArea(LOOK_STRUCTURES, this.pos.y - 2, this.pos.x - 2, this.pos.y + 2, this.pos.x + 2, true);
+        let size = Constant.HARVESTERS_CARRY ? 2 : 1;
+
+        let targets = this.room.lookForAtArea(LOOK_STRUCTURES, this.pos.y - size, this.pos.x - size, this.pos.y + size, this.pos.x + size, true);
         targets = _.filter(targets, target => target.structure.structureType == STRUCTURE_CONTAINER);
 
         if (targets.length > 0) {
@@ -25,5 +27,11 @@ Source.prototype.getLocalContainer = function() {
     }
     
     return this.memory.localContainerId;
+}
+
+Source.prototype.clearLocalContainer = function() {
+    this.memory.localContainerId = false;
+    
+    return true;
 }
 

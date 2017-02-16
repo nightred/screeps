@@ -13,7 +13,7 @@
 var Constants = {
     
     DEBUG: true,
-    SIM: true,
+    SIM: false,
     ACTIVE: true,
     
     ENERGY_ROOM_LIMIT: 600,
@@ -29,15 +29,15 @@ var Constants = {
     RAMPART_HIT_MAX: 10000,
     
     LIMIT_BUILDERS: 1,
-    LIMIT_UPGRADERS: 2,
+    LIMIT_UPGRADERS: 3,
     LIMIT_HARVESTERS: 2,
     LIMIT_REPAIRERS: 0,
-    LIMIT_HAULERS: 2,
+    LIMIT_HAULERS: 3,
     LIMIT_SERVICE: 1,
     
     CREEP_LIVE_MIN: 40,
 
-    HARVESTERS_CARRY: true,
+    HARVESTERS_CARRY: false,
     
 };
 
@@ -50,6 +50,6 @@ Constants.LIMIT_BUILDERS    = !Constants.SIM ? Constants.LIMIT_BUILDERS     : 0;
 Constants.LIMIT_UPGRADERS   = !Constants.SIM ? Constants.LIMIT_UPGRADERS    : 1;
 Constants.LIMIT_HARVESTERS  = !Constants.SIM ? Constants.LIMIT_HARVESTERS   : 2;
 Constants.LIMIT_REPAIRERS   = !Constants.SIM ? Constants.LIMIT_REPAIRERS    : 0;
-Constants.LIMIT_HAULERS     = !Constants.SIM ? Constants.LIMIT_HAULERS      : 1;
+Constants.LIMIT_HAULERS     = !Constants.SIM ? Constants.LIMIT_HAULERS      : 0;
 
 module.exports = Constants;

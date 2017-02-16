@@ -20,7 +20,7 @@ var manageCreep = {
             if(!Game.creeps[name]) {
                 delete Memory.creeps[name];
                 if (Constant.DEBUG) {
-                    console.log("DEBUG - clearing non-existing creep memory: " + name);
+                    console.log("DEBUG - clearing non-existant creep memory: " + name);
                 }
             }
         }
@@ -91,6 +91,7 @@ var manageCreep = {
         if (!creep.memory.despawn || creep.memory.despawn == undefined) {
             creep.memory.despawn = true;
             creep.memory.goingTo = false;
+            creep.memory.harvestTarget = false;
             if (Constant.DEBUG) {
                 console.log("DEBUG - end of life " + creep.memory.role + " " + creep.name);
             }

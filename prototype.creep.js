@@ -6,6 +6,12 @@
  */
  
 Creep.prototype.manageState = function() {
+    if (!this.carryCapacity > 0) {
+        this.memory.working = true;
+        
+        return true;
+    }
+    
     if (this.memory.working && this.isEnergyEmpty()) {
         this.memory.working = false;
         

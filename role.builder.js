@@ -22,6 +22,11 @@ var roleBuilder = {
         }
         
         if (creep.memory.working) {
+            if (creep.memory.idleStart > (Game.time - 20)) {
+                creep.moveToIdlePosition();
+                
+                return false;
+            }
             if (!creep.buildConstructionSite()) {
                 roleRepairer.run(creep);
             }

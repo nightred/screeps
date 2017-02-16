@@ -9,6 +9,7 @@ require('prototype.memory');
 require('prototype.creep');
 require('prototype.spawn');
 require('prototype.source');
+require('prototype.room');
 require('prototype.structureContainer');
 
 global.Constant = require('constants');

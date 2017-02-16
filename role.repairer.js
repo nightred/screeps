@@ -23,7 +23,7 @@ var roleRepairer = {
         
         if (creep.memory.working) {
             if (!creep.repairStructures()) {
-                //roleUpgrader.run(creep);
+                creep.memory.idleStart = Game.time;
                 creep.moveToIdlePosition();
             }
         }

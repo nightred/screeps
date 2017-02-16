@@ -83,14 +83,20 @@ StructureSpawn.prototype.createRepairer = function(energy) {
 }
 
 StructureSpawn.prototype.createHauler = function(energy) {
-    let bodyUnits = Math.floor(energy / 100);
+    let CarryUnits = Math.floor((energy / 2) / 50);
+    let MoveUnits = Math.floor((energy / 2) / 50);
     let bodyParts = [];
     
-    bodyUnits = bodyUnits > 5 ? 5 : bodyUnits;
-    for (let i = 0; i < bodyUnits; i++) {
+    MoveUnits = MoveUnits > 4 ? 4 : MoveUnits;
+    for (let i = 0; i < MoveUnits; i++) {
         bodyParts.push(MOVE);
+    }
+    
+    CarryUnits = CarryUnits > 8 ? 8 : CarryUnits;
+    for (let i = 0; i < CarryUnits; i++) {
         bodyParts.push(CARRY);
     }
+    
     
     return this.createCreep(bodyParts, undefined, {role: 'hauler'});
 }
