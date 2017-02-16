@@ -32,13 +32,18 @@ var roleHarvester = {
             }
         }
         
+        let source = Game.getObjectById(creep.memory.harvestTarget);
+        
         if (!creep.memory.working) {
-            let target = Game.getObjectById(creep.memory.harvestTarget);
-            
-            if (creep.harvest(target) == ERR_NOT_IN_RANGE) {
-                creep.moveTo(target);
+            if (creep.harvest(source) == ERR_NOT_IN_RANGE) {
+                creep.moveTo(source);
             }
         } else {
+            
+            if (!creep.memory.goingTo || creep.memory.goingTo == undefined) {
+                creep.memory.goingTo = source.getLocalContainer();
+            }
+            
             if (!creep.memory.goingTo || creep.memory.goingTo == undefined) {
                 if (!roleHarvester.storeEnergy(creep)) {
                     creep.moveToIdlePosition();

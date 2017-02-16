@@ -74,6 +74,10 @@ Creep.prototype.withdrawEnergy = function(target) {
         this.moveTo(target);
     } else {
         this.memory.goingTo = false;
+
+        if (target.structureType == STRUCTURE_CONTAINER) {
+            target.withdrawnEnergy(this.carryCapacity - _.sum(this.carry));
+        }
     }
         
     return true;
@@ -187,6 +191,8 @@ Creep.prototype.getTargetContainerEnergy = function(useMode, storeType, fillLeve
     useMode = typeof useMode !== 'undefined' ? useMode : 'store';
     storeType = typeof storeType !== 'undefined' ? storeType : 'default';
     fillLevel = typeof fillLevel !== 'undefined' ? fillLevel : false;
+    
+    //console.log('mode: ' + useMode + ' type: ' + storeType + ' fill: ' + fillLevel);
 
     let targets = global.cacheFind.containers(this.room);
     
@@ -217,9 +223,10 @@ Creep.prototype.getTargetContainerEnergy = function(useMode, storeType, fillLeve
         targets = _.sortBy(targets, structure => this.pos.getRangeTo(structure));
     }
     
-    if (targets.length > 0) {
-
-        targets[0].reserveEnergy();
+    if (targets.length > 0 && useMode == 'withdraw') {
+        if (!targets[0].reserveEnergy(this.carryCapacity - _.sum(this.carry))) {
+            return false;
+        }
     }
 
     return this.setGoingTo(targets);
@@ -266,7 +273,7 @@ Creep.prototype.collectDroppedEnergy = function () {
 }
 
 Creep.prototype.moveToIdlePosition = function() {
-    if (this.isOnRoad()) {
+    if (this.isOnRoad() || this.isOnContainer()) {
         return this.move(Math.floor(Math.random() * 9)) == 0;
     }
     
@@ -275,6 +282,10 @@ Creep.prototype.moveToIdlePosition = function() {
 
 Creep.prototype.isOnRoad = function() {
     return _.find(this.pos.lookFor(LOOK_STRUCTURES), i => i instanceof StructureRoad) != undefined;
+}
+
+Creep.prototype.isOnContainer = function() {
+    return _.find(this.pos.lookFor(LOOK_STRUCTURES), i => i instanceof StructureContainer) != undefined;
 }
 
 Creep.prototype.buildConstructionSite = function() {
@@ -296,7 +307,7 @@ Creep.prototype.repairStructures = function() {
             return ((structure.structureType != STRUCTURE_WALL &&
                 structure.structureType != STRUCTURE_RAMPART) ||
                 (structure.structureType == STRUCTURE_RAMPART &&
-                structure.hits < 2000)) &&
+                structure.hits < Constant.RAMPART_HIT_MAX)) &&
                 structure.hits < structure.hitsMax
         }
     }), s => s.hits / s.hitsMax);

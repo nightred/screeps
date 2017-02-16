@@ -74,9 +74,9 @@ var roleHauler = {
             if (creep.getTargetContainerEnergy('store')) {
                 return true;
             }
-        }
-        if (creep.getTargetStorageEnergy('store')) {
-            return true;
+            if (creep.getTargetStorageEnergy('store')) {
+                return true;
+            }
         }
         
         return false;
@@ -91,10 +91,10 @@ var roleHauler = {
         if (creep.getTargetContainerEnergy('withdraw', 'in', true)) {
             return true;
         }
-        if (creep.getTargetContainerEnergy('withdraw')) {
-            creep.memory.blockContainer = true;
-            return true;
-        }
+        //if (creep.getTargetContainerEnergy('withdraw')) {
+        //    creep.memory.blockContainer = true;
+        //    return true;
+        //}
         
         return false;
     }
