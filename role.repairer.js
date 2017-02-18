@@ -16,6 +16,7 @@ var roleRepairer = {
     
     /** @param {Creep} creep **/
     run: function(creep) {
+        if (!creep) { return false; }
         
         if (creep.manageState()) {
             if (creep.memory.working) {
@@ -32,14 +33,16 @@ var roleRepairer = {
         }
         
         if (creep.memory.working) {
-            this.doWork();
+            this.doWork(creep);
         } else {
-            this.doRecharge();
+            this.doRecharge(creep);
         }
     },
     
     /** @param {Creep} creep **/
-    doWork: function() {
+    doWork: function(creep) {
+        if (!creep) { return false; }
+        
         if (!creep.memory.workId) {
             if (!creep.getWork(this.workTypes)) {
                 creep.memory.idleStart = Game.time;
@@ -49,9 +52,7 @@ var roleRepairer = {
         }
         
         if (!creep.doWork()) {
-            if (Constant.DEBUG) {
-                console.log("DEBUG - " + this.memory.role + " " + this.name + ' failed doWork');
-            }
+            if (Constant.DEBUG) { console.log("DEBUG - " + this.memory.role + " " + this.name + ' failed doWork'); }
         }
         
         return true;
@@ -59,6 +60,8 @@ var roleRepairer = {
     
     /** @param {Creep} creep **/
     doRecharge: function(creep) {
+        if (!creep) { return false; }
+        
         if (!creep.memory.goingTo || creep.memory.goingTo == undefined) {
             if (!this.getRechargeLocation(creep)) {
                 if (!creep.isCarryingEnergy()) {
@@ -79,6 +82,7 @@ var roleRepairer = {
     
     /** @param {Creep} creep **/
     getRechargeLocation: function(creep) {
+        if (!creep) { return false; }
         
         if (creep.getTargetContainerEnergy('withdraw', 'out')) {
             return true;

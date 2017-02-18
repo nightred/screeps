@@ -18,34 +18,68 @@ var Work = {
         run: function(room) {
             if (!room) { return false; }
             this.memory = Memory.work;
-            this.memory.timeFindWork = this.memory.timeFindWork || 0;
+            this.memory.timeFindWork = this.memory.timeFindWork || Game.time;
+            this.memory.timeWorkReport = this.memory.timeWorkReport || Game.time;
             
-            if (this.memory.timeFindWork > (Game.time - Constant.WORK_FIND_WAIT)) {
+            if ((this.memory.timeFindWork + Constant.WORK_FIND_WAIT) < Game.time) {
                 this.repair(room);
+                
+                this.memory.timeFindWork = Game.time;
+            }
+            
+            if ((this.memory.timeWorkReport + Constant.WORK_REPORT_WAIT) < Game.time) {
+                Work.reportWork();
+                this.memory.timeWorkReport = Game.time;
             }
             
             return true;
         },
         
         repair: function(room) {
-            let targets = _.sortBy(this.room.find(FIND_MY_STRUCTURES, {
-                filter: (structure) => {
-                    return structure.hits < (structure.hitsMax * Constant.REPAIR_HIT_MIN)
-                }
-            }), s => s.hits / s.hitsMax);
-            this.room.find(FIND_STRUCTURES, {
-                filter: (structure) => (structure.structureType == STRUCTURE_CONTAINER && 
-                    structure.structureType == STRUCTURE_ROAD) &&
-                    structure.hits < (structure.hitsMax * Constant.REPAIR_HIT_MIN)
-            }).forEach(structure => targets.push(structure));
+            if (!room) { return false; }
             
-            if (targets.length > 0) {
-                if (!Work.addWork(targets[0].id, 'repair', 60)) {
-                    if (Constant.DEBUG) { console.log('DEBUG - failed to add repair work, target id: ' + target[0].id ); }
-                }
+            let targets = _.sortBy(_.filter(room.find(FIND_MY_STRUCTURES), structure =>
+                    structure.hits < (structure.hitsMax * Constant.REPAIR_HIT_WORK_MIN)
+                    ), structure => structure.hits / structure.hitsMax);
+                
+            _.filter(room.find(FIND_STRUCTURES), structure => 
+                (structure.structureType == STRUCTURE_CONTAINER || 
+                structure.structureType == STRUCTURE_ROAD) &&
+                (structure.structureType != STRUCTURE_WALL &&
+                structure.structureType != STRUCTURE_RAMPART) &&
+                structure.hits < (structure.hitsMax * Constant.REPAIR_HIT_WORK_MIN)
+                ).forEach(structure => targets.push(structure));
+            
+            if (targets.length < 1) {
+                return false;
             }
+            
+            let count = 0;
+            for (let i = 0; i < targets.length; i++) {
+                if (Work.addWork(targets[i].id, 'repair', 60)) { count++; }
+            }
+            if (count && Constant.DEBUG) { console.log('DEBUG - added ' + count + ' repair work to the queue'); }
         },
         
+    },
+    
+    reportWork: function() {
+        
+        console.log('REPORT - listing of work types and active work per type');
+        
+        for (let i = 0; i < Constant.WORK_TYPES.length; i++) {
+            let countWork = _.filter(this.memory.workQueue, work => 
+                Constant.WORK_TYPES[i] == work.task
+                ).length;
+            let activeWork = _.filter(this.memory.workQueue, work => 
+                Constant.WORK_TYPES[i] == work.task &&
+                work.creeps.length > 0
+                ).length;
+            
+            console.log('REPORT - ' + Constant.WORK_TYPES[i] + ' has ' + countWork + ' jobs in queued, ' + activeWork + ' are in progress');
+        }
+        
+        return true;
     },
     
     /*
@@ -58,7 +92,7 @@ var Work = {
             tasks.indexOf(work.task) >= 0 &&
             ((!work.multiCreep && work.creeps.length == 0) ||
             (work.multiCreep && work.creeps.length < work.multiCreepLimit))
-        ), work => work.priority);
+            ), work => work.priority);
         if (!targets.length > 0) { return false; }
         
         return targets[0].id;
@@ -73,7 +107,11 @@ var Work = {
         if (!workId) { return false; }
         
         let work = this.memory.workQueue[workId];
-        if (!work) { return false;}
+        if (!work) {
+            this.removeWork(workId);
+
+            return false;
+        }
         if (!work.multiCreep && work.creeps.length > 0) { return false; }
         if (work.multiCreep && 
             work.creeps.length >= work.multiCreepLimit) { 
@@ -89,6 +127,16 @@ var Work = {
         if (this.memory.workQueue[workId]) { return true; }
         
         return false;
+    },
+    
+    hasWork: function(targetId, task) {
+        if (!targetId) { return false; }
+        if (Constant.WORK_TYPES.indexOf(task) < 0) { return false; }
+        
+        return _.filter(this.memory.workQueue, work => 
+            task == work.task &&
+            work.targetId == targetId
+            ).length > 0 ? true : false;
     },
     
     /*
@@ -108,6 +156,8 @@ var Work = {
         multiCreepLimit = typeof multiCreepLimit !== 'undefined' ? multiCreepLimit : 1;
         perpetual = typeof perpetual !== 'undefined' ? perpetual : false;
         
+        if (this.hasWork(targetId, task)) { return false; }
+        
         let workId = this.getQueueId();
         this.memory.workQueue[workId] = {
             id: workId,
@@ -126,10 +176,25 @@ var Work = {
     removeWork: function(workId) {
         if (!this.memory.workQueue[workId]) { return true; }
         
+        if (Constant.DEBUG) { console.log('DEBUG - removing ' + this.memory.workQueue[workId].task + ' work id: ' + workId + ' for id:' + this.memory.workQueue[workId].targetId); }
         delete this.memory.workQueue[workId];
-        if (Constant.DEBUG) { console.log("DEBUG - removing work: " + workId); }
         
         return true;
+    },
+    
+    leaveWork: function(creepId, workId) {
+        if (!creepId) { return false; }
+        if (!workId) { return false; }
+        
+        let work = this.memory.workQueue[creep.memory.workId];
+        if (!work) { return false; }
+        
+        for (let i = 0; i < work.creeps.length; i++) {
+            if (work.creeps[i] == creepId) {
+                work.creeps.splice(i, 1);
+                break;
+            }
+        }
     },
     
     getQueueId: function() {

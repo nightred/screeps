@@ -57,17 +57,25 @@ Creep.prototype.setDespawn = function() {
     this.memory.goingTo = false;
     this.memory.harvestTarget = false;
     
-    if (Constant.DEBUG) {
-        console.log("DEBUG - end of life " + this.memory.role + " " + this.name);
-    }
+    this.leaveWork();
+    
+    if (Constant.DEBUG) { console.log('DEBUG - ' + this.memory.role + this.name + ' end of life'); }
+}
+
+Creep.prototype.leaveWork = function() {
+    if (!this.memory.workId) { return false; }
+    Work.leaveWork(this.id, this.memory.workId);
+    this.memory.workId = false;
+    
+    return true;
 }
 
 Creep.prototype.getWork = function(tasks) {
     if (!Array.isArray(tasks)) { return false; }
-    
+
     let workId = Work.getWork(tasks);
     if (!workId) { return false; }
-    if (!Work.setWork(workId)) { return false; }
+    if (!Work.setWork(this.id, workId)) { return false; }
     
     this.memory.workId = workId;
     
@@ -76,7 +84,7 @@ Creep.prototype.getWork = function(tasks) {
 
 Creep.prototype.doWork = function() {
     if (!this.memory.workId) { return false; }
-    
+
     if (!Work.doWork(this)) {
         this.removeWork();
     }

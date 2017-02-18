@@ -58,9 +58,7 @@ var roleHarvester = {
     doStoreEnergy: function(creep) {
         let target = Game.getObjectById(creep.memory.goingTo);
         if (!target) {
-            if (Constant.DEBUG) {
-                console.log('DEBUG - source: ' + source.id + ' lost local container');
-            }
+            if (Constant.DEBUG) { console.log('DEBUG - source: ' + source.id + ' lost local container'); }
             source.clearContainer();
             creep.memory.goingTo = false;
             
@@ -103,10 +101,8 @@ var roleHarvester = {
         let target = Game.getObjectById(source.getDropContainer());
 
         if (!target) {
-            if (Constant.DEBUG) {
-                console.log('DEBUG - ERROR - harvester ' + creep.name + ' has no drop container');
-            }
-            source.clearContainer;
+            if (Constant.DEBUG) { console.log('DEBUG - ERROR - harvester ' + creep.name + ' has no drop container'); }
+            source.clearContainer();
             
             return false;
         }
@@ -124,9 +120,8 @@ var roleHarvester = {
             return true;
         }
         
-        if (creep.harvest(source) == ERR_NOT_IN_RANGE && 
-            Constant.DEBUG) {
-            console.log('DEBUG - ERROR - harvester ' + creep.name + ' not in range of ' + source.id);
+        if (creep.harvest(source) == ERR_NOT_IN_RANGE) {
+            if (Constant.DEBUG) { console.log('DEBUG - ERROR - harvester ' + creep.name + ' not in range of ' + source.id); }
             
             return false;
         }

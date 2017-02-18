@@ -16,9 +16,7 @@ var manageCreep = {
         for(let name in Memory.creeps) {
             if(!Game.creeps[name]) {
                 delete Memory.creeps[name];
-                if (Constant.DEBUG) {
-                    console.log("DEBUG - clearing non-existant creep memory: " + name);
-                }
+                if (Constant.DEBUG) { console.log("DEBUG - clearing non-existant creep memory: " + name); }
             }
         }
         
@@ -114,9 +112,7 @@ var manageCreep = {
 
             if (creep.pos.x == target.pos.x && creep.pos.y == target.pos.y) {
                 if (creep.room.memory.deSpawnContainerId && creep.room.memory.spawnId) { 
-                    if (Constant.DEBUG) {
-                        console.log("DEBUG - recycling " + creep.memory.role + " " + creep.name);
-                    }
+                    if (Constant.DEBUG) { console.log("DEBUG - recycling " + creep.memory.role + " " + creep.name); }
                     let roomSpawn = Game.getObjectById(creep.room.getSpawn());
                     roomSpawn.recycleCreep(creep);
                 } else {

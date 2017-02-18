@@ -6,8 +6,6 @@
  */
 
 var workRepair = {
-    
-    repairToPercent: 0.96,
 
     run: function(creep, work) {
         if (!creep) { return false; }
@@ -33,7 +31,7 @@ var workRepair = {
     },
     
     checkWork: function(target) {
-        if (target.hits >= Math.floor(target.hitsMax * this.repairToPercent)) {
+        if (target.hits >= Math.floor(target.hitsMax * Constant.REPAIR_HIT_WORK_MAX)) {
             return true;
         }
         
