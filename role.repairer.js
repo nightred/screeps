@@ -19,9 +19,9 @@ var roleRepairer = {
         
         if (creep.manageState()) {
             if (creep.memory.working) {
-                creep.say('🔧 repair');
+                creep.say('🔧');
             } else {
-                creep.say('🔋 energy');
+                creep.say('🔋');
             }
         }
         
@@ -32,40 +32,53 @@ var roleRepairer = {
         }
         
         if (creep.memory.working) {
-            if (!creep.memory.workId) {
-                if (!creep.getWork(this.workTypes)) {
-                    creep.memory.idleStart = Game.time;
-                    return false;
-                }
-            }
-            
-            if (!creep.doWork()) {
-                
-            }
-            
-            return true;
+            this.doWork();
         } else {
-            if (!creep.memory.goingTo || creep.memory.goingTo == undefined) {
-                if (!roleRepairer.withdrawEnergy(creep)) {
-                    if (!creep.isCarryingEnergy()) {
-                        creep.memory.idleStart = Game.time;
-                    } else {
-                        creep.toggleState();
-                    }
-                    
-                    return false;
-                }
-            }
-            
-            let target = Game.getObjectById(creep.memory.goingTo);
-            creep.withdrawEnergy(target);
-            
-            return true;
+            this.doRecharge();
         }
     },
     
     /** @param {Creep} creep **/
-    withdrawEnergy: function(creep) {
+    doWork: function() {
+        if (!creep.memory.workId) {
+            if (!creep.getWork(this.workTypes)) {
+                creep.memory.idleStart = Game.time;
+                
+                return false;
+            }
+        }
+        
+        if (!creep.doWork()) {
+            if (Constant.DEBUG) {
+                console.log("DEBUG - " + this.memory.role + " " + this.name + ' failed doWork');
+            }
+        }
+        
+        return true;
+    },
+    
+    /** @param {Creep} creep **/
+    doRecharge: function(creep) {
+        if (!creep.memory.goingTo || creep.memory.goingTo == undefined) {
+            if (!this.getRechargeLocation(creep)) {
+                if (!creep.isCarryingEnergy()) {
+                    creep.memory.idleStart = Game.time;
+                } else {
+                    creep.toggleState();
+                }
+                
+                return false;
+            }
+        }
+        
+        let target = Game.getObjectById(creep.memory.goingTo);
+        creep.withdrawEnergy(target);
+        
+        return true;
+    },
+    
+    /** @param {Creep} creep **/
+    getRechargeLocation: function(creep) {
         
         if (creep.getTargetContainerEnergy('withdraw', 'out')) {
             return true;

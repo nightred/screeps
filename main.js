@@ -43,6 +43,7 @@ module.exports.loop = function () {
     
     rooms.forEach((room) => manageMemory.run(room));
     rooms.forEach((room) => manageTower.run(room));
+    rooms.forEach((room) => Work.createWork.run(room));
     rooms.forEach((room) => manageCreep.run(manageRole, room));
     
     for(let name in Game.creeps) {

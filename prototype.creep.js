@@ -333,30 +333,3 @@ Creep.prototype.buildConstructionSite = function() {
     
     return false;
 }
-
-Creep.prototype.repairStructures = function() {
-    let targets = _.sortBy(this.room.find(FIND_MY_STRUCTURES, {
-        filter: (structure) => {
-            return ((structure.structureType != STRUCTURE_WALL &&
-                structure.structureType != STRUCTURE_RAMPART) ||
-                (structure.structureType == STRUCTURE_RAMPART &&
-                structure.hits < Constant.RAMPART_HIT_MAX)) &&
-                structure.hits < structure.hitsMax
-        }
-    }), s => s.hits / s.hitsMax);
-    this.room.find(FIND_STRUCTURES, {
-        filter: (structure) => (structure.structureType == STRUCTURE_CONTAINER && 
-            structure.structureType == STRUCTURE_ROAD) &&
-            structure.hits < structure.hitsMax
-    }).forEach(structure => targets.push(structure));
-    
-    if (targets.length > 0) {
-        if (this.repair(targets[0]) == ERR_NOT_IN_RANGE) {
-            this.moveTo(targets[0]);
-        }
-        
-        return true;
-    }
-    
-    return false;
-}

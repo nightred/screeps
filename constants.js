@@ -26,6 +26,9 @@ var Constants = {
     
     CONTROLLER_WITHDRAW_LEVEL: 2,
     
+    WORK_FIND_WAIT: 0,
+    
+    REPAIR_HIT_MIN: 0.80,
     RAMPART_HIT_MAX: 10000,
     
     LIMIT_UPGRADERS: 3,

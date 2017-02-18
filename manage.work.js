@@ -17,14 +17,33 @@ var Work = {
         
         run: function(room) {
             if (!room) { return false; }
+            this.memory = Memory.work;
+            this.memory.timeFindWork = this.memory.timeFindWork || 0;
             
-            this.repair(room);
+            if (this.memory.timeFindWork > (Game.time - Constant.WORK_FIND_WAIT)) {
+                this.repair(room);
+            }
             
             return true;
         },
         
         repair: function(room) {
-            //
+            let targets = _.sortBy(this.room.find(FIND_MY_STRUCTURES, {
+                filter: (structure) => {
+                    return structure.hits < (structure.hitsMax * Constant.REPAIR_HIT_MIN)
+                }
+            }), s => s.hits / s.hitsMax);
+            this.room.find(FIND_STRUCTURES, {
+                filter: (structure) => (structure.structureType == STRUCTURE_CONTAINER && 
+                    structure.structureType == STRUCTURE_ROAD) &&
+                    structure.hits < (structure.hitsMax * Constant.REPAIR_HIT_MIN)
+            }).forEach(structure => targets.push(structure));
+            
+            if (targets.length > 0) {
+                if (!Work.addWork(targets[0].id, 'repair', 60)) {
+                    if (Constant.DEBUG) { console.log('DEBUG - failed to add repair work, target id: ' + target[0].id ); }
+                }
+            }
         },
         
     },
@@ -108,9 +127,7 @@ var Work = {
         if (!this.memory.workQueue[workId]) { return true; }
         
         delete this.memory.workQueue[workId];
-        if (Constant.DEBUG) {
-            console.log("DEBUG - removing work: " + workId);
-        }
+        if (Constant.DEBUG) { console.log("DEBUG - removing work: " + workId); }
         
         return true;
     },
@@ -130,9 +147,7 @@ var Work = {
             let workTask = require('work.' + work.task);
             return workTask.run(creep, work);
         } catch(e) {
-            if (Constant.DEBUG) {
-                console.log('DEBUG - failed to load work task: ' + role + ' error: ' + e);
-            }
+            if (Constant.DEBUG) { console.log('DEBUG - failed to load work task: ' + role + ' error: ' + e); }
         }
         
         return false;
