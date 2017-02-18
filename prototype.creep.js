@@ -62,6 +62,37 @@ Creep.prototype.setDespawn = function() {
     }
 }
 
+Creep.prototype.getWork = function(tasks) {
+    if (!Array.isArray(tasks)) { return false; }
+    
+    let workId = Work.getWork(tasks);
+    if (!workId) { return false; }
+    if (!Work.setWork(workId)) { return false; }
+    
+    this.memory.workId = workId;
+    
+    return true;
+}
+
+Creep.prototype.doWork = function() {
+    if (!this.memory.workId) { return false; }
+    
+    if (!Work.doWork(this)) {
+        this.removeWork();
+    }
+    
+    return true;
+}
+
+Creep.prototype.checkWork = function() {
+    return Work.checkWork(this.memory.workId);
+}
+
+Creep.prototype.removeWork = function() {
+    Work.removeWork(this.memory.workId);
+    this.memory.workId = false;
+}
+
 Creep.prototype.transferEnergy = function(target) {
     if (!target) {
         this.memory.goingTo = false;
@@ -117,20 +148,15 @@ Creep.prototype.setGoingTo = function(target, leaveRoom) {
     return true;
 }
 
-Creep.prototype.isGoingTo = function(target) {
-    
-    
-    
-    return false;
+Creep.prototype.isGoingTo = function() {
+    return this.memory.goingTo ? true : false;
 }
 
 Creep.prototype.getTargetTowerEnergy = function(useMode) {
     useMode = typeof useMode !== 'undefined' ? useMode : 'store';
     
     let targets = this.room.getTowers();
-    if (!targets.length > 0) {
-        return false;
-    }
+    if (!targets.length > 0) { return false; }
     
     if (useMode == 'store') {
         targets = _.filter(targets, structure => 
@@ -143,9 +169,7 @@ Creep.prototype.getTargetTowerEnergy = function(useMode) {
     }
     
     targets = _.sortBy(targets, structure => this.pos.getRangeTo(structure));
-    if (!targets.length > 0) {
-        return false;
-    }
+    if (!targets.length > 0) { return false; }
 
     return this.setGoingTo(targets[0]);
 }
@@ -154,14 +178,14 @@ Creep.prototype.getTargetStorageEnergy = function(useMode) {
     useMode = typeof useMode !== 'undefined' ? useMode : 'store';
     
     let target = this.room.storage;
-    if (!target) {
-        return false;
-    }
+    if (!target) { return false; }
     
-    if (useMode == 'store' && _.sum(target.store) == target.storeCapacity) {
+    if (useMode == 'store' && 
+        _.sum(target.store) == target.storeCapacity) {
         return false;
     }
-    if (useMode == 'withdraw' && target.store[RESOURCE_ENERGY] < Constant.ENERGY_STORAGE_MIN_WITHDRAW) {
+    if (useMode == 'withdraw' && 
+        target.store[RESOURCE_ENERGY] < Constant.ENERGY_STORAGE_MIN_WITHDRAW) {
         return false;
     }
     
@@ -171,19 +195,20 @@ Creep.prototype.getTargetStorageEnergy = function(useMode) {
 Creep.prototype.getTargetSpawnEnergy = function(useMode) {
     useMode = typeof useMode !== 'undefined' ? useMode : 'store';
     
-    if (this.room.energyAvailable < Constant.ENERGY_ROOM_LIMIT && useMode == 'withdraw') {
+    if (useMode == 'withdraw' && 
+        this.room.energyAvailable < Constant.ENERGY_ROOM_LIMIT ) {
         return false;
     }
     
 	let target = Game.getObjectById(this.room.getSpawn());
-	if (!target) {
-		return false;
-	}
+	if (!target) { return false; }
 
-    if (useMode == 'store' && target.energy == target.energyCapacity) {
+    if (useMode == 'store' && 
+        target.energy == target.energyCapacity) {
         return false;
     }
-    if (useMode == 'withdraw' && target.energy == 0) {
+    if (useMode == 'withdraw' && 
+        target.energy == 0) {
         return false;
     }
     
@@ -193,14 +218,13 @@ Creep.prototype.getTargetSpawnEnergy = function(useMode) {
 Creep.prototype.getTargetExtentionEnergy = function(useMode) {
     useMode = typeof useMode !== 'undefined' ? useMode : 'store';
     
-    if (this.room.energyAvailable < Constant.ENERGY_ROOM_LIMIT && useMode == 'withdraw') {
+    if (useMode == 'withdraw' && 
+        this.room.energyAvailable < Constant.ENERGY_ROOM_LIMIT) {
         return false;
     }
     
     let targets = this.room.getExtensions();
-    if (!targets.length > 0) {
-        return false;
-    }
+    if (!targets.length > 0) { return false; }
     
     if (useMode == 'store') {
         targets = _.filter(targets, structure => 
@@ -213,9 +237,7 @@ Creep.prototype.getTargetExtentionEnergy = function(useMode) {
     }
     
     targets = _.sortBy(targets, structure => this.pos.getRangeTo(structure));
-    if (!targets.length > 0) {
-        return false;
-    }
+    if (!targets.length > 0) { return false; }
 
     return this.setGoingTo(targets[0]);
 }
@@ -226,9 +248,7 @@ Creep.prototype.getTargetContainerEnergy = function(useMode, storeType, fillLeve
     fillLevel = typeof fillLevel !== 'undefined' ? fillLevel : false;
 
     let targets = this.room.getContainers();
-    if (!targets.length > 0) {
-        return false;
-    }
+    if (!targets.length > 0) { return false; }
     
     if (storeType == 'in') {
         targets = _.filter(targets, structure => structure.memory.type == 'in');
@@ -258,7 +278,8 @@ Creep.prototype.getTargetContainerEnergy = function(useMode, storeType, fillLeve
     }
     
     if (targets.length > 0) {
-        if (useMode == 'withdraw' && !targets[0].reserveEnergy(this.carryCapacity - _.sum(this.carry))) {
+        if (useMode == 'withdraw' && 
+            !targets[0].reserveEnergy(this.carryCapacity - _.sum(this.carry))) {
             return false;
         }
     } else {
@@ -339,4 +360,3 @@ Creep.prototype.repairStructures = function() {
     
     return false;
 }
-

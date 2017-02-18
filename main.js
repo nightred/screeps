@@ -5,9 +5,7 @@
  *
  */
 
-var Traveler = require('traveler');
-//require('jobs');
-
+// prototypes
 require('prototype.memory');
 require('prototype.creep');
 require('prototype.spawn');
@@ -15,12 +13,18 @@ require('prototype.source');
 require('prototype.room');
 require('prototype.structureContainer');
 
-global.Constant = require('constants');
+// global methods
+global.Constant     = require('constants');
+global.Work         = require('manage.work');
 
-var manageMemory = require('manage.memory');
-var manageRole = require('manage.role');
-var manageCreep = require('manage.creep');
-var manageTower = require('manage.tower');
+// managment modules
+var manageMemory    = require('manage.memory');
+var manageRole      = require('manage.role');
+var manageCreep     = require('manage.creep');
+var manageTower     = require('manage.tower');
+
+// third party modules
+var Traveler        = require('traveler');
 
 module.exports.loop = function () {
     
@@ -28,6 +32,8 @@ module.exports.loop = function () {
         return false;
     }
     
+    Work.init();
+
     let rooms = [];
     for (let name in Game.rooms) {
         if (Game.rooms[name].controller.my) {
@@ -53,7 +59,5 @@ module.exports.loop = function () {
         
         manageRole[creep.memory.role].run(creep);
     }
-    
-    
     
 }

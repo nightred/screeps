@@ -9,7 +9,11 @@
 var roleUpgrader = require('role.upgrader');
 
 var roleRepairer = {
-
+    
+    workTypes: [
+        'repair',
+        ],
+    
     /** @param {Creep} creep **/
     run: function(creep) {
         
@@ -28,9 +32,18 @@ var roleRepairer = {
         }
         
         if (creep.memory.working) {
-            if (!creep.repairStructures()) {
-                creep.memory.idleStart = Game.time;
+            if (!creep.memory.workId) {
+                if (!creep.getWork(this.workTypes)) {
+                    creep.memory.idleStart = Game.time;
+                    return false;
+                }
             }
+            
+            if (!creep.doWork()) {
+                
+            }
+            
+            return true;
         } else {
             if (!creep.memory.goingTo || creep.memory.goingTo == undefined) {
                 if (!roleRepairer.withdrawEnergy(creep)) {

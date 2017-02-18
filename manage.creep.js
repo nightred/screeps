@@ -28,9 +28,7 @@ var manageCreep = {
         if (!room.spawning && energy >= 200) {
             
             let spawn = Game.getObjectById(room.getSpawn());
-            if (!spawn) {
-                return false;
-            }
+            if (!spawn) { return false; }
             
             let name = undefined;
             let type = null;
@@ -97,9 +95,7 @@ var manageCreep = {
         }
         
     	let target = Game.getObjectById(creep.room.getSpawn());
-    	if (!target) {
-    		return false;
-    	}
+    	if (!target) { return false; }
         
         if (creep.room.memory.deSpawnContainerId == undefined) {
             creep.room.memory.deSpawnContainerId = false;

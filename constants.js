@@ -13,10 +13,10 @@
 var Constants = {
     
     DEBUG: true,
-    SIM: false,
+    SIM: true,
     ACTIVE: true,
     
-    ENERGY_ROOM_LIMIT: 600,
+    ENERGY_ROOM_LIMIT: 200,
     ENERGY_CREEP_SPAWN_MAX: 800,
     ENERGY_TOWER_MIN: 500,
     ENERGY_CONTAINER_MAX_PERCENT: 0.9,
@@ -28,7 +28,6 @@ var Constants = {
     
     RAMPART_HIT_MAX: 10000,
     
-    LIMIT_BUILDERS: 1,
     LIMIT_UPGRADERS: 3,
     LIMIT_HARVESTERS: 2,
     LIMIT_REPAIRERS: 0,
@@ -38,8 +37,11 @@ var Constants = {
     CREEP_DESPAWN_TICKS: 40,
     CREEP_IDLE_TIME: 10,
 
-    HARVESTERS_CARRY: false,
     HARVESTERS_PER_SOURCE: 1,
+    
+    WORK_TYPES: [
+        'repair',
+        ],
     
 };
 
@@ -50,7 +52,6 @@ var Constants = {
  
 Constants.ENERGY_ROOM_LIMIT = !Constants.SIM ? Constants.ENERGY_ROOM_LIMIT  : 200;
 Constants.LIMIT_SERVICE     = !Constants.SIM ? Constants.LIMIT_SERVICE      : 0;
-Constants.LIMIT_BUILDERS    = !Constants.SIM ? Constants.LIMIT_BUILDERS     : 0;
 Constants.LIMIT_UPGRADERS   = !Constants.SIM ? Constants.LIMIT_UPGRADERS    : 1;
 Constants.LIMIT_HARVESTERS  = !Constants.SIM ? Constants.LIMIT_HARVESTERS   : 2;
 Constants.LIMIT_REPAIRERS   = !Constants.SIM ? Constants.LIMIT_REPAIRERS    : 0;

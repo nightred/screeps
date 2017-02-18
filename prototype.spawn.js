@@ -10,9 +10,7 @@ StructureSpawn.prototype.createHarvester = function(energy) {
     let dropHarvest = false;
     let source = Game.getObjectById(this.room.getHarvestTarget());
     if (source) {
-        if (source.getDropContainer()) {
-            dropHarvest = true;
-        }
+        if (source.getDropContainer()) { dropHarvest = true; }
     }
     
     let bodyParts = [];
