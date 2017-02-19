@@ -13,7 +13,7 @@
 var Constants = {
     
     DEBUG: true,
-    SIM: true,
+    SIM: false,
     ACTIVE: true,
     
     ENERGY_ROOM_LIMIT: 200,
@@ -27,16 +27,18 @@ var Constants = {
     CONTROLLER_WITHDRAW_LEVEL: 2,
     
     WORK_FIND_WAIT: 5,
-    WORK_REPORT_WAIT: 100,
+    WORK_REPORT_WAIT: 200,
     
-    REPAIR_HIT_WORK_MIN: 0.95,
-    REPAIR_HIT_WORK_MAX: 0.98,
+    REPAIR_HIT_WORK_MIN: 0.80,
+    REPAIR_HIT_WORK_MAX: 0.95,
     RAMPART_HIT_MAX: 10000,
+    
+    REFILL_TOWER_MAX: 0.90,
+    REFILL_TOWER_MIN: 0.50,
     
     LIMIT_UPGRADERS: 3,
     LIMIT_HARVESTERS: 2,
-    LIMIT_REPAIRERS: 0,
-    LIMIT_HAULERS: 3,
+    LIMIT_HAULERS: 2,
     LIMIT_SERVICE: 1,
     
     CREEP_DESPAWN_TICKS: 40,
@@ -46,6 +48,8 @@ var Constants = {
     
     WORK_TYPES: [
         'repair',
+        'build',
+        'refillTower',
         ],
     
 };
@@ -56,10 +60,9 @@ var Constants = {
  */
  
 Constants.ENERGY_ROOM_LIMIT = !Constants.SIM ? Constants.ENERGY_ROOM_LIMIT  : 200;
-Constants.LIMIT_SERVICE     = !Constants.SIM ? Constants.LIMIT_SERVICE      : 0;
+Constants.LIMIT_SERVICE     = !Constants.SIM ? Constants.LIMIT_SERVICE      : 1;
 Constants.LIMIT_UPGRADERS   = !Constants.SIM ? Constants.LIMIT_UPGRADERS    : 0;
 Constants.LIMIT_HARVESTERS  = !Constants.SIM ? Constants.LIMIT_HARVESTERS   : 2;
-Constants.LIMIT_REPAIRERS   = !Constants.SIM ? Constants.LIMIT_REPAIRERS    : 1;
 Constants.LIMIT_HAULERS     = !Constants.SIM ? Constants.LIMIT_HAULERS      : 2;
 
 module.exports = Constants;

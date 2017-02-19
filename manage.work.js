@@ -23,6 +23,8 @@ var Work = {
             
             if ((this.memory.timeFindWork + Constant.WORK_FIND_WAIT) < Game.time) {
                 this.repair(room);
+                this.build(room);
+                this.refillTower(room);
                 
                 this.memory.timeFindWork = Game.time;
             }
@@ -31,6 +33,44 @@ var Work = {
                 Work.reportWork();
                 this.memory.timeWorkReport = Game.time;
             }
+            
+            return true;
+        },
+        
+        refillTower: function(room) {
+            if (!room) { return false; }
+            
+            let targets = _.filter(room.getTowers(), structure =>
+                structure.energy < (structure.energyCapacity * Constant.REFILL_TOWER_MIN)
+                );
+            
+            if (targets.length < 1) {
+                return false;
+            }
+            
+            let count = 0;
+            for (let i = 0; i < targets.length; i++) {
+                if (Work.addWork(targets[i].id, 'refillTower', 20)) { count++; }
+            }
+            if (count && Constant.DEBUG) { console.log('DEBUG - added ' + count + ' refillTower work to the queue'); }
+            
+            return true;
+        },
+        
+        build: function(room) {
+            if (!room) { return false; }
+            
+            let targets = room.getConstructionSites();
+            
+            if (targets.length < 1) {
+                return false;
+            }
+            
+            let count = 0;
+            for (let i = 0; i < targets.length; i++) {
+                if (Work.addWork(targets[i].id, 'build', 80)) { count++; }
+            }
+            if (count && Constant.DEBUG) { console.log('DEBUG - added ' + count + ' build work to the queue'); }
             
             return true;
         },
@@ -59,13 +99,16 @@ var Work = {
                 if (Work.addWork(targets[i].id, 'repair', 60)) { count++; }
             }
             if (count && Constant.DEBUG) { console.log('DEBUG - added ' + count + ' repair work to the queue'); }
+            
+            return true;
         },
         
     },
     
     reportWork: function() {
         
-        console.log('REPORT - listing of work types and active work per type');
+        console.log('#######################################################');
+        console.log(' * REPORT - work queued and in progress by type');
         
         for (let i = 0; i < Constant.WORK_TYPES.length; i++) {
             let countWork = _.filter(this.memory.workQueue, work => 
@@ -76,8 +119,10 @@ var Work = {
                 work.creeps.length > 0
                 ).length;
             
-            console.log('REPORT - ' + Constant.WORK_TYPES[i] + ' has ' + countWork + ' jobs in queued, ' + activeWork + ' are in progress');
+            console.log(' * ' + Constant.WORK_TYPES[i] + ' has ' + countWork + ' jobs in queued, ' + activeWork + ' are in progress');
         }
+        
+        console.log('#######################################################');
         
         return true;
     },
@@ -102,8 +147,8 @@ var Work = {
     * @param creepId the creep that will do the work
     * @param workId the id of the work to be done
     */
-    setWork: function(creepId, workId) {
-        if (!creepId) { return false; }
+    setWork: function(creepName, workId) {
+        if (!creepName) { return false; }
         if (!workId) { return false; }
         
         let work = this.memory.workQueue[workId];
@@ -118,7 +163,7 @@ var Work = {
             return false; 
         }
         
-        work.creeps.push(creepId);
+        work.creeps.push(creepName);
         
         return true;
     },
@@ -176,21 +221,21 @@ var Work = {
     removeWork: function(workId) {
         if (!this.memory.workQueue[workId]) { return true; }
         
-        if (Constant.DEBUG) { console.log('DEBUG - removing ' + this.memory.workQueue[workId].task + ' work id: ' + workId + ' for id:' + this.memory.workQueue[workId].targetId); }
+        if (Constant.DEBUG) { console.log('DEBUG - removing ' + this.memory.workQueue[workId].task + ' work id: ' + workId + ' for id: ' + this.memory.workQueue[workId].targetId); }
         delete this.memory.workQueue[workId];
         
         return true;
     },
     
-    leaveWork: function(creepId, workId) {
-        if (!creepId) { return false; }
+    leaveWork: function(creepName, workId) {
+        if (!creepName) { return false; }
         if (!workId) { return false; }
         
-        let work = this.memory.workQueue[creep.memory.workId];
+        let work = this.memory.workQueue[workId];
         if (!work) { return false; }
         
         for (let i = 0; i < work.creeps.length; i++) {
-            if (work.creeps[i] == creepId) {
+            if (work.creeps[i] == creepName) {
                 work.creeps.splice(i, 1);
                 break;
             }
@@ -199,6 +244,8 @@ var Work = {
     
     getQueueId: function() {
         this.memory.queueID = this.memory.queueID || 0;
+        this.memory.queueID = this.memory.queueID < 999999999 ? this.memory.queueID : 0;
+        
         return (++ this.memory.queueID);
     },
     

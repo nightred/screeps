@@ -59,12 +59,12 @@ Creep.prototype.setDespawn = function() {
     
     this.leaveWork();
     
-    if (Constant.DEBUG) { console.log('DEBUG - ' + this.memory.role + this.name + ' end of life'); }
+    if (Constant.DEBUG) { console.log('DEBUG - ' + this.memory.role + ' ' + this.name + ' end of life'); }
 }
 
 Creep.prototype.leaveWork = function() {
     if (!this.memory.workId) { return false; }
-    Work.leaveWork(this.id, this.memory.workId);
+    Work.leaveWork(this.name, this.memory.workId);
     this.memory.workId = false;
     
     return true;
@@ -75,7 +75,7 @@ Creep.prototype.getWork = function(tasks) {
 
     let workId = Work.getWork(tasks);
     if (!workId) { return false; }
-    if (!Work.setWork(this.id, workId)) { return false; }
+    if (!Work.setWork(this.name, workId)) { return false; }
     
     this.memory.workId = workId;
     
@@ -327,17 +327,4 @@ Creep.prototype.isOnRoad = function() {
 
 Creep.prototype.isOnContainer = function() {
     return _.find(this.pos.lookFor(LOOK_STRUCTURES), i => i instanceof StructureContainer) != undefined;
-}
-
-Creep.prototype.buildConstructionSite = function() {
-    let targets = _.sortBy(this.room.getConstructionSites(), s => this.pos.getRangeTo(s));
-    if (targets.length > 0) {
-        if (this.build(targets[0]) == ERR_NOT_IN_RANGE) {
-            this.moveTo(targets[0]);
-        }
-        
-        return true;
-    }
-    
-    return false;
 }

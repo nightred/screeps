@@ -64,7 +64,7 @@ var manageTower = {
                     structure.structureType != STRUCTURE_RAMPART) ||
                     (structure.structureType == STRUCTURE_RAMPART &&
                     structure.hits < Constant.RAMPART_HIT_MAX)) &&
-                    structure.hits < structure.hitsMax
+                    structure.hits < Math.floor(structure.hitsMax * 0.3)
             }
         }), structure => structure.hits / structure.hitsMax);
 

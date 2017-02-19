@@ -24,7 +24,7 @@ var roleHarvester = {
         
         if (creep.manageState()) {
             if (!creep.memory.working) {
-                creep.say('⛏️ harvest');
+                creep.say('⛏️');
             }
         }
         

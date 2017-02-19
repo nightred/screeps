@@ -12,8 +12,6 @@
 
 var roleHarvester = require('role.harvester');
 var roleUpgrader = require('role.upgrader');
-var roleBuilder = require('role.builder');
-var roleRepairer = require('role.repairer');
 var roleHauler = require('role.hauler');
 var roleService = require('role.service');
 
@@ -39,26 +37,12 @@ var manageRole = {
         units:  spawn => manageRole.getUnitsInRoomByRole(spawn, 'service'),
         isMax:  spawn => manageRole.isUnitsInRoomMax(spawn, 'service'),
     },
-    
-    builder: {
-        max:    spawn => manageRole.getRoomBuilderMax(spawn),
-        run:    creep => roleBuilder.run(creep),
-        units:  spawn => manageRole.getUnitsInRoomByRole(spawn, 'builder'),
-        isMax:  spawn => manageRole.isUnitsInRoomMax(spawn, 'builder'),
-    },
-    
+
     hauler: {
         max:    spawn => manageRole.getRoomMax(spawn, 'hauler'),
         run:    creep => roleHauler.run(creep),
         units:  spawn => manageRole.getUnitsInRoomByRole(spawn, 'hauler'),
         isMax:  spawn => manageRole.isUnitsInRoomMax(spawn, 'hauler'),
-    },
-    
-    repairer: {
-        max:    spawn => manageRole.getRoomMax(spawn, 'repairer'),
-        run:    creep => roleRepairer.run(creep),
-        units:  spawn => manageRole.getUnitsInRoomByRole(spawn, 'repairer'),
-        isMax:  spawn => manageRole.isUnitsInRoomMax(spawn, 'repairer'),
     },
     
     getRoomMax: function(spawn, type) {

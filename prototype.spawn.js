@@ -44,20 +44,6 @@ StructureSpawn.prototype.createService = function(energy) {
     return this.createCreep(bodyParts, undefined, {role: 'service'});
 }
 
-StructureSpawn.prototype.createBuilder = function(energy) {
-    let bodyUnits = Math.floor(energy / 200);
-    let bodyParts = [];
-    
-    bodyUnits = bodyUnits > 5 ? 5 : bodyUnits;
-    for (let i = 0; i < bodyUnits; i++) {
-        bodyParts.push(WORK);
-        bodyParts.push(MOVE);
-        bodyParts.push(CARRY);
-    }
-    
-    return this.createCreep(bodyParts, undefined, {role: 'builder'});
-}
-
 StructureSpawn.prototype.createUpgrader = function(energy) {
     let workUnits = Math.floor((energy - 100) / 100);
     let bodyParts = [];
@@ -71,20 +57,6 @@ StructureSpawn.prototype.createUpgrader = function(energy) {
     bodyParts.push(CARRY);
     
     return this.createCreep(bodyParts, undefined, {role: 'upgrader'});
-}
-
-StructureSpawn.prototype.createRepairer = function(energy) {
-    let bodyUnits = Math.floor(energy / 200);
-    let bodyParts = [];
-    
-    bodyUnits = bodyUnits > 5 ? 5 : bodyUnits;
-    for (let i = 0; i < bodyUnits; i++) {
-        bodyParts.push(WORK);
-        bodyParts.push(MOVE);
-        bodyParts.push(CARRY);
-    }
-    
-    return this.createCreep(bodyParts, undefined, {role: 'repairer'});
 }
 
 StructureSpawn.prototype.createHauler = function(energy) {
