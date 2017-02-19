@@ -36,7 +36,7 @@ var manageMemory = {
             for (let containerId in room.memory.structureContainers) {
                 if (!Game.getObjectById(containerId)) {
                     delete room.memory.structureContainers[containerId];
-                    if (Constant.DEBUG) { console.log('DEBUG - clearing non-existant container: ' + containerId); }
+                    if (Constant.DEBUG >= 1) { console.log('INFO - clearing non-existant container: ' + containerId); }
                 }
             }
             

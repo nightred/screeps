@@ -37,6 +37,13 @@ var workBuild = {
         
         return false;
     },
+    
+    findWork: function(room) {
+        if (!room) { return false; }
+        
+        return room.getConstructionSites();
+    },
+    
 };
 
 module.exports = workBuild;

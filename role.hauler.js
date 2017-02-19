@@ -9,6 +9,7 @@ var roleHauler = {
 
     /** @param {Creep} creep **/
     run: function(creep) {
+        if (!creep) { return false; }
         
         if (creep.manageState()) {
             if (creep.memory.working) {
@@ -38,6 +39,7 @@ var roleHauler = {
         if (!creep.memory.goingTo || creep.memory.goingTo == undefined) {
             if (!this.getStoreEnergyLocation(creep)) {
                 creep.memory.idleStart = Game.time;
+                creep.say('💤');
                 
                 return false;
             }
@@ -51,30 +53,41 @@ var roleHauler = {
     
     /** @param {Creep} creep **/
     getStoreEnergyLocation: function(creep) {
+        if (!creep) { return false; }
         
-        if (creep.getTargetSpawnEnergy('store')) {
-            return true;
+        let targets = [];
+        let spawn = creep.getTargetSpawnEnergy('store');
+        if (spawn) { return creep.setGoingTo(spawn); }
+        let getTargets = creep.getTargetExtentionEnergy('store');
+        if (getTargets.length > 0) {
+            getTargets.forEach(structure => targets.push(structure));
         }
-        if (creep.getTargetExtentionEnergy('store')) {
-            return true;
-        }
-        if (creep.getTargetContainerEnergy('store', 'out', true)) {
-            return true;
+        getTargets = creep.getTargetContainerEnergy('store', 'out', true);
+        if (getTargets.length > 0) {
+            getTargets.forEach(structure => targets.push(structure));
         }
         if (!creep.memory.blockContainer) {
-            if (creep.getTargetContainerEnergy('store')) {
-                return true;
+            getTargets = creep.getTargetContainerEnergy('store');
+            if (getTargets.length > 0) {
+                getTargets.forEach(structure => targets.push(structure));
             }
-            if (creep.getTargetStorageEnergy('store')) {
-                return true;
+            let storage = creep.getTargetStorageEnergy('store');
+            if (storage) {
+                targets.push(storage);
             }
+            
         }
         
-        return false;
+        if (targets.length == 0) { return false; }
+        
+        targets = _.sortBy(targets, structure => creep.pos.getRangeTo(structure));
+        
+        return creep.setGoingTo(targets[0]);
     },
     
     /** @param {Creep} creep **/
     doWithdrawEnergy: function(creep) {
+        if (!creep) { return false; }
         if (creep.carry.energy > 0) {
             creep.toggleState();
             
@@ -83,7 +96,10 @@ var roleHauler = {
         if (!creep.memory.goingTo || creep.memory.goingTo == undefined) {
             if (!this.getWithdrawEnergyLocation(creep)) {
                 if (!creep.isCarryingEnergy()) {
-                    creep.memory.idleStart = Game.time;
+                    if (!this.collectDroppedEnergy(creep)) {
+                        creep.memory.idleStart = Game.time;
+                        creep.say('💤');
+                    }
                 } else {
                     creep.toggleState();
                 }
@@ -100,16 +116,24 @@ var roleHauler = {
     
     /** @param {Creep} creep **/
     getWithdrawEnergyLocation: function(creep) {
+        if (!creep) { return false; }
         
-        if (creep.getTargetContainerEnergy('withdraw', 'in', true)) {
-            return true;
-        }
-        if (creep.collectDroppedEnergy()) {
-            return true;
-        }
+        let targets = creep.getTargetContainerEnergy('withdraw', 'in', true)
         
-        return false;
+        if (targets.length == 0) { return false; }
+        
+        targets = _.sortBy(targets, structure => creep.pos.getRangeTo(structure));
+        
+        return creep.setGoingTo(targets[0]);
     },
+    
+    /** @param {Creep} creep **/
+    collectDroppedEnergy: function(creep) {
+        if (!creep) { return false; }
+        
+        return creep.collectDroppedEnergy();
+    },
+    
 };
 
 module.exports = roleHauler;

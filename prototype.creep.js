@@ -59,7 +59,7 @@ Creep.prototype.setDespawn = function() {
     
     this.leaveWork();
     
-    if (Constant.DEBUG) { console.log('DEBUG - ' + this.memory.role + ' ' + this.name + ' end of life'); }
+    if (Constant.DEBUG >= 3) { console.log('DEBUG - ' + this.memory.role + ' ' + this.name + ' end of life'); }
 }
 
 Creep.prototype.leaveWork = function() {
@@ -73,7 +73,7 @@ Creep.prototype.leaveWork = function() {
 Creep.prototype.getWork = function(tasks) {
     if (!Array.isArray(tasks)) { return false; }
 
-    let workId = Work.getWork(tasks);
+    let workId = Work.getWork(tasks, this.room.name);
     if (!workId) { return false; }
     if (!Work.setWork(this.name, workId)) { return false; }
     
@@ -176,10 +176,7 @@ Creep.prototype.getTargetTowerEnergy = function(useMode) {
         );
     }
     
-    targets = _.sortBy(targets, structure => this.pos.getRangeTo(structure));
-    if (!targets.length > 0) { return false; }
-
-    return this.setGoingTo(targets[0]);
+    return targets;
 }
 
 Creep.prototype.getTargetStorageEnergy = function(useMode) {
@@ -197,14 +194,14 @@ Creep.prototype.getTargetStorageEnergy = function(useMode) {
         return false;
     }
     
-    return this.setGoingTo(target);
+    return target;
 }
 
 Creep.prototype.getTargetSpawnEnergy = function(useMode) {
     useMode = typeof useMode !== 'undefined' ? useMode : 'store';
     
     if (useMode == 'withdraw' && 
-        this.room.energyAvailable < Constant.ENERGY_ROOM_LIMIT ) {
+        this.room.energyAvailable < Constant.ENERGY_ROOM_WITHDRAW_MIN ) {
         return false;
     }
     
@@ -220,14 +217,14 @@ Creep.prototype.getTargetSpawnEnergy = function(useMode) {
         return false;
     }
     
-    return this.setGoingTo(target);
+    return target;
 }
 
 Creep.prototype.getTargetExtentionEnergy = function(useMode) {
     useMode = typeof useMode !== 'undefined' ? useMode : 'store';
     
     if (useMode == 'withdraw' && 
-        this.room.energyAvailable < Constant.ENERGY_ROOM_LIMIT) {
+        this.room.energyAvailable < Constant.ENERGY_ROOM_WITHDRAW_MIN) {
         return false;
     }
     
@@ -244,10 +241,7 @@ Creep.prototype.getTargetExtentionEnergy = function(useMode) {
         );
     }
     
-    targets = _.sortBy(targets, structure => this.pos.getRangeTo(structure));
-    if (!targets.length > 0) { return false; }
-
-    return this.setGoingTo(targets[0]);
+    return targets;
 }
 
 Creep.prototype.getTargetContainerEnergy = function(useMode, storeType, fillLevel) {
@@ -278,23 +272,10 @@ Creep.prototype.getTargetContainerEnergy = function(useMode, storeType, fillLeve
     
     if (fillLevel) {
         targets = _.sortBy(targets, structure => structure.store[RESOURCE_ENERGY]);
-        if (useMode == 'withdraw') {
-            targets.reverse();
-        }
-    } else {
-        targets = _.sortBy(targets, structure => this.pos.getRangeTo(structure));
+        if (useMode == 'withdraw') { targets.reverse(); }
     }
     
-    if (targets.length > 0) {
-        if (useMode == 'withdraw' && 
-            !targets[0].reserveEnergy(this.carryCapacity - _.sum(this.carry))) {
-            return false;
-        }
-    } else {
-        return false;
-    }
-
-    return this.setGoingTo(targets[0]);
+    return targets;
 }
 
 Creep.prototype.collectDroppedEnergy = function () {

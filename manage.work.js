@@ -5,7 +5,7 @@
  *
  */
 
-var Work = {
+var manageWork = {
 
     init: function() {
         if (!Memory.work) { Memory.work = {}; }
@@ -39,76 +39,60 @@ var Work = {
         
         refillTower: function(room) {
             if (!room) { return false; }
+            let task = 'refillTower';
             
-            let targets = _.filter(room.getTowers(), structure =>
-                structure.energy < (structure.energyCapacity * Constant.REFILL_TOWER_MIN)
-                );
-            
-            if (targets.length < 1) {
-                return false;
-            }
-            
-            let count = 0;
-            for (let i = 0; i < targets.length; i++) {
-                if (Work.addWork(targets[i].id, 'refillTower', 20)) { count++; }
-            }
-            if (count && Constant.DEBUG) { console.log('DEBUG - added ' + count + ' refillTower work to the queue'); }
-            
-            return true;
+            return this.addWork(this.findWork(room, task), task, room.name, 30);
         },
         
         build: function(room) {
             if (!room) { return false; }
+            let task = 'build';
             
-            let targets = room.getConstructionSites();
-            
-            if (targets.length < 1) {
-                return false;
-            }
-            
-            let count = 0;
-            for (let i = 0; i < targets.length; i++) {
-                if (Work.addWork(targets[i].id, 'build', 80)) { count++; }
-            }
-            if (count && Constant.DEBUG) { console.log('DEBUG - added ' + count + ' build work to the queue'); }
-            
-            return true;
+            return this.addWork(this.findWork(room, task), task, room.name, 80);
         },
         
         repair: function(room) {
             if (!room) { return false; }
+            let task = 'repair';
             
-            let targets = _.sortBy(_.filter(room.find(FIND_MY_STRUCTURES), structure =>
-                    structure.hits < (structure.hitsMax * Constant.REPAIR_HIT_WORK_MIN)
-                    ), structure => structure.hits / structure.hitsMax);
-                
-            _.filter(room.find(FIND_STRUCTURES), structure => 
-                (structure.structureType == STRUCTURE_CONTAINER || 
-                structure.structureType == STRUCTURE_ROAD) &&
-                (structure.structureType != STRUCTURE_WALL &&
-                structure.structureType != STRUCTURE_RAMPART) &&
-                structure.hits < (structure.hitsMax * Constant.REPAIR_HIT_WORK_MIN)
-                ).forEach(structure => targets.push(structure));
-            
-            if (targets.length < 1) {
-                return false;
-            }
+            return this.addWork(this.findWork(room, task), task, room.name, 60);
+        },
+        
+        addWork: function(targets, task, roomName, priority) {
+            if (targets.length < 1) { return false; }
+            if (!task) { return false; }
+            if (!roomName) { return false; }
+            priority = typeof priority !== 'undefined' ? priority : 100;
             
             let count = 0;
             for (let i = 0; i < targets.length; i++) {
-                if (Work.addWork(targets[i].id, 'repair', 60)) { count++; }
+                if (Work.addWork(task, roomName, priority, targets[i].id)) { count++; }
             }
-            if (count && Constant.DEBUG) { console.log('DEBUG - added ' + count + ' repair work to the queue'); }
+            if (count && Constant.DEBUG >= 2) { console.log('DEBUG - added ' + count + ' ' + task + ' work to the queue'); }
             
             return true;
+        },
+        
+        findWork: function(room, task) {
+            if (!room) { return false; }
+            if (!task) { return false; }
+            
+            try {
+                let workTask = require('work.' + task);
+                return workTask.findWork(room);
+            } catch(e) {
+                if (Constant.DEBUG >= 2) { console.log('DEBUG - ' + task + ' failed to load find work, error: ' + e); }
+            }
+            
+            return false;
         },
         
     },
     
     reportWork: function() {
         
-        console.log('#######################################################');
-        console.log(' * REPORT - work queued and in progress by type');
+        console.log('╔═══════════════════════════════════════════════════════');
+        console.log('║ * REPORT - work queued and in progress by type');
         
         for (let i = 0; i < Constant.WORK_TYPES.length; i++) {
             let countWork = _.filter(this.memory.workQueue, work => 
@@ -119,10 +103,10 @@ var Work = {
                 work.creeps.length > 0
                 ).length;
             
-            console.log(' * ' + Constant.WORK_TYPES[i] + ' has ' + countWork + ' jobs in queued, ' + activeWork + ' are in progress');
+            console.log('║ * ' + Constant.WORK_TYPES[i] + ' has ' + countWork + ' jobs in queued, ' + activeWork + ' are in progress');
         }
         
-        console.log('#######################################################');
+        console.log('╚═══════════════════════════════════════════════════════');
         
         return true;
     },
@@ -130,11 +114,13 @@ var Work = {
     /*
     * @param [tasks] array of tasks
     */
-    getWork: function(tasks) {
+    getWork: function(tasks, roomName) {
         if (!Array.isArray(tasks)) { return false; }
+        if (!roomName) { return false; }
         
         let targets = _.sortBy(_.filter(this.memory.workQueue, work => 
             tasks.indexOf(work.task) >= 0 &&
+            work.room == roomName &&
             ((!work.multiCreep && work.creeps.length == 0) ||
             (work.multiCreep && work.creeps.length < work.multiCreepLimit))
             ), work => work.priority);
@@ -174,7 +160,7 @@ var Work = {
         return false;
     },
     
-    hasWork: function(targetId, task) {
+    hasWorkTypeByTargetId: function(targetId, task) {
         if (!targetId) { return false; }
         if (Constant.WORK_TYPES.indexOf(task) < 0) { return false; }
         
@@ -192,28 +178,33 @@ var Work = {
     * @param multiCreep several creep on the job default:false
     * @param multiCreepLimit max creeps default:1
     */
-    addWork: function(targetId, task, priority, perpetual, multiCreep, multiCreepLimit) {
-        if (!targetId) { return false; }
+    addWork: function(task, roomName, priority, targetId, perpetual, multiCreep, multiCreepLimit) {
         if (Constant.WORK_TYPES.indexOf(task) < 0) { return false; }
+        if (!roomName) { return false; }
         
+        targetId = typeof targetId !== 'undefined' ? targetId : false;
         priority = typeof priority !== 'undefined' ? priority : 100;
         multiCreep = typeof multiCreep !== 'undefined' ? multiCreep : false;
         multiCreepLimit = typeof multiCreepLimit !== 'undefined' ? multiCreepLimit : 1;
         perpetual = typeof perpetual !== 'undefined' ? perpetual : false;
         
-        if (this.hasWork(targetId, task)) { return false; }
+        if (this.hasWorkTypeByTargetId(targetId, task)) { return false; }
         
         let workId = this.getQueueId();
-        this.memory.workQueue[workId] = {
+        let work = {
             id: workId,
-            targetId: targetId,
             creeps: [],
             multiCreep: multiCreep,
-            multiCreepLimit: multiCreepLimit,
+            room: roomName,
             task: task,
             priority: priority,
-            perpetual: perpetual,
         };
+        
+        if (targetId) { work.targetId = targetId; }
+        if (multiCreep) { work.multiCreepLimit = multiCreepLimit; }
+        if (perpetual) { work.perpetual = perpetual; }
+        
+        this.memory.workQueue[workId] = work;
         
         return workId;
     },
@@ -221,7 +212,7 @@ var Work = {
     removeWork: function(workId) {
         if (!this.memory.workQueue[workId]) { return true; }
         
-        if (Constant.DEBUG) { console.log('DEBUG - removing ' + this.memory.workQueue[workId].task + ' work id: ' + workId + ' for id: ' + this.memory.workQueue[workId].targetId); }
+        if (Constant.DEBUG >= 3) { console.log('DEBUG - removing ' + this.memory.workQueue[workId].task + ' work id: ' + workId + ' for id: ' + this.memory.workQueue[workId].targetId); }
         delete this.memory.workQueue[workId];
         
         return true;
@@ -259,7 +250,7 @@ var Work = {
             let workTask = require('work.' + work.task);
             return workTask.run(creep, work);
         } catch(e) {
-            if (Constant.DEBUG) { console.log('DEBUG - failed to load work task: ' + role + ' error: ' + e); }
+            if (Constant.DEBUG >= 2) { console.log('DEBUG - ' + creep.name + ' failed to load work task: ' + work.task + ' error: ' + e); }
         }
         
         return false;
@@ -267,5 +258,5 @@ var Work = {
     
 };
 
-module.exports = Work;
+module.exports = manageWork;
 

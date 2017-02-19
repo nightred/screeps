@@ -37,6 +37,25 @@ var workRepair = {
         
         return false;
     },
+    
+    findWork: function(room) {
+        if (!room) { return false; }
+        
+        let targets = _.sortBy(_.filter(room.find(FIND_MY_STRUCTURES), structure =>
+                structure.hits < (structure.hitsMax * Constant.REPAIR_HIT_WORK_MIN)
+                ), structure => structure.hits / structure.hitsMax);
+            
+        _.filter(room.find(FIND_STRUCTURES), structure => 
+            (structure.structureType == STRUCTURE_CONTAINER || 
+            structure.structureType == STRUCTURE_ROAD) &&
+            (structure.structureType != STRUCTURE_WALL &&
+            structure.structureType != STRUCTURE_RAMPART) &&
+            structure.hits < (structure.hitsMax * Constant.REPAIR_HIT_WORK_MIN)
+            ).forEach(structure => targets.push(structure));
+        
+        return targets;
+    },
+    
 };
 
 module.exports = workRepair;

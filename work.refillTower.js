@@ -35,6 +35,15 @@ var workRefillTower = {
         
         return false;
     },
+    
+    findWork: function(room) {
+        if (!room) { return false; }
+        
+        return _.filter(room.getTowers(), structure =>
+                structure.energy < (structure.energyCapacity * Constant.REFILL_TOWER_MIN)
+                );
+    },
+    
 };
 
 module.exports = workRefillTower;

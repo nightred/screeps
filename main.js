@@ -49,16 +49,20 @@ module.exports.loop = function () {
     for(let name in Game.creeps) {
         let creep = Game.creeps[name];
         
-        if (creep.memory.role == '' || creep.memory.role == undefined || creep.spawning) {
+        if (!creep.memory.role || creep.memory.role == undefined || creep.spawning) {
             continue;
         }
         
         if (creep.isDespawnWarning()) {
-            manageCreep.doDeSpawn(creep);
+            manageCreep.doDespawn(creep);
             continue;
         }
         
-        manageRole[creep.memory.role].run(creep);
+        try {
+            manageRole[creep.memory.role].run(creep);
+        } catch(e) {
+            if (Constant.DEBUG >= 2) { console.log('DEBUG - ' + creep.name + ' failed to load role: ' + creep.memory.role + ' error: ' + e); }
+        }
     }
     
 }

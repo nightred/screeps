@@ -12,19 +12,19 @@
 
 var Constants = {
     
-    DEBUG: true,
+    DEBUG: 3, // 0 off, 1 info, 2 debug, 3 verbos
     SIM: false,
     ACTIVE: true,
     
-    ENERGY_ROOM_LIMIT: 200,
+    ENERGY_ROOM_WITHDRAW_MIN: 200,
     ENERGY_CREEP_SPAWN_MAX: 800,
-    ENERGY_TOWER_MIN: 500,
+    ENERGY_TOWER_MIN: 300,
     ENERGY_CONTAINER_MAX_PERCENT: 0.9,
     ENERGY_CONTAINER_MIN_PERCENT: 0.1 ,
     ENERGY_CONTAINER_MIN_WITHDRAW: 100,
     ENERGY_STORAGE_MIN_WITHDRAW: 100,
     
-    CONTROLLER_WITHDRAW_LEVEL: 2,
+    CONTROLLER_WITHDRAW_LEVEL: 4,
     
     WORK_FIND_WAIT: 5,
     WORK_REPORT_WAIT: 200,
@@ -58,11 +58,10 @@ var Constants = {
  * Set variables for SIM mode
  *
  */
- 
-Constants.ENERGY_ROOM_LIMIT = !Constants.SIM ? Constants.ENERGY_ROOM_LIMIT  : 200;
+
 Constants.LIMIT_SERVICE     = !Constants.SIM ? Constants.LIMIT_SERVICE      : 1;
 Constants.LIMIT_UPGRADERS   = !Constants.SIM ? Constants.LIMIT_UPGRADERS    : 0;
 Constants.LIMIT_HARVESTERS  = !Constants.SIM ? Constants.LIMIT_HARVESTERS   : 2;
-Constants.LIMIT_HAULERS     = !Constants.SIM ? Constants.LIMIT_HAULERS      : 2;
+Constants.LIMIT_HAULERS     = !Constants.SIM ? Constants.LIMIT_HAULERS      : 1;
 
 module.exports = Constants;

@@ -48,6 +48,7 @@ var roleUpgrader = {
             if (!this.getRechargeLocation(creep)) {
                 if (!creep.isCarryingEnergy()) {
                     creep.memory.idleStart = Game.time;
+                    creep.say('💤');
                 } else {
                     creep.toggleState();
                 }
@@ -66,22 +67,35 @@ var roleUpgrader = {
     getRechargeLocation: function(creep) {
         if (!creep) { return false; }
         
-        if (creep.getTargetContainerEnergy('withdraw', 'out')) {
-            return true;
+        let targets = [];
+        let getTargets = creep.getTargetContainerEnergy('withdraw', 'out');
+        if (getTargets.length > 0) {
+            getTargets.forEach(structure => targets.push(structure));
         }
-        if (creep.getTargetContainerEnergy('withdraw')) {
-            return true;
+        getTargets = creep.getTargetContainerEnergy('withdraw');
+        if (getTargets.length > 0) {
+            getTargets.forEach(structure => targets.push(structure));
         }
-        if (creep.room.controller.level <= Constant.CONTROLLER_WITHDRAW_LEVEL) {
-            if (creep.getTargetExtentionEnergy('withdraw')) {
-                return true;
+        getTargets = creep.getTargetContainerEnergy('withdraw', 'in');
+        if (getTargets.length > 0) {
+            getTargets.forEach(structure => targets.push(structure));
+        }
+
+        if (creep.room.getContainers().length == 0) {
+            getTargets = creep.getTargetExtentionEnergy('withdraw');
+            if (getTargets.length > 0) {
+                getTargets.forEach(structure => targets.push(structure));
             }
-            if (creep.getTargetSpawnEnergy('withdraw')) {
-                return true;
-            }
+        }
+        if (creep.room.getExtensions().length == 0) {
+            let spawn = creep.getTargetSpawnEnergy('store');
+            if (spawn) { return creep.setGoingTo(spawn); }
         }
         
-        return false;
+        if (targets.length == 0) { return false; }
+        targets = _.sortBy(targets, structure => creep.pos.getRangeTo(structure));
+
+        return creep.setGoingTo(targets[0]);
     }
 };
 
