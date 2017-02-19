@@ -46,4 +46,3 @@ Source.prototype.clearContainer = function() {
     
     return true;
 }
-

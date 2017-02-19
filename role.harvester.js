@@ -13,22 +13,18 @@ var roleHarvester = {
         if (!creep.memory.harvestTarget || creep.memory.harvestTarget == undefined) {
             creep.memory.harvestTarget = creep.room.getHarvestTarget();
             
-            if (Constant.DEBUG) {
-                console.log('DEBUG - harvester ' + creep.name + ' target set to: ' + creep.memory.harvestTarget);
-            }
+            if (Constant.DEBUG) { console.log('DEBUG - harvester ' + creep.name + ' target set to: ' + creep.memory.harvestTarget); }
         }
         
         if (!creep.memory.harvestTarget || creep.memory.harvestTarget == undefined) {
-            if (Constant.DEBUG) {
-                console.log('DEBUG - ERROR - harvester ' + creep.name + ' has no harvest target');
-            }
+            if (Constant.DEBUG) { console.log('DEBUG - ERROR - harvester ' + creep.name + ' has no harvest target'); }
             
             return false;
         }
         
         if (creep.manageState()) {
             if (!creep.memory.working) {
-                creep.say('⛏️ harvest');
+                creep.say('⛏️');
             }
         }
         
@@ -41,7 +37,7 @@ var roleHarvester = {
     },
     
     /** @param {Creep} creep **/
-    storeEnergy: function(creep) {
+    getStorageLocation: function(creep) {
         
         if (creep.getTargetContainerEnergy('store', 'in', false)) {
             return true;
@@ -59,6 +55,21 @@ var roleHarvester = {
         return false;
     },
     
+    doStoreEnergy: function(creep) {
+        let target = Game.getObjectById(creep.memory.goingTo);
+        if (!target) {
+            if (Constant.DEBUG) { console.log('DEBUG - source: ' + source.id + ' lost local container'); }
+            source.clearContainer();
+            creep.memory.goingTo = false;
+            
+            return false;
+        }
+        
+        creep.transferEnergy(target);
+
+        return true;
+    },
+    
     doCarryHarvest: function(creep) {
         let source = Game.getObjectById(creep.memory.harvestTarget);
         
@@ -66,35 +77,23 @@ var roleHarvester = {
             if (creep.harvest(source) == ERR_NOT_IN_RANGE) {
                 creep.moveTo(source);
             }
-        } else {
             
-            if (!creep.memory.goingTo || creep.memory.goingTo == undefined) {
-                creep.memory.goingTo = source.getLocalContainer();
-            }
+            return true;
+        }
             
-            if (!creep.memory.goingTo || creep.memory.goingTo == undefined) {
-                if (!this.storeEnergy(creep)) {
-                    creep.moveToIdlePosition();
-                    
-                    return false;
-                }
-            }
-            
-            let target = Game.getObjectById(creep.memory.goingTo);
-            if (!target) {
-                if (Constant.DEBUG) {
-                    console.log('DEBUG - source: ' + source.id + ' lost local container');
-                }
-                source.clearContainer();
-                creep.memory.goingTo = false;
+        if (!creep.memory.goingTo) {
+            creep.memory.goingTo = source.getLocalContainer();
+        }
+        
+        if (!creep.memory.goingTo) {
+            if (!this.getStorageLocation(creep)) {
+                creep.moveToIdlePosition();
                 
                 return false;
             }
-            
-            creep.transferEnergy(target);
         }
         
-        return true;
+        this.doStoreEnergy();
     },
     
     doDropHarvest: function(creep) {
@@ -102,10 +101,8 @@ var roleHarvester = {
         let target = Game.getObjectById(source.getDropContainer());
 
         if (!target) {
-            if (Constant.DEBUG) {
-                console.log('DEBUG - ERROR - harvester ' + creep.name + ' has no drop container');
-            }
-            source.clearContainer;
+            if (Constant.DEBUG) { console.log('DEBUG - ERROR - harvester ' + creep.name + ' has no drop container'); }
+            source.clearContainer();
             
             return false;
         }
@@ -123,15 +120,15 @@ var roleHarvester = {
             return true;
         }
         
-        if (creep.harvest(source) == ERR_NOT_IN_RANGE && 
-            Constant.DEBUG) {
-            console.log('DEBUG - ERROR - harvester ' + creep.name + ' not in range of ' + source.id);
+        if (creep.harvest(source) == ERR_NOT_IN_RANGE) {
+            if (Constant.DEBUG) { console.log('DEBUG - ERROR - harvester ' + creep.name + ' not in range of ' + source.id); }
             
             return false;
         }
         
         return true;
     },
+
 };
 
 module.exports = roleHarvester;

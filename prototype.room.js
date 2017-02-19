@@ -15,7 +15,8 @@ Room.prototype.getHarvestTarget = function() {
     for (let source of this.find(FIND_SOURCES)) {
         let count = 0;
         for (let roomCreep of this.find(FIND_MY_CREEPS)) {
-            if (roomCreep.memory.harvestTarget === source.id && roomCreep.memory.role == 'harvester') {
+            if (roomCreep.memory.harvestTarget === source.id && 
+                roomCreep.memory.role == 'harvester') {
                 count++;
             }
         }

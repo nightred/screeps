@@ -12,9 +12,9 @@ var roleHauler = {
         
         if (creep.manageState()) {
             if (creep.memory.working) {
-                creep.say('🚛 haul');
+                creep.say('🚚');
             } else {
-                creep.say('🔋 energy');
+                creep.say('🔋');
             }
         }
         
@@ -25,48 +25,32 @@ var roleHauler = {
         }
         
         if (creep.memory.working) {
-            if (!creep.memory.goingTo || creep.memory.goingTo == undefined) {
-                if (!roleHauler.storeEnergy(creep)) {
-                    creep.memory.idleStart = Game.time;
-                    
-                    return false;
-                }
-            }
-            
-            let target = Game.getObjectById(creep.memory.goingTo);
-            creep.transferEnergy(target);
-            
-            return true;
+            this.doStoreEnergy(creep);
         } else {
-            if (creep.carry.energy > 0) {
-                creep.toggleState();
-                
-                return true;
-            }
-            if (!creep.memory.goingTo || creep.memory.goingTo == undefined) {
-                if (!roleHauler.withdrawEnergy(creep)) {
-                    if (!creep.isCarryingEnergy()) {
-                        creep.memory.idleStart = Game.time;
-                    } else {
-                        creep.toggleState();
-                    }
-                    
-                    return false;
-                }
-            }
-            
-            let target = Game.getObjectById(creep.memory.goingTo);
-            creep.withdrawEnergy(target);
-            
-            return true;
+            this.doWithdrawEnergy(creep);
         }
     },
     
-    doEmptyInContainer: function(creep) {
+    /** @param {Creep} creep **/
+    doStoreEnergy: function(creep) {
+        if (!creep) { return false; }
         
+        if (!creep.memory.goingTo || creep.memory.goingTo == undefined) {
+            if (!this.getStoreEnergyLocation(creep)) {
+                creep.memory.idleStart = Game.time;
+                
+                return false;
+            }
+        }
+        
+        let target = Game.getObjectById(creep.memory.goingTo);
+        creep.transferEnergy(target);
+        
+        return true; 
     },
     
-    storeEnergy: function(creep) {
+    /** @param {Creep} creep **/
+    getStoreEnergyLocation: function(creep) {
         
         if (creep.getTargetSpawnEnergy('store')) {
             return true;
@@ -89,7 +73,33 @@ var roleHauler = {
         return false;
     },
     
-    withdrawEnergy: function(creep) {
+    /** @param {Creep} creep **/
+    doWithdrawEnergy: function(creep) {
+        if (creep.carry.energy > 0) {
+            creep.toggleState();
+            
+            return true;
+        }
+        if (!creep.memory.goingTo || creep.memory.goingTo == undefined) {
+            if (!this.getWithdrawEnergyLocation(creep)) {
+                if (!creep.isCarryingEnergy()) {
+                    creep.memory.idleStart = Game.time;
+                } else {
+                    creep.toggleState();
+                }
+                
+                return false;
+            }
+        }
+        
+        let target = Game.getObjectById(creep.memory.goingTo);
+        creep.withdrawEnergy(target);
+        
+        return true;
+    },
+    
+    /** @param {Creep} creep **/
+    getWithdrawEnergyLocation: function(creep) {
         
         if (creep.getTargetContainerEnergy('withdraw', 'in', true)) {
             return true;
@@ -97,13 +107,9 @@ var roleHauler = {
         if (creep.collectDroppedEnergy()) {
             return true;
         }
-        //if (creep.getTargetContainerEnergy('withdraw')) {
-        //    creep.memory.blockContainer = true;
-        //    return true;
-        //}
         
         return false;
-    }
+    },
 };
 
 module.exports = roleHauler;

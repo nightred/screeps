@@ -12,9 +12,9 @@ var roleUpgrader = {
         
         if (creep.manageState()) {
             if (creep.memory.working) {
-                creep.say('📡 upgrade');
+                creep.say('📡');
             } else {
-                creep.say('🔋 energy');
+                creep.say('🔋');
             }
         }
         
@@ -24,32 +24,47 @@ var roleUpgrader = {
             return false;
         }
         
-        if(creep.memory.working) {
-            if(creep.upgradeController(creep.room.controller) == ERR_NOT_IN_RANGE) {
-                creep.moveTo(creep.room.controller);
-            }
+        if (creep.memory.working) {
+            this.doWork(creep);
         } else {
-            if (!creep.memory.goingTo || creep.memory.goingTo == undefined) {
-                if (!roleUpgrader.withdrawEnergy(creep)) {
-                    if (!creep.isCarryingEnergy()) {
-                        creep.memory.idleStart = Game.time;
-                    } else {
-                        creep.toggleState();
-                    }
-                    
-                    return false;
-                }
-            }
-            
-            let target = Game.getObjectById(creep.memory.goingTo);
-            creep.withdrawEnergy(target);
-            
-            return true;
+            this.doRecharge(creep);
         }
     },
     
     /** @param {Creep} creep **/
-    withdrawEnergy: function(creep) {
+    doWork: function(creep) {
+        if (!creep) { return false; }
+        
+        if(creep.upgradeController(creep.room.controller) == ERR_NOT_IN_RANGE) {
+            creep.moveTo(creep.room.controller);
+        }
+    },
+    
+    /** @param {Creep} creep **/
+    doRecharge: function(creep) {
+        if (!creep) { return false; }
+        
+        if (!creep.memory.goingTo || creep.memory.goingTo == undefined) {
+            if (!this.getRechargeLocation(creep)) {
+                if (!creep.isCarryingEnergy()) {
+                    creep.memory.idleStart = Game.time;
+                } else {
+                    creep.toggleState();
+                }
+                
+                return false;
+            }
+        }
+        
+        let target = Game.getObjectById(creep.memory.goingTo);
+        creep.withdrawEnergy(target);
+        
+        return true;
+    },
+    
+    /** @param {Creep} creep **/
+    getRechargeLocation: function(creep) {
+        if (!creep) { return false; }
         
         if (creep.getTargetContainerEnergy('withdraw', 'out')) {
             return true;

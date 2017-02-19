@@ -5,8 +5,9 @@
  * Check the footer of this file for suggestions on how to access it at various scopes
  *
  */
+ 
 "use strict";
-const REPORT_CPU_THRESHOLD = 50;
+const REPORT_CPU_THRESHOLD = 20;
 const DEFAULT_MAXOPS = 20000;
 const DEFAULT_STUCK_VALUE = 5;
 class Traveler {

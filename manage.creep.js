@@ -15,10 +15,12 @@ var manageCreep = {
         
         for(let name in Memory.creeps) {
             if(!Game.creeps[name]) {
-                delete Memory.creeps[name];
-                if (Constant.DEBUG) {
-                    console.log("DEBUG - clearing non-existant creep memory: " + name);
+                if (Memory.creeps[name].workId) {
+                    Work.leaveWork(name, Memory.creeps[name].workId);
                 }
+                if (Constant.DEBUG) { console.log('DEBUG - clearing non-existant creep memory: ' + Memory.creeps[name].role + ' ' + name); }
+                
+                delete Memory.creeps[name];
             }
         }
         
@@ -28,9 +30,7 @@ var manageCreep = {
         if (!room.spawning && energy >= 200) {
             
             let spawn = Game.getObjectById(room.getSpawn());
-            if (!spawn) {
-                return false;
-            }
+            if (!spawn) { return false; }
             
             let name = undefined;
             let type = null;
@@ -42,18 +42,12 @@ var manageCreep = {
                 } else if (!manageRole.upgrader.isMax(spawn)) {
                     type = 'upgrader';
                     name = spawn.createUpgrader(energy);
-                } else if (!manageRole.builder.isMax(spawn)) {
-                    type = 'builder';
-                    name = spawn.createBuilder(energy);
                 } else if (!manageRole.hauler.isMax(spawn)) {
                     type = 'hauler';
                     name = spawn.createHauler(energy);
                 } else if (!manageRole.service.isMax(spawn)) {
                     type = 'service';
                     name = spawn.createService(energy);
-                } else if (!manageRole.repairer.isMax(spawn)) {
-                    type = 'repairer';
-                    name = spawn.createRepairer(energy);
                 }
             } else {
                 if (!manageRole.harvester.isMax(spawn)) {
@@ -68,19 +62,11 @@ var manageCreep = {
                 } else if (!manageRole.upgrader.isMax(spawn)) {
                     type = 'upgrader';
                     name = spawn.createUpgrader(energy);
-                } else if (!manageRole.repairer.isMax(spawn)) {
-                    type = 'repairer';
-                    name = spawn.createRepairer(energy);
-                } else if (!manageRole.builder.isMax(spawn)) {
-                    type = 'builder';
-                    name = spawn.createBuilder(energy);
                 }
             }
             
             if (name != undefined && !(name < 0)) {
-                if (Constant.DEBUG) {
-                    console.log("DEBUG - spawn energy: " + energy);
-                }
+                if (Constant.DEBUG) { console.log("DEBUG - spawning with energy: " + energy); }
                 
                 manageCreep.spawned(name, type);
             }
@@ -97,9 +83,7 @@ var manageCreep = {
         }
         
     	let target = Game.getObjectById(creep.room.getSpawn());
-    	if (!target) {
-    		return false;
-    	}
+    	if (!target) { return false; }
         
         if (creep.room.memory.deSpawnContainerId == undefined) {
             creep.room.memory.deSpawnContainerId = false;
@@ -118,9 +102,7 @@ var manageCreep = {
 
             if (creep.pos.x == target.pos.x && creep.pos.y == target.pos.y) {
                 if (creep.room.memory.deSpawnContainerId && creep.room.memory.spawnId) { 
-                    if (Constant.DEBUG) {
-                        console.log("DEBUG - recycling " + creep.memory.role + " " + creep.name);
-                    }
+                    if (Constant.DEBUG) { console.log("DEBUG - recycling " + creep.memory.role + " " + creep.name); }
                     let roomSpawn = Game.getObjectById(creep.room.getSpawn());
                     roomSpawn.recycleCreep(creep);
                 } else {

@@ -20,9 +20,8 @@ var manageMemory = {
     
     doSpawnLimits: function(room) {
         if (!room.memory.limitsInit) {
-            room.memory.limits = {};
+            room.memory.limits = room.memory.limits || {};
             room.memory.limits.service = Constant.LIMIT_SERVICE;
-            room.memory.limits.builder = Constant.LIMIT_BUILDERS;
             room.memory.limits.upgrader = Constant.LIMIT_UPGRADERS;
             room.memory.limits.harvester = Constant.LIMIT_HARVESTERS;
             room.memory.limits.repairer = Constant.LIMIT_REPAIRERS;
@@ -37,9 +36,7 @@ var manageMemory = {
             for (let containerId in room.memory.structureContainers) {
                 if (!Game.getObjectById(containerId)) {
                     delete room.memory.structureContainers[containerId];
-                    if (Constant.DEBUG) {
-                        console.log('DEBUG - clearing non-existant container: ' + containerId)
-                    }
+                    if (Constant.DEBUG) { console.log('DEBUG - clearing non-existant container: ' + containerId); }
                 }
             }
             
