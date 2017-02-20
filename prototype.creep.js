@@ -110,6 +110,8 @@ Creep.prototype.transferEnergy = function(target) {
     
     if (this.transfer(target, RESOURCE_ENERGY) == ERR_NOT_IN_RANGE) {
         this.moveTo(target);
+        
+        return false;
     } else {
         this.memory.goingTo = false;
         this.memory.blockContainer = false;
@@ -127,11 +129,13 @@ Creep.prototype.withdrawEnergy = function(target) {
     
     if (this.withdraw(target, RESOURCE_ENERGY) == ERR_NOT_IN_RANGE) {
         this.moveTo(target);
+        
+        return false;
     } else {
         this.memory.goingTo = false;
-
+        
         if (target.structureType == STRUCTURE_CONTAINER) {
-            target.withdrawnEnergy(this.carryCapacity - _.sum(this.carry));
+            target.withdrawnEnergy(this.carryCapacity - this.carry[RESOURCE_ENERGY]);
         }
     }
         

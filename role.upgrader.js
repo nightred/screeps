@@ -76,10 +76,6 @@ var roleUpgrader = {
         if (getTargets.length > 0) {
             getTargets.forEach(structure => targets.push(structure));
         }
-        getTargets = creep.getTargetContainerEnergy('withdraw', 'in');
-        if (getTargets.length > 0) {
-            getTargets.forEach(structure => targets.push(structure));
-        }
 
         if (creep.room.getContainers().length == 0) {
             getTargets = creep.getTargetExtentionEnergy('withdraw');

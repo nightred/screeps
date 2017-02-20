@@ -67,15 +67,20 @@ var manageTower = {
                     structure.hits < Math.floor(structure.hitsMax * 0.3)
             }
         }), structure => structure.hits / structure.hitsMax);
-
+        _.filter(tower.room.find(FIND_STRUCTURES), structure => 
+            (structure.structureType == STRUCTURE_RAMPART &&
+            structure.hits < Constant.RAMPART_HIT_MAX) || 
+            (structure.structureType == STRUCTURE_WALL &&
+            structure.hits < Constant.WALL_HIT_MAX)
+            ).forEach(structure => targets.push(structure));
         
-        if (targets.length > 0) {
-            tower.repair(targets[0]);
+        if (targets.length == 0) { return false; }
+        targets = _.sortBy(targets, structure => tower.pos.getRangeTo(structure));
+        targets = _.sortBy(targets, structure => structure.hits);
+        
+        tower.repair(targets[0]);
             
-            return true;
-        }
-        
-        return false;
+        return true;
     },
     
 };

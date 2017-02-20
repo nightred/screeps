@@ -93,10 +93,6 @@ var roleService = {
         if (getTargets.length > 0) {
             getTargets.forEach(structure => targets.push(structure));
         }
-        getTargets = creep.getTargetContainerEnergy('withdraw', 'in');
-        if (getTargets.length > 0) {
-            getTargets.forEach(structure => targets.push(structure));
-        }
         let storage = creep.getTargetStorageEnergy('store');
         if (storage) {
             targets.push(storage);
