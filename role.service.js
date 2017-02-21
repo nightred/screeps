@@ -37,6 +37,40 @@ var roleService = {
         }
     },
     
+    getBody: function(energy) {
+        let workUnits = Math.floor((energy * 0.5) / 100);  // 100
+        let moveUnits = Math.floor((energy * 0.3) / 50);  // 50
+        let carryUnits = Math.floor((energy * 0.2) / 50); // 50
+        let bodyParts = [];
+        
+        workUnits = workUnits < 1 ? 1 : workUnits;
+        moveUnits = moveUnits < 1 ? 1 : moveUnits;
+        carryUnits = carryUnits < 1 ? 1 : carryUnits;
+    
+        workUnits = workUnits > 8 ? 8 : workUnits;
+        moveUnits = moveUnits > 10 ? 10 : moveUnits;
+        carryUnits = carryUnits > 6 ? 6 : carryUnits;
+        
+        for (let i = 0; i < workUnits; i++) {
+            bodyParts.push(WORK);
+        }
+        for (let i = 0; i < moveUnits; i++) {
+            bodyParts.push(MOVE);
+        }
+        for (let i = 0; i < carryUnits; i++) { 
+            bodyParts.push(CARRY);
+        }
+        
+        return bodyParts;
+    },
+    
+    doSpawn: function(spawn, body) {
+        if (!spawn) { return false; }
+        if (!body || body.length < 1) { return false; }
+
+        return spawn.createCreep(body, undefined, {role: 'service'});
+    },
+    
     /** @param {Creep} creep **/
     doWork: function(creep) {
         if (!creep) { return false; }
@@ -93,22 +127,27 @@ var roleService = {
         if (getTargets.length > 0) {
             getTargets.forEach(structure => targets.push(structure));
         }
-        let storage = creep.getTargetStorageEnergy('store');
+        let storage = creep.getTargetStorageEnergy('withdraw');
         if (storage) {
             targets.push(storage);
         }
-        if (creep.room.getContainers().length == 0) {
+
+        if (creep.room.getContainers().length <= 2) {
             getTargets = creep.getTargetExtentionEnergy('withdraw');
             if (getTargets.length > 0) {
                 getTargets.forEach(structure => targets.push(structure));
             }
         }
-        if (creep.room.getExtensions().length == 0) {
-            let spawn = creep.getTargetSpawnEnergy('store');
-            if (spawn) { return creep.setGoingTo(spawn); }
+        if (creep.room.getExtensions().length <= 5) {
+            let spawns = creep.getTargetSpawnEnergy('withdraw');
+            if (spawns.length > 0) {
+                spawns = _.sortBy(spawns, structure => creep.pos.getRangeTo(structure));
+                
+                return creep.setGoingTo(spawns[0]);
+            }
         }
         
-        if (targets.length == 0) { return false; }
+        if (targets.length == 0 || !targets) { return false; }
         targets = _.sortBy(targets, structure => creep.pos.getRangeTo(structure));
 
         return creep.setGoingTo(targets[0]);

@@ -13,12 +13,14 @@ var manageMemory = {
     
     run: function(room) {
         
-        this.doContainers(room);
         this.doSpawnLimits(room);
+        this.doContainers(room);
         
     },
     
     doSpawnLimits: function(room) {
+        if (!room) {return false; }
+        
         if (!room.memory.limitsInit) {
             room.memory.limits = room.memory.limits || {};
             room.memory.limits.service = Constant.LIMIT_SERVICE;
@@ -32,6 +34,8 @@ var manageMemory = {
     },
     
     doContainers: function(room) {
+        if (!room) {return false; }
+        
         if (room.memory.containersMemory < (Game.time - 20) || !room.memory.containersMemory) {
             for (let containerId in room.memory.structureContainers) {
                 if (!Game.getObjectById(containerId)) {

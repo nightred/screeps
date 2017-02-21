@@ -13,22 +13,24 @@
 var Constants = {
     
     // debug: 0 off, 1 info, 2 debug, 3 verbose
-    DEBUG:                          3, 
+    DEBUG:                          2, 
     SIM:                            false,
     ACTIVE:                         true,
     
     ENERGY_ROOM_WITHDRAW_MIN:       200,
     ENERGY_CREEP_SPAWN_MAX:         800,
+    ENERGY_CREEP_SPAWN_MIN:         200,
     ENERGY_TOWER_MIN:               300,
     ENERGY_CONTAINER_MAX_PERCENT:   0.9,
     ENERGY_CONTAINER_MIN_PERCENT:   0.1 ,
     ENERGY_CONTAINER_MIN_WITHDRAW:  100,
     ENERGY_STORAGE_MIN_WITHDRAW:    100,
     
-    CONTROLLER_WITHDRAW_LEVEL:      4,
+    CONTROLLER_WITHDRAW_LEVEL:      2,
     
     WORK_FIND_WAIT:                 5,
-    WORK_REPORT_WAIT:               200,
+    
+    REPORT_TICKS:                   200,
     
     REPAIR_HIT_WORK_MIN:            0.80,
     REPAIR_HIT_WORK_MAX:            0.95,
@@ -48,6 +50,13 @@ var Constants = {
 
     HARVESTERS_PER_SOURCE:          1,
     
+    ROLE_TYPES: [
+        'harvester',
+        'hauler',
+        'service',
+        'upgrader',
+        ],
+    
     WORK_TYPES: [
         'repair',
         'build',
@@ -61,9 +70,9 @@ var Constants = {
  *
  */
 
-Constants.LIMIT_SERVICE     = !Constants.SIM ? Constants.LIMIT_SERVICE      : 1;
+Constants.LIMIT_SERVICE     = !Constants.SIM ? Constants.LIMIT_SERVICE      : 0;
 Constants.LIMIT_UPGRADERS   = !Constants.SIM ? Constants.LIMIT_UPGRADERS    : 0;
-Constants.LIMIT_HARVESTERS  = !Constants.SIM ? Constants.LIMIT_HARVESTERS   : 2;
+Constants.LIMIT_HARVESTERS  = !Constants.SIM ? Constants.LIMIT_HARVESTERS   : 0;
 Constants.LIMIT_HAULERS     = !Constants.SIM ? Constants.LIMIT_HAULERS      : 1;
 
 module.exports = Constants;

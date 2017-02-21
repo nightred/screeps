@@ -1,5 +1,5 @@
 /*
- * Creep role managment
+ * role managment
  *
  * Provides functions for each role
  *
@@ -10,58 +10,78 @@
  *
  */
 
-var roleHarvester = require('role.harvester');
-var roleUpgrader = require('role.upgrader');
-var roleHauler = require('role.hauler');
-var roleService = require('role.service');
-
 var manageRole = {
     
-    harvester: {
-        max:    spawn => manageRole.getRoomMax(spawn, 'harvester'),
-        run:    creep => roleHarvester.run(creep),
-        units:  spawn => manageRole.getUnitsInRoomByRole(spawn, 'harvester'),
-        isMax:  spawn => manageRole.isUnitsInRoomMax(spawn, 'harvester'),
+    init: function() {
+        // init
     },
     
-    upgrader: {
-        max:    spawn => manageRole.getRoomMax(spawn, 'upgrader'),
-        run:    creep => roleUpgrader.run(creep),
-        units:  spawn => manageRole.getUnitsInRoomByRole(spawn, 'upgrader'),
-        isMax:  spawn => manageRole.isUnitsInRoomMax(spawn, 'upgrader'),
+    run: function(room) {
+        
+        if (!this.isUnitsInRoomMax(room, 'harvester')) {
+            QSpawn.addQueue(room.name, 'harvester', 50);
+        }
+        if (!this.isUnitsInRoomMax(room, 'upgrader')) {
+            QSpawn.addQueue(room.name, 'upgrader', 80);
+        }
+        if (!this.isUnitsInRoomMax(room, 'hauler')) {
+            QSpawn.addQueue(room.name, 'hauler', 70);
+        }
+        if (!this.isUnitsInRoomMax(room, 'service')) {
+            QSpawn.addQueue(room.name, 'service', 60);
+        }
+        
+        return true;
     },
     
-    service: {
-        max:    spawn => manageRole.getRoomMax(spawn, 'service'),
-        run:    creep => roleService.run(creep),
-        units:  spawn => manageRole.getUnitsInRoomByRole(spawn, 'service'),
-        isMax:  spawn => manageRole.isUnitsInRoomMax(spawn, 'service'),
-    },
-
-    hauler: {
-        max:    spawn => manageRole.getRoomMax(spawn, 'hauler'),
-        run:    creep => roleHauler.run(creep),
-        units:  spawn => manageRole.getUnitsInRoomByRole(spawn, 'hauler'),
-        isMax:  spawn => manageRole.isUnitsInRoomMax(spawn, 'hauler'),
+    getRoomMax: function(room, role) {
+        if (!room) { return false; }
+        if (Constant.ROLE_TYPES.indexOf(role) < 0) { return false; }
+        
+        return room.memory.limits[role];
     },
     
-    getRoomMax: function(spawn, type) {
-        return spawn.room.memory.limits[type];
+    getUnitsInRoomByRole: function(room, role) {
+        if (!room) { return false; }
+        if (Constant.ROLE_TYPES.indexOf(role) < 0) { return false; }
+        
+        return _.filter(Game.creeps, creep => 
+            creep.memory.role == role && 
+            creep.room.name == room.name &&
+            creep.memory.despawn != true
+            );
     },
     
-    getUnitsInRoomByRole: function(spawn, type) {
-        return _.filter(Game.creeps, (creep) => 
-            creep.memory.role == type && 
-            creep.room.name == spawn.room.name &&
-            creep.memory.despawn != true);
+    isUnitsInRoomMax: function(room, role) {
+        if (!room) { return false; }
+        if (Constant.ROLE_TYPES.indexOf(role) < 0) { return false; }
+        let count = this.getUnitsInRoomByRole(room, role).length;
+        count += QSpawn.getQueueInRoomByRole(room.name, role).length;
+        
+        return count >= this.getRoomMax(room, role);
     },
     
-    isUnitsInRoomMax: function(spawn, type) {
-        return this[type].units(spawn).length >= this[type].max(spawn);
+    doRole: function(creep) {
+        if (!creep) { return false; }
+        if (Constant.ROLE_TYPES.indexOf(creep.memory.role) < 0) { return false; }
+        
+        let role = this.getRole(creep.memory.role);
+        if (!role) { return false; }
+        
+        return role.run(creep);
     },
     
-    getRoomBuilderMax: function(spawn) {
-        return spawn.room.getConstructionSites().length > 0 ? 1 : 0;
+    getRole: function(roleName) {
+        if (Constant.ROLE_TYPES.indexOf(roleName) < 0) { return false; }
+        let role = false;
+        
+        try {
+            role = require('role.' + roleName);
+        } catch(e) {
+            if (Constant.DEBUG >= 2) { console.log('DEBUG - failed to load role: ' + roleName + ', error: ' + e); }
+        }
+        
+        return role;
     },
     
 }

@@ -13,13 +13,18 @@ var manageWork = {
         this.memory = Memory.work;
     },
     
+    doManage: function() {
+        
+        
+        return true;
+    },
+    
     createWork: {
         
         run: function(room) {
             if (!room) { return false; }
             this.memory = Memory.work;
             this.memory.timeFindWork = this.memory.timeFindWork || Game.time;
-            this.memory.timeWorkReport = this.memory.timeWorkReport || Game.time;
             
             if ((this.memory.timeFindWork + Constant.WORK_FIND_WAIT) < Game.time) {
                 this.repair(room);
@@ -27,11 +32,6 @@ var manageWork = {
                 this.refillTower(room);
                 
                 this.memory.timeFindWork = Game.time;
-            }
-            
-            if ((this.memory.timeWorkReport + Constant.WORK_REPORT_WAIT) < Game.time) {
-                Work.reportWork();
-                this.memory.timeWorkReport = Game.time;
             }
             
             return true;
@@ -68,7 +68,7 @@ var manageWork = {
             for (let i = 0; i < targets.length; i++) {
                 if (Work.addWork(task, roomName, priority, targets[i].id)) { count++; }
             }
-            if (count && Constant.DEBUG >= 2) { console.log('DEBUG - added ' + count + ' ' + task + ' work to the queue'); }
+            if (count && Constant.DEBUG >= 2) { console.log('DEBUG - added ' + count + ' ' + task + ' tasks to the queue'); }
             
             return true;
         },
@@ -89,9 +89,8 @@ var manageWork = {
         
     },
     
-    reportWork: function() {
+    getReport: function() {
         
-        console.log('╔═══════════════════════════════════════════════════════');
         console.log('║ * REPORT - work queued and in progress by type');
         
         for (let i = 0; i < Constant.WORK_TYPES.length; i++) {
@@ -103,10 +102,10 @@ var manageWork = {
                 work.creeps.length > 0
                 ).length;
             
-            console.log('║ * ' + Constant.WORK_TYPES[i] + ' has ' + countWork + ' jobs in queued, ' + activeWork + ' are in progress');
+            if (countWork > 0) {
+                console.log('║ * ' + Constant.WORK_TYPES[i] + ' has ' + countWork + ' tasks in queued, ' + activeWork + ' are in progress');
+            }
         }
-        
-        console.log('╚═══════════════════════════════════════════════════════');
         
         return true;
     },
@@ -124,7 +123,7 @@ var manageWork = {
             ((!work.multiCreep && work.creeps.length == 0) ||
             (work.multiCreep && work.creeps.length < work.multiCreepLimit))
             ), work => work.priority);
-        if (!targets.length > 0) { return false; }
+        if (!targets.length > 0 || !targets) { return false; }
         
         return targets[0].id;
     },
@@ -190,29 +189,38 @@ var manageWork = {
         
         if (this.hasWorkTypeByTargetId(targetId, task)) { return false; }
         
-        let workId = this.getQueueId();
-        let work = {
-            id: workId,
+        let queueId = this.getQueueId();
+        let queueItem = {
+            id: queueId,
+            room: roomName,
+            priority: priority,
+            task: task,
             creeps: [],
             multiCreep: multiCreep,
-            room: roomName,
-            task: task,
-            priority: priority,
+            creeps: [],
         };
         
-        if (targetId) { work.targetId = targetId; }
-        if (multiCreep) { work.multiCreepLimit = multiCreepLimit; }
-        if (perpetual) { work.perpetual = perpetual; }
+        if (targetId) { queueItem.targetId = targetId; }
+        if (multiCreep) { queueItem.multiCreepLimit = multiCreepLimit; }
+        if (perpetual) { queueItem.perpetual = perpetual; }
         
-        this.memory.workQueue[workId] = work;
+        this.memory.workQueue[queueId] = queueItem;
+        if (Constant.DEBUG >= 3) { console.log('VERBOSE - work adding task: ' + queueItem.task + ', id: ' + queueId + ', room: ' + queueItem.room); }
         
-        return workId;
+        return queueId;
+    },
+    
+    delQueue: function() {
+        console.log('INFO - work queue has been droped, rebuilding active work...');
+        delete this.memory.workQueue;
+        
+        return true;
     },
     
     removeWork: function(workId) {
         if (!this.memory.workQueue[workId]) { return true; }
         
-        if (Constant.DEBUG >= 3) { console.log('DEBUG - removing ' + this.memory.workQueue[workId].task + ' work id: ' + workId + ' for id: ' + this.memory.workQueue[workId].targetId); }
+        if (Constant.DEBUG >= 3) { console.log('VERBOSE - work removing task: ' + this.memory.workQueue[workId].task + ', id: ' + workId + ', room: ' + this.memory.workQueue[workId].room); }
         delete this.memory.workQueue[workId];
         
         return true;
@@ -235,7 +243,7 @@ var manageWork = {
     
     getQueueId: function() {
         this.memory.queueID = this.memory.queueID || 0;
-        this.memory.queueID = this.memory.queueID < 999999999 ? this.memory.queueID : 0;
+        this.memory.queueID = this.memory.queueID < 999999 ? this.memory.queueID : 0;
         
         return (++ this.memory.queueID);
     },
@@ -246,14 +254,23 @@ var manageWork = {
         let work = this.memory.workQueue[creep.memory.workId];
         if (!work) { return false; }
         
+        let task = this.getTask(work.task);
+        if (!task) { return false; }
+        
+        return task.run(creep, work);
+    },
+    
+    getTask: function(task) {
+        if (Constant.WORK_TYPES.indexOf(task) < 0) { return false; }
+        let work = false;
+        
         try {
-            let workTask = require('work.' + work.task);
-            return workTask.run(creep, work);
+            work = require('work.' + task);
         } catch(e) {
-            if (Constant.DEBUG >= 2) { console.log('DEBUG - ' + creep.name + ' failed to load work task: ' + work.task + ' error: ' + e); }
+            if (Constant.DEBUG >= 2) { console.log('DEBUG - failed to load work task: ' + work.task + ', error: ' + e); }
         }
         
-        return false;
+        return work;
     },
     
 };

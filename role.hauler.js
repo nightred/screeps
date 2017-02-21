@@ -47,6 +47,31 @@ var roleHauler = {
         return true;
     },
     
+    getBody: function(energy) {
+        let CarryUnits = Math.floor((energy / 2) / 50);
+        let MoveUnits = Math.floor((energy / 2) / 50);
+        let bodyParts = [];
+        
+        MoveUnits = MoveUnits > 4 ? 4 : MoveUnits;
+        for (let i = 0; i < MoveUnits; i++) {
+            bodyParts.push(MOVE);
+        }
+        
+        CarryUnits = CarryUnits > 8 ? 8 : CarryUnits;
+        for (let i = 0; i < CarryUnits; i++) {
+            bodyParts.push(CARRY);
+        }
+        
+        return bodyParts;
+    },
+    
+    doSpawn: function(spawn, body) {
+        if (!spawn) { return false; }
+        if (!body || body.length < 1) { return false; }
+        
+        return spawn.createCreep(body, undefined, {role: 'hauler'});
+    },
+    
     /** @param {Creep} creep **/
     getEnergyMove: function(creep) {
         if (!creep) { return false; }
@@ -164,17 +189,21 @@ var roleHauler = {
         if (!creep) { return false; }
         
         let targets = [];
-        let spawn = creep.getTargetSpawnEnergy('store');
-        if (spawn) { return spawn.id; }
-        
-        targets = creep.getTargetExtentionEnergy('store');
-        if (targets.length > 0) {
-            targets = _.sortBy(targets, structure => creep.pos.getRangeTo(structure));
+        let getTargets = creep.getTargetSpawnEnergy('store');
+        if (getTargets.length > 0) {
+            getTargets = _.sortBy(getTargets, structure => creep.pos.getRangeTo(structure));
             
-            return targets[0].id;
+            return getTargets[0].id;
         }
         
-        let getTargets = creep.getTargetContainerEnergy('store', 'out', true);
+        getTargets = creep.getTargetExtentionEnergy('store');
+        if (getTargets.length > 0) {
+            getTargets = _.sortBy(getTargets, structure => creep.pos.getRangeTo(structure));
+            
+            return getTargets[0].id;
+        }
+        
+        getTargets = creep.getTargetContainerEnergy('store', 'out', true);
         if (getTargets.length > 0) {
             getTargets.forEach(structure => targets.push(structure));
         }
@@ -190,7 +219,7 @@ var roleHauler = {
             }
         }
         
-        if (targets.length == 0) { return false; }
+        if (targets.length == 0 || !targets) { return false; }
         
         targets = _.sortBy(targets, structure => creep.pos.getRangeTo(structure));
         
@@ -201,12 +230,15 @@ var roleHauler = {
     getStoreEnergySpawnId: function(creep) {
         if (!creep) { return false; }
         
-        let targets = [];
-        let spawn = creep.getTargetSpawnEnergy('store');
-        if (spawn) { return spawn.id; }
+        let targets = creep.getTargetSpawnEnergy('store');
+        if (targets.length > 0) {
+            targets = _.sortBy(targets, structure => creep.pos.getRangeTo(structure));
+            
+            return targets[0].id;
+        }
         
         targets = creep.getTargetExtentionEnergy('store');
-        if (targets.length == 0) { return false; }
+        if (targets.length == 0 || !targets) { return false; }
         targets = _.sortBy(targets, structure => creep.pos.getRangeTo(structure));
         
         return targets[0].id;
@@ -217,7 +249,7 @@ var roleHauler = {
         if (!creep) { return false; }
         
         let targets = creep.getTargetContainerEnergy('store', 'out')
-        if (targets.length == 0) { return false; }
+        if (targets.length == 0 || !targets) { return false; }
         targets = _.sortBy(targets, structure => creep.pos.getRangeTo(structure));
         
         return targets[0].id;
@@ -228,7 +260,7 @@ var roleHauler = {
         if (!creep) { return false; }
         
         let targets = creep.getTargetContainerEnergy('withdraw', 'in', true)
-        if (targets.length == 0) { return false; }
+        if (targets.length == 0 || !targets) { return false; }
         targets = _.sortBy(targets, structure => creep.pos.getRangeTo(structure));
         
         return targets[0].id;
@@ -240,7 +272,7 @@ var roleHauler = {
         
         let targets = [];
         let getTargets = creep.getTargetContainerEnergy('withdraw');
-        if (getTargets.length > 0) {
+        if (getTargets.length > 0 || !targets) {
             getTargets.forEach(structure => targets.push(structure));
         }
         let storage = creep.getTargetStorageEnergy('withdraw');
@@ -248,7 +280,7 @@ var roleHauler = {
             targets.push(storage);
         }
         
-        if (targets.length == 0) { return false; }
+        if (targets.length == 0 || !targets) { return false; }
         targets = _.sortBy(targets, structure => creep.pos.getRangeTo(structure));
         
         return targets[0].id;

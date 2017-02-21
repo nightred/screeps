@@ -59,7 +59,7 @@ Creep.prototype.setDespawn = function() {
     
     this.leaveWork();
     
-    if (Constant.DEBUG >= 3) { console.log('DEBUG - ' + this.memory.role + ' ' + this.name + ' end of life'); }
+    if (Constant.DEBUG >= 3) { console.log('VERBOSE - ' + this.memory.role + ' ' + this.name + ' end of life'); }
 }
 
 Creep.prototype.leaveWork = function() {
@@ -209,19 +209,21 @@ Creep.prototype.getTargetSpawnEnergy = function(useMode) {
         return false;
     }
     
-	let target = Game.getObjectById(this.room.getSpawn());
-	if (!target) { return false; }
+	let targets = this.room.getSpawns();
+	if (!targets.length > 0) { return false; }
 
-    if (useMode == 'store' && 
-        target.energy == target.energyCapacity) {
-        return false;
+    if (useMode == 'store') {
+        targets = _.filter(targets, structure => 
+            structure.energy < structure.energyCapacity
+        );
     }
-    if (useMode == 'withdraw' && 
-        target.energy == 0) {
-        return false;
+    if (useMode == 'withdraw') {
+        targets = _.filter(targets, structure => 
+            structure.energy > 0
+        );
     }
     
-    return target;
+    return targets;
 }
 
 Creep.prototype.getTargetExtentionEnergy = function(useMode) {

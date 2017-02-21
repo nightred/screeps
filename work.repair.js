@@ -42,7 +42,8 @@ var workRepair = {
         if (!room) { return false; }
         
         let targets = _.sortBy(_.filter(room.find(FIND_MY_STRUCTURES), structure =>
-                structure.hits < (structure.hitsMax * Constant.REPAIR_HIT_WORK_MIN)
+                structure.hits < (structure.hitsMax * Constant.REPAIR_HIT_WORK_MIN) &&
+                structure.structureType != STRUCTURE_RAMPART
                 ), structure => structure.hits / structure.hitsMax);
             
         _.filter(room.find(FIND_STRUCTURES), structure => 

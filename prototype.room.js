@@ -50,6 +50,16 @@ Room.prototype.findSpawn = function() {
     }
 }
 
+Room.prototype.getSpawns = function() {
+    let targets = this.find(FIND_MY_SPAWNS);
+    
+    if (targets.length > 0) {
+        return targets;
+    } 
+    
+    return false;
+}
+
 Room.prototype.getContainers = function() {
     return this.find(FIND_STRUCTURES, {
         filter: (structure) => {
@@ -57,7 +67,6 @@ Room.prototype.getContainers = function() {
         }
     });
 }
-
 
 Room.prototype.getTowers = function() {
     return this.find(FIND_MY_STRUCTURES, {

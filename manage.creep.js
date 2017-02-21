@@ -11,8 +11,7 @@
  
 var manageCreep = {
     
-    run: function(manageRole, room) {
-        
+    init: function() {
         for(let name in Memory.creeps) {
             if(!Game.creeps[name]) {
                 if (Memory.creeps[name].workId) {
@@ -23,60 +22,16 @@ var manageCreep = {
                 delete Memory.creeps[name];
             }
         }
-        
-        let energy = room.energyAvailable;
-        energy = energy > Constant.ENERGY_CREEP_SPAWN_MAX ? Constant.ENERGY_CREEP_SPAWN_MAX : energy;
-        
-        if (!room.spawning && energy >= 200) {
-            
-            let spawn = Game.getObjectById(room.getSpawn());
-            if (!spawn) { return false; }
-            
-            let name = undefined;
-            let type = null;
-            
-            if (room.controller.level <= Constant.CONTROLLER_WITHDRAW_LEVEL) {
-                if (!manageRole.harvester.isMax(spawn)) {
-                    type = 'harvester';
-                    name = spawn.createHarvester(energy);
-                } else if (!manageRole.upgrader.isMax(spawn)) {
-                    type = 'upgrader';
-                    name = spawn.createUpgrader(energy);
-                } else if (!manageRole.hauler.isMax(spawn)) {
-                    type = 'hauler';
-                    name = spawn.createHauler(energy);
-                } else if (!manageRole.service.isMax(spawn)) {
-                    type = 'service';
-                    name = spawn.createService(energy);
-                }
-            } else {
-                if (!manageRole.harvester.isMax(spawn)) {
-                    type = 'harvester';
-                    name = spawn.createHarvester(energy);
-                } else if (!manageRole.hauler.isMax(spawn)) {
-                    type = 'hauler';
-                    name = spawn.createHauler(energy);
-                } else if (!manageRole.service.isMax(spawn)) {
-                    type = 'service';
-                    name = spawn.createService(energy);
-                } else if (!manageRole.upgrader.isMax(spawn)) {
-                    type = 'upgrader';
-                    name = spawn.createUpgrader(energy);
-                }
-            }
-            
-            if (name != undefined && !(name < 0)) {
-                if (Constant.DEBUG >= 3) { console.log("DEBUG - spawning with energy: " + energy); }
-                
-                manageCreep.spawned(name, type);
-            }
-        }
     },
     
-    spawned: function(name, type) {
-        if (Constant.DEBUG >= 1) { console.log("INFO - spawning " + type + " named " + name + " with " + Game.creeps[name].body.length + " parts"); }
+    run: function(room) {
+        // run
     },
     
+    doManage: function() {
+        // manage
+    },
+
     doDespawn: function(creep) {
         if (!creep) { return false; }
         

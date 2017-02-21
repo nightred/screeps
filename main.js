@@ -16,6 +16,7 @@ require('prototype.structureContainer');
 // global methods
 global.Constant     = require('constants');
 global.Work         = require('manage.work');
+global.QSpawn       = require('manage.spawnQueue');
 
 // managment modules
 var manageMemory    = require('manage.memory');
@@ -33,19 +34,23 @@ module.exports.loop = function () {
     }
     
     Work.init();
+    QSpawn.init();
+    manageCreep.init();
 
-    let rooms = [];
     for (let name in Game.rooms) {
         if (Game.rooms[name].controller.my) {
-            rooms.push(Game.rooms[name]);
+            let room = Game.rooms[name];
+            manageMemory.run(room);
+            manageRole.run(room);
+            manageTower.run(room);
+            Work.createWork.run(room);
+            QSpawn.run(room);
         }
     }
-    
-    rooms.forEach((room) => manageMemory.run(room));
-    rooms.forEach((room) => manageTower.run(room));
-    rooms.forEach((room) => Work.createWork.run(room));
-    rooms.forEach((room) => manageCreep.run(manageRole, room));
-    
+
+    QSpawn.doManage();
+    Work.doManage();
+
     for(let name in Game.creeps) {
         let creep = Game.creeps[name];
         
@@ -58,11 +63,19 @@ module.exports.loop = function () {
             continue;
         }
         
-        try {
-            manageRole[creep.memory.role].run(creep);
-        } catch(e) {
-            if (Constant.DEBUG >= 2) { console.log('DEBUG - ' + creep.name + ' failed to load role: ' + creep.memory.role + ' error: ' + e); }
-        }
+        manageRole.doRole(creep);
+    }
+    
+    Memory.world.reportTime = Memory.world.reportTime || Game.time;
+    if ((Memory.world.reportTime + Constant.REPORT_TICKS) < Game.time) {
+        console.log('REPORT - game tick: ' + Game.time);
+        console.log('╔═══════════════════════════════════════════════════════');
+        Work.getReport();
+        console.log('╠═══════════════════════════════════════════════════════');
+        QSpawn.getReport();
+        console.log('╚═══════════════════════════════════════════════════════');
+        
+        Memory.world.reportTime = Game.time;
     }
     
 }
