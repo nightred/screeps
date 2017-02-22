@@ -132,13 +132,13 @@ var roleService = {
             targets.push(storage);
         }
 
-        if (creep.room.getContainers().length <= 2) {
+        if (targets.length < 1) {
             getTargets = creep.getTargetExtentionEnergy('withdraw');
             if (getTargets.length > 0) {
                 getTargets.forEach(structure => targets.push(structure));
             }
         }
-        if (creep.room.getExtensions().length <= 5) {
+        if (creep.room.getExtensions().length < 5) {
             let spawns = creep.getTargetSpawnEnergy('withdraw');
             if (spawns.length > 0) {
                 spawns = _.sortBy(spawns, structure => creep.pos.getRangeTo(structure));
