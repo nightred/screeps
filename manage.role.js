@@ -29,7 +29,7 @@ var manageRole = {
         try {
             role = require('role.' + roleName);
         } catch(e) {
-            if (Constant.DEBUG >= 2) { console.log('DEBUG - failed to load role: ' + roleName + ', error: ' + e); }
+            if (Constant.DEBUG >= 2) { console.log('DEBUG - failed to load role: ' + roleName + ', error:\n' + e); }
         }
         
         return role;

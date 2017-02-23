@@ -27,8 +27,24 @@ var workUpgrade = {
             Work.addWork('harvestEnergy', room.name, 20, {managed: true,});
         }
         
-        if (Work.getRoomTaskCount('service', room.name) == 0) {
-            Work.addWork('service', room.name, 24, {managed: true, creepLimit: 1});
+        if (Work.getRoomTaskCount('service', room.name) > 0) {
+            let serviceTask = Work.getRoomTask('service', room.name);
+            if (serviceTask) {
+                switch (room.controller.level) {
+                    case 3:
+                    case 4:
+                        if (serviceTask.creepLimit < 2) {
+                            serviceTask.creepLimit = 2;
+                        }
+                        break;
+                    case 5:
+                        if (serviceTask.creepLimit < 3) {
+                            serviceTask.creepLimit = 3;
+                        }
+                }
+            } else {
+                Work.addWork('service', room.name, 24, {managed: true, creepLimit: 1});
+            }
         }
         
         if (room.controller.level > 0) { 

@@ -316,7 +316,7 @@ var manageWork = {
         try {
             work = require('work.' + task);
         } catch(e) {
-            if (Constant.DEBUG >= 2) { console.log('DEBUG - failed to load work task: ' + work.task + ', error: ' + e); }
+            if (Constant.DEBUG >= 2) { console.log('DEBUG - failed to load work task: ' + work.task + ', error:\n' + e); }
         }
         
         return work;

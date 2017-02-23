@@ -24,7 +24,7 @@ var workBuild = {
         if (!target) { return false; }
         
         if (creep.build(target) == ERR_NOT_IN_RANGE) {
-            creep.moveTo(target);
+            creep.moveTo(target, { range: 3, });
         }
         
         return true;
