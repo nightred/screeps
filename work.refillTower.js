@@ -12,23 +12,26 @@ var workRefillTower = {
         if (!work) { return false; }
         
         let target = Game.getObjectById(work.targetId);
-        if (!target) { return false; }
+        if (!target) { return creep.removeWork(); }
         
-        if (this.checkWork(target)) {
-            creep.removeWork();
-
-            return true;
-        }
+        if (this.checkWork(target)) { return creep.removeWork(); }
         this.doWork(creep, target);
         
         return true;
     },
     
     doWork: function(creep, target) {
+        if (!creep) { return false; }
+        if (!target) { return false; }
+        
         creep.transferEnergy(target);
+        
+        return true;
     },
     
     checkWork: function(target) {
+        if (!target) { return false; }
+        
         if (target.energy >= Math.floor(target.energyCapacity * Constant.REFILL_TOWER_MAX)) {
             return true;
         }

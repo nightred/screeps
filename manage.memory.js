@@ -13,26 +13,11 @@ var manageMemory = {
     
     run: function(room) {
         
-        this.doSpawnLimits(room);
         this.doContainers(room);
         
+        return true;
     },
-    
-    doSpawnLimits: function(room) {
-        if (!room) {return false; }
-        
-        if (!room.memory.limitsInit) {
-            room.memory.limits = room.memory.limits || {};
-            room.memory.limits.service = Constant.LIMIT_SERVICE;
-            room.memory.limits.upgrader = Constant.LIMIT_UPGRADERS;
-            room.memory.limits.harvester = Constant.LIMIT_HARVESTERS;
-            room.memory.limits.repairer = Constant.LIMIT_REPAIRERS;
-            room.memory.limits.hauler = Constant.LIMIT_HAULERS;
-            
-            room.memory.limitsInit = true;
-        }
-    },
-    
+
     doContainers: function(room) {
         if (!room) {return false; }
         

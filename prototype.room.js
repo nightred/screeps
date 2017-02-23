@@ -9,10 +9,22 @@ Room.prototype.getConstructionSites = function() {
     return this.find(FIND_CONSTRUCTION_SITES);
 }
 
+Room.prototype.getSources = function() {
+    return this.find(FIND_SOURCES);
+}
+
+Room.prototype.getSourceCount = function() {
+    if (!this.memory.sourceCount) {
+        this.memory.sourceCount = this.getSources().length;
+    }
+    
+    return this.memory.sourceCount;
+}
+
 Room.prototype.getHarvestTarget = function() {
     let sources = [];
     
-    for (let source of this.find(FIND_SOURCES)) {
+    for (let source of this.getSources()) {
         let count = 0;
         for (let roomCreep of this.find(FIND_MY_CREEPS)) {
             if (roomCreep.memory.harvestTarget === source.id && 
@@ -75,7 +87,6 @@ Room.prototype.getTowers = function() {
         }
     });
 }
-    
 
 Room.prototype.getExtensions = function() {
     return this.find(FIND_MY_STRUCTURES, {

@@ -73,7 +73,7 @@ Creep.prototype.leaveWork = function() {
 Creep.prototype.getWork = function(tasks) {
     if (!Array.isArray(tasks)) { return false; }
 
-    let workId = Work.getWork(tasks, this.room.name);
+    let workId = Work.getCreepWork(tasks, this.room.name);
     if (!workId) { return false; }
     if (!Work.setWork(this.name, workId)) { return false; }
     
@@ -99,6 +99,8 @@ Creep.prototype.checkWork = function() {
 Creep.prototype.removeWork = function() {
     Work.removeWork(this.memory.workId);
     this.memory.workId = false;
+    
+    return true;
 }
 
 Creep.prototype.transferEnergy = function(target) {

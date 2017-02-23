@@ -14,7 +14,6 @@ var Constants = {
     
     // debug: 0 off, 1 info, 2 debug, 3 verbose
     DEBUG:                          2, 
-    SIM:                            false,
     ACTIVE:                         true,
     
     ENERGY_ROOM_WITHDRAW_MIN:       200,
@@ -29,8 +28,8 @@ var Constants = {
     CONTROLLER_WITHDRAW_LEVEL:      2,
     
     WORK_FIND_WAIT:                 5,
-    
-    REPORT_TICKS:                   200,
+    MANAGE_WAIT_TICKS:              5,
+    REPORT_TICKS:                   500,
     
     REPAIR_HIT_WORK_MIN:            0.80,
     REPAIR_HIT_WORK_MAX:            0.95,
@@ -39,12 +38,7 @@ var Constants = {
     
     REFILL_TOWER_MAX:               0.90,
     REFILL_TOWER_MIN:               0.50,
-    
-    LIMIT_UPGRADERS:                3,
-    LIMIT_HARVESTERS:               2,
-    LIMIT_HAULERS:                  2,
-    LIMIT_SERVICE:                  1,
-    
+
     CREEP_DESPAWN_TICKS:            40,
     CREEP_IDLE_TIME:                10,
 
@@ -61,18 +55,13 @@ var Constants = {
         'repair',
         'build',
         'refillTower',
+        'harvestEnergy',
+        'haul',
+        'upgrade',
+        'service',
+        'buildRoom',
         ],
     
 };
-
-/*
- * Set variables for SIM mode
- *
- */
-
-Constants.LIMIT_SERVICE     = !Constants.SIM ? Constants.LIMIT_SERVICE      : 0;
-Constants.LIMIT_UPGRADERS   = !Constants.SIM ? Constants.LIMIT_UPGRADERS    : 0;
-Constants.LIMIT_HARVESTERS  = !Constants.SIM ? Constants.LIMIT_HARVESTERS   : 0;
-Constants.LIMIT_HAULERS     = !Constants.SIM ? Constants.LIMIT_HAULERS      : 1;
 
 module.exports = Constants;

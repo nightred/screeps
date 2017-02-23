@@ -81,18 +81,18 @@ var manageSpawnQueue = {
     
     getReport: function() {
         
-        console.log('║ * REPORT - spawn queue');
+        let report = '║ * spawn queue\n';
         
         for (let i = 0; i < Constant.ROLE_TYPES.length; i++) {
             let countRole = _.filter(this.memory.queue, item => 
                 Constant.ROLE_TYPES[i] == item.role
                 ).length;
             if (countRole > 0) {
-                console.log('║ * ' + Constant.ROLE_TYPES[i] + ' has ' + countRole + ' in queue ');
+                report += '║ - ' + countRole + ' ' + Constant.ROLE_TYPES[i] + ' role creep in queue \n';
             }
         }
         
-        return true;
+        return report;
     },
     
     getQueue: function(roomName) {

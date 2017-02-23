@@ -15,6 +15,7 @@ require('prototype.structureContainer');
 
 // global methods
 global.Constant     = require('constants');
+global.cli          = require('cli');
 global.Work         = require('manage.work');
 global.QSpawn       = require('manage.spawnQueue');
 
@@ -41,7 +42,6 @@ module.exports.loop = function () {
         if (Game.rooms[name].controller.my) {
             let room = Game.rooms[name];
             manageMemory.run(room);
-            manageRole.run(room);
             manageTower.run(room);
             Work.createWork.run(room);
             QSpawn.run(room);
@@ -54,7 +54,7 @@ module.exports.loop = function () {
     for(let name in Game.creeps) {
         let creep = Game.creeps[name];
         
-        if (!creep.memory.role || creep.memory.role == undefined || creep.spawning) {
+        if (!creep.memory.role || creep.spawning) {
             continue;
         }
         
@@ -66,16 +66,10 @@ module.exports.loop = function () {
         manageRole.doRole(creep);
     }
     
-    Memory.world.reportTime = Memory.world.reportTime || Game.time;
+    Memory.world.reportTime = Memory.world.reportTime || 0;
     if ((Memory.world.reportTime + Constant.REPORT_TICKS) < Game.time) {
-        console.log('REPORT - game tick: ' + Game.time);
-        console.log('╔═══════════════════════════════════════════════════════');
-        Work.getReport();
-        console.log('╠═══════════════════════════════════════════════════════');
-        QSpawn.getReport();
-        console.log('╚═══════════════════════════════════════════════════════');
-        
         Memory.world.reportTime = Game.time;
+        cli.report.run();
     }
     
 }

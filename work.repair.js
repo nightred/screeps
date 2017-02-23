@@ -12,25 +12,28 @@ var workRepair = {
         if (!work) { return false; }
         
         let target = Game.getObjectById(work.targetId);
-        if (!target) { return false; }
+        if (!target) { return creep.removeWork(); }
         
-        if (this.checkWork(target)) {
-            creep.removeWork();
-
-            return true;
-        }
+        if (this.checkWork(target)) { return creep.removeWork(); }
         this.doWork(creep, target);
         
         return true;
     },
     
     doWork: function(creep, target) {
+        if (!creep) { return false; }
+        if (!target) { return false; }
+        
         if (creep.repair(target) == ERR_NOT_IN_RANGE) {
             creep.moveTo(target);
         }
+        
+        return true;
     },
     
     checkWork: function(target) {
+        if (!target) { return false; }
+        
         if (target.hits >= Math.floor(target.hitsMax * Constant.REPAIR_HIT_WORK_MAX)) {
             return true;
         }

@@ -14,7 +14,15 @@ var manageWork = {
     },
     
     doManage: function() {
+        let list = this.getManagedWork();
+        if (!list || list.length < 0) { return false; }
         
+        for (let i = 0; i < list.length; i++) {
+            let task = this.getTask(list[i].task);
+            if (!task) { continue; }
+            
+            task.doManage(list[i]);
+        }
         
         return true;
     },
@@ -66,7 +74,9 @@ var manageWork = {
             
             let count = 0;
             for (let i = 0; i < targets.length; i++) {
-                if (Work.addWork(task, roomName, priority, targets[i].id)) { count++; }
+                if (Work.hasWorkTypeByTargetId(targets[i].id, task)) { continue; }
+                let args = { targetId: targets[i].id, };
+                if (Work.addWork(task, roomName, priority, args)) { count++; }
             }
             if (count && Constant.DEBUG >= 2) { console.log('DEBUG - added ' + count + ' ' + task + ' tasks to the queue'); }
             
@@ -91,29 +101,42 @@ var manageWork = {
     
     getReport: function() {
         
-        console.log('║ * REPORT - work queued and in progress by type');
+        let report = '║ * work queued and in progress by type\n';
         
         for (let i = 0; i < Constant.WORK_TYPES.length; i++) {
             let countWork = _.filter(this.memory.workQueue, work => 
-                Constant.WORK_TYPES[i] == work.task
-                ).length;
-            let activeWork = _.filter(this.memory.workQueue, work => 
                 Constant.WORK_TYPES[i] == work.task &&
-                work.creeps.length > 0
+                work.managed
                 ).length;
-            
+                
             if (countWork > 0) {
-                console.log('║ * ' + Constant.WORK_TYPES[i] + ' has ' + countWork + ' tasks in queued, ' + activeWork + ' are in progress');
+                report += '║ - ' + countWork + ' managed ' + Constant.WORK_TYPES[i] + ' task(s) in progress\n';
             }
         }
         
-        return true;
+        for (let i = 0; i < Constant.WORK_TYPES.length; i++) {
+            let countWork = _.filter(this.memory.workQueue, work => 
+                Constant.WORK_TYPES[i] == work.task &&
+                !work.managed
+                ).length;
+            let activeWork = _.filter(this.memory.workQueue, work => 
+                Constant.WORK_TYPES[i] == work.task &&
+                work.creeps.length > 0 &&
+                !work.managed
+                ).length;
+            
+            if (countWork > 0) {
+                report += '║ - ' + Constant.WORK_TYPES[i] + ' has ' + countWork + ' task(s) in queued, ' + activeWork + ' are in progress\n';
+            }
+        }
+        
+        return report;
     },
     
     /*
     * @param [tasks] array of tasks
     */
-    getWork: function(tasks, roomName) {
+    getCreepWork: function(tasks, roomName) {
         if (!Array.isArray(tasks)) { return false; }
         if (!roomName) { return false; }
         
@@ -126,6 +149,38 @@ var manageWork = {
         if (!targets.length > 0 || !targets) { return false; }
         
         return targets[0].id;
+    },
+    
+    getRoomTaskCount: function(task, roomName) {
+        if (Constant.WORK_TYPES.indexOf(task) < 0) { return false; }
+        if (!roomName) { return false; }
+        
+        return _.filter(this.memory.workQueue, work => 
+            work.task == task &&
+            work.room == roomName
+            ).length;
+    },
+    
+    getRoomTask: function(task, roomName) {
+        if (Constant.WORK_TYPES.indexOf(task) < 0) { return false; }
+        if (!roomName) { return false; }
+        
+        let tasks = _.filter(this.memory.workQueue, work => 
+            work.task == task &&
+            work.room == roomName
+            );
+        if (!tasks.length > 0) { return false; }
+        
+        return tasks[0];
+    },
+    
+    getManagedWork: function() {
+        let list = _.sortBy(_.filter(this.memory.workQueue, work => 
+            work.managed
+            ), work => work.priority);
+        if (!list.length > 0 || !list) { return false; }
+        
+        return list;
     },
     
     /*
@@ -142,9 +197,9 @@ var manageWork = {
 
             return false;
         }
-        if (!work.multiCreep && work.creeps.length > 0) { return false; }
-        if (work.multiCreep && 
-            work.creeps.length >= work.multiCreepLimit) { 
+        if (!work.multiCreep) {
+            if (work.creeps.length > 0) { return false; }
+        } else if (work.creeps.length >= work.multiCreepLimit) { 
             return false; 
         }
         
@@ -173,21 +228,13 @@ var manageWork = {
     * @param required targetId the target of the work
     * @param required task the type of work based on the WORK_TYPES constant
     * @param priority lower is first default:100
-    * @param perpetual job never ends default:false
-    * @param multiCreep several creep on the job default:false
-    * @param multiCreepLimit max creeps default:1
+    * @param args further values supported by work
     */
-    addWork: function(task, roomName, priority, targetId, perpetual, multiCreep, multiCreepLimit) {
+    addWork: function(task, roomName, priority, args) {
         if (Constant.WORK_TYPES.indexOf(task) < 0) { return false; }
         if (!roomName) { return false; }
-        
-        targetId = typeof targetId !== 'undefined' ? targetId : false;
         priority = typeof priority !== 'undefined' ? priority : 100;
-        multiCreep = typeof multiCreep !== 'undefined' ? multiCreep : false;
-        multiCreepLimit = typeof multiCreepLimit !== 'undefined' ? multiCreepLimit : 1;
-        perpetual = typeof perpetual !== 'undefined' ? perpetual : false;
-        
-        if (this.hasWorkTypeByTargetId(targetId, task)) { return false; }
+        args = args || {};
         
         let queueId = this.getQueueId();
         let queueItem = {
@@ -196,13 +243,15 @@ var manageWork = {
             priority: priority,
             task: task,
             creeps: [],
-            multiCreep: multiCreep,
-            creeps: [],
         };
         
-        if (targetId) { queueItem.targetId = targetId; }
-        if (multiCreep) { queueItem.multiCreepLimit = multiCreepLimit; }
-        if (perpetual) { queueItem.perpetual = perpetual; }
+        if (args.targetId) { queueItem.targetId = args.targetId; }
+        if (args.managed) { queueItem.managed = args.managed; }
+        if (args.creepLimit) { queueItem.creepLimit = args.creepLimit; }
+        if (args.multiCreep) {
+            queueItem.multiCreep = args.multiCreep;
+            queueItem.multiCreepLimit = args.multiCreepLimit;
+        }
         
         this.memory.workQueue[queueId] = queueItem;
         if (Constant.DEBUG >= 3) { console.log('VERBOSE - work adding task: ' + queueItem.task + ', id: ' + queueId + ', room: ' + queueItem.room); }
