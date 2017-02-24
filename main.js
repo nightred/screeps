@@ -12,6 +12,7 @@ require('prototype.spawn');
 require('prototype.source');
 require('prototype.room');
 require('prototype.structureContainer');
+require('prototype.roomPosition');
 
 // global methods
 global.Constant     = require('constants');
@@ -25,9 +26,6 @@ var manageRole      = require('manage.role');
 var manageCreep     = require('manage.creep');
 var manageTower     = require('manage.tower');
 
-// third party modules
-var Traveler        = require('traveler');
-
 module.exports.loop = function () {
     
     if (!Constant.ACTIVE) {
@@ -39,6 +37,7 @@ module.exports.loop = function () {
     manageCreep.init();
 
     for (let name in Game.rooms) {
+        if (!Game.rooms[name].controller) { continue; }
         if (Game.rooms[name].controller.my) {
             let room = Game.rooms[name];
             manageMemory.run(room);

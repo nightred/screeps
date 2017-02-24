@@ -21,7 +21,12 @@ var manageWork = {
             let task = this.getTask(list[i].task);
             if (!task) { continue; }
             
-            task.doManage(list[i]);
+            try {
+                task.doManage(list[i]);
+            } catch(e) {
+                if (Constant.DEBUG >= 2) { console.log('DEBUG - failed to do managed task: ' + list[i].task + ', error:\n' + e); }
+            }
+            
         }
         
         return true;
@@ -87,11 +92,11 @@ var manageWork = {
             if (!room) { return false; }
             if (!task) { return false; }
             
+            let workTask = Work.getTask(task);
             try {
-                let workTask = require('work.' + task);
                 return workTask.findWork(room);
             } catch(e) {
-                if (Constant.DEBUG >= 2) { console.log('DEBUG - ' + task + ' failed to load find work, error: ' + e); }
+                if (Constant.DEBUG >= 2) { console.log('DEBUG - failed to run find work for task: ' + task + ', error: ' + e); }
             }
             
             return false;
@@ -136,13 +141,30 @@ var manageWork = {
     /*
     * @param [tasks] array of tasks
     */
-    getCreepWork: function(tasks, roomName) {
+    getCreepRoomWork: function(tasks, roomName) {
         if (!Array.isArray(tasks)) { return false; }
         if (!roomName) { return false; }
         
         let targets = _.sortBy(_.filter(this.memory.workQueue, work => 
             tasks.indexOf(work.task) >= 0 &&
-            work.room == roomName &&
+            (work.room == roomName ||
+            work.spawnRoom == roomName ) &&
+            ((!work.multiCreep && work.creeps.length == 0) ||
+            (work.multiCreep && work.creeps.length < work.multiCreepLimit))
+            ), work => work.priority);
+        if (!targets.length > 0 || !targets) { return false; }
+        
+        return targets[0].id;
+    },
+    
+    /*
+    * @param [tasks] array of tasks
+    */
+    getCreepWork: function(tasks) {
+        if (!Array.isArray(tasks)) { return false; }
+
+        let targets = _.sortBy(_.filter(this.memory.workQueue, work => 
+            tasks.indexOf(work.task) >= 0 &&
             ((!work.multiCreep && work.creeps.length == 0) ||
             (work.multiCreep && work.creeps.length < work.multiCreepLimit))
             ), work => work.priority);
@@ -241,12 +263,15 @@ var manageWork = {
             id: queueId,
             room: roomName,
             priority: priority,
+            tick: Game.time,
             task: task,
             creeps: [],
         };
         
         if (args.targetId) { queueItem.targetId = args.targetId; }
         if (args.managed) { queueItem.managed = args.managed; }
+        if (args.spawnRoom) { queueItem.spawnRoom = args.spawnRoom; }
+        if (args.message) { queueItem.message = args.message; }
         if (args.creepLimit) { queueItem.creepLimit = args.creepLimit; }
         if (args.multiCreep) {
             queueItem.multiCreep = args.multiCreep;
@@ -306,7 +331,13 @@ var manageWork = {
         let task = this.getTask(work.task);
         if (!task) { return false; }
         
-        return task.run(creep, work);
+        try {
+        	return task.run(creep, work);
+        } catch(e) {
+        	if (Constant.DEBUG >= 2) { console.log('DEBUG - failed to run task: ' + work.task + ', error:\n' + e); }
+        }
+        
+        return false;
     },
     
     getTask: function(task) {

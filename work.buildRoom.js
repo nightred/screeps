@@ -27,24 +27,25 @@ var workUpgrade = {
             Work.addWork('harvestEnergy', room.name, 20, {managed: true,});
         }
         
-        if (Work.getRoomTaskCount('service', room.name) > 0) {
-            let serviceTask = Work.getRoomTask('service', room.name);
-            if (serviceTask) {
-                switch (room.controller.level) {
-                    case 3:
-                    case 4:
-                        if (serviceTask.creepLimit < 2) {
-                            serviceTask.creepLimit = 2;
-                        }
-                        break;
-                    case 5:
-                        if (serviceTask.creepLimit < 3) {
-                            serviceTask.creepLimit = 3;
-                        }
-                }
-            } else {
-                Work.addWork('service', room.name, 24, {managed: true, creepLimit: 1});
+        let serviceTask = Work.getRoomTask('service', room.name);
+        if (serviceTask) {
+            switch (room.controller.level) {
+                case 3:
+                case 4:
+                case 5:
+                case 6:
+                case 7:
+                    if (serviceTask.creepLimit < 2) {
+                        serviceTask.creepLimit = 2;
+                    }
+                    break;
+                case 8:
+                    if (serviceTask.creepLimit < 3) {
+                        serviceTask.creepLimit = 3;
+                    }
             }
+        } else {
+            Work.addWork('service', room.name, 24, {managed: true, creepLimit: 1});
         }
         
         if (room.controller.level > 0) { 
@@ -53,12 +54,15 @@ var workUpgrade = {
                 switch (room.controller.level) {
                     case 2:
                     case 3:
+                    case 4:
                         if (upgradeTask.creepLimit < 2) {
                             upgradeTask.creepLimit = 2;
                         }
                         break;
-                    case 4:
                     case 5:
+                    case 6:
+                    case 7:
+                    case 8:
                         if (upgradeTask.creepLimit < 3) {
                             upgradeTask.creepLimit = 3;
                         }

@@ -30,8 +30,7 @@ var manageSpawnQueue = {
     run: function(room) {
         let energy = room.energyAvailable;
         if (energy < Constant.ENERGY_CREEP_SPAWN_MIN) { return false; }
-        energy = energy > Constant.ENERGY_CREEP_SPAWN_MAX ? Constant.ENERGY_CREEP_SPAWN_MAX : energy;
-        
+
         let queue = this.getQueue(room.name);
         if (!queue) { return false; }
         
@@ -44,17 +43,23 @@ var manageSpawnQueue = {
             }
             
             let role = this.getRole(queue[i].role);
-            if (!role) {
-                if (Constant.DEBUG >= 2) { console.log('DEBUG - failed to load role: ' + queue[i].role); }
-                continue;
+            
+            let body = undefined;
+            try {
+            	body = role.getBody(energy);
+            } catch(e) {
+            	if (Constant.DEBUG >= 2) { console.log('DEBUG - failed to get body for role: ' + queue[i].role + ', error:\n' + e); }
             }
-            let body = role.getBody(energy);
             let cost = this.getBodyCost(body);
             let name = undefined;
             
             for (let s = 0; s < spawns.length; s++) {
                 if (spawns[s].spawning) { continue; }
-                name = role.doSpawn(spawns[s], body);
+                try {
+                	name = role.doSpawn(spawns[s], body);
+                } catch(e) {
+                	if (Constant.DEBUG >= 2) { console.log('DEBUG - failed to do spawn for role: ' + queue[i].role + ', error:\n' + e); }
+                }
                 
                 if (name != undefined && !(name < 0)) {
                     energy -= cost;
@@ -147,6 +152,7 @@ var manageSpawnQueue = {
             id: queueId,
             room: roomName,
             priority: priority,
+            tick: Game.time,
             role: role,
         };
         

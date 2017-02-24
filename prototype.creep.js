@@ -4,7 +4,16 @@
  * Provides common functions to all creeps
  *
  */
- 
+
+Creep.prototype.moveToRoom = function(roomName) {
+    if (!Game.rooms[roomName]) { return false; }
+    if (this.room.name == roomName) { return false; }
+    
+    let target = new RoomPosition(25, 25, roomName);
+    
+    return creep.moveTo(target, { range: 20, })
+}
+
 Creep.prototype.manageState = function() {
     if (!this.carryCapacity > 0) {
         this.memory.working = true;
@@ -70,10 +79,20 @@ Creep.prototype.leaveWork = function() {
     return true;
 }
 
-Creep.prototype.getWork = function(tasks) {
+Creep.prototype.getWork = function(tasks, args) {
     if (!Array.isArray(tasks)) { return false; }
+    args = args || {};
 
-    let workId = Work.getCreepWork(tasks, this.room.name);
+    let workId = false;
+    if (args.ignoreRoom) {
+        workId = Work.getCreepWork(tasks);
+    } else {
+        let roomName = this.room.name;
+        if (args.roomName) {
+            roomName = args.roomName;
+        }
+        workId = Work.getCreepRoomWork(tasks, roomName);
+    }
     if (!workId) { return false; }
     if (!Work.setWork(this.name, workId)) { return false; }
     
@@ -111,7 +130,7 @@ Creep.prototype.transferEnergy = function(target) {
     }
     
     if (this.transfer(target, RESOURCE_ENERGY) == ERR_NOT_IN_RANGE) {
-        this.moveTo(target);
+        this.moveTo(target, { range: 1, });
         
         return false;
     } else {
@@ -130,7 +149,7 @@ Creep.prototype.withdrawEnergy = function(target) {
     }
     
     if (this.withdraw(target, RESOURCE_ENERGY) == ERR_NOT_IN_RANGE) {
-        this.moveTo(target);
+        this.moveTo(target, { range: 1, });
         
         return false;
     } else {
@@ -302,7 +321,44 @@ Creep.prototype.collectDroppedEnergy = function () {
     return false;
 }
 
+Creep.prototype.getOffExit = function() {
+    let directionFromExit = {
+        x: {
+            0:  [3, 4, 2],
+            49: [7, 8, 6],
+        },
+        y: {
+            0:  [5, 6, 4],
+            49: [1, 8, 2],
+        },
+    }
+    
+    let moveDirections = false;
+    if (directionFromExit['x'][this.pos.x]) {
+        moveDirections = directionFromExit['x'][this.pos.x];
+    } else if (directionFromExit['y'][this.pos.y]) {
+        moveDirections = directionFromExit['y'][this.pos.y];
+    }
+    
+    if (!moveDirections) { return false; }
+    
+    for (let direction of moveDirections) {
+        let target = this.pos.fromDirection(direction).look();
+        if (_.findIndex(target, objects =>
+            objects.type == 'creep' ||
+            (objects.structure && OBSTACLE_OBJECT_TYPES[object.structure.structureType]) ||
+            object.terrain == 'wall'
+            ) == -1) {
+            this.move(direction);
+            break;
+        }
+    }
+    
+    return true;
+}
+
 Creep.prototype.moveToIdlePosition = function() {
+    if (this.getOffExit()) { return true; }
     if (this.isOnRoad() || this.isOnContainer()) {
         return this.move(Math.floor(Math.random() * 9)) == 0;
     }

@@ -13,11 +13,10 @@
 var Constants = {
     
     // debug: 0 off, 1 info, 2 debug, 3 verbose
-    DEBUG:                          2, 
+    DEBUG:                          3, 
     ACTIVE:                         true,
     
     ENERGY_ROOM_WITHDRAW_MIN:       200,
-    ENERGY_CREEP_SPAWN_MAX:         800,
     ENERGY_CREEP_SPAWN_MIN:         200,
     ENERGY_TOWER_MIN:               300,
     ENERGY_CONTAINER_MAX_PERCENT:   0.9,
@@ -49,6 +48,8 @@ var Constants = {
         'hauler',
         'service',
         'upgrader',
+        'scout',
+        'controller',
         ],
     
     WORK_TYPES: [
@@ -60,7 +61,21 @@ var Constants = {
         'upgrade',
         'service',
         'buildRoom',
+        'signcontroller',
+        'scout',
+        'room.claim',
         ],
+        
+    DIRECTIONS: {
+        1: [0, -1],
+        2: [1, -1],
+        3: [1, 0],
+        4: [1, 1],
+        5: [0, 1],
+        6: [-1, 1],
+        7: [-1, 0],
+        8: [-1, -1],
+    },
     
 };
 

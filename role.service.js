@@ -11,6 +11,7 @@ var roleService = {
         'refillTower',
         'repair',
         'build',
+        'signcontroller',
         ],
 
     /** @param {Creep} creep **/
@@ -21,6 +22,7 @@ var roleService = {
                 creep.say('⚙');
             } else {
                 creep.say('🔋');
+                creep.leaveWork();
             }
         }
         

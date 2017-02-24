@@ -48,13 +48,22 @@ var Cli = {
             return Work.removeWork(workId);
         },
         
+        signcontroller: function(roomName, message) {
+            if (!roomName || !message) {
+                console.log('ERROR - command need the following values: roomName, message');
+                return false;
+            }
+            
+            return Work.addWork('signcontroller', roomName, 30, { message: message, });
+        },
+        
         harvestEnergy: function(roomName) {
             if (!roomName) {
                 console.log('ERROR - command need the following values: roomName');
                 return false;
             }
             
-            return Work.addWork('harvestEnergy', roomName, 20, {managed: true,});
+            return Work.addWork('harvestEnergy', roomName, 20, { managed: true, });
         },
         
         haul: function(roomName) {
@@ -63,7 +72,7 @@ var Cli = {
                 return false;
             }
             
-            return Work.addWork('haul', roomName, 22, {managed: true,});
+            return Work.addWork('haul', roomName, 22, { managed: true, });
         },
         
         upgrade: function(roomName, creepLimit) {
@@ -72,7 +81,7 @@ var Cli = {
                 return false;
             }
             
-            return Work.addWork('upgrade', roomName, 26, {managed: true, creepLimit: creepLimit});
+            return Work.addWork('upgrade', roomName, 26, { managed: true, creepLimit: creepLimit });
         },
         
         service: function(roomName, creepLimit) {
@@ -81,7 +90,7 @@ var Cli = {
                 return false;
             }
             
-            return Work.addWork('service', roomName, 24, {managed: true, creepLimit: creepLimit});
+            return Work.addWork('service', roomName, 24, { managed: true, creepLimit: creepLimit });
         },
         
         buildRoom: function(roomName) {
@@ -90,7 +99,47 @@ var Cli = {
                 return false;
             }
             
-            return Work.addWork('buildRoom', roomName, 10, {managed: true,});
+            return Work.addWork('buildRoom', roomName, 10, { managed: true, });
+        },
+        
+        scout: function(roomName) {
+            if (!roomName) {
+                console.log('ERROR - command need the following values: roomName');
+                return false;
+            }
+            
+            return Work.addWork('scout', roomName, 30);
+        },
+        
+    },
+    
+    spawn: {
+        
+        scout: function(roomName) {
+            if (!roomName) {
+                console.log('ERROR - command need the following values: roomName');
+                return false;
+            }
+            
+            return QSpawn.addQueue(roomName, 'scout', 10);
+        },
+        
+        hauler: function(roomName) {
+            if (!roomName) {
+                console.log('ERROR - command need the following values: roomName');
+                return false;
+            }
+            
+            return QSpawn.addQueue(roomName, 'hauler', 10);
+        },
+        
+        harvester: function(roomName) {
+            if (!roomName) {
+                console.log('ERROR - command need the following values: roomName');
+                return false;
+            }
+            
+            return QSpawn.addQueue(roomName, 'harvester', 10);
         },
         
     },
