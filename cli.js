@@ -20,12 +20,12 @@ var Cli = {
                 return false;
             }
             
-            if (!Game.creeps[creepname]) {
+            if (!Game.creeps[creepName]) {
                 console.log('ERROR - ' + creepName + ' is not a valid creep');
                 return false;
             }
             
-            Game.creeps[creepname].memory.despawn = true;
+            Game.creeps[creepName].memory.despawn = true;
             console.log('RESULT - ' + creepName + ' has been set to despawn');
             
             return true;
@@ -144,6 +144,19 @@ var Cli = {
             };
             
             return Work.addWork('room.reserve', roomName, 10, args);
+        },
+        
+        remoteharvest: function(roomName, spawnRoom) {
+            if (!roomName || !spawnRoom) {
+                console.log('ERROR - command need the following values: roomName, spawnRoom');
+                return false;
+            }
+            let args = { 
+                spawnRoom: spawnRoom, 
+                managed: true,
+            };
+            
+            return Work.addWork('remote.harvest', roomName, 40, args);
         },
         
     },

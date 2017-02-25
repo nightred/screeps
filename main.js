@@ -8,7 +8,6 @@
 // prototypes
 require('prototype.memory');
 require('prototype.creep');
-require('prototype.spawn');
 require('prototype.source');
 require('prototype.room');
 require('prototype.structureContainer');
@@ -27,7 +26,7 @@ var manageCreep     = require('manage.creep');
 var manageTower     = require('manage.tower');
 
 module.exports.loop = function () {
-    
+
     if (!Constant.ACTIVE) {
         return false;
     }
@@ -52,23 +51,23 @@ module.exports.loop = function () {
 
     for(let name in Game.creeps) {
         let creep = Game.creeps[name];
-        
+
         if (!creep.memory.role || creep.spawning) {
             continue;
         }
-        
+
         if (creep.isDespawnWarning()) {
             manageCreep.doDespawn(creep);
             continue;
         }
-        
+
         manageRole.doRole(creep);
     }
-    
+
     Memory.world.reportTime = Memory.world.reportTime || 0;
     if ((Memory.world.reportTime + Constant.REPORT_TICKS) < Game.time) {
         Memory.world.reportTime = Game.time;
         cli.report.run();
     }
-    
+
 }

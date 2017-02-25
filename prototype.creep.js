@@ -88,7 +88,7 @@ Creep.prototype.leaveWork = function() {
 Creep.prototype.getWork = function(tasks, args) {
     if (!Array.isArray(tasks)) { return false; }
     args = args || {};
-
+    
     let workId = false;
     if (args.ignoreRoom) {
         workId = Work.getCreepWork(tasks);
@@ -99,6 +99,7 @@ Creep.prototype.getWork = function(tasks, args) {
         }
         workId = Work.getCreepRoomWork(tasks, roomName);
     }
+    
     if (!workId) { return false; }
     if (!Work.setWork(this.name, workId)) { return false; }
     
@@ -187,8 +188,15 @@ Creep.prototype.setGoingTo = function(target, leaveRoom) {
     return true;
 }
 
-Creep.prototype.isGoingTo = function() {
-    return this.memory.goingTo ? true : false;
+Creep.prototype.isGoingToSet = function(target) {
+    for (let roomCreep of this.room.find(FIND_MY_CREEPS)) {
+        if (roomCreep.memory.goingTo == target.id && 
+            roomCreep.memory.role == this.memory.role
+            ) {
+            return true;
+        }
+    }
+    return false;
 }
 
 Creep.prototype.getTargetTowerEnergy = function(useMode) {
@@ -352,8 +360,8 @@ Creep.prototype.getOffExit = function() {
         let target = this.pos.fromDirection(direction).look();
         if (_.findIndex(target, objects =>
             objects.type == 'creep' ||
-            (objects.structure && OBSTACLE_OBJECT_TYPES[object.structure.structureType]) ||
-            object.terrain == 'wall'
+            (objects.structure && OBSTACLE_OBJECT_TYPES[objects.structure.structureType]) ||
+            objects.terrain == 'wall'
             ) == -1) {
             this.move(direction);
             break;

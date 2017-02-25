@@ -19,7 +19,7 @@ var manageSpawnQueue = {
                     if (Constant.DEBUG >= 3) { console.log('VERBOSE - spawn queue removing id: ' + queue[i].id + ', role: ' + queue[i].role + ', room: ' + queue[i].room + ', name: ' + queue[i].name + ', missing from game'); }
                     this.delQueueId(queue[i].id);
                 }
-                if (!Game.creeps[queue[i].name].spawning) {
+                if (Game.creeps[queue[i].name] && !Game.creeps[queue[i].name].spawning) {
                     if (Constant.DEBUG >= 3) { console.log('VERBOSE - spawn queue removing id: ' + queue[i].id + ', role: ' + queue[i].role + ', room: ' + queue[i].room + ', name: ' + queue[i].name + ', spawned'); }
                     this.delQueueId(queue[i].id);
                 }

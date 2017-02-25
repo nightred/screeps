@@ -33,8 +33,8 @@ var workHaul = {
                 }
         }
         
-        let count = room.getSourceCount();
-        count = count < 1 ? 1 : count;
+        let count = 1;
+        count += room.getSourceCount();
         
         count -= _.filter(Game.creeps, creep => 
             creep.memory.role == 'hauler' && 

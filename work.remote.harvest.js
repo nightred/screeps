@@ -47,12 +47,21 @@ var workRemoteHarvest = {
     
     doManage: function(work) {
         if (!work) { return false; }
+        work.spawnCooldown = work.spawnCooldown || 0;
         
         if (work.sourceCount && work.creepLimit != work.sourceCount) {
                 work.creepLimit = work.sourceCount;
         }
         
         if (work.creeps.length < work.creepLimit && QSpawn.getQueueInRoomByRole(work.spawnRoom, 'remote.harvester').length == 0) {
+            work.spawnCooldown++;
+        } else {
+            if (work.spawnCooldown != 0) {
+                work.spawnCooldown = 0;
+            }
+        }
+        
+        if (work.spawnCooldown >= 10) {
             QSpawn.addQueue(work.spawnRoom, 'remote.harvester', 60);
         }
 

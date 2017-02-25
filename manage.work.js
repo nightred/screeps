@@ -149,7 +149,7 @@ var manageWork = {
             tasks.indexOf(work.task) >= 0 &&
             (work.room == roomName ||
             work.spawnRoom == roomName ) &&
-            (work.creeps.length <= work.creepLimit ||
+            (work.creeps.length < work.creepLimit ||
             work.creeps.length == 0)
             ), work => work.priority);
         if (!targets.length > 0 || !targets) { return false; }
@@ -328,8 +328,9 @@ var manageWork = {
         let task = this.getTask(work.task);
         if (!task) { return false; }
         
+        return task.run(creep, work);
         try {
-        	return task.run(creep, work);
+        	//return task.run(creep, work);
         } catch(e) {
         	if (Constant.DEBUG >= 2) { console.log('DEBUG - failed to run task: ' + work.task + ', error:\n' + e); }
         }

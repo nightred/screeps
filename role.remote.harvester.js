@@ -6,6 +6,10 @@
  */
  
 var roleRemoteHarvester = {
+    
+    workTypes: [
+        'remote.harvest',
+        ],
 
     /** @param {Creep} creep **/
     run: function(creep) {
@@ -33,17 +37,48 @@ var roleRemoteHarvester = {
         return true;
     },
     
+    /** @param {Creep} creep **/
+    doWork: function(creep) {
+        if (!creep) { return false; }
+        
+        if (!creep.memory.workId) {
+            if (!creep.getWork(this.workTypes)) {
+                creep.memory.idleStart = Game.time;
+                creep.say('💤');
+                
+                return false;
+            }
+        }
+        
+        if (!creep.doWork()) {
+            if (Constant.DEBUG >= 2) { console.log("DEBUG - " + this.memory.role + " " + this.name + ' failed doWork'); }
+        }
+        
+        return true;
+    },
+    
     getBody: function(energy) {
+        let workUnits = Math.floor((energy * 0.5) / 100);  // 100
+        let moveUnits = Math.floor((energy * 0.3) / 50);  // 50
+        let carryUnits = Math.floor((energy * 0.2) / 50); // 50
         let bodyParts = [];
-        let extrasCost = 100;
         
-        bodyParts.push(MOVE);
-        bodyParts.push(CARRY);
+        workUnits = workUnits < 1 ? 1 : workUnits;
+        moveUnits = moveUnits < 1 ? 1 : moveUnits;
+        carryUnits = carryUnits < 1 ? 1 : carryUnits;
         
-        let workUnits = Math.floor((energy - extrasCost) / 100);
         workUnits = workUnits > 5 ? 5 : workUnits;
+        moveUnits = moveUnits > 15 ? 15 : moveUnits;
+        carryUnits = carryUnits > 24 ? 24 : carryUnits;
+        
         for (let i = 0; i < workUnits; i++) {
             bodyParts.push(WORK);
+        }
+        for (let i = 0; i < moveUnits; i++) {
+            bodyParts.push(MOVE);
+        }
+        for (let i = 0; i < carryUnits; i++) { 
+            bodyParts.push(CARRY);
         }
         
         return bodyParts;

@@ -22,12 +22,13 @@ Room.prototype.getSourceCount = function() {
 }
 
 Room.prototype.cleanSourceHarvesters = function() {
-    let sources = _.filter(creep.room.getSources(), source => 
+    let sources = _.filter(this.getSources(), source => 
         source.memory.harvester
         );
     if (sources.length <= 0) { return true; }
     
     for (i = 0; i < sources.length; i++) {
+        if (sources[i].memory.harvester) { continue; }
         let name = sources[i].memory.harvester;
         if (!Game.creeps[name]) {
             sources[i].removeHarvester();

@@ -19,8 +19,9 @@ var manageRole = {
         let role = this.getRole(creep.memory.role);
         if (!role) { return false; }
         
+        return role.run(creep);
         try {
-        	return role.run(creep);
+        	//return role.run(creep);
         } catch(e) {
         	if (Constant.DEBUG >= 2) { console.log('DEBUG - failed to run role: ' + creep.memory.role + ', error:\n' + e); }
         }

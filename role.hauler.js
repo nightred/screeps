@@ -193,14 +193,22 @@ var roleHauler = {
         if (getTargets.length > 0) {
             getTargets = _.sortBy(getTargets, structure => creep.pos.getRangeTo(structure));
             
-            return getTargets[0].id;
+            for (i = 0; i < getTargets.length; i++) {
+                if (!creep.isGoingToSet(getTargets[i])) {
+                    return getTargets[i].id;
+                }
+            }
         }
         
         getTargets = creep.getTargetExtentionEnergy('store');
         if (getTargets.length > 0) {
             getTargets = _.sortBy(getTargets, structure => creep.pos.getRangeTo(structure));
             
-            return getTargets[0].id;
+            for (i = 0; i < getTargets.length; i++) {
+                if (!creep.isGoingToSet(getTargets[i])) {
+                    return getTargets[i].id;
+                }
+            }
         }
         
         getTargets = creep.getTargetContainerEnergy('store', 'out', true);
@@ -220,9 +228,8 @@ var roleHauler = {
         }
         
         if (targets.length == 0 || !targets) { return false; }
-        
         targets = _.sortBy(targets, structure => creep.pos.getRangeTo(structure));
-        
+
         return targets[0].id;
     },
     
@@ -241,7 +248,13 @@ var roleHauler = {
         if (targets.length == 0 || !targets) { return false; }
         targets = _.sortBy(targets, structure => creep.pos.getRangeTo(structure));
         
-        return targets[0].id;
+        for (i = 0; i < targets.length; i++) {
+            if (!creep.isGoingToSet(targets[i])) {
+                return targets[i].id;
+            }
+        }
+        
+        return false;
     },
     
     /** @param {Creep} creep **/
