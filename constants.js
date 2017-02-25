@@ -50,20 +50,23 @@ var Constants = {
         'upgrader',
         'scout',
         'controller',
+        'remote.harvester',
         ],
     
     WORK_TYPES: [
         'repair',
         'build',
-        'refillTower',
+        'tower.refill',
         'harvestEnergy',
         'haul',
         'upgrade',
         'service',
-        'buildRoom',
+        'room.build',
         'signcontroller',
         'scout',
         'room.claim',
+        'room.reserve',
+        'remote.harvest',
         ],
         
     DIRECTIONS: {

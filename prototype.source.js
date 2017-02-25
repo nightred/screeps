@@ -5,6 +5,18 @@
  *
  */
  
+Source.prototype.setHarvester = function(creepName) {
+    this.memory.harvester = creepName;
+    
+    return true;
+}
+
+Source.prototype.removeHarvester = function() {
+    this.memory.harvester = false;
+
+    return true;
+}
+ 
 Source.prototype.getDropContainer = function() {
     if (this.memory.containerId == undefined) {
         this.memory.containerId = false;

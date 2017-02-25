@@ -72,7 +72,7 @@ var manageSpawnQueue = {
                 queue[i].name = name;
                 if (Constant.DEBUG >= 1) { console.log('INFO - spawning ' + queue[i].role + ', named ' + name + ' with ' + Game.creeps[name].body.length + ' parts for ' + cost + ' energy in ' + room.name); }
             }
-            if (energy < Constant.ENERGY_CREEP_SPAWN_MAX) { break; }
+            if (energy < Constant.ENERGY_CREEP_SPAWN_MIN) { break; }
         }
         
         return true;

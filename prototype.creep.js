@@ -6,12 +6,12 @@
  */
 
 Creep.prototype.moveToRoom = function(roomName) {
-    if (!Game.rooms[roomName]) { return false; }
+    if (!roomName) { return false; }
     if (this.room.name == roomName) { return false; }
     
     let target = new RoomPosition(25, 25, roomName);
     
-    return creep.moveTo(target, { range: 20, })
+    return this.moveTo(target, { range: 20, })
 }
 
 Creep.prototype.manageState = function() {
@@ -58,6 +58,12 @@ Creep.prototype.isCarryingEnergy = function() {
 }
 
 Creep.prototype.isDespawnWarning = function() {
+    if (this.memory.despawn) { return true; }
+    
+    if (this.memory.role == 'controller') {
+        return false;
+    }
+    
     return this.ticksToLive < Constant.CREEP_DESPAWN_TICKS;
 }
 
@@ -130,7 +136,7 @@ Creep.prototype.transferEnergy = function(target) {
     }
     
     if (this.transfer(target, RESOURCE_ENERGY) == ERR_NOT_IN_RANGE) {
-        this.moveTo(target, { range: 1, });
+        this.moveTo(target, { range: 1, reusePath: 10, });
         
         return false;
     } else {
@@ -149,7 +155,7 @@ Creep.prototype.withdrawEnergy = function(target) {
     }
     
     if (this.withdraw(target, RESOURCE_ENERGY) == ERR_NOT_IN_RANGE) {
-        this.moveTo(target, { range: 1, });
+        this.moveTo(target, { range: 1, reusePath: 10, });
         
         return false;
     } else {

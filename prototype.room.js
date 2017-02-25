@@ -21,6 +21,22 @@ Room.prototype.getSourceCount = function() {
     return this.memory.sourceCount;
 }
 
+Room.prototype.cleanSourceHarvesters = function() {
+    let sources = _.filter(creep.room.getSources(), source => 
+        source.memory.harvester
+        );
+    if (sources.length <= 0) { return true; }
+    
+    for (i = 0; i < sources.length; i++) {
+        let name = sources[i].memory.harvester;
+        if (!Game.creeps[name]) {
+            sources[i].removeHarvester();
+        }
+    }
+    
+    return true;
+}
+
 Room.prototype.getHarvestTarget = function() {
     let sources = [];
     
@@ -28,7 +44,8 @@ Room.prototype.getHarvestTarget = function() {
         let count = 0;
         for (let roomCreep of this.find(FIND_MY_CREEPS)) {
             if (roomCreep.memory.harvestTarget === source.id && 
-                roomCreep.memory.role == 'harvester') {
+                roomCreep.memory.role == 'harvester'
+                ) {
                 count++;
             }
         }

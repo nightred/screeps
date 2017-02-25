@@ -52,7 +52,7 @@ var manageWork = {
         
         refillTower: function(room) {
             if (!room) { return false; }
-            let task = 'refillTower';
+            let task = 'tower.refill';
             
             return this.addWork(this.findWork(room, task), task, room.name, 30);
         },
@@ -149,8 +149,8 @@ var manageWork = {
             tasks.indexOf(work.task) >= 0 &&
             (work.room == roomName ||
             work.spawnRoom == roomName ) &&
-            ((!work.multiCreep && work.creeps.length == 0) ||
-            (work.multiCreep && work.creeps.length < work.multiCreepLimit))
+            (work.creeps.length <= work.creepLimit ||
+            work.creeps.length == 0)
             ), work => work.priority);
         if (!targets.length > 0 || !targets) { return false; }
         
@@ -165,8 +165,8 @@ var manageWork = {
 
         let targets = _.sortBy(_.filter(this.memory.workQueue, work => 
             tasks.indexOf(work.task) >= 0 &&
-            ((!work.multiCreep && work.creeps.length == 0) ||
-            (work.multiCreep && work.creeps.length < work.multiCreepLimit))
+            (work.creeps.length <= work.creepLimit ||
+            work.creeps.length == 0)
             ), work => work.priority);
         if (!targets.length > 0 || !targets) { return false; }
         
@@ -219,9 +219,9 @@ var manageWork = {
 
             return false;
         }
-        if (!work.multiCreep) {
+        if (!work.creepLimit) {
             if (work.creeps.length > 0) { return false; }
-        } else if (work.creeps.length >= work.multiCreepLimit) { 
+        } else if (work.creeps.length >= work.creepLimit) { 
             return false; 
         }
         
@@ -266,6 +266,7 @@ var manageWork = {
             tick: Game.time,
             task: task,
             creeps: [],
+            creepLimit: 1,
         };
         
         if (args.targetId) { queueItem.targetId = args.targetId; }
@@ -273,11 +274,7 @@ var manageWork = {
         if (args.spawnRoom) { queueItem.spawnRoom = args.spawnRoom; }
         if (args.message) { queueItem.message = args.message; }
         if (args.creepLimit) { queueItem.creepLimit = args.creepLimit; }
-        if (args.multiCreep) {
-            queueItem.multiCreep = args.multiCreep;
-            queueItem.multiCreepLimit = args.multiCreepLimit;
-        }
-        
+
         this.memory.workQueue[queueId] = queueItem;
         if (Constant.DEBUG >= 3) { console.log('VERBOSE - work adding task: ' + queueItem.task + ', id: ' + queueId + ', room: ' + queueItem.room); }
         
@@ -341,13 +338,16 @@ var manageWork = {
     },
     
     getTask: function(task) {
-        if (Constant.WORK_TYPES.indexOf(task) < 0) { return false; }
+        if (Constant.WORK_TYPES.indexOf(task) < 0) { 
+            if (Constant.DEBUG >= 2) { console.log('DEBUG - tried to load invalid work task: ' + task); }
+            return false;
+        }
         let work = false;
         
         try {
             work = require('work.' + task);
         } catch(e) {
-            if (Constant.DEBUG >= 2) { console.log('DEBUG - failed to load work task: ' + work.task + ', error:\n' + e); }
+            if (Constant.DEBUG >= 2) { console.log('DEBUG - failed to load work task: ' + task + ', error:\n' + e); }
         }
         
         return work;

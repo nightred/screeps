@@ -8,7 +8,7 @@
 var roleService = {
     
     workTypes: [
-        'refillTower',
+        'tower.refill',
         'repair',
         'build',
         'signcontroller',
@@ -41,17 +41,17 @@ var roleService = {
     
     getBody: function(energy) {
         let workUnits = Math.floor((energy * 0.5) / 100);  // 100
-        let moveUnits = Math.floor((energy * 0.3) / 50);  // 50
-        let carryUnits = Math.floor((energy * 0.2) / 50); // 50
+        let moveUnits = Math.floor((energy * 0.2) / 50);  // 50
+        let carryUnits = Math.floor((energy * 0.3) / 50); // 50
         let bodyParts = [];
         
         workUnits = workUnits < 1 ? 1 : workUnits;
         moveUnits = moveUnits < 1 ? 1 : moveUnits;
         carryUnits = carryUnits < 1 ? 1 : carryUnits;
-    
-        workUnits = workUnits > 8 ? 8 : workUnits;
-        moveUnits = moveUnits > 10 ? 10 : moveUnits;
-        carryUnits = carryUnits > 6 ? 6 : carryUnits;
+        
+        workUnits = workUnits > 5 ? 5 : workUnits;
+        moveUnits = moveUnits > 6 ? 6 : moveUnits;
+        carryUnits = carryUnits > 8 ? 8 : carryUnits;
         
         for (let i = 0; i < workUnits; i++) {
             bodyParts.push(WORK);

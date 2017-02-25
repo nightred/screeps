@@ -76,8 +76,8 @@ var roleHauler = {
     getEnergyMove: function(creep) {
         if (!creep) { return false; }
         
-        if (this.doEmptyInContainers(creep)) { return true; }
         if (this.doFillSpawn(creep)) { return true; }
+        if (this.doEmptyInContainers(creep)) { return true; }
         if (this.doFillOutContainers(creep)) { return true; }
         
         return false;

@@ -10,16 +10,18 @@ var workRoomClaim = {
     run: function(creep, work) {
         if (!creep) { return false; }
         if (!work) { return false; }
+        creep.memory.travelTime = creep.memory.travelTime || 0;
         
         if (creep.room.name != work.room) {
             creep.moveToRoom(work.room);
+            creep.memory.travelTime++;
+            
+            return true;
         }
         
-        if (!Game.rooms[work.room] ||
-            !Game.rooms[work.room].controller) { return creep.removeWork(); }
-        let target = Game.rooms[work.room].controller;
+        if (!creep.room.controller) { return creep.removeWork(); }
+        let target = creep.room.controller;
         
-        if (this.checkWork(target)) { return true;}
         this.doWork(creep, target);
         
         return true;
@@ -27,20 +29,21 @@ var workRoomClaim = {
     
     doManage: function(work) {
         if (!work) { return false; }
-        
-        if (!Game.rooms[work.room]) { return creep.removeWork(); }
-        
-        if (work.creeps.length < 1 &&
-            QSpawn.getQueueInRoomByRole(work.spawnRoom, 'claimer').length < 1) {
-            QSpawn.addQueue(work.spawnRoom, 'claimer', 10);
-        } else if (work.creeps[0] &&
-            QSpawn.getQueueInRoomByRole(work.spawnRoom, 'claimer').length < 1) {
-                let creep = Game.creeps[work.creeps[0]];
-                
-                if (creep.ticksToLive < 8) {
-                    //
+
+        if (work.creeps.length == 0 && QSpawn.getQueueInRoomByRole(work.spawnRoom, 'controller').length == 0) {
+            QSpawn.addQueue(work.spawnRoom, 'controller', 10);
+        }
+        if (work.creeps.length == 1 && QSpawn.getQueueInRoomByRole(work.spawnRoom, 'controller').length == 0) {
+            let controller = Game.rooms[work.room].controller;
+            let creep = Game.creeps[work.creeps[0]];
+            let life = creep.ticksToLive - creep.memory.travelTime;
+            if (life <= 0 && creep.room.name == work.room && controller) {
+                if (controller.reservation) {
+                    if (controller.reservation.ticksToEnd < 4000) {
+                        QSpawn.addQueue(work.spawnRoom, 'controller', 10);
+                    }
                 }
-            
+            }
         }
 
         return true;
@@ -52,15 +55,8 @@ var workRoomClaim = {
         
         if (creep.reserveController(target) == ERR_NOT_IN_RANGE) {
             creep.moveTo(target, { range: 1, });
+            creep.memory.travelTime++;
         }
-        
-        return true;
-    },
-    
-    checkWork: function(target) {
-        if (!target) { return false; }
-        if (!target.reservation) { return; false; }
-        if (target.reservation.ticksToEnd < 4000) { return; false; }
         
         return true;
     },

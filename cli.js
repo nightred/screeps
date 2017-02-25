@@ -12,6 +12,27 @@
 
 var Cli = {
     
+    creep: {
+        
+        despawn: function(creepName) {
+            if (!creepName) {
+                console.log('ERROR - command need the following values: creepName');
+                return false;
+            }
+            
+            if (!Game.creeps[creepname]) {
+                console.log('ERROR - ' + creepName + ' is not a valid creep');
+                return false;
+            }
+            
+            Game.creeps[creepname].memory.despawn = true;
+            console.log('RESULT - ' + creepName + ' has been set to despawn');
+            
+            return true;
+        }
+        
+    },
+    
     report: {
         
         run: function() {
@@ -93,13 +114,13 @@ var Cli = {
             return Work.addWork('service', roomName, 24, { managed: true, creepLimit: creepLimit });
         },
         
-        buildRoom: function(roomName) {
+        roombuild: function(roomName) {
             if (!roomName) {
                 console.log('ERROR - command need the following values: roomName');
                 return false;
             }
             
-            return Work.addWork('buildRoom', roomName, 10, { managed: true, });
+            return Work.addWork('room.build', roomName, 10, { managed: true, });
         },
         
         scout: function(roomName) {
@@ -109,6 +130,20 @@ var Cli = {
             }
             
             return Work.addWork('scout', roomName, 30);
+        },
+        
+        reserve: function(roomName, spawnRoom) {
+            if (!roomName || !spawnRoom) {
+                console.log('ERROR - command need the following values: roomName, spawnRoom');
+                return false;
+            }
+            let args = { 
+                spawnRoom: spawnRoom, 
+                managed: true,
+                creepLimit: 2,
+            };
+            
+            return Work.addWork('room.reserve', roomName, 10, args);
         },
         
     },

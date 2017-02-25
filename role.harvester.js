@@ -52,6 +52,7 @@ var roleHarvester = {
         bodyParts.push(CARRY);
         
         let workUnits = Math.floor((energy - extrasCost) / 100);
+        workUnits = workUnits < 1 ? 1 : workUnits;
         workUnits = workUnits > 5 ? 5 : workUnits;
         for (let i = 0; i < workUnits; i++) {
             bodyParts.push(WORK);
