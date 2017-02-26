@@ -63,7 +63,7 @@ module.exports.loop = function () {
 
         manageRole.doRole(creep);
     }
-
+    Memory.world = Memory.world || {};
     Memory.world.reportTime = Memory.world.reportTime || 0;
     if ((Memory.world.reportTime + Constant.REPORT_TICKS) < Game.time) {
         Memory.world.reportTime = Game.time;
