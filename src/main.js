@@ -13,6 +13,11 @@ require('prototype.room');
 require('prototype.structureContainer');
 require('prototype.roomPosition');
 
+// load the queue systems
+var Queues          = require('queues');
+var spawnQueue      = require('queue.spawn');
+var workQueue       = require('queue.work');
+
 // global methods
 global.Constant     = require('constants');
 global.cli          = require('cli');
@@ -27,10 +32,14 @@ var manageTower     = require('manage.tower');
 
 module.exports.loop = function () {
 
+    Game.Queues = new Queues;
+    Game.Queues.spawn = new spawnQueue;
+    Game.Queues.work = new workQueue;
+
     if (!Constant.ACTIVE) {
         return false;
     }
-    
+
     Work.init();
     QSpawn.init();
     manageCreep.init();
