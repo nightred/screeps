@@ -13,16 +13,14 @@ require('prototype.room');
 require('prototype.structureContainer');
 require('prototype.roomPosition');
 
+// global methods
+global.Constant     = require('constants');
+global.cli          = require('cli');
+
 // load the queue systems
 var Queues          = require('queues');
 var spawnQueue      = require('queue.spawn');
 var workQueue       = require('queue.work');
-
-// global methods
-global.Constant     = require('constants');
-global.cli          = require('cli');
-global.Work         = require('manage.work');
-global.QSpawn       = require('manage.spawnQueue');
 
 // managment modules
 var manageMemory    = require('manage.memory');
@@ -35,6 +33,8 @@ module.exports.loop = function () {
     Game.Queues = new Queues;
     Game.Queues.spawn = new spawnQueue;
     Game.Queues.work = new workQueue;
+
+    Memory.world = Memory.world || {};
 
     if (!Constant.ACTIVE) {
         return false;
@@ -72,7 +72,7 @@ module.exports.loop = function () {
 
         manageRole.doRole(creep);
     }
-    Memory.world = Memory.world || {};
+
     Memory.world.reportTime = Memory.world.reportTime || 0;
     if ((Memory.world.reportTime + Constant.REPORT_TICKS) < Game.time) {
         Memory.world.reportTime = Game.time;

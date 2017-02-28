@@ -11,11 +11,11 @@
  */
 
 var Constants = {
-    
+
     // debug: 0 off, 1 info, 2 debug, 3 verbose
-    DEBUG:                          3, 
+    DEBUG:                          3,
     ACTIVE:                         true,
-    
+
     ENERGY_ROOM_WITHDRAW_MIN:       200,
     ENERGY_CREEP_SPAWN_MIN:         200,
     ENERGY_TOWER_MIN:               300,
@@ -23,18 +23,18 @@ var Constants = {
     ENERGY_CONTAINER_MIN_PERCENT:   0.1 ,
     ENERGY_CONTAINER_MIN_WITHDRAW:  100,
     ENERGY_STORAGE_MIN_WITHDRAW:    100,
-    
+
     CONTROLLER_WITHDRAW_LEVEL:      2,
-    
+
     WORK_FIND_WAIT:                 5,
     MANAGE_WAIT_TICKS:              5,
     REPORT_TICKS:                   500,
-    
+
     REPAIR_HIT_WORK_MIN:            0.80,
     REPAIR_HIT_WORK_MAX:            0.95,
     RAMPART_HIT_MAX:                100000,
     WALL_HIT_MAX:                   100000,
-    
+
     REFILL_TOWER_MAX:               0.90,
     REFILL_TOWER_MIN:               0.50,
 
@@ -42,7 +42,10 @@ var Constants = {
     CREEP_IDLE_TIME:                10,
 
     HARVESTERS_PER_SOURCE:          1,
-    
+
+    QUEUE_WORK:                     'work',
+    QUEUE_SPAWN:                    'spawn',
+
     ROLE_TYPES: [
         'harvester',
         'hauler',
@@ -52,8 +55,8 @@ var Constants = {
         'controller',
         'remote.harvester',
         ],
-    
-    WORK_TYPES: [
+
+    WORK_TASKS: [
         'repair',
         'build',
         'tower.refill',
@@ -68,7 +71,7 @@ var Constants = {
         'room.reserve',
         'remote.harvest',
         ],
-        
+
     DIRECTIONS: {
         1: [0, -1],
         2: [1, -1],
@@ -79,7 +82,7 @@ var Constants = {
         7: [-1, 0],
         8: [-1, -1],
     },
-    
+
 };
 
 module.exports = Constants;

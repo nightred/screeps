@@ -41,6 +41,7 @@ Queues.prototype.delRecord = function(id) {
     if (isNaN(id)) { return -1; }
     if (!this.queue[id]) { return true; }
 
+    if (Constant.DEBUG >= 3) { console.log('VERBOSE - queue record removed id: ' + id); }
     delete this.queue[id];
 
     return true;
