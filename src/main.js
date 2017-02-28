@@ -23,47 +23,24 @@ var spawnQueue      = require('queue.spawn');
 var workQueue       = require('queue.work');
 
 // managment modules
-var manageMemory    = require('manage.memory');
+var manageRooms     = require('manage.rooms');
 var manageRole      = require('manage.role');
 var manageCreep     = require('manage.creep');
-var manageTower     = require('manage.tower');
 
 module.exports.loop = function () {
+    Memory.world = Memory.world || {};
 
     Game.Queues = new Queues;
     Game.Queues.spawn = new spawnQueue;
     Game.Queues.work = new workQueue;
 
-    Memory.world = Memory.world || {};
-
-    if (!Constant.ACTIVE) {
-        return false;
-    }
-
-    Work.init();
-    QSpawn.init();
     manageCreep.init();
-
-    for (let name in Game.rooms) {
-        if (!Game.rooms[name].controller) { continue; }
-        if (Game.rooms[name].controller.my) {
-            let room = Game.rooms[name];
-            manageMemory.run(room);
-            manageTower.run(room);
-            Work.createWork.run(room);
-            QSpawn.run(room);
-        }
-    }
-
-    QSpawn.doManage();
-    Work.doManage();
+    Game.Queues.work.doManageTasks();
+    manageRooms.doManage();
 
     for(let name in Game.creeps) {
         let creep = Game.creeps[name];
-
-        if (!creep.memory.role || creep.spawning) {
-            continue;
-        }
+        if (!creep.memory.role || creep.spawning) { continue; }
 
         if (creep.isDespawnWarning()) {
             manageCreep.doDespawn(creep);
@@ -71,12 +48,6 @@ module.exports.loop = function () {
         }
 
         manageRole.doRole(creep);
-    }
-
-    Memory.world.reportTime = Memory.world.reportTime || 0;
-    if ((Memory.world.reportTime + Constant.REPORT_TICKS) < Game.time) {
-        Memory.world.reportTime = Game.time;
-        cli.report.run();
     }
 
 }

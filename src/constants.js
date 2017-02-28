@@ -14,7 +14,6 @@ var Constants = {
 
     // debug: 0 off, 1 info, 2 debug, 3 verbose
     DEBUG:                          3,
-    ACTIVE:                         true,
 
     ENERGY_ROOM_WITHDRAW_MIN:       200,
     ENERGY_CREEP_SPAWN_MIN:         200,

@@ -1,26 +1,33 @@
 /*
- * Memory managment of objects
+ * Rooms managment
  *
- * Creates memory of objects in a room
- * Updates the room memory on a cycle
- *
- * Memory Types
- *  StructuresContainer, Sources
+ * runs proccesses to manage each room
  *
  */
 
-var manageMemory = {
-    
-    run: function(room) {
-        
-        this.doContainers(room);
-        
+var manageTower     = require('manage.tower');
+
+var manageRooms = {
+
+    doManage: function() {
+
+        for (let name in Game.rooms) {
+            if (!Game.rooms[name].controller) { continue; }
+            if (Game.rooms[name].controller.my) {
+                let room = Game.rooms[name];
+
+                this.doContainers(room);
+                manageTower.run(room);
+                Game.Queues.spawn.doSpawn(room);
+            }
+        }
+
         return true;
     },
 
     doContainers: function(room) {
         if (!room) {return false; }
-        
+
         if (room.memory.containersMemory < (Game.time - 20) || !room.memory.containersMemory) {
             for (let containerId in room.memory.structureContainers) {
                 if (!Game.getObjectById(containerId)) {
@@ -28,23 +35,23 @@ var manageMemory = {
                     if (Constant.DEBUG >= 1) { console.log('INFO - clearing non-existant container: ' + containerId); }
                 }
             }
-            
+
             var targets = room.find(FIND_STRUCTURES, {
                 filter: (structure) => {
                     return structure.structureType == STRUCTURE_CONTAINER;
                 }
             });
-            
+
             for (let target of targets) {
                 if (!target.memory.type) {
                     target.memory.type = 'default';
                 }
             }
-            
+
             room.memory.containersMemory = Game.time;
         }
     },
-    
+
 }
 
-module.exports = manageMemory;
+module.exports = manageRooms;
