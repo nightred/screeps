@@ -8,68 +8,79 @@
  *  harvester, upgrader, builder, hauler, repairer
  *
  */
- 
+
+// managment modules
+var manageRole      = require('manage.role');
+
 var manageCreep = {
-    
-    init: function() {
+
+    cleanCreeps: function() {
         for(let name in Memory.creeps) {
             if(!Game.creeps[name]) {
                 if (Memory.creeps[name].workId) {
                     Work.leaveWork(name, Memory.creeps[name].workId);
                 }
                 if (Constant.DEBUG >= 2) { console.log('DEBUG - clearing non-existant creep memory: ' + Memory.creeps[name].role + ' ' + name); }
-                
+
                 delete Memory.creeps[name];
             }
         }
     },
-    
-    run: function(room) {
-        // run
-    },
-    
+
     doManage: function() {
-        // manage
+        this.cleanCreeps();
+
+        for(let name in Game.creeps) {
+            let creep = Game.creeps[name];
+            if (!creep.memory.role || creep.spawning) { continue; }
+            if (creep.isDespawnWarning()) {
+                this.doDespawn(creep);
+                continue;
+            }
+
+            manageRole.doRole(creep);
+        }
+
     },
 
     doDespawn: function(creep) {
         if (!creep) { return false; }
-        
+
         if (!creep.memory.despawn || creep.memory.despawn == undefined) {
             creep.setDespawn();
         }
-        
+
     	let target = Game.getObjectById(creep.room.getSpawn());
     	if (!target) { return false; }
-        
+
         if (creep.room.memory.deSpawnContainerId == undefined) {
             creep.room.memory.deSpawnContainerId = false;
         }
-        
+
         if (creep.room.memory.deSpawnContainerId) {
             creep.memory.goingTo = creep.room.memory.deSpawnContainerId;
         }
-        
+
         if (!creep.memory.goingTo || creep.memory.goingTo == undefined) {
             this.getDespawnContainer(creep);
         } else {
             this.doDespawnOnContainer(creep);
         }
-        
+
         return true;
     },
-    
+
     doDespawnOnContainer: function(creep) {
         if (!creep) { return false; }
-        
+
         let target = Game.getObjectById(creep.memory.goingTo);
-        if (!target) { 
+        if (!target) {
             creep.memory.goingTo = false;
             return false;
         }
-        
+
         if (creep.pos.x == target.pos.x && creep.pos.y == target.pos.y) {
-            if (creep.room.memory.deSpawnContainerId && creep.room.memory.spawnId) { 
+            if (creep.room.memory.deSpawnContainerId && creep.room.memory.spawnId) {
                 if (Constant.DEBUG >= 1) { console.log("INFO - recycling " + creep.memory.role + " " + creep.name); }
                 let roomSpawn = Game.getObjectById(creep.room.getSpawn());
                 roomSpawn.recycleCreep(creep);
@@ -77,26 +88,26 @@ var manageCreep = {
                 creep.suicide();
             }
         }
-        
+
         creep.moveTo(target.pos.x, target.pos.y);
-    
+
         return true;
     },
-    
+
     getDespawnContainer: function(creep) {
         if (!creep) { return false; }
-        
+
         let targets = creep.getTargetContainerEnergy('store', 'all');
-        if (targets.length == 0) { 
+        if (targets.length == 0) {
             creep.suicide();
-            
+
             return false;
         }
         targets = _.sortBy(targets, structure => creep.pos.getRangeTo(structure));
-        
+
         return creep.setGoingTo(targets[0]);
     },
-    
+
 };
 
 module.exports = manageCreep;

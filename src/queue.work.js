@@ -77,7 +77,7 @@ WorkQueue.prototype.getWork = function(tasks, args) {
 
     return _sortBy(_.filter(this.getQueue(), record =>
         tasks.indexOf(record.task) >= 0 &&
-        (!args.room || record.rooms.indexOf(args.room) >= 0) &&
+        (!args.workRooms || record.workRooms.indexOf(args.rooms) >= 0) &&
         record.creeps.length < record.creepLimit
     ), record => record.priority);
 };
@@ -120,7 +120,9 @@ WorkQueue.prototype.isQueued = function(args) {
 
 WorkQueue.prototype.addRecord(args) {
     if (!args) { return -1; }
-    if (!Array.isArray(args.rooms)) { return -1; }
+    if (!Array.isArray(args.workRooms)) { return -1; }
+    if (!Array.isArray(args.resupplyRooms)) { return -1; }
+    if (!Array.isArray(args.spawnRooms)) { return -1; }
     if (Constant.WORK_TASKS.indexof(args.task) < 0) { return -1; }
     args.priority = args.priority || 100;
     args.creepLimit = args.creepLimit || 1;
@@ -128,7 +130,9 @@ WorkQueue.prototype.addRecord(args) {
     let record = {
         queue: Constant.QUEUE_WORK,
         task: args.task,
-        rooms: args.rooms,
+        workRooms: args.workRooms,
+        resupplyRooms: args.resupplyRooms,
+        spawnRooms: args.spawnRooms,
         priority: args.priority,
         creeps: [],
         creepLimit: args.creepLimit,
@@ -137,7 +141,7 @@ WorkQueue.prototype.addRecord(args) {
     if (args.message) { record.message = args.message; }
     if (args.creepLimit) { record.creepLimit = args.creepLimit; }
 
-    if (Constant.DEBUG >= 3) { console.log('VERBOSE - work queue adding record, task: ' + record.task + ', room: [' + record.rooms + '], priority: ' + record.priority); }
+    if (Constant.DEBUG >= 3) { console.log('VERBOSE - work queue adding record, task: ' + record.task + ', priority: ' + record.priority); }
     return Game.Queues.addRecord(record);
 };
 

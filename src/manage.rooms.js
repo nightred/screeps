@@ -5,6 +5,7 @@
  *
  */
 
+// managment modules
 var manageTower     = require('manage.tower');
 
 var manageRooms = {
@@ -17,8 +18,8 @@ var manageRooms = {
                 let room = Game.rooms[name];
 
                 this.doContainers(room);
-                manageTower.run(room);
                 Game.Queues.spawn.doSpawn(room);
+                manageTower.run(room);
             }
         }
 

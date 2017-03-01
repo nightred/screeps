@@ -77,7 +77,14 @@ SpawnQueue.prototype.doSpawn = function(room) {
 
         for (let s = 0; s < spawns.length; s++) {
             if (spawns[s].spawning) { continue; }
-            name = let body = this.roles[records[r].role].getBody(body);
+
+            let args = {};
+            if (records[r].creepArgs) {
+                for (let item in records[r].creepArgs) {
+                    args[item] = records[r].creepArgs[item];
+                };
+            }
+            name = this.roles[records[r].role].getBody(spawns[s], body, args);
 
             if (name != undefined && !(name < 0)) {
                 energy -= cost;
@@ -132,6 +139,7 @@ SpawnQueue.prototype.addRecord = function(args) {
         priority: args.priority,
     };
     if (args.minSize) { record.minSize = args.minSize; }
+    if (args.creepArgs) { record.creepArgs = args.creepArgs; }
 
     if (Constant.DEBUG >= 3) { console.log('VERBOSE - spawn queue adding record, role: ' + record.role + ', rooms: [' + record.rooms + '], priority: ' + record.priority); }
     return Game.Queues.addRecord(record);

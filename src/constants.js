@@ -38,37 +38,17 @@ var Constants = {
     REFILL_TOWER_MIN:               0.50,
 
     CREEP_DESPAWN_TICKS:            40,
-    CREEP_IDLE_TIME:                10,
-
-    HARVESTERS_PER_SOURCE:          1,
+    CREEP_IDLE_TIME:                5,
 
     QUEUE_WORK:                     'work',
     QUEUE_SPAWN:                    'spawn',
 
     ROLE_TYPES: [
-        'harvester',
-        'hauler',
-        'service',
-        'upgrader',
-        'scout',
-        'controller',
-        'remote.harvester',
+        'miner',
         ],
 
     WORK_TASKS: [
-        'repair',
-        'build',
-        'tower.refill',
-        'harvestEnergy',
-        'haul',
-        'upgrade',
-        'service',
-        'room.build',
-        'signcontroller',
-        'scout',
-        'room.claim',
-        'room.reserve',
-        'remote.harvest',
+        'mine',
         ],
 
     DIRECTIONS: {

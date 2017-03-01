@@ -19,35 +19,24 @@ global.cli          = require('cli');
 
 // load the queue systems
 var Queues          = require('queues');
-var spawnQueue      = require('queue.spawn');
-var workQueue       = require('queue.work');
+var SpawnQueue      = require('queue.spawn');
+var WorkQueue       = require('queue.work');
+var EnergyNet       = require('energy.net')
 
 // managment modules
 var manageRooms     = require('manage.rooms');
-var manageRole      = require('manage.role');
 var manageCreep     = require('manage.creep');
 
 module.exports.loop = function () {
     Memory.world = Memory.world || {};
 
-    Game.Queues = new Queues;
-    Game.Queues.spawn = new spawnQueue;
-    Game.Queues.work = new workQueue;
+    Game.Queues         = new Queues;
+    Game.Queues.spawn   = new SpawnQueue;
+    Game.Queues.work    = new WorkQueue;
+    Game.energyNet      = new EnergyNet
 
-    manageCreep.init();
     Game.Queues.work.doManageTasks();
     manageRooms.doManage();
-
-    for(let name in Game.creeps) {
-        let creep = Game.creeps[name];
-        if (!creep.memory.role || creep.spawning) { continue; }
-
-        if (creep.isDespawnWarning()) {
-            manageCreep.doDespawn(creep);
-            continue;
-        }
-
-        manageRole.doRole(creep);
-    }
+    manageCreeps.doManage();
 
 }
