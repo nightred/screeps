@@ -18,13 +18,14 @@ var manageCreep = {
         for(let name in Memory.creeps) {
             if(!Game.creeps[name]) {
                 if (Memory.creeps[name].workId) {
-                    Work.leaveWork(name, Memory.creeps[name].workId);
+                    Game.Queues.work.removeCreep(name, Memory.creeps[name].workId);
                 }
                 if (Constant.DEBUG >= 2) { console.log('DEBUG - clearing non-existant creep memory: ' + Memory.creeps[name].role + ' ' + name); }
-
                 delete Memory.creeps[name];
             }
         }
+
+        return true;
     },
 
     doManage: function() {
@@ -53,15 +54,11 @@ var manageCreep = {
     	let target = Game.getObjectById(creep.room.getSpawn());
     	if (!target) { return false; }
 
-        if (creep.room.memory.deSpawnContainerId == undefined) {
-            creep.room.memory.deSpawnContainerId = false;
+        if (creep.room.getDespawnContainer()) {
+            creep.memory.goingTo = creep.room.getDespawnContainer();
         }
 
-        if (creep.room.memory.deSpawnContainerId) {
-            creep.memory.goingTo = creep.room.memory.deSpawnContainerId;
-        }
-
-        if (!creep.memory.goingTo || creep.memory.goingTo == undefined) {
+        if (!creep.memory.goingTo) {
             this.getDespawnContainer(creep);
         } else {
             this.doDespawnOnContainer(creep);

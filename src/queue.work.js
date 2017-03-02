@@ -51,7 +51,7 @@ WorkQueue.prototype.doManageTasks = function() {
     if (!taskList || taskList.length < 0) { return false; }
 
     for (let i =0; i < taskList.length; i++) {
-        this.tasks[taskList[i].task].doManage(taskList[i]);
+        this.tasks[taskList[i].task].doTaskManage(taskList[i]);
     }
 
     return true;
@@ -71,13 +71,14 @@ WorkQueue.prototype.getQueue = function() {
     return Game.Queues.getQueue({queue: Constant.QUEUE_WORK, });
 };
 
-WorkQueue.prototype.getWork = function(tasks, args) {
+WorkQueue.prototype.getWork = function(tasks, name, args) {
     if (!Array.isArray(tasks)) { return -1; }
     args = args | {};
 
     return _sortBy(_.filter(this.getQueue(), record =>
         tasks.indexOf(record.task) >= 0 &&
-        (!args.workRooms || record.workRooms.indexOf(args.rooms) >= 0) &&
+        (!args.room || record.workRooms.indexOf(args.room) >= 0) &&
+        record.creeps.indexOf(name) == -1 &&
         record.creeps.length < record.creepLimit
     ), record => record.priority);
 };
@@ -87,6 +88,7 @@ WorkQueue.prototype.addCreep = function(name, id) {
     if (isNaN(id)) { return -1; }
     if (!this.queue[id]) { return -1; }
     if (!this.queue[id].creeps) { return -1; }
+    if (this.queue[id].creeps.indexOf(name) >= 0) { return true; }
 
     this.queue[id].creeps.push(name);
 
@@ -98,6 +100,7 @@ WorkQueue.prototype.removeCreep = function(name, id) {
     if (isNaN(id)) { return -1; }
     if (!this.queue[id]) { return -1; }
     if (!this.queue[id].creeps) { return -1; }
+    if (this.queue[id].creeps.indexOf(name) == -1) { return true; }
 
     let record = this.queue[id];
     for (let i = 0; i < record.creeps.length; i++) {

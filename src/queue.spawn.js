@@ -71,21 +71,20 @@ SpawnQueue.prototype.doSpawn = function(room) {
             if (energy < records[r].minSize) { continue; }
         }
 
-        let body = this.roles[records[r].role].getBody({energy: energy, });
+        let args = {};
+        if (records[r].creepArgs) {
+            for (let item in records[r].creepArgs) {
+                args[item] = records[r].creepArgs[item];
+            };
+        }
+
+        let body = this.roles[records[r].role].getBody(energy, args);
         let cost = this.getBodyCost(body);
-        let name = undefined;
 
         for (let s = 0; s < spawns.length; s++) {
             if (spawns[s].spawning) { continue; }
 
-            let args = {};
-            if (records[r].creepArgs) {
-                for (let item in records[r].creepArgs) {
-                    args[item] = records[r].creepArgs[item];
-                };
-            }
-            name = this.roles[records[r].role].getBody(spawns[s], body, args);
-
+            let name = this.roles[records[r].role].doSpawn(spawns[s], body, args);
             if (name != undefined && !(name < 0)) {
                 energy -= cost;
                 records[r].spawned = true;

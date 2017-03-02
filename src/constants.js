@@ -49,6 +49,7 @@ var Constants = {
 
     WORK_TASKS: [
         'mine',
+        'director.mine',
         ],
 
     DIRECTIONS: {
