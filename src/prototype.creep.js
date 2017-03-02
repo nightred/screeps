@@ -140,17 +140,14 @@ Creep.prototype.removeWork = function() {
 Creep.prototype.transferEnergy = function(target) {
     if (!target) {
         this.memory.goingTo = false;
-
         return false;
     }
 
     if (this.transfer(target, RESOURCE_ENERGY) == ERR_NOT_IN_RANGE) {
         this.moveTo(target, { range: 1, reusePath: 10, });
-
         return false;
     } else {
         this.memory.goingTo = false;
-        this.memory.blockContainer = false;
     }
 
     return true;
@@ -159,20 +156,14 @@ Creep.prototype.transferEnergy = function(target) {
 Creep.prototype.withdrawEnergy = function(target) {
     if (!target) {
         this.memory.goingTo = false;
-
         return false;
     }
 
     if (this.withdraw(target, RESOURCE_ENERGY) == ERR_NOT_IN_RANGE) {
         this.moveTo(target, { range: 1, reusePath: 10, });
-
         return false;
     } else {
         this.memory.goingTo = false;
-
-        if (target.structureType == STRUCTURE_CONTAINER) {
-            target.withdrawnEnergy(this.carryCapacity - this.carry[RESOURCE_ENERGY]);
-        }
     }
 
     return true;
@@ -192,20 +183,52 @@ Creep.prototype.setGoingTo = function(target, leaveRoom) {
     }
 
     this.memory.goingTo = target.id;
-
     return true;
 }
 
 Creep.prototype.isGoingToSet = function(target) {
     for (let roomCreep of this.room.find(FIND_MY_CREEPS)) {
         if (roomCreep.memory.goingTo == target.id &&
-            roomCreep.memory.role == this.memory.role
-            ) {
+            roomCreep.memory.role == this.memory.role) {
             return true;
         }
     }
     return false;
 }
+
+Creep.prototype.doEmptyEnergy = function(types) {
+    if (!Array.isArray(types)) { return -1; }
+
+    if (!this.memory.goingTo) {
+        let target = Game.energyNet.getStore(this.room, this.carry[RESOURCE_ENERGY], types);
+        if (!target) {
+            this.memory.idleStart = Game.time;
+            this.say('💤');
+            return true;
+        }
+        this.setGoingTo(target);
+    }
+
+    this.transferEnergy(Game.getObjectById(this.memory.goingTo));
+    return true;
+};
+
+Creep.prototype.doFillEnergy = function(types) {
+    if (!Array.isArray(types)) { return -1; }
+
+    if (!this.memory.goingTo) {
+        let target = Game.energyNet.getWithdraw(this.room, (this.carrycapacity - _.sum(this.carry), types);
+        if (!target) {
+            this.memory.idleStart = Game.time;
+            this.say('💤');
+            return true;
+        }
+        this.setGoingTo(target);
+    }
+
+    this.withdrawEnergy(Game.getObjectById(this.memory.goingTo));
+    return true;
+};
 
 Creep.prototype.getTargetTowerEnergy = function(useMode) {
     useMode = typeof useMode !== 'undefined' ? useMode : 'store';

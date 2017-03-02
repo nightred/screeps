@@ -22,7 +22,7 @@ var roleTemplate = {
     /**
     * The locations that energy can be taken from
     **/
-    refillEnergy: [
+    energyTargets: [
         'spawn',
         'extention',
         'container',
@@ -62,8 +62,8 @@ var roleTemplate = {
                 if (Constant.DEBUG >= 2) { console.log('DEBUG - do work failed for role: ' + this.memory.role + ', name: ' + this.name); }
             }
         } else {
-            if (!creep.doRefillEnergy(this.refillEnergy)) {
-                if (Constant.DEBUG >= 2) { console.log('DEBUG - do restock failed for role: ' + this.memory.role + ', name: ' + this.name); }
+            if (!creep.doFillEnergy(this.energyTargets)) {
+                if (Constant.DEBUG >= 2) { console.log('DEBUG - do fill energy failed for role: ' + this.memory.role + ', name: ' + this.name); }
             }
         }
 

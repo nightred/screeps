@@ -22,7 +22,7 @@ var roleRemoteHarvester = {
     /**
     * The locations that energy can be stored
     **/
-    fillEnergy: [
+    energyTargets: [
         'spawn',
         'extention',
         'container',
@@ -60,14 +60,19 @@ var roleRemoteHarvester = {
                 if (Constant.DEBUG >= 2) { console.log('DEBUG - do work failed for role: ' + this.memory.role + ', name: ' + this.name); }
             }
         } else {
-            if (!creep.doFillEnergy(this.fillEnergy)) {
-                if (Constant.DEBUG >= 2) { console.log('DEBUG - do restock failed for role: ' + this.memory.role + ', name: ' + this.name); }
+            if (!creep.doEmptyEnergy(this.energyTargets)) {
+                if (Constant.DEBUG >= 2) { console.log('DEBUG - do empty energy failed for role: ' + this.memory.role + ', name: ' + this.name); }
             }
         }
 
         return true;
     },
 
+    /**
+    * Create the body of the creep for the role
+    * @param {number} energy The amount of energy avalible
+    * @param {Object} args Extra arguments
+    **/
     getBody: function(energy, args) {
         if (isNaN(energy)) { return -1; }
         args = args || {};
@@ -112,6 +117,12 @@ var roleRemoteHarvester = {
         return bodyParts;
     },
 
+    /**
+    * Spawn the creep
+    * @param {Spawn} spawn The spawn to be used
+    * @param {array} body The creep body
+    * @param {Object} args Extra arguments
+    **/
     doSpawn: function(spawn, body, args) {
         if (!spawn) { return -1; }
         if (!Array.isArray(body)) { return -1; }

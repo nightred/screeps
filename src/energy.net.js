@@ -6,6 +6,9 @@
  *
  */
 
+ /**
+ * create the empty object to store all room energy targets
+ **/
 var EnergyNet = function() {
     this.tick = this.tick || 0;
     if (this.tick < Game.time) {
@@ -14,28 +17,74 @@ var EnergyNet = function() {
     }
 };
 
+/**
+* get an object to store energy in
+* @param {Room} room The room to be used
+* @param {Number} energy The amount of energy
+* @param {Array} types The storage types
+**/
 EnergyNet.prototype.getStore = function(room, energy, types) {
     if (!room) { return -1; }
     if (isNaN(energy)) { return -1; }
     if(!Array.isArray(types)) { return -1; }
     if (!this.rooms[room.name]) {
-        this.buildRoom(room);
+        if (!this.buildRoom(room)) { return false; }
     }
 
-    return false;
+    let targetId = false;
+    for (let i = 0; i < types.length; i++) {
+        if (!this.rooms[room.name][types[i]]) { continue; }
+        let type = this.rooms[room.name][types[i]];
+        for (let id in type) {
+            if (type[id].energy < type[id].energyMax) {
+                type[id].energy += energy;
+                type[id].energy = type[id].energy > type[id].energyMax ? type[id].energyMax : type[id].energy;
+                targetId = id;
+                break;
+            }
+        }
+        if (targetId) { break; }
+    }
+
+    return Game.getObjectById(targetId);
 };
 
+/**
+* get an object to withdraw energy from
+* @param {Room} room The room to be used
+* @param {Number} energy The amount of energy
+* @param {Array} types The storage types
+**/
 EnergyNet.prototype.getWithdraw = function(room, energy, types) {
     if (!room) { return -1; }
     if (isNaN(energy)) { return -1; }
     if(!Array.isArray(types)) { return -1; }
     if (!this.rooms[room.name]) {
-        this.buildRoom(room);
+        if (!this.buildRoom(room)) { return false; }
     }
 
-    return false;
+    let targetId = false;
+    for (let i = 0; i < types.length; i++) {
+        if (!this.rooms[room.name][types[i]]) { continue; }
+        let type = this.rooms[room.name][types[i]];
+        for (let id in type) {
+            if (type[id].energy > 0) {
+                type[id].energy -= energy;
+                type[id].energy = type[id].energy < 0 ? 0 : type[id].energy;
+                targetId = id;
+                break;
+            }
+        }
+        if (targetId) { break; }
+    }
+
+    return Game.getObjectById(targetId);
 };
 
+/**
+* create a listing of the storage locations for a room
+* @param {Room} room The room to be used
+**/
 EnergyNet.prototype.buildRoom = function(room) {
     if (!Game.rooms[room.name]) { return false; }
     this.rooms[room.name] = {};
@@ -49,6 +98,7 @@ EnergyNet.prototype.buildRoom = function(room) {
             id: storage.id,
             energy: storage.store[RESOURCE_ENERGY],
             energyMax: storage.storeCapacity,
+            pos: storage.pos,
         };
     }
 
@@ -62,6 +112,7 @@ EnergyNet.prototype.buildRoom = function(room) {
                 energy: containers[i].store[RESOURCE_ENERGY],
                 energyMax: containers[i].storeCapacity,
                 type: containers[i].memory.type,
+                pos: containers[i].pos,
             };
         }
     }
@@ -75,6 +126,7 @@ EnergyNet.prototype.buildRoom = function(room) {
                 id: spawns[i].id,
                 energy: spawns[i].energy,
                 energyMax: spawns[i].energyCapacity,
+                pos: spawns[i].pos,
             };
         }
     }
@@ -88,6 +140,7 @@ EnergyNet.prototype.buildRoom = function(room) {
                 id: extentions[i].id,
                 energy: extentions[i].energy,
                 energyMax: extentions[i].energyCapacity,
+                pos: extentions[i].pos,
             };
         }
     }

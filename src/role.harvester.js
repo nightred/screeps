@@ -43,7 +43,7 @@ var roleHarvester = {
 
         return true;
     },
-    
+
     getBody: function(energy) {
         let bodyParts = [];
         let extrasCost = 100;
@@ -69,7 +69,7 @@ var roleHarvester = {
         let source = Game.getObjectById(spawn.room.getHarvestTarget());
         if (source) {
             harvestTarget = source.id;
-        }thisemailwasmentfordacvzz
+        }
 
         return spawn.createCreep(body, undefined, {role: 'harvester', harvestTarget: harvestTarget, dropHarvest: false});
     },
