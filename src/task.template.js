@@ -12,6 +12,8 @@ var taskTemplate = {
     * @param {Task} task The work task passed from the work Queue
     **/
     doTask: function(creep, task) {
+        if (!creep) { return -1; }
+        if (!task) { return -1; }
         // run creep task
     },
 
@@ -19,6 +21,14 @@ var taskTemplate = {
     * @param {Task} task The work task passed from the work Queue
     **/
     doTaskManaged: function(task) {
+        if (!task) { return -1; }
+
+        task.manageTick = task.manageTick || 0;
+        if ((task.manageTick + Constant.MANAGE_WAIT_TICKS) > Game.time) {
+            return true;
+        }
+        task.manageTick = Game.time;
+        
         // managed tasks
     },
 
@@ -26,6 +36,7 @@ var taskTemplate = {
     * @param {Room} room The room object
     **/
     doTaskFind: function(room) {
+        if (!room) { return -1; }
         // task creation for the room
     },
 

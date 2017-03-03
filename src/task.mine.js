@@ -42,7 +42,28 @@ var taskMine = {
     **/
     doTaskManaged: function(task) {
         if (!task) { return -1; }
-        // managed tasks
+
+        task.manageTick = task.manageTick || 0;
+        if ((task.manageTick + Constant.MANAGE_WAIT_TICKS) > Game.time) {
+            return true;
+        }
+        task.manageTick = Game.time;
+
+        if (task.creeps.length < task.creepLimit) {
+            if (!Game.Queues.spawn.isQueued({ room: task.workRooms[0], role: 'miner', })) {
+                let record = {
+                    rooms: [ task.workRooms[0], ],
+                    role: 'miner',
+                    priority: 50,
+                    creepArgs: {
+                        harvestTarget: task.targetId,
+                    },
+                };
+                Game.Queues.spawn.addRecord(args);
+            }
+        }
+
+        return true;
     },
 
     /**
