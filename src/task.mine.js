@@ -1,0 +1,58 @@
+/*
+ * task Mine
+ *
+ * mine task harvestes the source for energy
+ *
+ */
+
+var taskMine = {
+
+    /**
+    * @param {Creep} creep The creep object
+    * @param {Task} task The work task passed from the work Queue
+    **/
+    doTask: function(creep, task) {
+        if (!creep) { return -1; }
+        if (!task) { return -1; }
+
+        if (!creep.memory.harvestTarget) {
+            if (Constant.DEBUG >= 2) { console.log('DEBUG - miner name:' + creep.name + ' has no harvest target'); }
+            return false;
+        }
+        if (task.workRooms.length <= 0) {
+            if (Constant.DEBUG >= 2) { console.log('DEBUG - missing work rooms on task: ' + task.task + ', id: ' + task.id); }
+            return false;
+        }
+
+        if (creep.room.name != task.workRooms[0]) {
+            creep.moveToRoom(task.workRooms[0]);
+            return true;
+        }
+
+        let source = Game.getObjectById(creep.memory.harvestTarget);
+        if (creep.harvest(source) == ERR_NOT_IN_RANGE) {
+            creep.moveTo(source);
+        }
+
+        return true;
+    },
+
+    /**
+    * @param {Task} task The work task passed from the work Queue
+    **/
+    doTaskManaged: function(task) {
+        if (!task) { return -1; }
+        // managed tasks
+    },
+
+    /**
+    * @param {Room} room The room object
+    **/
+    doTaskFind: function(room) {
+        if (!room) { return -1; }
+        // task creation for the room
+    },
+
+};
+
+module.exports = taskMine;
