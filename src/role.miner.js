@@ -46,20 +46,25 @@ var roleRemoteHarvester = {
             return true;
         }
 
-        if (!creep.memory.working) {
-            if (!creep.memory.workId) {
-                if (!creep.getWork(this.workTypes)) {
-                    creep.memory.idleStart = Game.time;
-                    creep.say('💤');
+        if (!creep.memory.workId) {
+            if (!creep.getWork(this.workTypes)) {
+                creep.memory.idleStart = Game.time;
+                creep.say('💤');
 
-                    return true;
-                }
+                return true;
             }
+        }
 
+        if (!creep.memory.working) {
             if (!creep.doWork()) {
                 if (Constant.DEBUG >= 2) { console.log('DEBUG - do work failed for role: ' + this.memory.role + ', name: ' + this.name); }
             }
         } else {
+            let source = Game.getObjectById(creep.memory.harvestTarget);
+            if (!creep.memory.goingTo && source) {
+                creep.memory.goingTo = source.getLocalContainer();
+            }
+
             if (!creep.doEmptyEnergy(this.energyTargets)) {
                 if (Constant.DEBUG >= 2) { console.log('DEBUG - do empty energy failed for role: ' + this.memory.role + ', name: ' + this.name); }
             }

@@ -5,11 +5,10 @@
  *
  */
 
-Creep.prototype.moveToRoom = function(roomName) {
-    if (!roomName) { return false; }
-    if (this.room.name == roomName) { return false; }
-
-    let target = new RoomPosition(25, 25, roomName);
+Creep.prototype.moveToRoom = function(name) {
+    if (!name) { return -1; }
+    if (this.room.name == name) { return true; }
+    let target = new RoomPosition(25, 25, name);
 
     return this.moveTo(target, { range: 23, })
 }
