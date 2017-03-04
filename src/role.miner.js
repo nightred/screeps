@@ -23,9 +23,11 @@ var roleRemoteHarvester = {
     * The locations that energy can be stored
     **/
     energyTargets: [
+        'containerIn',
         'spawn',
         'extention',
         'container',
+        'containerOut',
         'storage',
     ],
 
@@ -37,7 +39,7 @@ var roleRemoteHarvester = {
             if (!creep.memory.working) {
                 creep.say('⛏️');
             } else {
-                creep.say('🔋');
+                creep.say('⚡');
             }
         }
 
@@ -134,7 +136,7 @@ var roleRemoteHarvester = {
     **/
     doSpawn: function(spawn, body, args) {
         if (!spawn) { return -1; }
-        if (!Array.isArray(body)) { return -1; }
+        if (!Array.isArray(body) || body.length < 1) { return -1; }
         args = args || {};
         args.role = this.role;
 

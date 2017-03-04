@@ -29,7 +29,7 @@ var Constants = {
     MANAGE_WAIT_TICKS:              5,
     REPORT_TICKS:                   500,
 
-    SPAWN_QUEUE_DELAY:              200,
+    SPAWN_QUEUE_DELAY:              8,
 
     REPAIR_HIT_WORK_MIN:            0.80,
     REPAIR_HIT_WORK_MAX:            0.95,
@@ -47,11 +47,13 @@ var Constants = {
 
     ROLE_TYPES: [
         'miner',
+        'upgrader',
         ],
 
     WORK_TASKS: [
         'mine',
         'director.mine',
+        'upgrade',
         ],
 
     DIRECTIONS: {

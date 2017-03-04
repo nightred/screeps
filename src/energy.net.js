@@ -97,6 +97,7 @@ EnergyNet.prototype.buildRoom = function(room) {
         let storage = room.storage;
         energyMap.storage[storage.id] = {
             id: storage.id,
+            structure: 'storage',
             energy: storage.store[RESOURCE_ENERGY],
             energyMax: storage.storeCapacity,
             pos: storage.pos,
@@ -105,15 +106,28 @@ EnergyNet.prototype.buildRoom = function(room) {
 
     // container
     energyMap.container = {};
+    energyMap.containerIn = {};
+    energyMap.containerOut = {};
     let containers = room.getContainers();
     if (containers.length > 0) {
         for (let i = 0; i < containers.length; i++) {
-            energyMap.container[containers[i].id] = {
+            let record = {
                 id: containers[i].id,
+                structure: 'container',
                 energy: containers[i].store[RESOURCE_ENERGY],
                 energyMax: containers[i].storeCapacity,
                 type: containers[i].memory.type,
                 pos: containers[i].pos,
+            };
+            switch (containers[i].memory.type) {
+                case 'in':
+                    energyMap.containerIn[containers[i].id] = record;
+                    break;
+                case 'out':
+                    energyMap.containerOut[containers[i].id] = record;
+                    break;
+                default:
+                    energyMap.container[containers[i].id] = record;
             };
         }
     }
@@ -125,6 +139,7 @@ EnergyNet.prototype.buildRoom = function(room) {
         for (let i = 0; i < spawns.length; i++) {
             energyMap.spawn[spawns[i].id] = {
                 id: spawns[i].id,
+                structure: 'spawn',
                 energy: spawns[i].energy,
                 energyMax: spawns[i].energyCapacity,
                 pos: spawns[i].pos,
@@ -139,6 +154,7 @@ EnergyNet.prototype.buildRoom = function(room) {
         for (let i = 0; i < extentions.length; i++) {
             energyMap.extention[extentions[i].id] = {
                 id: extentions[i].id,
+                structure: 'extention',
                 energy: extentions[i].energy,
                 energyMax: extentions[i].energyCapacity,
                 pos: extentions[i].pos,

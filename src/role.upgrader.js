@@ -1,22 +1,22 @@
 /*
- * role Template
+ * role Upgrader
  *
  * template role defines the basic layout of a role
  *
  */
 
-var roleTemplate = {
+var roleUpgrader = {
 
     /**
     * The role name
     **/
-    role: 'template',
+    role: 'upgrader',
 
     /**
     * The work tasks that the role is created for
     **/
     workTasks: [
-        'template',
+        'upgrade',
     ],
 
     /**
@@ -76,9 +76,15 @@ var roleTemplate = {
     * @param {Object} args Extra arguments
     **/
     getBody: function(energy, args) {
+        let workUnits = Math.floor((energy - 100) / 100);
         let body = [];
 
-        body.push(WORK);
+        workUnits = workUnits < 1 ? 1 : workUnits;
+        workUnits = workUnits > 5 ? 5 : workUnits;
+        for (let i = 0; i < workUnits; i++) {
+            body.push(WORK);
+        }
+
         body.push(MOVE);
         body.push(CARRY);
 
@@ -102,4 +108,4 @@ var roleTemplate = {
 
 };
 
-module.exports = roleTemplate;
+module.exports = roleUpgrader;

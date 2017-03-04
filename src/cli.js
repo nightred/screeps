@@ -86,13 +86,22 @@ var Cli = {
             return Work.addWork('haul', roomName, 22, { managed: true, });
         },
 
-        upgrade: function(roomName, creepLimit) {
-            if (!roomName || !creepLimit) {
-                console.log('ERROR - command need the following values: roomName, creepLimit');
+        upgrade: function(roomName, spawnRoom) {
+            if (!roomName) {
+                console.log('ERROR - command need the following values: work room, (opt) spawn room');
                 return false;
             }
+            if (!spawnRoom) { spawnRoom = roomName; }
+            let record = {
+                workRooms: [ roomName, ],
+                spawnRooms: [ spawnRoom, ],
+                task: 'upgrade',
+                priority: 26,
+                creepLimit: 1,
+                managed: true,
+            };
 
-            return Work.addWork('upgrade', roomName, 26, { managed: true, creepLimit: creepLimit });
+            return Game.Queues.work.addRecord(record);
         },
 
         service: function(roomName, creepLimit) {
