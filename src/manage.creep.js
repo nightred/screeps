@@ -20,7 +20,7 @@ var manageCreep = {
                 if (Memory.creeps[name].workId) {
                     Game.Queues.work.removeCreep(name, Memory.creeps[name].workId);
                 }
-                if (Constant.DEBUG >= 2) { console.log('DEBUG - clearing non-existant creep memory: ' + Memory.creeps[name].role + ' ' + name); }
+                if (Constant.DEBUG >= 2) { console.log('DEBUG - clearing non-existant creep memory name: ' + name + ' role: ' + Memory.creeps[name].role); }
                 delete Memory.creeps[name];
             }
         }
@@ -94,7 +94,7 @@ var manageCreep = {
     getDespawnContainer: function(creep) {
         if (!creep) { return false; }
 
-        let targets = creep.getTargetContainerEnergy('store', 'all');
+        let targets = creep.room.getContainers();
         if (targets.length == 0) {
             creep.suicide();
 

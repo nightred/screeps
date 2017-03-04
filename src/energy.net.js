@@ -77,6 +77,7 @@ EnergyNet.prototype.getWithdraw = function(room, energy, types) {
         }
         if (targetId) { break; }
     }
+    if (!targetId) { return false; }
 
     return Game.getObjectById(targetId);
 };
@@ -132,7 +133,7 @@ EnergyNet.prototype.buildRoom = function(room) {
     }
 
     // extention
-    energyNet.extention = {};
+    energyMap.extention = {};
     let extentions = room.getExtensions();
     if (extentions.length > 0) {
         for (let i = 0; i < extentions.length; i++) {
@@ -144,6 +145,8 @@ EnergyNet.prototype.buildRoom = function(room) {
             };
         }
     }
+
+    return true;
 };
 
 module.exports = EnergyNet;

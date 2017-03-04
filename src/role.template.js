@@ -43,7 +43,7 @@ var roleTemplate = {
             }
         }
 
-        if ((creep.memory.idleStart + Constant.CREEP_IDLE_TIME) < Game.time) {
+        if ((creep.memory.idleStart + Constant.CREEP_IDLE_TIME) > Game.time) {
             creep.moveToIdlePosition();
             return true;
         }

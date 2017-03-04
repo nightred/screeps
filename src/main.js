@@ -33,10 +33,10 @@ module.exports.loop = function () {
     Game.Queues         = new Queues;
     Game.Queues.spawn   = new SpawnQueue;
     Game.Queues.work    = new WorkQueue;
-    Game.energyNet      = new EnergyNet
+    Game.energyNet      = new EnergyNet;
 
     Game.Queues.work.doManageTasks();
     manageRooms.doManage();
-    manageCreeps.doManage();
+    manageCreep.doManage();
 
 }

@@ -28,17 +28,17 @@ WorkQueue.prototype.doTask = function(creep) {
     return this.tasks[work.task].doTask(creep, work);
 }
 
-WorkQueue.prototype.getTask = function(task) {
-    if (Constant.WORK_TASKS.indexof(task) < 0) {
-        if (Constant.DEBUG >= 2) { console.log('DEBUG - failed to load work task: ' + task); }
+WorkQueue.prototype.getTask = function(taskName) {
+    if (Constant.WORK_TASKS.indexOf(taskName) < 0) {
+        if (Constant.DEBUG >= 2) { console.log('DEBUG - failed to load work task: ' + taskName); }
         return -1;
     }
 
     let task = false;
     try {
-        task = require('task.' + task);
+        task = require('task.' + taskName);
     } catch(e) {
-        if (Constant.DEBUG >= 2) { console.log('DEBUG - failed to load work task: ' + task + ', error:\n' + e); }
+        if (Constant.DEBUG >= 2) { console.log('DEBUG - failed to load work task: ' + taskName + ', error:\n' + e); }
     }
 
     return task;
@@ -51,7 +51,7 @@ WorkQueue.prototype.doManageTasks = function() {
     if (!taskList || taskList.length < 0) { return false; }
 
     for (let i =0; i < taskList.length; i++) {
-        this.tasks[taskList[i].task].doTaskManage(taskList[i]);
+        this.tasks[taskList[i].task].doTaskManaged(taskList[i]);
     }
 
     return true;
@@ -75,7 +75,7 @@ WorkQueue.prototype.getWork = function(tasks, name, args) {
     if (!Array.isArray(tasks)) { return -1; }
     args = args | {};
 
-    return _sortBy(_.filter(this.getQueue(), record =>
+    return _.sortBy(_.filter(this.getQueue(), record =>
         tasks.indexOf(record.task) >= 0 &&
         (!args.room || record.workRooms.indexOf(args.room) >= 0) &&
         record.creeps.indexOf(name) == -1 &&
@@ -121,11 +121,11 @@ WorkQueue.prototype.isQueued = function(args) {
     ).length > 0 ? true : false;
 };
 
-WorkQueue.prototype.addRecord(args) {
+WorkQueue.prototype.addRecord = function(args) {
     if (!args) { return -1; }
     if (!Array.isArray(args.workRooms)) { return -1; }
     if (!Array.isArray(args.spawnRooms)) { return -1; }
-    if (Constant.WORK_TASKS.indexof(args.task) < 0) { return -1; }
+    if (Constant.WORK_TASKS.indexOf(args.task) < 0) { return -1; }
     args.priority = args.priority || 100;
     args.creepLimit = args.creepLimit || 1;
 

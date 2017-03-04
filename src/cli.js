@@ -150,8 +150,8 @@ var Cli = {
                 creepLimit: 0,
                 managed: true,
             };
-            
-            return Game.Queues.work.addRecordk(record);
+
+            return Game.Queues.work.addRecord(record);
         },
 
     },
@@ -176,13 +176,21 @@ var Cli = {
             return QSpawn.addQueue(roomName, 'hauler', 10);
         },
 
-        harvester: function(roomName) {
+        miner: function(roomName) {
             if (!roomName) {
                 console.log('ERROR - command need the following values: roomName');
                 return false;
             }
 
-            return QSpawn.addQueue(roomName, 'harvester', 10);
+            let record = {
+                rooms: [ roomName, ],
+                role: 'miner',
+                priority: 50,
+                creepArgs: {
+                    test: 'testval',
+                },
+            };
+            Game.Queues.spawn.addRecord(record);
         },
 
     },

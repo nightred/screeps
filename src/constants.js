@@ -29,6 +29,8 @@ var Constants = {
     MANAGE_WAIT_TICKS:              5,
     REPORT_TICKS:                   500,
 
+    SPAWN_QUEUE_DELAY:              200,
+
     REPAIR_HIT_WORK_MIN:            0.80,
     REPAIR_HIT_WORK_MAX:            0.95,
     RAMPART_HIT_MAX:                100000,

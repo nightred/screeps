@@ -41,7 +41,7 @@ var roleRemoteHarvester = {
             }
         }
 
-        if ((creep.memory.idleStart + Constant.CREEP_IDLE_TIME) < Game.time) {
+        if ((creep.memory.idleStart + Constant.CREEP_IDLE_TIME) > Game.time) {
             creep.moveToIdlePosition();
             return true;
         }
@@ -84,13 +84,17 @@ var roleRemoteHarvester = {
         if (!args.style) { args.style = 'default'; }
 
         let bodyParts = [];
+        let workUnits = 1;
+        let moveUnits = 1;
+        let carryUnits = 1;
+        let extrasCost = 0;
         switch (args.style) {
             case 'drop':
                 break;
             case 'ranged':
-                let workUnits = Math.floor((energy * 0.5) / 100);
-                let moveUnits = Math.floor((energy * 0.3) / 50);
-                let carryUnits = Math.floor((energy * 0.2) / 50);
+                workUnits = Math.floor((energy * 0.5) / 100);
+                moveUnits = Math.floor((energy * 0.3) / 50);
+                carryUnits = Math.floor((energy * 0.2) / 50);
                 workUnits = workUnits < 1 ? 1 : workUnits;
                 workUnits = workUnits > 5 ? 5 : workUnits;
                 moveUnits = moveUnits < 1 ? 1 : moveUnits;
@@ -108,10 +112,10 @@ var roleRemoteHarvester = {
                 }
                 break;
             default:
-                let extrasCost = 100;
+                extrasCost = 100;
                 bodyParts.push(MOVE);
                 bodyParts.push(CARRY);
-                let workUnits = Math.floor((energy - extrasCost) / 100);
+                workUnits = Math.floor((energy - extrasCost) / 100);
                 workUnits = workUnits < 1 ? 1 : workUnits;
                 workUnits = workUnits > 5 ? 5 : workUnits;
                 for (let i = 0; i < workUnits; i++) {

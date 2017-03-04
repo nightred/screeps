@@ -88,29 +88,31 @@ Creep.prototype.getWork = function(tasks, args) {
     if (!Array.isArray(tasks)) { return false; }
     args = args || {};
 
-    let workId = false;
+    let list = false;
     if (args.ignoreRoom) {
-        workId = Game.Queues.work.getWork(tasks, this.name);
+        list = Game.Queues.work.getWork(tasks, this.name);
     } else if (args.room) {
-        workId = Work.getWork(tasks, this.name, args);
+        list = Work.getWork(tasks, this.name, args);
     } else if (this.memory.workRooms) {
         if (this.memory.workRooms.indexOf(this.room.name) >= 0) {
             args.room = this.room.name;
-            workId = Game.Queues.work.getWork(tasks, this.name, args);
+            list = Game.Queues.work.getWork(tasks, this.name, args);
         }
-        if (!workId) {
+        if (!list) {
             for (let i = 0; i < this.memory.workRooms.length; i++) {
                 args.room = this.memory.workRooms[i];
-                workId = Game.Queues.work.getWork(tasks, this.name, args);
-                if (workId) { break; }
+                list = Game.Queues.work.getWork(tasks, this.name, args);
+                if (list) { break; }
             }
         }
     } else {
         args.room = this.room.name;
-        workId = Game.Queues.work.getWork(tasks, this.name, args);
+        list = Game.Queues.work.getWork(tasks, this.name, args);
     }
 
-    if (!workId) { return false; }
+    if (list.length <= 0) { return false; }
+    let workId = list[0].id;
+
     if (!Game.Queues.work.addCreep(this.name, workId)) { return false; }
     this.memory.workId = workId;
 
@@ -216,7 +218,7 @@ Creep.prototype.doFillEnergy = function(types) {
     if (!Array.isArray(types)) { return -1; }
 
     if (!this.memory.goingTo) {
-        let target = Game.energyNet.getWithdraw(this.room, (this.carrycapacity - _.sum(this.carry), types);
+        let target = Game.energyNet.getWithdraw(this.room, (this.carrycapacity - _.sum(this.carry)), types);
         if (!target) {
             this.memory.idleStart = Game.time;
             this.say('💤');

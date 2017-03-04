@@ -59,7 +59,7 @@ var taskMine = {
                         harvestTarget: task.targetId,
                     },
                 };
-                Game.Queues.spawn.addRecord(args);
+                Game.Queues.spawn.addRecord(record);
             }
         }
 

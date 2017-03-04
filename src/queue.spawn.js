@@ -14,14 +14,14 @@ var SpawnQueue = function() {
 
     this.roles = {};
     for (let i =0; i < Constant.ROLE_TYPES.length; i++) {
-        this.roles[Constant.ROLE_TYPES[i]] = this.getRole(Constant.ROLE_TYPES[i]]);
+        this.roles[Constant.ROLE_TYPES[i]] = this.getRole(Constant.ROLE_TYPES[i]);
     }
 
     this.cleanQueue();
 };
 
 SpawnQueue.prototype.getRole = function(name) {
-    if (Constant.ROLE_TYPES.indexof(name) < 0) {
+    if (Constant.ROLE_TYPES.indexOf(name) < 0) {
         if (Constant.DEBUG >= 2) { console.log('DEBUG - failed to load role: ' + name); }
         return -1;
     }
@@ -42,8 +42,11 @@ SpawnQueue.prototype.cleanQueue = function() {
     );
     if (records.length <= 0) { return true; }
 
-    for(let i = 0; i < records.length: i++) {
+    for(let i = 0; i < records.length; i++) {
         if (Game.creeps[records[i].name] && !Game.creeps[records[i].name].spawning) {
+            records[i].spawnedTime = records[i].spawnedTime || Game.time;
+        }
+        if ((records[i].spawnedTime + Constant.SPAWN_QUEUE_DELAY) < Game.time) {
             if (Constant.DEBUG >= 3) { console.log('VERBOSE - spawn queue removing record, id: ' + records[i].id + ', role: ' + records[i].role + ', name: ' + records[i].name + ', spawned'); }
             this.delRecord(records[i].id);
         }
@@ -53,11 +56,11 @@ SpawnQueue.prototype.cleanQueue = function() {
 SpawnQueue.prototype.doSpawn = function(room) {
     if (!room) { return -1; }
 
-    let energy = room,energyAvailable;
+    let energy = room.energyAvailable;
     if (energy < Constant.ENERGY_CREEP_SPAWN_MIN) { return true; }
 
-    let records = let records = _.filter(this.getQueue(), record =>
-        record.rooms.indexof(room.name) &&
+    let records = _.filter(this.getQueue(), record =>
+        record.rooms.indexOf(room.name) >= 0 &&
         !record.spawned
     );
     if (records.length <= 0) { return true; }
@@ -121,14 +124,14 @@ SpawnQueue.prototype.isQueued = function(args) {
 
     return _.filter(this.getQueue(), record =>
         (!args.role || record.role == args.role) &&
-        (!args.room || record.rooms.indexof(args.room) >= 0)
+        (!args.room || record.rooms.indexOf(args.room) >= 0)
     ).length > 0 ? true : false;
 };
 
 SpawnQueue.prototype.addRecord = function(args) {
     if (!args) { return -1; }
     if (!Array.isArray(args.rooms)) { return -1; }
-    if (Constant.ROLE_TYPES.indexof(args.role) < 0) { return -1; }
+    if (Constant.ROLE_TYPES.indexOf(args.role) < 0) { return -1; }
     args.priority = args.priority || 100;
 
     let record = {
