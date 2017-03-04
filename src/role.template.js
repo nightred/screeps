@@ -48,9 +48,9 @@ var roleTemplate = {
             return true;
         }
 
-        if (!creep.memory.working) {
+        if (creep.memory.working) {
             if (!creep.memory.workId) {
-                if (!creep.getWork(this.workTypes)) {
+                if (!creep.getWork(this.workTasks)) {
                     creep.memory.idleStart = Game.time;
                     creep.say('💤');
 

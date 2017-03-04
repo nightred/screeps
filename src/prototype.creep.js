@@ -218,7 +218,7 @@ Creep.prototype.doFillEnergy = function(types) {
     if (!Array.isArray(types)) { return -1; }
 
     if (!this.memory.goingTo) {
-        let target = Game.energyNet.getWithdraw(this.room, (this.carrycapacity - _.sum(this.carry)), types);
+        let target = Game.energyNet.getWithdraw(this.room, (this.carryCapacity - _.sum(this.carry)), types);
         if (!target) {
             this.memory.idleStart = Game.time;
             this.say('💤');

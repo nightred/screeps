@@ -15,7 +15,7 @@ var roleRemoteHarvester = {
     /**
     * The work tasks that the role is created for
     **/
-    workTypes: [
+    workTasks: [
         'mine',
     ],
 
@@ -49,7 +49,7 @@ var roleRemoteHarvester = {
         }
 
         if (!creep.memory.workId) {
-            if (!creep.getWork(this.workTypes)) {
+            if (!creep.getWork(this.workTasks)) {
                 creep.memory.idleStart = Game.time;
                 creep.say('💤');
 

@@ -37,7 +37,7 @@ var roleUpgrader = {
 
         if (creep.manageState()) {
             if (creep.memory.working) {
-                creep.say('⛏️');
+                creep.say('📡');
             } else {
                 creep.say('🔋');
             }
@@ -48,9 +48,9 @@ var roleUpgrader = {
             return true;
         }
 
-        if (!creep.memory.working) {
+        if (creep.memory.working) {
             if (!creep.memory.workId) {
-                if (!creep.getWork(this.workTypes)) {
+                if (!creep.getWork(this.workTasks)) {
                     creep.memory.idleStart = Game.time;
                     creep.say('💤');
 

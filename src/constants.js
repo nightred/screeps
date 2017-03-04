@@ -39,7 +39,7 @@ var Constants = {
     REFILL_TOWER_MAX:               0.90,
     REFILL_TOWER_MIN:               0.50,
 
-    CREEP_DESPAWN_TICKS:            40,
+    CREEP_DESPAWN_TICKS:            200,
     CREEP_IDLE_TIME:                5,
 
     QUEUE_WORK:                     'work',
