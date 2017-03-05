@@ -1,28 +1,30 @@
 /*
- * role Template
+ * role Tech
  *
- * template role defines the basic layout of a role
+ * tech role defines the general server creep
  *
  */
 
-var roleTemplate = {
+var roleTech = {
 
     /**
     * The role name
     **/
-    role: 'template',
+    role: 'tech',
 
     /**
     * The work tasks that the role is created for
     **/
     workTasks: [
-        'template',
+        'construction',
+        'repair',
     ],
 
     /**
     * The locations that energy can be taken from
     **/
     energyTargets: [
+        'storage',
         'containerOut',
         'container',
         'extention',
@@ -37,7 +39,7 @@ var roleTemplate = {
 
         if (creep.manageState()) {
             if (creep.memory.working) {
-                creep.say('⛏️');
+                creep.say('⚙');
             } else {
                 creep.say('🔋');
             }
@@ -48,16 +50,16 @@ var roleTemplate = {
             return true;
         }
 
-        if (!creep.memory.workId) {
-            if (!creep.getWork(this.workTasks)) {
-                creep.memory.idleStart = Game.time;
-                creep.say('💤');
-
-                return true;
-            }
-        }
-
         if (creep.memory.working) {
+            if (!creep.memory.workId) {
+                if (!creep.getWork(this.workTasks)) {
+                    creep.memory.idleStart = Game.time;
+                    creep.say('💤');
+
+                    return true;
+                }
+            }
+
             if (!creep.doWork()) {
                 if (Constant.DEBUG >= 2) { console.log('DEBUG - do work failed for role: ' + this.memory.role + ', name: ' + this.name); }
             }
@@ -76,13 +78,29 @@ var roleTemplate = {
     * @param {Object} args Extra arguments
     **/
     getBody: function(energy, args) {
-        let body = [];
+        let workUnits = Math.floor((energy * 0.5) / 100);
+        let moveUnits = Math.floor((energy * 0.2) / 50);
+        let carryUnits = Math.floor((energy * 0.3) / 50);
+        let bodyParts = [];
 
-        body.push(WORK);
-        body.push(MOVE);
-        body.push(CARRY);
+        workUnits = workUnits < 1 ? 1 : workUnits;
+        workUnits = workUnits > 5 ? 5 : workUnits;
+        moveUnits = moveUnits < 1 ? 1 : moveUnits;
+        moveUnits = moveUnits > 6 ? 6 : moveUnits;
+        carryUnits = carryUnits < 1 ? 1 : carryUnits;
+        carryUnits = carryUnits > 10 ? 10 : carryUnits;
 
-        return body;
+        for (let i = 0; i < workUnits; i++) {
+            bodyParts.push(WORK);
+        }
+        for (let i = 0; i < moveUnits; i++) {
+            bodyParts.push(MOVE);
+        }
+        for (let i = 0; i < carryUnits; i++) {
+            bodyParts.push(CARRY);
+        }
+
+        return bodyParts;
     },
 
     /**
@@ -102,4 +120,4 @@ var roleTemplate = {
 
 };
 
-module.exports = roleTemplate;
+module.exports = roleTech;

@@ -27,8 +27,12 @@ var EnergyNet       = require('energy.net')
 var manageRooms     = require('manage.rooms');
 var manageCreep     = require('manage.creep');
 
+// logging
+var stats        = require('stats');
+
 module.exports.loop = function () {
     Memory.world = Memory.world || {};
+    stats.init();
 
     Game.Queues         = new Queues;
     Game.Queues.spawn   = new SpawnQueue;
@@ -38,5 +42,8 @@ module.exports.loop = function () {
     Game.Queues.work.doManageTasks();
     manageRooms.doManage();
     manageCreep.doManage();
+
+    stats.visuals();
+    stats.logCPU();
 
 }

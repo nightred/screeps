@@ -66,6 +66,10 @@ EnergyNet.prototype.getWithdraw = function(room, energy, types) {
     let targetId = false;
     for (let i = 0; i < types.length; i++) {
         if (!this.rooms[room.name][types[i]]) { continue; }
+        if ((types[i] == 'spawn' || types[i] == 'extention') &&
+            room.energyAvailable <= Constant.ENERGY_ROOM_WITHDRAW_MIN) {
+            continue;
+        }
         let type = this.rooms[room.name][types[i]];
         for (let id in type) {
             if (type[id].energy > 0) {

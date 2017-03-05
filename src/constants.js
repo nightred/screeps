@@ -14,6 +14,7 @@ var Constants = {
 
     // debug: 0 off, 1 info, 2 debug, 3 verbose
     DEBUG:                          3,
+    VISUALS:                        true,
 
     ENERGY_ROOM_WITHDRAW_MIN:       200,
     ENERGY_CREEP_SPAWN_MIN:         200,
@@ -25,7 +26,7 @@ var Constants = {
 
     CONTROLLER_WITHDRAW_LEVEL:      2,
 
-    WORK_FIND_WAIT:                 5,
+    FIND_WAIT_TICKS:                5,
     MANAGE_WAIT_TICKS:              5,
     REPORT_TICKS:                   500,
 
@@ -48,12 +49,16 @@ var Constants = {
     ROLE_TYPES: [
         'miner',
         'upgrader',
+        'tech',
         ],
 
     WORK_TASKS: [
-        'mine',
         'director.mine',
+        'director.tech',
+        'mine',
         'upgrade',
+        'repair',
+        'construction',
         ],
 
     DIRECTIONS: {

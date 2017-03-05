@@ -1,11 +1,11 @@
 /*
- * task Upgrade
+ * task Director Tech
  *
- * upgrade task upgrades the room controller
+ * director tech task handles the spwning od tech units
  *
  */
 
-var taskUpgrade = {
+var taskDirectorMine = {
 
     /**
     * @param {Creep} creep The creep object
@@ -14,22 +14,7 @@ var taskUpgrade = {
     doTask: function(creep, task) {
         if (!creep) { return -1; }
         if (!task) { return -1; }
-
-        if (task.workRooms.length <= 0) {
-            if (Constant.DEBUG >= 2) { console.log('DEBUG - missing work rooms on task: ' + task.task + ', id: ' + task.id); }
-            return false;
-        }
-
-        if (creep.room.name != task.workRooms[0]) {
-            creep.moveToRoom(task.workRooms[0]);
-            return true;
-        }
-
-        if (creep.upgradeController(creep.room.controller) == ERR_NOT_IN_RANGE) {
-            creep.moveTo(creep.room.controller, { range: 3, });
-        }
-
-        return true;
+        // run creep task
     },
 
     /**
@@ -48,6 +33,7 @@ var taskUpgrade = {
             if (Constant.DEBUG >= 2) { console.log('DEBUG - missing work rooms on task: ' + task.task + ', id: ' + task.id); }
             return false;
         }
+
         let room = Game.rooms[task.workRooms[0]];
         if (!room) {
             if (Constant.DEBUG >= 3) { console.log('VERBOSE - no eyes on room: ' + task.workRooms[0] + ', task: ' + task.task + ', id: ' + task.id); }
@@ -69,12 +55,11 @@ var taskUpgrade = {
                 break;
             case 4:
             case 5:
+            case 6:
                 if (task.minSize < 400) {
                     task.minSize = 400;
                 }
                 break;
-
-            case 6:
             case 7:
             case 8:
                 if (task.minSize < 600) {
@@ -87,13 +72,10 @@ var taskUpgrade = {
             case 2:
             case 3:
             case 4:
-                if (task.creepLimit < 2) {
-                    task.creepLimit = 2;
-                }
-                break;
             case 5:
             case 6:
             case 7:
+                break;
             case 8:
                 if (task.creepLimit < 3) {
                     task.creepLimit = 3;
@@ -101,12 +83,17 @@ var taskUpgrade = {
         }
 
         // spawn new creeps if needed
-        if (task.creeps.length < task.creepLimit) {
-            if (!Game.Queues.spawn.isQueued({ room: task.workRooms[0], role: 'upgrader', })) {
+        let count = _.filter(Game.creeps, creep =>
+            creep.memory.role == 'tech' &&
+            creep.room.name == room.name &&
+            creep.memory.despawn != true
+            ).length;
+        if (count < task.creepLimit) {
+            if (!Game.Queues.spawn.isQueued({ room: task.workRooms[0], role: 'tech', })) {
                 let record = {
                     rooms: [ task.workRooms[0], ],
-                    role: 'upgrader',
-                    priority: 60,
+                    role: 'tech',
+                    priority: 54,
                 };
                 if (task.minSize) { record.minSize = task.minSize; }
                 Game.Queues.spawn.addRecord(record);
@@ -114,6 +101,7 @@ var taskUpgrade = {
         }
 
         return true;
+
     },
 
     /**
@@ -126,4 +114,4 @@ var taskUpgrade = {
 
 };
 
-module.exports = taskUpgrade;
+module.exports = taskDirectorMine;

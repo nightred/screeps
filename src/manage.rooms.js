@@ -18,6 +18,7 @@ var manageRooms = {
                 let room = Game.rooms[name];
 
                 this.doContainers(room);
+                Game.Queues.work.doTaskFind(room);
                 Game.Queues.spawn.doSpawn(room);
                 manageTower.run(room);
             }

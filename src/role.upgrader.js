@@ -48,16 +48,16 @@ var roleUpgrader = {
             return true;
         }
 
-        if (creep.memory.working) {
-            if (!creep.memory.workId) {
-                if (!creep.getWork(this.workTasks)) {
-                    creep.memory.idleStart = Game.time;
-                    creep.say('💤');
+        if (!creep.memory.workId) {
+            if (!creep.getWork(this.workTasks)) {
+                creep.memory.idleStart = Game.time;
+                creep.say('💤');
 
-                    return true;
-                }
+                return true;
             }
+        }
 
+        if (creep.memory.working) {
             if (!creep.doWork()) {
                 if (Constant.DEBUG >= 2) { console.log('DEBUG - do work failed for role: ' + this.memory.role + ', name: ' + this.name); }
             }

@@ -104,13 +104,22 @@ var Cli = {
             return Game.Queues.work.addRecord(record);
         },
 
-        service: function(roomName, creepLimit) {
-            if (!roomName || !creepLimit) {
-                console.log('ERROR - command need the following values: roomName, creepLimit');
+        tech: function(roomName, spawnRoom) {
+            if (!roomName) {
+                console.log('ERROR - command need the following values: work room, (opt) spawn room');
                 return false;
             }
+            if (!spawnRoom) { spawnRoom = roomName; }
+            let record = {
+                workRooms: [ roomName, ],
+                spawnRooms: [ spawnRoom, ],
+                task: 'director.tech',
+                priority: 30,
+                creepLimit: 0,
+                managed: true,
+            };
 
-            return Work.addWork('service', roomName, 24, { managed: true, creepLimit: creepLimit });
+            return Game.Queues.work.addRecord(record);
         },
 
         roombuild: function(roomName) {
