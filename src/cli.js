@@ -77,13 +77,22 @@ var Cli = {
             return Work.addWork('harvestEnergy', roomName, 20, { managed: true, });
         },
 
-        haul: function(roomName) {
+        haul: function(roomName, spawnRoom) {
             if (!roomName) {
-                console.log('ERROR - command need the following values: roomName');
+                console.log('ERROR - command need the following values: work room, (opt) spawn room');
                 return false;
             }
+            if (!spawnRoom) { spawnRoom = roomName; }
+            let record = {
+                workRooms: [ roomName, ],
+                spawnRooms: [ spawnRoom, ],
+                task: 'director.haul',
+                priority: 22,
+                creepLimit: 0,
+                managed: true,
+            };
 
-            return Work.addWork('haul', roomName, 22, { managed: true, });
+            return Game.Queues.work.addRecord(record);
         },
 
         upgrade: function(roomName, spawnRoom) {
@@ -122,13 +131,21 @@ var Cli = {
             return Game.Queues.work.addRecord(record);
         },
 
-        roombuild: function(roomName) {
+        spawnRoom: function(roomName) {
             if (!roomName) {
-                console.log('ERROR - command need the following values: roomName');
+                console.log('ERROR - command need the following values: room name');
                 return false;
             }
+            let record = {
+                workRooms: [ roomName, ],
+                spawnRooms: [ roomName, ],
+                task: 'director.room',
+                priority: 20,
+                creepLimit: 0,
+                managed: true,
+            };
 
-            return Work.addWork('room.build', roomName, 10, { managed: true, });
+            return Game.Queues.work.addRecord(record);
         },
 
         scout: function(roomName) {

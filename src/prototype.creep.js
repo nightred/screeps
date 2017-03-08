@@ -146,7 +146,7 @@ Creep.prototype.transferEnergy = function(target) {
 
     if (this.transfer(target, RESOURCE_ENERGY) == ERR_NOT_IN_RANGE) {
         this.moveTo(target, { range: 1, reusePath: 10, });
-        return false;
+        return true;
     } else {
         this.memory.goingTo = false;
     }
@@ -201,34 +201,62 @@ Creep.prototype.doEmptyEnergy = function(types) {
     if (!Array.isArray(types)) { return -1; }
 
     if (!this.memory.goingTo) {
-        let target = Game.energyNet.getStore(this.room, this.carry[RESOURCE_ENERGY], types);
-        if (!target) {
+        if (!this.getEmptyEnergyTarget(types)) {
             this.memory.idleStart = Game.time;
             this.say('💤');
             return true;
         }
-        this.setGoingTo(target);
     }
 
     this.transferEnergy(Game.getObjectById(this.memory.goingTo));
     return true;
 };
 
+Creep.prototype.getEmptyEnergyTarget = function(types) {
+    if (!Array.isArray(types)) { return -1; }
+
+    let target = Game.energyNet.getStore(this.room, this.carry[RESOURCE_ENERGY], types);
+    if (target) {
+        this.setGoingTo(target);
+        return true;
+    }
+    if (this.room.name != this.spawnRoom) {
+        this.moveToRoom(this.spawnRoom);
+        return true;
+    }
+
+    return false;
+};
+
 Creep.prototype.doFillEnergy = function(types) {
     if (!Array.isArray(types)) { return -1; }
 
     if (!this.memory.goingTo) {
-        let target = Game.energyNet.getWithdraw(this.room, (this.carryCapacity - _.sum(this.carry)), types);
-        if (!target) {
+        if (!this.getFillEnergyTarget(types)) {
             this.memory.idleStart = Game.time;
             this.say('💤');
             return true;
         }
-        this.setGoingTo(target);
     }
 
     this.withdrawEnergy(Game.getObjectById(this.memory.goingTo));
     return true;
+};
+
+Creep.prototype.getFillEnergyTarget = function(types) {
+    if (!Array.isArray(types)) { return -1; }
+
+    let target = Game.energyNet.getWithdraw(this.room, (this.carryCapacity - _.sum(this.carry)), types);
+    if (target) {
+        this.setGoingTo(target);
+        return true;
+    }
+    if (this.room.name != this.spawnRoom) {
+        this.moveToRoom(this.spawnRoom);
+        return true;
+    }
+
+    return false;
 };
 
 Creep.prototype.collectDroppedEnergy = function () {

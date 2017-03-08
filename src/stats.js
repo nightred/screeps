@@ -6,12 +6,14 @@
 var Stats = {
 
     init: function() {
-        if ( !Memory.cpugraphdata ) Memory.cpugraphdata = [];
+        Memory.stats = Memory.stats || {};
+        this.memory = Memory.stats;
+        this.memory.cpugraphdata = this.memory.cpugraphdata || [];
     },
 
     logCPU: function() {
-        Memory.cpugraphdata.push(Game.cpu.getUsed());
-        if ( Memory.cpugraphdata.length > 100 ) Memory.cpugraphdata.shift();
+        this.memory.cpugraphdata.push(Game.cpu.getUsed());
+        if ( this.memory.cpugraphdata.length > 100 ) this.memory.cpugraphdata.shift();
     },
 
     visuals: function() {
@@ -23,10 +25,10 @@ var Stats = {
     graphCPU: function() {
         let rv = new RoomVisual();
 
-        for ( let i = 0; i < Memory.cpugraphdata.length; i ++ ) {
-            let cpuamount = Memory.cpugraphdata[i];
-            let lastcpuamount = Memory.cpugraphdata[i-1];
-            let nextcpuamount = Memory.cpugraphdata[i+1];
+        for ( let i = 0; i < this.memory.cpugraphdata.length; i ++ ) {
+            let cpuamount = this.memory.cpugraphdata[i];
+            let lastcpuamount = this.memory.cpugraphdata[i-1];
+            let nextcpuamount = this.memory.cpugraphdata[i+1];
 
             let col = "#ffffff"
             if ( cpuamount < Game.cpu.limit / 2) {
@@ -41,7 +43,7 @@ var Stats = {
                 rv.line( 1 + 0.15 + i * 0.3, 5 - ((lastcpuamount+cpuamount) / Game.cpu.limit), 1 + i * 0.3 + 0.3, 5 - (cpuamount / Game.cpu.limit) * 4, { color: col });
             }
 
-            if ( i < Memory.cpugraphdata.length - 1) {
+            if ( i < this.memory.cpugraphdata.length - 1) {
                 rv.line( 1 + 0.3 + i * 0.3, 5 - (cpuamount / Game.cpu.limit) * 4, 1 + i * 0.3 + 0.45, 5 - ((cpuamount+nextcpuamount) / Game.cpu.limit), { color: col });
             }
 

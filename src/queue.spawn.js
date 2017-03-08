@@ -75,6 +75,7 @@ SpawnQueue.prototype.doSpawn = function(room) {
         }
 
         let args = {};
+        args.spawnRoom = room.name;
         if (records[r].creepArgs) {
             for (let item in records[r].creepArgs) {
                 args[item] = records[r].creepArgs[item];

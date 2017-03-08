@@ -28,7 +28,7 @@ var manageRooms     = require('manage.rooms');
 var manageCreep     = require('manage.creep');
 
 // logging
-var stats        = require('stats');
+var stats           = require('stats');
 
 module.exports.loop = function () {
     Memory.world = Memory.world || {};

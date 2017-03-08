@@ -1,11 +1,11 @@
 /*
- * task Upgrade
+ * task Director Haul
  *
- * upgrade task upgrades the room controller
+ * director haul task handles spawning of haulers
  *
  */
 
-var taskUpgrade = {
+var taskDirectorHaul = {
 
     /**
     * @param {Creep} creep The creep object
@@ -14,22 +14,7 @@ var taskUpgrade = {
     doTask: function(creep, task) {
         if (!creep) { return -1; }
         if (!task) { return -1; }
-
-        if (task.workRooms.length <= 0) {
-            if (Constant.DEBUG >= 2) { console.log('DEBUG - missing work rooms on task: ' + task.task + ', id: ' + task.id); }
-            return false;
-        }
-
-        if (creep.room.name != task.workRooms[0]) {
-            creep.moveToRoom(task.workRooms[0]);
-            return true;
-        }
-
-        if (creep.upgradeController(creep.room.controller) == ERR_NOT_IN_RANGE) {
-            creep.moveTo(creep.room.controller, { range: 3, });
-        }
-
-        return true;
+        // run creep task
     },
 
     /**
@@ -48,6 +33,7 @@ var taskUpgrade = {
             if (Constant.DEBUG >= 2) { console.log('DEBUG - missing work rooms on task: ' + task.task + ', id: ' + task.id); }
             return false;
         }
+
         let room = Game.rooms[task.workRooms[0]];
         if (!room) {
             if (Constant.DEBUG >= 3) { console.log('VERBOSE - no eyes on room: ' + task.workRooms[0] + ', task: ' + task.task + ', id: ' + task.id); }
@@ -73,7 +59,6 @@ var taskUpgrade = {
                     task.minSize = 400;
                 }
                 break;
-
             case 6:
             case 7:
             case 8:
@@ -82,39 +67,33 @@ var taskUpgrade = {
                 }
         }
 
-        // set spawn limits
-        switch (room.controller.level) {
-            case 2:
-            case 3:
-            case 4:
-                if (task.creepLimit < 2) {
-                    task.creepLimit = 2;
-                }
-                break;
-            case 5:
-            case 6:
-            case 7:
-            case 8:
-                if (task.creepLimit < 3) {
-                    task.creepLimit = 3;
-                }
-        }
-        if (Constant.SIM) { task.creepLimit = 1 };
+        if (room.getContainers().length > 0) {
+            if (task.creepLimit == 0) {
+                let count = room.getSources().length;
+                count++;
+                task.creepLimit = count;
+            }
 
-        // spawn new creeps if needed
-        if (task.creeps.length < task.creepLimit) {
-            if (!Game.Queues.spawn.isQueued({ room: task.workRooms[0], role: 'upgrader', })) {
-                let record = {
-                    rooms: [ task.workRooms[0], ],
-                    role: 'upgrader',
-                    priority: 60,
-                };
-                if (task.minSize) { record.minSize = task.minSize; }
-                Game.Queues.spawn.addRecord(record);
+            // spawn new creeps if needed
+            let count = _.filter(Game.creeps, creep =>
+                creep.memory.role == 'hauler' &&
+                creep.room.name == room.name &&
+                creep.memory.despawn != true
+                ).length;
+            if (count < task.creepLimit) {
+                if (!Game.Queues.spawn.isQueued({ room: task.workRooms[0], role: 'hauler', })) {
+                    let record = {
+                        rooms: [ task.workRooms[0], ],
+                        role: 'hauler',
+                        priority: 52,
+                    };
+                    if (task.minSize) { record.minSize = task.minSize; }
+                    Game.Queues.spawn.addRecord(record);
+                }
             }
         }
 
-        return true;
+
     },
 
     /**
@@ -127,4 +106,4 @@ var taskUpgrade = {
 
 };
 
-module.exports = taskUpgrade;
+module.exports = taskDirectorHaul;

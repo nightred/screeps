@@ -5,7 +5,7 @@
  *
  */
 
-var roleRemoteHarvester = {
+var roleMiner = {
 
     /**
     * The role name
@@ -145,4 +145,4 @@ var roleRemoteHarvester = {
 
 };
 
-module.exports = roleRemoteHarvester;
+module.exports = roleMiner;

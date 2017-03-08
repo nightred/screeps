@@ -14,6 +14,7 @@ var Constants = {
 
     // debug: 0 off, 1 info, 2 debug, 3 verbose
     DEBUG:                          3,
+    SIM:                            true,
     VISUALS:                        true,
 
     ENERGY_ROOM_WITHDRAW_MIN:       200,
@@ -26,8 +27,8 @@ var Constants = {
 
     CONTROLLER_WITHDRAW_LEVEL:      2,
 
-    FIND_WAIT_TICKS:                5,
-    MANAGE_WAIT_TICKS:              5,
+    FIND_WAIT_TICKS:                8,
+    MANAGE_WAIT_TICKS:              10,
     REPORT_TICKS:                   500,
 
     SPAWN_QUEUE_DELAY:              8,
@@ -50,11 +51,15 @@ var Constants = {
         'miner',
         'upgrader',
         'tech',
+        'hauler',
         ],
 
     WORK_TASKS: [
+        'director.room',
         'director.mine',
         'director.tech',
+        'director.haul',
+        'tower.fill',
         'mine',
         'upgrade',
         'repair',

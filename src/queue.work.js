@@ -57,11 +57,13 @@ WorkQueue.prototype.doManageTasks = function() {
     return true;
 };
 
-WorkQueue.prototype.doTaskFind = function(room) {
+WorkQueue.prototype.doTaskFind = function(room, tasks) {
     if (!room) { return -1; }
+    tasks = tasks || Constant.WORK_TASKS;
+    if (!Array.isArray(tasks)) { return -1; }
 
-    for (let task in this.tasks) {
-        this.tasks[task].doTaskFind(room);
+    for (let i = 0; i < tasks.length; i++) {
+        this.tasks[tasks[i]].doTaskFind(room);
     }
 
     return true;
@@ -117,7 +119,9 @@ WorkQueue.prototype.isQueued = function(args) {
     if (!args) { return -1; }
 
     return _.filter(this.getQueue(), record =>
-        (!args.targetId || record.targetId == args.targetId)
+        (!args.targetId || record.targetId == args.targetId) &&
+        ((!args.task || !args.room) || 
+        (record.task == args.task && record.workRooms.indexOf(args.room) >= 0))
     ).length > 0 ? true : false;
 };
 

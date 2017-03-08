@@ -6,7 +6,7 @@
  */
 
 Room.prototype.getConstructionSites = function() {
-    return this.find(FIND_CONSTRUCTION_SITES);
+    return this.find(FIND_MY_CONSTRUCTION_SITES);
 };
 
 Room.prototype.getSources = function() {

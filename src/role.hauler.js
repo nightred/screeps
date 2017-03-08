@@ -1,46 +1,41 @@
 /*
- * role Tech
+ * Hauler Role
  *
- * tech role defines the general server creep
+ * miner role that handles moving energy in a room
  *
  */
 
-var roleTech = {
+var roleHauler = {
 
     /**
     * The role name
     **/
-    role: 'tech',
+    role: 'hauler',
 
     /**
-    * The work tasks that the role is created for
+    * The locations that energy can be withdrawn
     **/
-    workTasks: [
-        'tower.fill',
-        'repair',
-        'construction',
+    energyInTargets: [
+        'containerIn',
     ],
-
     /**
-    * The locations that energy can be taken from
+    * The locations that energy can be stored
     **/
-    energyTargets: [
-        'storage',
+    energyOutTargets: [
+        'spawn',
+        'extention',
         'containerOut',
         'container',
-        'extention',
-        'spawn',
+        'storage',
     ],
 
-    /**
-    * @param {Creep} creep
-    **/
+    /** @param {Creep} creep **/
     doRole: function(creep) {
         if (!creep) { return false; }
 
         if (creep.manageState()) {
             if (creep.memory.working) {
-                creep.say('⚙');
+                creep.say('🚚');
             } else {
                 creep.say('🔋');
             }
@@ -52,20 +47,11 @@ var roleTech = {
         }
 
         if (creep.memory.working) {
-            if (!creep.memory.workId) {
-                if (!creep.getWork(this.workTasks)) {
-                    creep.memory.idleStart = Game.time;
-                    creep.say('💤');
-
-                    return true;
-                }
-            }
-
-            if (!creep.doWork()) {
-                if (Constant.DEBUG >= 2) { console.log('DEBUG - do work failed for role: ' + this.memory.role + ', name: ' + this.name); }
+            if (!creep.doEmptyEnergy(this.energyOutTargets)) {
+                if (Constant.DEBUG >= 2) { console.log('DEBUG - do empty energy failed for role: ' + this.memory.role + ', name: ' + this.name); }
             }
         } else {
-            if (!creep.doFillEnergy(this.energyTargets)) {
+            if (!creep.doFillEnergy(this.energyInTargets)) {
                 if (Constant.DEBUG >= 2) { console.log('DEBUG - do fill energy failed for role: ' + this.memory.role + ', name: ' + this.name); }
             }
         }
@@ -79,29 +65,27 @@ var roleTech = {
     * @param {Object} args Extra arguments
     **/
     getBody: function(energy, args) {
-        let workUnits = Math.floor((energy * 0.5) / 100);
-        let moveUnits = Math.floor((energy * 0.2) / 50);
-        let carryUnits = Math.floor((energy * 0.3) / 50);
-        let bodyParts = [];
+        if (isNaN(energy)) { return -1; }
+        args = args || {};
 
-        workUnits = workUnits < 1 ? 1 : workUnits;
-        workUnits = workUnits > 5 ? 5 : workUnits;
+        let carryUnits = Math.floor((energy / 2) / 50);
+        let moveUnits = Math.floor((energy / 2) / 50);
+        let body = [];
+
         moveUnits = moveUnits < 1 ? 1 : moveUnits;
-        moveUnits = moveUnits > 6 ? 6 : moveUnits;
+        moveUnits = moveUnits > 4 ? 4 : moveUnits;
         carryUnits = carryUnits < 1 ? 1 : carryUnits;
-        carryUnits = carryUnits > 10 ? 10 : carryUnits;
+        carryUnits = carryUnits > 8 ? 8 : carryUnits;
 
-        for (let i = 0; i < workUnits; i++) {
-            bodyParts.push(WORK);
-        }
         for (let i = 0; i < moveUnits; i++) {
-            bodyParts.push(MOVE);
-        }
-        for (let i = 0; i < carryUnits; i++) {
-            bodyParts.push(CARRY);
+            body.push(MOVE);
         }
 
-        return bodyParts;
+        for (let i = 0; i < carryUnits; i++) {
+            body.push(CARRY);
+        }
+
+        return body;
     },
 
     /**
@@ -121,4 +105,4 @@ var roleTech = {
 
 };
 
-module.exports = roleTech;
+module.exports = roleHauler;
