@@ -9,25 +9,21 @@ Creep.prototype.moveToRoom = function(name) {
     if (!name) { return -1; }
     if (this.room.name == name) { return true; }
     let target = new RoomPosition(25, 25, name);
-
     return this.moveTo(target, { range: 23, })
 }
 
 Creep.prototype.manageState = function() {
     if (!this.carryCapacity > 0) {
         this.memory.working = true;
-
         return true;
     }
 
     if (this.memory.working && this.isEnergyEmpty()) {
         this.memory.working = false;
-
         return true;
     }
     if (!this.memory.working && this.isEnergyFull()) {
         this.memory.working = true;
-
         return true;
     }
 
@@ -58,29 +54,27 @@ Creep.prototype.isCarryingEnergy = function() {
 
 Creep.prototype.isDespawnWarning = function() {
     if (this.memory.despawn) { return true; }
-
-    if (this.memory.role == 'controller') {
+    if (this.memory.role == 'controller' ||
+        this.memory.role == 'scout') {
         return false;
     }
 
-    return this.ticksToLive < Constant.CREEP_DESPAWN_TICKS;
+    return this.ticksToLive <= Constant.CREEP_DESPAWN_TICKS;
 }
 
 Creep.prototype.setDespawn = function() {
     this.memory.despawn = true;
     this.memory.goingTo = false;
     this.memory.harvestTarget = false;
-
     this.leaveWork();
-
     if (Constant.DEBUG >= 3) { console.log('VERBOSE - ' + this.memory.role + ' ' + this.name + ' end of life'); }
+    return true;
 }
 
 Creep.prototype.leaveWork = function() {
     if (!this.memory.workId) { return true; }
     Game.Queues.work.removeCreep(this.name, this.memory.workId);
     this.memory.workId = false;
-
     return true;
 }
 
@@ -118,26 +112,21 @@ Creep.prototype.getWork = function(tasks, args) {
 
     if (!Game.Queues.work.addCreep(this.name, workId)) { return false; }
     this.memory.workId = workId;
-
     return true;
 }
 
 Creep.prototype.doWork = function() {
     if (!this.memory.workId) { return false; }
-
     if (!Game.Queues.work.doTask(this)) {
         this.leaveWork();
     }
-
     return true;
 }
 
 Creep.prototype.removeWork = function() {
     if (!this.memory.workId) { return false; }
-
     Game.Queues.work.delRecord(this.memory.workId);
     this.memory.workId = false;
-
     return true;
 }
 
@@ -180,7 +169,6 @@ Creep.prototype.setGoingTo = function(target, leaveRoom) {
         this.memory.goingTo = false;
         return false;
     }
-
     if (!leaveRoom && (target.pos.x < 1 || target.pos.y < 1 || target.pos.x > 48 || target.pos.y > 48)) {
         this.memory.goingTo = false;
        return false;
@@ -190,10 +178,10 @@ Creep.prototype.setGoingTo = function(target, leaveRoom) {
     return true;
 }
 
-Creep.prototype.isGoingToSet = function(target) {
-    for (let roomCreep of this.room.find(FIND_MY_CREEPS)) {
-        if (roomCreep.memory.goingTo == target.id &&
-            roomCreep.memory.role == this.memory.role) {
+Creep.prototype.hasGoingTo = function(target) {
+    for (let name of this.room.find(FIND_MY_CREEPS)) {
+        if (Game.creeps[name].memory.goingTo == target.id &&
+            Game.creeps[name].memory.role == this.memory.role) {
             return true;
         }
     }
@@ -295,7 +283,6 @@ Creep.prototype.getOffExit = function() {
     }
 
     if (!moveDirections) { return false; }
-
     for (let direction of moveDirections) {
         let target = this.pos.fromDirection(direction).look();
         if (_.findIndex(target, objects =>

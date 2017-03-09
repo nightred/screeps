@@ -39,7 +39,7 @@ var roleHauler = {
             } else {
                 creep.say('🔋');
             }
-        } else if (creep.isCarryingEnergy() && !creep.memory.working)  {
+        } else if (creep.carry.energy > (creep.carryCapacity * 0.2) && !creep.memory.working)  {
             creep.toggleState();
             creep.say('🚚');
         }

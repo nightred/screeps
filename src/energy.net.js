@@ -34,15 +34,24 @@ EnergyNet.prototype.getStore = function(creep, energy, types) {
     let targetId = false;
     for (let i = 0; i < types.length; i++) {
         if (!this.rooms[creep.room.name][types[i]]) { continue; }
+        let mod = 1;
+        if (types[i] == 'containerOut' ||
+            types[i] == 'container'||
+            types[i] == 'storage') {
+            mod = 0.8;
+        }
         let targets = _.filter(this.rooms[creep.room.name][types[i]], target =>
-            target.energy < target.energyMax);
-        let type = this.rooms[creep.room.name][types[i]];
+            target.energy < target.energyMax * mod);
         targets = _.sortBy(targets, target => target.energy);
         targets = _.sortBy(targets, target => creep.pos.getRangeTo(target.pos));
-        if (targets.length > 0) {
-            targetId = targets[0].id;
-            break;
+        if (targets.length <= 0) { continue; }
+        for (let i = 0; i < targets.length; i++) {
+            if (!creep.hasGoingTo(targets[i])) {
+                targetId = targets[i].id;
+                break;
+            }
         }
+        if (targetId) { break; }
     }
     if (!targetId) { return false; }
 
@@ -70,8 +79,12 @@ EnergyNet.prototype.getWithdraw = function(creep, energy, types) {
             creep.room.energyAvailable <= Constant.ENERGY_ROOM_WITHDRAW_MIN) {
             continue;
         }
+        let mod = 0;
+        if (types[i] == 'containerIn') {
+            mod = 0.05;
+        }
         let targets = _.filter(this.rooms[creep.room.name][types[i]], target =>
-            target.energy > 0);
+            target.energy > target.energyMax * mod);
         targets = _.sortBy(targets, target => target.energy).reverse();
         if (types[i] != 'containerIn') {
             targets = _.sortBy(targets, target => creep.pos.getRangeTo(target.pos));
