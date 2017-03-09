@@ -50,13 +50,14 @@ var taskMine = {
         task.manageTick = Game.time;
 
         if (task.creeps.length < task.creepLimit) {
-            if (!Game.Queues.spawn.isQueued({ room: task.workRooms[0], role: 'miner', })) {
+            if (!Game.Queues.spawn.isQueued({ room: task.spawnRoom, role: 'miner', })) {
                 let record = {
-                    rooms: [ task.workRooms[0], ],
+                    rooms: [ task.spawnRoom, ],
                     role: 'miner',
                     priority: 50,
                     creepArgs: {
                         harvestTarget: task.targetId,
+                        workRooms: task.workRooms,
                     },
                 };
                 Game.Queues.spawn.addRecord(record);

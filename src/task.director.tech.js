@@ -77,8 +77,8 @@ var taskDirectorMine = {
             case 7:
                 break;
             case 8:
-                if (task.creepLimit < 3) {
-                    task.creepLimit = 3;
+                if (task.creepLimit < 2) {
+                    task.creepLimit = 2;
                 }
         }
 
@@ -89,11 +89,14 @@ var taskDirectorMine = {
             creep.memory.despawn != true
             ).length;
         if (count < task.creepLimit) {
-            if (!Game.Queues.spawn.isQueued({ room: task.workRooms[0], role: 'tech', })) {
+            if (!Game.Queues.spawn.isQueued({ room: task.spawnRoom, role: 'tech', })) {
                 let record = {
-                    rooms: [ task.workRooms[0], ],
+                    rooms: [ task.spawnRoom, ],
                     role: 'tech',
                     priority: 54,
+                    creepArgs: {
+                        workRooms: task.workRooms,
+                    },
                 };
                 if (task.minSize) { record.minSize = task.minSize; }
                 Game.Queues.spawn.addRecord(record);
@@ -101,7 +104,6 @@ var taskDirectorMine = {
         }
 
         return true;
-
     },
 
     /**

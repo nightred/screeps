@@ -100,6 +100,9 @@ Creep.prototype.getWork = function(tasks, args) {
         }
         if (!list) {
             for (let i = 0; i < this.memory.workRooms.length; i++) {
+                if (this.memory.workRooms[i] == this.room.name) {
+                    continue;
+                }
                 args.room = this.memory.workRooms[i];
                 list = Game.Queues.work.getWork(tasks, this.name, args);
                 if (list) { break; }
@@ -215,7 +218,7 @@ Creep.prototype.doEmptyEnergy = function(types) {
 Creep.prototype.getEmptyEnergyTarget = function(types) {
     if (!Array.isArray(types)) { return -1; }
 
-    let target = Game.energyNet.getStore(this.room, this.carry[RESOURCE_ENERGY], types);
+    let target = Game.energyNet.getStore(this, this.carry[RESOURCE_ENERGY], types);
     if (target) {
         this.setGoingTo(target);
         return true;
@@ -246,7 +249,7 @@ Creep.prototype.doFillEnergy = function(types) {
 Creep.prototype.getFillEnergyTarget = function(types) {
     if (!Array.isArray(types)) { return -1; }
 
-    let target = Game.energyNet.getWithdraw(this.room, (this.carryCapacity - _.sum(this.carry)), types);
+    let target = Game.energyNet.getWithdraw(this, (this.carryCapacity - _.sum(this.carry)), types);
     if (target) {
         this.setGoingTo(target);
         return true;

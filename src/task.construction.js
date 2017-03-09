@@ -40,14 +40,8 @@ var taskConstruction = {
     **/
     doTaskManaged: function(task) {
         if (!task) { return -1; }
-
-        task.manageTick = task.manageTick || 0;
-        if ((task.manageTick + Constant.MANAGE_WAIT_TICKS) > Game.time) {
-            return true;
-        }
-        task.manageTick = Game.time;
-
         // managed tasks
+        return true;
     },
 
     /**
@@ -76,7 +70,7 @@ var taskConstruction = {
 
             let record = {
                 workRooms: [ room.name, ],
-                spawnRooms: [ room.name, ],
+                spawnRoom: room.name,
                 task: 'construction',
                 priority: 70,
                 creepLimit: 1,

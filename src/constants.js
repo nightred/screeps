@@ -52,6 +52,7 @@ var Constants = {
         'upgrader',
         'tech',
         'hauler',
+        'scout',
         ],
 
     WORK_TASKS: [
@@ -64,6 +65,8 @@ var Constants = {
         'upgrade',
         'repair',
         'construction',
+        'signcontroller',
+        'scouting',
         ],
 
     DIRECTIONS: {

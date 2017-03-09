@@ -43,7 +43,7 @@ var taskDirectorRoom = {
         if (!Game.Queues.work.isQueued({ room: task.workRooms[0], task: 'director.mine', })) {
             let record = {
                 workRooms: [ task.workRooms[0], ],
-                spawnRooms: [ task.workRooms[0], ],
+                spawnRoom: task.spawnRoom,
                 task: 'director.mine',
                 priority: 22,
                 creepLimit: 0,
@@ -55,7 +55,7 @@ var taskDirectorRoom = {
         if (!Game.Queues.work.isQueued({ room: task.workRooms[0], task: 'director.haul', })) {
             let record = {
                 workRooms: [ task.workRooms[0], ],
-                spawnRooms: [ task.workRooms[0], ],
+                spawnRoom: task.spawnRoom,
                 task: 'director.haul',
                 priority: 24,
                 creepLimit: 0,
@@ -67,7 +67,7 @@ var taskDirectorRoom = {
         if (!Game.Queues.work.isQueued({ room: task.workRooms[0], task: 'director.tech', })) {
             let record = {
                 workRooms: [ task.workRooms[0], ],
-                spawnRooms: [ task.workRooms[0], ],
+                spawnRoom: task.spawnRoom,
                 task: 'director.tech',
                 priority: 26,
                 creepLimit: 0,
@@ -79,7 +79,7 @@ var taskDirectorRoom = {
         if (!Game.Queues.work.isQueued({ room: task.workRooms[0], task: 'upgrade', })) {
             let record = {
                 workRooms: [ task.workRooms[0], ],
-                spawnRooms: [ task.workRooms[0], ],
+                spawnRoom: task.spawnRoom,
                 task: 'upgrade',
                 priority: 28,
                 creepLimit: 1,
@@ -87,7 +87,8 @@ var taskDirectorRoom = {
             };
             Game.Queues.work.addRecord(record);
         }
-
+        
+        return true;
     },
 
     /**

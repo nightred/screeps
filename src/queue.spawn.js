@@ -43,6 +43,12 @@ SpawnQueue.prototype.cleanQueue = function() {
     if (records.length <= 0) { return true; }
 
     for(let i = 0; i < records.length; i++) {
+        if (!Game.creeps[records[i].name]) {
+            records[i].spawnedTime = records[i].spawnedTime || Game.time;
+        }
+        if (Game.creeps[records[i].name] && Game.creeps[records[i].name].spawning && records[i].spawnedTime) {
+            delete records[i].spawnedTime;
+        }
         if (Game.creeps[records[i].name] && !Game.creeps[records[i].name].spawning) {
             records[i].spawnedTime = records[i].spawnedTime || Game.time;
         }

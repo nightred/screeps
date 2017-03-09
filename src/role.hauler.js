@@ -39,6 +39,9 @@ var roleHauler = {
             } else {
                 creep.say('🔋');
             }
+        } else if (creep.isCarryingEnergy() && !creep.memory.working)  {
+            creep.toggleState();
+            creep.say('🚚');
         }
 
         if ((creep.memory.idleStart + Constant.CREEP_IDLE_TIME) > Game.time) {

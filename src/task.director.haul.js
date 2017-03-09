@@ -81,11 +81,14 @@ var taskDirectorHaul = {
                 creep.memory.despawn != true
                 ).length;
             if (count < task.creepLimit) {
-                if (!Game.Queues.spawn.isQueued({ room: task.workRooms[0], role: 'hauler', })) {
+                if (!Game.Queues.spawn.isQueued({ room: task.spawnRoom, role: 'hauler', })) {
                     let record = {
-                        rooms: [ task.workRooms[0], ],
+                        rooms: [ task.spawnRoom, ],
                         role: 'hauler',
                         priority: 52,
+                        creepArgs: {
+                            workRooms: task.workRooms,
+                        },
                     };
                     if (task.minSize) { record.minSize = task.minSize; }
                     Game.Queues.spawn.addRecord(record);
@@ -93,7 +96,7 @@ var taskDirectorHaul = {
             }
         }
 
-
+        return true;
     },
 
     /**

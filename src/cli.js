@@ -29,52 +29,74 @@ var Cli = {
             console.log('RESULT - ' + creepName + ' has been set to despawn');
 
             return true;
-        }
+        },
+
+        spawn: {
+
+            scout: function(room) {
+                if (!room) {
+                    console.log('ERROR - command need the following values: room name');
+                    return false;
+                }
+
+                let record = {
+                    rooms: [ room, ],
+                    role: 'scout',
+                    priority: 80,
+                };
+
+                return Game.Queues.spawn.addRecord(record);
+            },
+
+        },
 
     },
 
-    report: {
+    queue: {
 
-        run: function() {
-            let report = '╔═ REPORT - game tick: ' + Game.time + ' ';
-            for (i = report.length; i < 70; i++) { report += "═" }
-            report += '\n';
-            report += Work.getReport();
-            report += '╠══════════════════════════════════════════════════════════════════════\n';
-            report += QSpawn.getReport();
-            report += '╚══════════════════════════════════════════════════════════════════════';
-            console.log(report);
+        remove: function(id) {
+            if (isNaN(id)) {
+                console.log('ERROR - command need the following values: work id');
+                return false;
+            }
+
+            return Game.Queues.delRecord(id);
         },
 
     },
 
     work: {
 
-        remove: function(workId) {
-            if (!workId) {
-                console.log('ERROR - command need the following values: workId');
+        scouting: function(room) {
+            if (!room) {
+                console.log('ERROR - command need the following values: room name');
                 return false;
             }
+            let record = {
+                workRooms: [ room, ],
+                task: 'scouting',
+                priority: 90,
+                creepLimit: 1,
+            };
 
-            return Work.removeWork(workId);
+            return Game.Queues.work.addRecord(record);
         },
 
         signcontroller: function(roomName, message) {
             if (!roomName || !message) {
-                console.log('ERROR - command need the following values: roomName, message');
+                console.log('ERROR - command need the following values: room name, message');
                 return false;
             }
+            let record = {
+                workRooms: [ roomName, ],
+                spawnRoom: roomName,
+                task: 'signcontroller',
+                priority: 40,
+                creepLimit: 1,
+                message: message,
+            };
 
-            return Work.addWork('signcontroller', roomName, 30, { message: message, });
-        },
-
-        harvestEnergy: function(roomName) {
-            if (!roomName) {
-                console.log('ERROR - command need the following values: roomName');
-                return false;
-            }
-
-            return Work.addWork('harvestEnergy', roomName, 20, { managed: true, });
+            return Game.Queues.work.addRecord(record);
         },
 
         haul: function(roomName, spawnRoom) {
@@ -85,7 +107,7 @@ var Cli = {
             if (!spawnRoom) { spawnRoom = roomName; }
             let record = {
                 workRooms: [ roomName, ],
-                spawnRooms: [ spawnRoom, ],
+                spawnRoom: roomName,
                 task: 'director.haul',
                 priority: 22,
                 creepLimit: 0,
@@ -103,7 +125,7 @@ var Cli = {
             if (!spawnRoom) { spawnRoom = roomName; }
             let record = {
                 workRooms: [ roomName, ],
-                spawnRooms: [ spawnRoom, ],
+                spawnRoom: roomName,
                 task: 'upgrade',
                 priority: 26,
                 creepLimit: 1,
@@ -121,7 +143,7 @@ var Cli = {
             if (!spawnRoom) { spawnRoom = roomName; }
             let record = {
                 workRooms: [ roomName, ],
-                spawnRooms: [ spawnRoom, ],
+                spawnRoom: roomName,
                 task: 'director.tech',
                 priority: 30,
                 creepLimit: 0,
@@ -138,7 +160,7 @@ var Cli = {
             }
             let record = {
                 workRooms: [ roomName, ],
-                spawnRooms: [ roomName, ],
+                spawnRoom: roomName,
                 task: 'director.room',
                 priority: 20,
                 creepLimit: 0,
@@ -146,29 +168,6 @@ var Cli = {
             };
 
             return Game.Queues.work.addRecord(record);
-        },
-
-        scout: function(roomName) {
-            if (!roomName) {
-                console.log('ERROR - command need the following values: roomName');
-                return false;
-            }
-
-            return Work.addWork('scout', roomName, 30);
-        },
-
-        reserve: function(roomName, spawnRoom) {
-            if (!roomName || !spawnRoom) {
-                console.log('ERROR - command need the following values: roomName, spawnRoom');
-                return false;
-            }
-            let args = {
-                spawnRoom: spawnRoom,
-                managed: true,
-                creepLimit: 2,
-            };
-
-            return Work.addWork('room.reserve', roomName, 10, args);
         },
 
         mine: function(roomName, spawnRoom) {
@@ -179,7 +178,7 @@ var Cli = {
             if (!spawnRoom) { spawnRoom = roomName; }
             let record = {
                 workRooms: [ roomName, ],
-                spawnRooms: [ spawnRoom, ],
+                spawnRoom: roomName,
                 task: 'director.mine',
                 priority: 21,
                 creepLimit: 0,
@@ -187,45 +186,6 @@ var Cli = {
             };
 
             return Game.Queues.work.addRecord(record);
-        },
-
-    },
-
-    spawn: {
-
-        scout: function(roomName) {
-            if (!roomName) {
-                console.log('ERROR - command need the following values: roomName');
-                return false;
-            }
-
-            return QSpawn.addQueue(roomName, 'scout', 10);
-        },
-
-        hauler: function(roomName) {
-            if (!roomName) {
-                console.log('ERROR - command need the following values: roomName');
-                return false;
-            }
-
-            return QSpawn.addQueue(roomName, 'hauler', 10);
-        },
-
-        miner: function(roomName) {
-            if (!roomName) {
-                console.log('ERROR - command need the following values: roomName');
-                return false;
-            }
-
-            let record = {
-                rooms: [ roomName, ],
-                role: 'miner',
-                priority: 50,
-                creepArgs: {
-                    test: 'testval',
-                },
-            };
-            Game.Queues.spawn.addRecord(record);
         },
 
     },

@@ -50,7 +50,7 @@ var taskDirectorMine = {
             if (!Game.Queues.work.isQueued({ targetId: sources[s].id, })) {
                 let record = {
                     workRooms: [ task.workRooms[0], ],
-                    spawnRooms: [ task.workRooms[0], ],
+                    spawnRoom: task.spawnRoom,
                     task: 'mine',
                     priority: 40,
                     creepLimit: 1,
@@ -61,7 +61,7 @@ var taskDirectorMine = {
             }
         }
 
-
+        return true;
     },
 
     /**

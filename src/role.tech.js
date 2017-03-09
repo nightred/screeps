@@ -19,6 +19,7 @@ var roleTech = {
         'tower.fill',
         'repair',
         'construction',
+        'signcontroller',
     ],
 
     /**
@@ -43,6 +44,7 @@ var roleTech = {
                 creep.say('⚙');
             } else {
                 creep.say('🔋');
+                creep.leaveWork();
             }
         }
 

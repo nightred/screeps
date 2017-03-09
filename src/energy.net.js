@@ -19,67 +19,67 @@ var EnergyNet = function() {
 
 /**
 * get an object to store energy in
-* @param {Room} room The room to be used
+* @param {Creep} creep
 * @param {Number} energy The amount of energy
 * @param {Array} types The storage types
 **/
-EnergyNet.prototype.getStore = function(room, energy, types) {
-    if (!room) { return -1; }
+EnergyNet.prototype.getStore = function(creep, energy, types) {
+    if (!creep) { return -1; }
     if (isNaN(energy)) { return -1; }
     if(!Array.isArray(types)) { return -1; }
-    if (!this.rooms[room.name]) {
-        if (!this.buildRoom(room)) { return false; }
+    if (!this.rooms[creep.room.name]) {
+        if (!this.buildRoom(creep.room)) { return false; }
     }
 
     let targetId = false;
     for (let i = 0; i < types.length; i++) {
-        if (!this.rooms[room.name][types[i]]) { continue; }
-        let type = this.rooms[room.name][types[i]];
-        for (let id in type) {
-            if (type[id].energy < type[id].energyMax) {
-                type[id].energy += energy;
-                type[id].energy = type[id].energy > type[id].energyMax ? type[id].energyMax : type[id].energy;
-                targetId = id;
-                break;
-            }
+        if (!this.rooms[creep.room.name][types[i]]) { continue; }
+        let targets = _.filter(this.rooms[creep.room.name][types[i]], target =>
+            target.energy < target.energyMax);
+        let type = this.rooms[creep.room.name][types[i]];
+        targets = _.sortBy(targets, target => target.energy);
+        targets = _.sortBy(targets, target => creep.pos.getRangeTo(target.pos));
+        if (targets.length > 0) {
+            targetId = targets[0].id;
+            break;
         }
-        if (targetId) { break; }
     }
+    if (!targetId) { return false; }
 
     return Game.getObjectById(targetId);
 };
 
 /**
 * get an object to withdraw energy from
-* @param {Room} room The room to be used
+* @param {Creep} creep
 * @param {Number} energy The amount of energy
 * @param {Array} types The storage types
 **/
-EnergyNet.prototype.getWithdraw = function(room, energy, types) {
-    if (!room) { return -1; }
+EnergyNet.prototype.getWithdraw = function(creep, energy, types) {
+    if (!creep) { return -1; }
     if (isNaN(energy)) { return -1; }
     if(!Array.isArray(types)) { return -1; }
-    if (!this.rooms[room.name]) {
-        if (!this.buildRoom(room)) { return false; }
+    if (!this.rooms[creep.room.name]) {
+        if (!this.buildRoom(creep.room)) { return false; }
     }
 
     let targetId = false;
     for (let i = 0; i < types.length; i++) {
-        if (!this.rooms[room.name][types[i]]) { continue; }
+        if (!this.rooms[creep.room.name][types[i]]) { continue; }
         if ((types[i] == 'spawn' || types[i] == 'extention') &&
-            room.energyAvailable <= Constant.ENERGY_ROOM_WITHDRAW_MIN) {
+            creep.room.energyAvailable <= Constant.ENERGY_ROOM_WITHDRAW_MIN) {
             continue;
         }
-        let type = this.rooms[room.name][types[i]];
-        for (let id in type) {
-            if (type[id].energy > 0) {
-                type[id].energy -= energy;
-                type[id].energy = type[id].energy < 0 ? 0 : type[id].energy;
-                targetId = id;
-                break;
-            }
+        let targets = _.filter(this.rooms[creep.room.name][types[i]], target =>
+            target.energy > 0);
+        targets = _.sortBy(targets, target => target.energy).reverse();
+        if (types[i] != 'containerIn') {
+            targets = _.sortBy(targets, target => creep.pos.getRangeTo(target.pos));
         }
-        if (targetId) { break; }
+        if (targets.length > 0) {
+            targetId = targets[0].id;
+            break;
+        }
     }
     if (!targetId) { return false; }
 

@@ -119,7 +119,7 @@ var roleMiner = {
                 bodyParts.push(CARRY);
                 workUnits = Math.floor((energy - extrasCost) / 100);
                 workUnits = workUnits < 1 ? 1 : workUnits;
-                workUnits = workUnits > 5 ? 5 : workUnits;
+                workUnits = workUnits > 6 ? 6 : workUnits;
                 for (let i = 0; i < workUnits; i++) {
                     bodyParts.push(WORK);
                 }

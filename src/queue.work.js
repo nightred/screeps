@@ -120,7 +120,7 @@ WorkQueue.prototype.isQueued = function(args) {
 
     return _.filter(this.getQueue(), record =>
         (!args.targetId || record.targetId == args.targetId) &&
-        ((!args.task || !args.room) || 
+        ((!args.task || !args.room) ||
         (record.task == args.task && record.workRooms.indexOf(args.room) >= 0))
     ).length > 0 ? true : false;
 };
@@ -142,9 +142,9 @@ WorkQueue.prototype.addRecord = function(args) {
     };
     if (args.targetId) { record.targetId = args.targetId; }
     if (args.message) { record.message = args.message; }
+    if (args.spawnRoom) { record.spawnRoom = args.spawnRoom; }
     if (args.managed) { record.managed = args.managed; }
     if (Array.isArray(args.resupplyRooms)) { record.resupplyRooms = args.resupplyRooms; }
-    if (Array.isArray(args.spawnRooms)) { record.spawnRooms = args.spawnRooms; }
 
     if (Constant.DEBUG >= 3) { console.log('VERBOSE - work queue adding record, task: ' + record.task + ', priority: ' + record.priority); }
     return Game.Queues.addRecord(record);
