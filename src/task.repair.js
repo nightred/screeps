@@ -84,7 +84,6 @@ var taskRepair = {
 
             let record = {
                 workRooms: [ room.name, ],
-                spawnRoom: room.name,
                 task: 'repair',
                 priority: 60,
                 creepLimit: 1,

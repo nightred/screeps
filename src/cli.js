@@ -89,7 +89,6 @@ var Cli = {
             }
             let record = {
                 workRooms: [ roomName, ],
-                spawnRoom: roomName,
                 task: 'signcontroller',
                 priority: 40,
                 creepLimit: 1,
@@ -104,10 +103,10 @@ var Cli = {
                 console.log('ERROR - command need the following values: work room, (opt) spawn room');
                 return false;
             }
-            if (!spawnRoom) { spawnRoom = roomName; }
+            spawnRoom = spawnRoom || roomName;
             let record = {
                 workRooms: [ roomName, ],
-                spawnRoom: roomName,
+                spawnRoom: spawnRoom,
                 task: 'director.haul',
                 priority: 22,
                 creepLimit: 0,
@@ -122,10 +121,10 @@ var Cli = {
                 console.log('ERROR - command need the following values: work room, (opt) spawn room');
                 return false;
             }
-            if (!spawnRoom) { spawnRoom = roomName; }
+            spawnRoom = spawnRoom || roomName;
             let record = {
                 workRooms: [ roomName, ],
-                spawnRoom: roomName,
+                spawnRoom: spawnRoom,
                 task: 'upgrade',
                 priority: 26,
                 creepLimit: 1,
@@ -140,10 +139,10 @@ var Cli = {
                 console.log('ERROR - command need the following values: work room, (opt) spawn room');
                 return false;
             }
-            if (!spawnRoom) { spawnRoom = roomName; }
+            spawnRoom = spawnRoom || roomName;
             let record = {
                 workRooms: [ roomName, ],
-                spawnRoom: roomName,
+                spawnRoom: spawnRoom,
                 task: 'director.tech',
                 priority: 30,
                 creepLimit: 0,
@@ -160,9 +159,26 @@ var Cli = {
             }
             let record = {
                 workRooms: [ roomName, ],
-                spawnRoom: roomName,
                 task: 'director.room',
                 priority: 20,
+                creepLimit: 0,
+                managed: true,
+            };
+
+            return Game.Queues.work.addRecord(record);
+        },
+
+        remoteRoom: function(roomName, spawnRoom) {
+            if (!roomName) {
+                console.log('ERROR - command need the following values: room name');
+                return false;
+            }
+            spawnRoom = spawnRoom || roomName;
+            let record = {
+                workRooms: [ roomName, ],
+                spawnRoom: spawnRoom,
+                task: 'director.remote',
+                priority: 30,
                 creepLimit: 0,
                 managed: true,
             };
@@ -175,10 +191,10 @@ var Cli = {
                 console.log('ERROR - command need the following values: work room, (opt) spawn room');
                 return false;
             }
-            if (!spawnRoom) { spawnRoom = roomName; }
+            spawnRoom = spawnRoom || roomName;
             let record = {
                 workRooms: [ roomName, ],
-                spawnRoom: roomName,
+                spawnRoom: spawnRoom,
                 task: 'director.mine',
                 priority: 21,
                 creepLimit: 0,

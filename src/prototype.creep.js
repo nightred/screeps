@@ -179,13 +179,9 @@ Creep.prototype.setGoingTo = function(target, leaveRoom) {
 }
 
 Creep.prototype.hasGoingTo = function(target) {
-    for (let name of this.room.find(FIND_MY_CREEPS)) {
-        if (Game.creeps[name].memory.goingTo == target.id &&
-            Game.creeps[name].memory.role == this.memory.role) {
-            return true;
-        }
-    }
-    return false;
+    return _.filter(this.room.find(FIND_MY_CREEPS), targetCreep =>
+        targetCreep.memory.goingTo == target.id &&
+        targetCreep.memory.role == this.memory.role) > 0 ? true : false;
 }
 
 Creep.prototype.doEmptyEnergy = function(types) {

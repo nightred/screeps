@@ -1,22 +1,22 @@
 /*
- * role Scout
+ * role Combat Brawler
  *
- * scout role defines a movment only long range expendable creep
+ * combat brawler role defines an attach creep designed for melle combat
  *
  */
 
-var roleScout = {
+var roleCombatBrawler = {
 
     /**
     * The role name
     **/
-    role: 'scout',
+    role: 'combat.brawler',
 
     /**
     * The work tasks that the role is created for
     **/
     workTasks: [
-        'scouting'
+        'defense',
     ],
 
     /**
@@ -36,7 +36,7 @@ var roleScout = {
                 creep.say('💤');
                 return true;
             } else {
-                creep.say('🚴‍');
+                creep.say('🥊‍');
             }
         }
 
@@ -53,7 +53,33 @@ var roleScout = {
     * @param {Object} args Extra arguments
     **/
     getBody: function(energy, args) {
-        let body = [MOVE];
+        if (isNaN(energy)) { return -1; }
+        args = args || {};
+
+        let attackUnits = Math.floor((energy * 0.6) / 80);
+        attackUnits = attackUnits < 1 ? 1 : attackUnits;
+        attackUnits = attackUnits > 20 ? 20 : attackUnits;
+        energy -= (attackUnits * 80);
+
+        let moveUnits = Math.floor((energy * 0.7) / 50);
+        moveUnits = moveUnits < 1 ? 1 : moveUnits;
+        moveUnits = moveUnits > 8 ? 8 : moveUnits;
+        energy -= (moveUnits * 50);
+
+        let toughUnits = Math.floor(energy / 10);
+        toughUnits = toughUnits < 1 ? 1 : toughUnits;
+        toughUnits = toughUnits > 18 ? 18 : toughUnits;
+
+        let body = [];
+        for (let i = 0; i < toughUnits; i++) {
+            body.push(TOUGH);
+        }
+        for (let i = 0; i < moveUnits; i++) {
+            body.push(MOVE);
+        }
+        for (let i = 0; i < attackUnits; i++) {
+            body.push(ATTACK);
+        }
 
         return body;
     },
@@ -75,4 +101,4 @@ var roleScout = {
 
 };
 
-module.exports = roleScout;
+module.exports = roleCombatBrawler;

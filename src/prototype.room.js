@@ -13,6 +13,10 @@ Room.prototype.getSources = function() {
     return this.find(FIND_SOURCES);
 };
 
+Room.prototype.getHostiles = function() {
+    return this.find(FIND_HOSTILE_CREEPS);
+};
+
 Room.prototype.getSourceCount = function() {
     if (!this.memory.sourceCount) {
         this.memory.sourceCount = this.getSources().length;

@@ -70,7 +70,6 @@ var taskConstruction = {
 
             let record = {
                 workRooms: [ room.name, ],
-                spawnRoom: room.name,
                 task: 'construction',
                 priority: 70,
                 creepLimit: 1,

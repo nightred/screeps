@@ -53,10 +53,12 @@ var Constants = {
         'tech',
         'hauler',
         'scout',
+        'combat.brawler',
         ],
 
     WORK_TASKS: [
         'director.room',
+        'director.remote',
         'director.mine',
         'director.tech',
         'director.haul',
@@ -67,6 +69,7 @@ var Constants = {
         'construction',
         'signcontroller',
         'scouting',
+        'defense',
         ],
 
     DIRECTIONS: {

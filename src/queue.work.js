@@ -75,7 +75,7 @@ WorkQueue.prototype.getQueue = function() {
 
 WorkQueue.prototype.getWork = function(tasks, name, args) {
     if (!Array.isArray(tasks)) { return -1; }
-    args = args | {};
+    args = args || {};
 
     return _.sortBy(_.filter(this.getQueue(), record =>
         tasks.indexOf(record.task) >= 0 &&

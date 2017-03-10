@@ -60,6 +60,9 @@ var taskMine = {
                         workRooms: task.workRooms,
                     },
                 };
+                if (task.spawnRoom != task.workRooms[0]) {
+                    record.creepArgs.style = 'ranged';
+                }
                 Game.Queues.spawn.addRecord(record);
             }
         }

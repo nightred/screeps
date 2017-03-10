@@ -51,11 +51,11 @@ var roleHauler = {
 
         if (creep.memory.working) {
             if (!creep.doEmptyEnergy(this.energyOutTargets)) {
-                if (Constant.DEBUG >= 2) { console.log('DEBUG - do empty energy failed for role: ' + this.memory.role + ', name: ' + this.name); }
+                if (Constant.DEBUG >= 2) { console.log('DEBUG - do empty energy failed for role: ' + creep.memory.role + ', name: ' + creep.name); }
             }
         } else {
             if (!creep.doFillEnergy(this.energyInTargets)) {
-                if (Constant.DEBUG >= 2) { console.log('DEBUG - do fill energy failed for role: ' + this.memory.role + ', name: ' + this.name); }
+                if (Constant.DEBUG >= 2) { console.log('DEBUG - do fill energy failed for role: ' + creep.memory.role + ', name: ' + creep.name); }
             }
         }
 
