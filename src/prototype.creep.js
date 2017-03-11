@@ -92,14 +92,14 @@ Creep.prototype.getWork = function(tasks, args) {
             args.room = this.room.name;
             list = Game.Queues.work.getWork(tasks, this.name, args);
         }
-        if (!list) {
+        if (!list || list.length <= 0) {
             for (let i = 0; i < this.memory.workRooms.length; i++) {
                 if (this.memory.workRooms[i] == this.room.name) {
                     continue;
                 }
                 args.room = this.memory.workRooms[i];
                 list = Game.Queues.work.getWork(tasks, this.name, args);
-                if (list) { break; }
+                if (list.length > 0) { break; }
             }
         }
     } else {
@@ -107,7 +107,7 @@ Creep.prototype.getWork = function(tasks, args) {
         list = Game.Queues.work.getWork(tasks, this.name, args);
     }
 
-    if (list.length <= 0) { return false; }
+    if (!list || list.length <= 0) { return false; }
     let workId = list[0].id;
 
     if (!Game.Queues.work.addCreep(this.name, workId)) { return false; }
@@ -207,8 +207,8 @@ Creep.prototype.getEmptyEnergyTarget = function(types) {
         this.setGoingTo(target);
         return true;
     }
-    if (this.room.name != this.spawnRoom) {
-        this.moveToRoom(this.spawnRoom);
+    if (this.room.name != this.memory.spawnRoom) {
+        this.moveToRoom(this.memory.spawnRoom);
         return true;
     }
 
@@ -238,8 +238,8 @@ Creep.prototype.getFillEnergyTarget = function(types) {
         this.setGoingTo(target);
         return true;
     }
-    if (this.room.name != this.spawnRoom) {
-        this.moveToRoom(this.spawnRoom);
+    if (this.room.name != this.memory.spawnRoom && this.memory.role != 'longhauler') {
+        this.moveToRoom(this.memory.spawnRoom);
         return true;
     }
 

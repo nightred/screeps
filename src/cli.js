@@ -116,6 +116,23 @@ var Cli = {
             return Game.Queues.work.addRecord(record);
         },
 
+        longhaul: function(roomName, spawnRoom) {
+            if (!roomName || !spawnRoom) {
+                console.log('ERROR - command need the following values: work room, spawn room');
+                return false;
+            }
+            let record = {
+                workRooms: [ roomName, ],
+                spawnRoom: spawnRoom,
+                task: 'longhaul',
+                priority: 40,
+                creepLimit: 1,
+                managed: true,
+            };
+
+            return Game.Queues.work.addRecord(record);
+        },
+
         upgrade: function(roomName, spawnRoom) {
             if (!roomName) {
                 console.log('ERROR - command need the following values: work room, (opt) spawn room');
@@ -140,12 +157,13 @@ var Cli = {
                 return false;
             }
             spawnRoom = spawnRoom || roomName;
+            workRooms = Array.isArray(roomName) ? roomName : [ roomName ];
             let record = {
-                workRooms: [ roomName, ],
+                workRooms: workRooms,
                 spawnRoom: spawnRoom,
                 task: 'director.tech',
                 priority: 30,
-                creepLimit: 0,
+                creepLimit: 1,
                 managed: true,
             };
 

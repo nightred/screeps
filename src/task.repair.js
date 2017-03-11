@@ -54,14 +54,11 @@ var taskRepair = {
     doTaskFind: function(room) {
         if (!room) { return -1; }
 
-        Memory.world.tasks = Memory.world.tasks || {};
-        Memory.world.tasks.repair = Memory.world.tasks.repair || {};
-        let mem = Memory.world.tasks.repair;
-        mem.findTick = mem.findTick || 0;
-        if ((mem.findTick + Constant.FIND_WAIT_TICKS) > Game.time) {
+        room.memory.findTickRepair = room.memory.findTickRepair || 0;
+        if ((room.memory.findTickRepair + Constant.FIND_WAIT_TICKS) > Game.time) {
             return true;
         }
-        mem.findTick = Game.time;
+        room.memory.findTickRepair = Game.time;
 
         let targets = _.sortBy(_.filter(room.find(FIND_MY_STRUCTURES), structure =>
             structure.hits < (structure.hitsMax * Constant.REPAIR_HIT_WORK_MIN) &&

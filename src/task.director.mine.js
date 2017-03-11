@@ -35,29 +35,25 @@ var taskDirectorMine = {
             return false;
         }
 
-        let room = Game.rooms[task.workRooms[0]];
-        if (!room) {
-            if (Constant.DEBUG >= 3) { console.log('VERBOSE - no eyes on room: ' + task.workRooms[0] + ', task: ' + task.task + ', id: ' + task.id); }
-            return true;
-        }
+        for (let i = 0; i < task.workRooms.length; i++ ) {
+            if (!Game.rooms[task.workRooms[i]]) { continue; }
+            let room = Game.rooms[task.workRooms[i]];
 
-        let sources = room.getSources();
-        if (sources.length <= 0) {
-            if (Constant.DEBUG >= 3) { console.log('VERBOSE - no no sources in room: ' + task.workRooms[0] + ', task: ' + task.task + ', id: ' + task.id); }
-            return true;
-        }
-        for (let s = 0; s < sources.length; s++) {
-            if (!Game.Queues.work.isQueued({ targetId: sources[s].id, })) {
-                let record = {
-                    workRooms: [ task.workRooms[0], ],
-                    spawnRoom: task.spawnRoom,
-                    task: 'mine',
-                    priority: 40,
-                    creepLimit: 1,
-                    managed: true,
-                    targetId: sources[s].id,
-                };
-                Game.Queues.work.addRecord(record);
+            let sources = room.getSources();
+            if (sources.length <= 0) { continue; }
+            for (let s = 0; s < sources.length; s++) {
+                if (!Game.Queues.work.isQueued({ targetId: sources[s].id, })) {
+                    let record = {
+                        workRooms: [ task.workRooms[0], ],
+                        spawnRoom: task.spawnRoom,
+                        task: 'mine',
+                        priority: 40,
+                        creepLimit: 1,
+                        managed: true,
+                        targetId: sources[s].id,
+                    };
+                    Game.Queues.work.addRecord(record);
+                }
             }
         }
 

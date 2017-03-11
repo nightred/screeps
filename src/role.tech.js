@@ -29,6 +29,7 @@ var roleTech = {
         'storage',
         'containerOut',
         'container',
+        'containerIn',
         'extention',
         'spawn',
     ],

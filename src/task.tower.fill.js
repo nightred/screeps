@@ -52,14 +52,11 @@ var taskTowerFill = {
     doTaskFind: function(room) {
         if (!room) { return -1; }
 
-        Memory.world.tasks = Memory.world.tasks || {};
-        Memory.world.tasks.repair = Memory.world.tasks.repair || {};
-        let mem = Memory.world.tasks.repair;
-        mem.findTick = mem.findTick || 0;
-        if ((mem.findTick + Constant.FIND_WAIT_TICKS) > Game.time) {
+        room.memory.findTickFillTower = room.memory.findTickFillTower || 0;
+        if ((room.memory.findTickFillTower + Constant.FIND_WAIT_TICKS) > Game.time) {
             return true;
         }
-        mem.findTick = Game.time;
+        room.memory.findTickFillTower = Game.time;
 
         let targets = _.filter(room.getTowers(), structure =>
                 structure.energy < (structure.energyCapacity * Constant.REFILL_TOWER_MIN)

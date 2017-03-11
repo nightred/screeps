@@ -34,58 +34,51 @@ var taskDirectorMine = {
             return false;
         }
 
-        let room = Game.rooms[task.workRooms[0]];
-        if (!room) {
-            if (Constant.DEBUG >= 3) { console.log('VERBOSE - no eyes on room: ' + task.workRooms[0] + ', task: ' + task.task + ', id: ' + task.id); }
-            return true;
-        }
+        for (let i = 0; i < task.workRooms.length; i++ ) {
+            if (!Game.rooms[task.workRooms[i]]) { continue; }
+            let room = Game.rooms[task.workRooms[i]];
 
-        // set size limits
-        switch (room.controller.level) {
-            case 1:
-            case 2:
-                if (task.minSize > 200) {
-                    task.minSize = 200;
-                }
-                break;
-            case 3:
-                if (task.minSize < 300) {
-                    task.minSize = 300;
-                }
-                break;
-            case 4:
-            case 5:
-            case 6:
-                if (task.minSize < 400) {
-                    task.minSize = 400;
-                }
-                break;
-            case 7:
-            case 8:
-                if (task.minSize < 600) {
-                    task.minSize = 600;
-                }
-        }
+            let remoteTasks = [
+                'repair',
+                'construction',
+            ];
+            Game.Queues.work.doTaskFind(room, remoteTasks);
 
-        // set spawn limits
-        switch (room.controller.level) {
-            case 2:
-            case 3:
-            case 4:
-            case 5:
-            case 6:
-            case 7:
-                break;
-            case 8:
-                if (task.creepLimit < 2) {
-                    task.creepLimit = 2;
-                }
+            if (!room.controller || !room.controller.my) { continue; }
+
+            switch (room.controller.level) {
+                case 1:
+                case 2:
+                    if (task.minSize > 200) {
+                        task.minSize = 200;
+                    }
+                    break;
+                case 3:
+                    if (task.minSize < 300) {
+                        task.minSize = 300;
+                    }
+                    break;
+                case 4:
+                case 5:
+                case 6:
+                    if (task.minSize < 400) {
+                        task.minSize = 400;
+                    }
+                    break;
+                case 7:
+                case 8:
+                    if (task.minSize < 600) {
+                        task.minSize = 600;
+                    }
+                    if (task.creepLimit < 2) {
+                        task.creepLimit = 2;
+                    }
+            }
         }
 
         // spawn new creeps if needed
         let count = _.filter(Game.creeps, creep =>
-            creep.memory.role == 'tech' &&
-            creep.room.name == room.name &&
+            creep.memory.directorId == task.id &&
             creep.memory.despawn != true
             ).length;
         if (count < task.creepLimit) {
@@ -96,6 +89,7 @@ var taskDirectorMine = {
                     priority: 54,
                     creepArgs: {
                         workRooms: task.workRooms,
+                        directorId: task.id,
                     },
                 };
                 if (task.minSize) { record.minSize = task.minSize; }

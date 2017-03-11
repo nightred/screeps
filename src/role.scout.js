@@ -31,12 +31,12 @@ var roleScout = {
         }
 
         if (!creep.memory.workId) {
-            if (!creep.getWork(this.workTasks)) {
+            if (!creep.getWork(this.workTasks, { ignoreRoom: true, })) {
                 creep.memory.idleStart = Game.time;
                 creep.say('💤');
                 return true;
             } else {
-                creep.say('🚴‍');
+                creep.say('🚴');
             }
         }
 

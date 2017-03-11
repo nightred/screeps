@@ -33,11 +33,6 @@ var taskDirectorRemote = {
             if (Constant.DEBUG >= 3) { console.log('VERBOSE - no eyes on room: ' + task.workRooms[0] + ', task: ' + task.task + ', id: ' + task.id); }
             return true;
         }
-        let remoteTasks = [
-            'repair',
-            'construction',
-        ];
-        Game.Queues.work.doTaskFind(room, remoteTasks);
 
         task.manageTick = task.manageTick || 0;
         if ((task.manageTick + Constant.MANAGE_WAIT_TICKS) > Game.time) {

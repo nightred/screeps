@@ -50,14 +50,11 @@ var taskConstruction = {
     doTaskFind: function(room) {
         if (!room) { return -1; }
 
-        Memory.world.tasks = Memory.world.tasks || {};
-        Memory.world.tasks.construction = Memory.world.tasks.construction || {};
-        let mem = Memory.world.tasks.construction;
-        mem.findTick = mem.findTick || 0;
-        if ((mem.findTick + Constant.FIND_WAIT_TICKS) > Game.time) {
+        room.memory.findTickConstruction = room.memory.findTickConstruction || 0;
+        if ((room.memory.findTickConstruction + Constant.FIND_WAIT_TICKS) > Game.time) {
             return true;
         }
-        mem.findTick = Game.time;
+        room.memory.findTickConstruction = Game.time;
 
         let targets = room.getConstructionSites();
 
