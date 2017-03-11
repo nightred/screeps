@@ -1,0 +1,8 @@
+.git/
+.tern-project
+package.json
+gruntfile.js
+
+ScreepsAutocomplete/
+node_modules/
+build/
