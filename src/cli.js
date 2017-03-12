@@ -33,6 +33,21 @@ var Cli = {
 
         spawn: {
 
+            controller: function(room) {
+                if (!room) {
+                    console.log('ERROR - command need the following values: room name');
+                    return false;
+                }
+
+                let record = {
+                    rooms: [ room, ],
+                    role: 'controller',
+                    priority: 30,
+                };
+
+                return Game.Queues.spawn.addRecord(record);
+            },
+
             scout: function(room) {
                 if (!room) {
                     console.log('ERROR - command need the following values: room name');
@@ -66,6 +81,21 @@ var Cli = {
     },
 
     work: {
+
+        claim: function(room) {
+            if (!room) {
+                console.log('ERROR - command need the following values: room name');
+                return false;
+            }
+            let record = {
+                workRooms: [ room, ],
+                task: 'claim',
+                priority: 20,
+                creepLimit: 1,
+            };
+
+            return Game.Queues.work.addRecord(record);
+        },
 
         scouting: function(room) {
             if (!room) {
@@ -177,6 +207,7 @@ var Cli = {
             }
             let record = {
                 workRooms: [ roomName, ],
+                spawnRoom: roomName,
                 task: 'director.room',
                 priority: 20,
                 creepLimit: 0,

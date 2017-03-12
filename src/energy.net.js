@@ -81,7 +81,7 @@ EnergyNet.prototype.getWithdraw = function(creep, energy, types) {
         }
         let mod = 0;
         if (types[i] == 'containerIn') {
-            mod = 0.05;
+            mod = 0.15;
         }
         let targets = _.filter(this.rooms[creep.room.name][types[i]], target =>
             target.energy > target.energyMax * mod);

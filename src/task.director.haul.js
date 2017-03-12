@@ -68,14 +68,14 @@ var taskDirectorHaul = {
         }
 
         if (room.getContainers().length > 0) {
-            if (task.creepLimit == 0) {
-                let count = room.getSources().length;
-                count++;
+            let count = room.getSources().length;
+            count++;
+            if (task.creepLimit < count) {
                 task.creepLimit = count;
             }
 
             // spawn new creeps if needed
-            let count = _.filter(Game.creeps, creep =>
+            count = _.filter(Game.creeps, creep =>
                 creep.memory.role == 'hauler' &&
                 creep.room.name == room.name &&
                 creep.memory.despawn != true

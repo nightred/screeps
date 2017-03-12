@@ -31,35 +31,67 @@ var roleHauler = {
 
     /** @param {Creep} creep **/
     doRole: function(creep) {
-        if (!creep) { return false; }
+        if (!creep) { return -1; }
 
         if (creep.manageState()) {
             if (creep.memory.working) {
                 creep.say('🚚');
             } else {
                 creep.say('🔋');
+                creep.memory.task = false;
             }
         } else if (creep.carry.energy > (creep.carryCapacity * 0.2) && !creep.memory.working)  {
             creep.toggleState();
             creep.say('🚚');
         }
 
+        if (creep.memory.task &&
+            (creep.memory.idleStart + Constant.CREEP_IDLE_TIME) > Game.time) {
+            creep.memory.task = false;
+            creep.memory.idleStart = 0;
+        }
         if ((creep.memory.idleStart + Constant.CREEP_IDLE_TIME) > Game.time) {
             creep.moveToIdlePosition();
             return true;
         }
 
-        if (creep.memory.working) {
-            if (!creep.doEmptyEnergy(this.energyOutTargets)) {
-                if (Constant.DEBUG >= 2) { console.log('DEBUG - do empty energy failed for role: ' + creep.memory.role + ', name: ' + creep.name); }
-            }
-        } else {
-            if (!creep.doFillEnergy(this.energyInTargets)) {
-                if (Constant.DEBUG >= 2) { console.log('DEBUG - do fill energy failed for role: ' + creep.memory.role + ', name: ' + creep.name); }
+        this.doWork(creep);
+
+        return true;
+    },
+
+    /** @param {Creep} creep **/
+    doWork: function(creep) {
+        if (!creep) { return -1; }
+        creep.memory.task = creep.memory.task || false;
+
+        if (!creep.memory.task) {
+            if (creep.room.storage &&
+                creep.room.storage.store[RESOURCE_ENERGY] > 100 &&
+                creep.getEmptyEnergyTarget(['spawn','extention',],{noSet: true,})) {
+                creep.memory.task = 'fillSpawn';
+            } else {
+                creep.memory.task = 'default';
             }
         }
 
-        return true;
+        let outTargets = this.energyOutTargets;
+        let inTargets = this.energyInTargets;
+        if (creep.memory.task == 'fillSpawn') {
+            outTargets = ['spawn','extention',];
+            inTargets = ['storage',];
+        }
+
+        // working has energy, else need energy
+        if (creep.memory.working) {
+            if (!creep.doEmptyEnergy(outTargets)) {
+                if (Constant.DEBUG >= 2) { console.log('DEBUG - do empty energy failed for role: ' + creep.memory.role + ', name: ' + creep.name); }
+            }
+        } else {
+            if (!creep.doFillEnergy(inTargets)) {
+                if (Constant.DEBUG >= 2) { console.log('DEBUG - do fill energy failed for role: ' + creep.memory.role + ', name: ' + creep.name); }
+            }
+        }
     },
 
     /**

@@ -199,12 +199,15 @@ Creep.prototype.doEmptyEnergy = function(types) {
     return true;
 };
 
-Creep.prototype.getEmptyEnergyTarget = function(types) {
+Creep.prototype.getEmptyEnergyTarget = function(types, args) {
     if (!Array.isArray(types)) { return -1; }
+    args = args || {};
 
     let target = Game.energyNet.getStore(this, this.carry[RESOURCE_ENERGY], types);
     if (target) {
-        this.setGoingTo(target);
+        if (!args.noSet) {
+            this.setGoingTo(target);
+        }
         return true;
     }
     if (this.room.name != this.memory.spawnRoom) {
@@ -230,12 +233,15 @@ Creep.prototype.doFillEnergy = function(types) {
     return true;
 };
 
-Creep.prototype.getFillEnergyTarget = function(types) {
+Creep.prototype.getFillEnergyTarget = function(types, args) {
     if (!Array.isArray(types)) { return -1; }
+    args = args || {};
 
     let target = Game.energyNet.getWithdraw(this, (this.carryCapacity - _.sum(this.carry)), types);
     if (target) {
-        this.setGoingTo(target);
+        if (!args.noSet) {
+            this.setGoingTo(target);
+        }
         return true;
     }
     if (this.room.name != this.memory.spawnRoom && this.memory.role != 'longhauler') {

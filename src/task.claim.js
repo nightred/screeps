@@ -1,11 +1,11 @@
 /*
- * task Scouting
+ * task Claim
  *
- * mine scouting travels to a room and patrols
+ * task claim travels to a room and claims the controller
  *
  */
 
-var taskScouting = {
+var taskClaim = {
 
     /**
     * @param {Creep} creep The creep object
@@ -25,36 +25,12 @@ var taskScouting = {
             return true;
         }
 
-        task.position = task.position || 0;
+        if (!creep.room.controller || creep.room.controller.my) {
+            return creep.removeWork();
+        }
 
-        let x = 10;
-        let y = 10;
-        switch (task.position) {
-            case 1:
-                y = 40;
-                break;
-            case 2:
-                x = 40;
-                y = 40;
-                break;
-            case 3:
-                x = 40;
-        }
-        let target = new RoomPosition(x, y, task.workRooms[0]);
-        let args = {
-            range: 6,
-            reusePath: 30,
-            visualizePathStyle: {
-                fill: 'transparent',
-                stroke: '#fff',
-                lineStyle: 'dashed',
-                strokeWidth: .15,
-                opacity: .1,
-            },
-        }
-        if (creep.moveTo(target, args) == ERR_NO_PATH) {
-            task.position++;
-            task.position = task.position < 4 ? task.position : 0;
+        if (creep.claimController(creep.room.controller) == ERR_NOT_IN_RANGE) {
+            creep.moveTo(creep.room.controller, { range: 1, });
         }
 
         return true;
@@ -79,4 +55,4 @@ var taskScouting = {
 
 };
 
-module.exports = taskScouting;
+module.exports = taskClaim;

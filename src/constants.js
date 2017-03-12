@@ -54,6 +54,7 @@ var Constants = {
         'hauler',
         'longhauler',
         'scout',
+        'controller',
         'combat.brawler',
         ],
 
@@ -72,6 +73,7 @@ var Constants = {
         'signcontroller',
         'scouting',
         'defense',
+        'claim',
         ],
 
     DIRECTIONS: {
