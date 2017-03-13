@@ -75,36 +75,30 @@ SpawnQueue.prototype.doSpawn = function(room) {
     let spawns = room.getSpawns();
     if (spawns.length <= 0) { return true; }
 
-    for (let r = 0; r < records.length; r++) {
-        if (records[r].minSize) {
-            if (energy < records[r].minSize) { continue; }
-        }
+    for (let s = 0; s < spawns.length; s++) {
+        if (spawns[s].spawning) { continue; }
+        for (let r = 0; r < records.length; r++) {
+            if (records[r].spawned) { continue; }
+            if (records[r].minSize && energy < records[r].minSize) { continue; }
 
-        let args = {};
-        args.spawnRoom = room.name;
-        if (records[r].creepArgs) {
-            for (let item in records[r].creepArgs) {
-                args[item] = records[r].creepArgs[item];
-            };
-        }
+            let args = {};
+            args.spawnRoom = room.name;
+            if (records[r].creepArgs) {
+                for (let item in records[r].creepArgs) {
+                    args[item] = records[r].creepArgs[item];
+                };
+            }
 
-        let body = this.roles[records[r].role].getBody(energy, args);
-        let cost = this.getBodyCost(body);
-
-        for (let s = 0; s < spawns.length; s++) {
-            if (spawns[s].spawning) { continue; }
-
+            let body = this.roles[records[r].role].getBody(energy, args);
             let name = this.roles[records[r].role].doSpawn(spawns[s], body, args);
             if (name != undefined && !(name < 0)) {
-                energy -= cost;
+                energy -= this.getBodyCost(body);
                 records[r].spawned = true;
                 records[r].name = name;
-                if (Constant.DEBUG >= 1) { console.log('INFO - spawning name: ' + name + ', role: ' + records[r].role + ', parts:  ' + Game.creeps[name].body.length + ', cost ' + cost + ', room:' + room.name); }
-
+                if (Constant.DEBUG >= 1) { console.log('INFO - spawning name: ' + name + ', role: ' + records[r].role + ', parts:  ' + Game.creeps[name].body.length + ', room:' + room.name); }
                 break;
             }
         }
-
         if (energy < Constant.ENERGY_CREEP_SPAWN_MIN) { break; }
     }
 

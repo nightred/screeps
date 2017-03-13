@@ -45,6 +45,18 @@ var taskDirectorRoom = {
                 workRooms: [ task.workRooms[0], ],
                 spawnRoom: task.spawnRoom,
                 task: 'director.mine',
+                priority: 21,
+                creepLimit: 0,
+                managed: true,
+            };
+            Game.Queues.work.addRecord(record);
+        }
+
+        if (!Game.Queues.work.isQueued({ room: task.workRooms[0], task: 'director.resupply', })) {
+            let record = {
+                workRooms: [ task.workRooms[0], ],
+                spawnRoom: task.spawnRoom,
+                task: 'director.resupply',
                 priority: 22,
                 creepLimit: 0,
                 managed: true,
@@ -57,7 +69,7 @@ var taskDirectorRoom = {
                 workRooms: [ task.workRooms[0], ],
                 spawnRoom: task.spawnRoom,
                 task: 'director.haul',
-                priority: 24,
+                priority: 23,
                 creepLimit: 0,
                 managed: true,
             };
@@ -69,7 +81,7 @@ var taskDirectorRoom = {
                 workRooms: [ task.workRooms[0], ],
                 spawnRoom: task.spawnRoom,
                 task: 'director.tech',
-                priority: 26,
+                priority: 24,
                 creepLimit: 0,
                 managed: true,
             };
@@ -87,7 +99,7 @@ var taskDirectorRoom = {
             };
             Game.Queues.work.addRecord(record);
         }
-        
+
         return true;
     },
 

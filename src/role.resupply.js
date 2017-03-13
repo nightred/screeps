@@ -1,22 +1,22 @@
 /*
- * Hauler Role
+ * Resupply Role
  *
- * miner role that handles moving energy in a room
+ * resupply role that handles filling extentions and spawn
  *
  */
 
-var roleHauler = {
+var roleResupply = {
 
     /**
     * The role name
     **/
-    role: 'hauler',
+    role: 'resupply',
 
     /**
     * The locations that energy can be withdrawn
     **/
     energyInTargets: [
-        'containerIn',
+        'storage',
     ],
     /**
     * The locations that energy can be stored
@@ -24,9 +24,7 @@ var roleHauler = {
     energyOutTargets: [
         'spawn',
         'extention',
-        'storage',
         'containerOut',
-        'container',
     ],
 
     /** @param {Creep} creep **/
@@ -118,4 +116,4 @@ var roleHauler = {
 
 };
 
-module.exports = roleHauler;
+module.exports = roleResupply;

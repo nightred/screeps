@@ -128,7 +128,7 @@ var Cli = {
         },
 
         attack: function(room, limit) {
-            if (!room) {
+            if (!room || isNaN(limit)) {
                 console.log('ERROR - command need the following values: room name, creep limit');
                 return false;
             }

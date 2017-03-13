@@ -1,11 +1,11 @@
 /*
- * task Director Haul
+ * task Director Resupply
  *
- * director haul task handles spawning of haulers
+ * director resupply task handles spawning of resupply creeps
  *
  */
 
-var taskDirectorHaul = {
+var taskDirectorResupply = {
 
     /**
     * @param {Creep} creep The creep object
@@ -67,24 +67,21 @@ var taskDirectorHaul = {
                 }
         }
 
-        if (room.getContainers().length > 0) {
-            let count = room.getSources().length;
-            if (task.creepLimit < count) {
-                task.creepLimit = count;
-            }
+        if (room.storage) {
+            task.creepLimit = task.creepLimit < 1 ? 1 : task.creepLimit;
 
             // spawn new creeps if needed
             count = _.filter(Game.creeps, creep =>
-                creep.memory.role == 'hauler' &&
+                creep.memory.role == 'resupply' &&
                 creep.room.name == room.name &&
                 creep.memory.despawn != true
                 ).length;
             if (count < task.creepLimit) {
-                if (!Game.Queues.spawn.isQueued({ room: task.spawnRoom, role: 'hauler', })) {
+                if (!Game.Queues.spawn.isQueued({ room: task.spawnRoom, role: 'resupply', })) {
                     let record = {
                         rooms: [ task.spawnRoom, ],
-                        role: 'hauler',
-                        priority: 52,
+                        role: 'resupply',
+                        priority: 48,
                         creepArgs: {
                             workRooms: task.workRooms,
                         },
@@ -108,4 +105,4 @@ var taskDirectorHaul = {
 
 };
 
-module.exports = taskDirectorHaul;
+module.exports = taskDirectorResupply;

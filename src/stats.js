@@ -27,13 +27,13 @@ var Stats = {
         let size = {t: 2, l: 2, };
         let fontSize = 0.5;
         let textStyle = {
-    		align: 'left',
+            align: 'left',
             color: '#BBBBBB',
-    		font: fontSize,
-    		opacity: 0.8,
-    		background: '#222222',
-    		stroke : '#222222',
-    		strokeWidth : 0.15,
+            font: fontSize,
+            opacity: 0.8,
+            background: '#222222',
+            stroke : '#222222',
+            strokeWidth : 0.15,
     	};
 
         let output = 'Work Report\n';
