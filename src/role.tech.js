@@ -30,8 +30,6 @@ var roleTech = {
         'containerOut',
         'container',
         'containerIn',
-        'extention',
-        'spawn',
     ],
 
     /**
@@ -50,8 +48,16 @@ var roleTech = {
         }
 
         if ((creep.memory.idleStart + Constant.CREEP_IDLE_TIME) > Game.time) {
+            if (!creep.isEnergyFull() && creep.collectDroppedEnergy()) {
+                return true;;
+            }
             creep.moveToIdlePosition();
             return true;
+        }
+
+        if (!creep.room.storage) {
+            this.energyTargets.push('extention');
+            this.energyTargets.push('spawn');
         }
 
         if (creep.memory.working) {

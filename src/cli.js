@@ -63,6 +63,21 @@ var Cli = {
                 return Game.Queues.spawn.addRecord(record);
             },
 
+            combatbrawler: function(room) {
+                if (!room) {
+                    console.log('ERROR - command need the following values: room name');
+                    return false;
+                }
+
+                let record = {
+                    rooms: [ room, ],
+                    role: 'combat.brawler',
+                    priority: 36,
+                };
+
+                return Game.Queues.spawn.addRecord(record);
+            },
+
         },
 
     },
@@ -107,6 +122,21 @@ var Cli = {
                 task: 'scouting',
                 priority: 90,
                 creepLimit: 1,
+            };
+
+            return Game.Queues.work.addRecord(record);
+        },
+
+        attack: function(room, limit) {
+            if (!room) {
+                console.log('ERROR - command need the following values: room name, creep limit');
+                return false;
+            }
+            let record = {
+                workRooms: [ room, ],
+                task: 'attack',
+                priority: 40,
+                creepLimit: limit,
             };
 
             return Game.Queues.work.addRecord(record);

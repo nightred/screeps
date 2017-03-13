@@ -25,8 +25,6 @@ var roleUpgrader = {
     energyTargets: [
         'containerOut',
         'container',
-        'extention',
-        'spawn',
     ],
 
     /**
@@ -55,6 +53,11 @@ var roleUpgrader = {
 
                 return true;
             }
+        }
+
+        if (!creep.room.storage) {
+            this.energyTargets.push('extention');
+            this.energyTargets.push('spawn');
         }
 
         if (creep.memory.working) {

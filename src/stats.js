@@ -20,6 +20,31 @@ var Stats = {
         if (!Constant.VISUALS) { return true; }
 
         this.graphCPU();
+        this.reportWork();
+    },
+
+    reportWork: function() {
+        let size = {t: 2, l: 2, };
+        let fontSize = 0.5;
+        let textStyle = {
+    		align: 'left',
+            color: '#BBBBBB',
+    		font: fontSize,
+    		opacity: 0.8,
+    		background: '#222222',
+    		stroke : '#222222',
+    		strokeWidth : 0.15,
+    	};
+
+        let output = 'Work Report\n';
+
+        output += Game.Queues.getReport();
+
+        let rv = new RoomVisual();
+        let lines = output.split('\n');
+        for (let l = 0; l < lines.length; l++) {
+            rv.text(lines[l], 1, 1 + (l * (0.5 + 0.1)), textStyle);
+        }
     },
 
     graphCPU: function() {

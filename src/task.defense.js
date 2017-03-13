@@ -26,11 +26,11 @@ var taskRepair = {
         }
 
         let targets = creep.room.getHostiles();
-        if (!targets) { return creep.removeWork(); }
-        targets = _.sortBy(targets, target => target.hits);
+        if (!targets || targets.length <= 0) { return creep.removeWork(); }
+        targets = _.sortBy(targets, target => creep.pos.getRangeTo(target));
 
         if (creep.attack(targets[0]) == ERR_NOT_IN_RANGE) {
-            creep.moveTo(targets[0], { range: 1, reusePath: 0, });
+            creep.moveTo(targets[0], { reusePath: 0, });
         }
 
         return true;
@@ -84,14 +84,11 @@ var taskRepair = {
         if (!room) { return -1; }
         args = args || {};
 
-        Memory.world.tasks = Memory.world.tasks || {};
-        Memory.world.tasks.repair = Memory.world.tasks.repair || {};
-        let mem = Memory.world.tasks.repair;
-        mem.findTick = mem.findTick || 0;
-        if ((mem.findTick + Constant.FIND_WAIT_TICKS) > Game.time) {
+        room.memory.findTickDefense = room.memory.findTickDefense || 0;
+        if ((room.memory.findTickDefense + Constant.FIND_WAIT_TICKS) > Game.time) {
             return true;
         }
-        mem.findTick = Game.time;
+        room.memory.findTickDefense = Game.time;
 
         let targets = room.getHostiles();
 
@@ -106,8 +103,9 @@ var taskRepair = {
             workRooms: [ room.name, ],
             spawnRoom: args.spawnRoom,
             task: 'defense',
+            managed: true,
             priority: 10,
-            creepLimit: 6,
+            creepLimit: 1,
         };
         Game.Queues.work.addRecord(record);
 

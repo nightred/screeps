@@ -51,8 +51,12 @@ var manageCreep = {
             creep.setDespawn();
         }
 
-    	let target = Game.getObjectById(creep.room.getSpawn());
-    	if (!target) { return false; }
+        if (creep.memory.spawnRoom && creep.room.name != creep.memory.spawnRoom) {
+            creep.moveToRoom(creep.memory.spawnRoom);
+            return true;
+        }
+
+    	if (!creep.room.getSpawn()) { return false; }
 
         if (creep.room.getDespawnContainer()) {
             creep.memory.goingTo = creep.room.getDespawnContainer();

@@ -65,4 +65,66 @@ Queues.prototype.addRecord = function(args) {
     return id;
 };
 
+Queues.prototype.getRecord = function(id) {
+    if (isNaN(id)) { return -1; }
+    if (!this.queue[id]) {
+        console.log('queue record id: ' + id + ', does not exist');
+        return false;
+    }
+
+    let record = this.queue[id];
+    let output = 'queue record id: ' + id + ' \n';
+    for (let item in record) {
+        output += item + ': ' + record[item] + ', ';
+    };
+
+    console.log(output);
+    return true;
+}
+
+Queues.prototype.getReport = function() {
+    let output = '';
+    let queue = this.getQueue();
+
+    let filteredQueue = _.filter(queue, record => record.queue == Constant.QUEUE_WORK);
+    output += '  Queue ' + Constant.QUEUE_WORK + ': ' + filteredQueue.length + '\n';
+    for (let t = 0; t < Constant.WORK_TASKS.length; t++) {
+        let records = _.filter(filteredQueue, record => record.task == Constant.WORK_TASKS[t]);
+        if (records.length > 0) {
+            output += '    ' + Constant.WORK_TASKS[t] + ': ' + records.length + '\n';
+            output += '      [ ';
+            for (let i = 0; i < records.length; i++) {
+                output += records[i].id;
+                if ((i + 1) % 8 == 0 && i != records.length - 1) {
+                    output += ',\n        ';
+                } else if (i < records.length - 1) {
+                    output += ', ';
+                }
+            }
+            output += ' ]\n';
+        }
+    }
+
+    filteredQueue = _.filter(queue, record => record.queue == Constant.QUEUE_SPAWN);
+    output += '  Queue ' + Constant.QUEUE_SPAWN + ': ' + filteredQueue.length + '\n';
+    for (let r = 0; r < Constant.ROLE_TYPES.length; r++) {
+        let records = _.filter(filteredQueue, record => record.role == Constant.ROLE_TYPES[r]);
+        if (records.length > 0) {
+            output += '    ' + Constant.ROLE_TYPES[r] + ': ' + records.length + '\n';
+            output += '      [ ';
+            for (let i = 0; i < records.length; i++) {
+                output += records[i].id;
+                if ((i + 1) % 8 == 0 && i != records.length - 1) {
+                    output += ',\n        ';
+                } else if (i < records.length - 1) {
+                    output += ', ';
+                }
+            }
+            output += ' ]\n';
+        }
+    }
+
+    return output;
+}
+
 module.exports = Queues;

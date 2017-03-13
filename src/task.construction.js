@@ -69,7 +69,7 @@ var taskConstruction = {
                 workRooms: [ room.name, ],
                 task: 'construction',
                 priority: 70,
-                creepLimit: 1,
+                creepLimit: 4,
                 targetId: targets[i].id,
             };
             Game.Queues.work.addRecord(record);

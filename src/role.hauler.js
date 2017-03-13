@@ -51,6 +51,9 @@ var roleHauler = {
             creep.memory.idleStart = 0;
         }
         if ((creep.memory.idleStart + Constant.CREEP_IDLE_TIME) > Game.time) {
+            if (!creep.isEnergyFull() && creep.collectDroppedEnergy()) {
+                return true;;
+            }
             creep.moveToIdlePosition();
             return true;
         }

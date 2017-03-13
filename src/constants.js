@@ -14,7 +14,7 @@ var Constants = {
 
     // debug: 0 off, 1 info, 2 debug, 3 verbose
     DEBUG:                          3,
-    SIM:                            true,
+    SIM:                            false,
     VISUALS:                        true,
 
     ENERGY_ROOM_WITHDRAW_MIN:       200,
@@ -73,6 +73,7 @@ var Constants = {
         'signcontroller',
         'scouting',
         'defense',
+        'attack',
         'claim',
         ],
 

@@ -17,6 +17,7 @@ var roleCombatBrawler = {
     **/
     workTasks: [
         'defense',
+        'attack',
     ],
 
     /**
@@ -25,13 +26,14 @@ var roleCombatBrawler = {
     doRole: function(creep) {
         if (!creep) { return false; }
 
+        if (creep.getOffExit()) { return true; }
         if ((creep.memory.idleStart + Constant.CREEP_IDLE_TIME) > Game.time) {
             creep.moveToIdlePosition();
             return true;
         }
 
         if (!creep.memory.workId) {
-            if (!creep.getWork(this.workTasks)) {
+            if (!creep.getWork(this.workTasks, {ignoreRoom: true})) {
                 creep.memory.idleStart = Game.time;
                 creep.say('💤');
                 return true;
@@ -63,12 +65,12 @@ var roleCombatBrawler = {
 
         let moveUnits = Math.floor((energy * 0.7) / 50);
         moveUnits = moveUnits < 1 ? 1 : moveUnits;
-        moveUnits = moveUnits > 8 ? 8 : moveUnits;
+        moveUnits = moveUnits > 18 ? 18 : moveUnits;
         energy -= (moveUnits * 50);
 
         let toughUnits = Math.floor(energy / 10);
         toughUnits = toughUnits < 1 ? 1 : toughUnits;
-        toughUnits = toughUnits > 18 ? 18 : toughUnits;
+        toughUnits = toughUnits > 12 ? 12 : toughUnits;
 
         let body = [];
         for (let i = 0; i < toughUnits; i++) {

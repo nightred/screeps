@@ -17,6 +17,14 @@ Room.prototype.getHostiles = function() {
     return this.find(FIND_HOSTILE_CREEPS);
 };
 
+Room.prototype.getHostileStructures = function() {
+    return this.find(FIND_HOSTILE_STRUCTURES);
+};
+
+Room.prototype.getFlags = function() {
+    return this.find(FIND_FLAGS);
+};
+
 Room.prototype.getSourceCount = function() {
     if (!this.memory.sourceCount) {
         this.memory.sourceCount = this.getSources().length;
@@ -92,6 +100,16 @@ Room.prototype.findSpawn = function() {
 
 Room.prototype.getSpawns = function() {
     let targets = this.find(FIND_MY_SPAWNS);
+
+    if (targets.length > 0) {
+        return targets;
+    }
+
+    return false;
+};
+
+Room.prototype.getHostileSpawns = function() {
+    let targets = this.find(FIND_HOSTILE_SPAWNS);
 
     if (targets.length > 0) {
         return targets;
