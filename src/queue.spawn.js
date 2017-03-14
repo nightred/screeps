@@ -63,6 +63,7 @@ SpawnQueue.prototype.doSpawn = function(room) {
     if (!room) { return -1; }
 
     let energy = room.energyAvailable;
+    let maxEnergy = room.energyCapacityAvailable / 2;
     if (energy < Constant.ENERGY_CREEP_SPAWN_MIN) { return true; }
 
     let records = _.filter(this.getQueue(), record =>
@@ -80,6 +81,13 @@ SpawnQueue.prototype.doSpawn = function(room) {
         for (let r = 0; r < records.length; r++) {
             if (records[r].spawned) { continue; }
             if (records[r].minSize && energy < records[r].minSize) { continue; }
+
+            let minSize = 0;
+            if (Game.time < (records[r].tick + Constant.SPAWN_COST_DECAY)) {
+                minSize = maxEnergy * ((Game.time - records[r].tick) / Constant.SPAWN_COST_DECAY)
+            }
+            minSize += Constant.ENERGY_CREEP_SPAWN_MIN;
+            if (minSize > energy) { continue; }
 
             let args = {};
             args.spawnRoom = room.name;

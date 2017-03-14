@@ -5,6 +5,10 @@
  *
  */
 
+Room.prototype.getHostileConstructionSites = function() {
+    return this.find(FIND_HOSTILE_CONSTRUCTION_SITES);
+};
+
 Room.prototype.getConstructionSites = function() {
     return this.find(FIND_MY_CONSTRUCTION_SITES);
 };

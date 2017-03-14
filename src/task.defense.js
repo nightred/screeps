@@ -58,6 +58,19 @@ var taskRepair = {
             return true;
         }
 
+        if (Game.rooms[task.workRooms[0]].getHostiles().length <= 0) {
+            task.cooldown = task.cooldown || Game.time;
+            if ((task.cooldown + Constant.DEFENSE_COOLDOWN) < Game.time) {
+                Game.Queues.work.delRecord(task.id);
+                return true;
+            }
+        }
+
+        task.spawnDelay = task.spawnDelay || Game.time;
+        if ((task.spawnDelay + Constant.DEFENSE_SPAWN_DELAY) > Game.time) {
+            return true;
+        }
+
         if (task.creeps.length >= task.creepLimit) {
             return true;
         }

@@ -41,7 +41,7 @@ Queues.prototype.delRecord = function(id) {
     if (isNaN(id)) { return -1; }
     if (!this.queue[id]) { return true; }
 
-    if (Constant.DEBUG >= 3) { console.log('VERBOSE - queue record removed id: ' + id); }
+    if (Constant.DEBUG >= 3) { console.log('VERBOSE - queue record removed ' + this.getRecord(id)); }
     delete this.queue[id];
 
     return true;
@@ -60,7 +60,7 @@ Queues.prototype.addRecord = function(args) {
     };
 
     this.queue[id] = record;
-    if (Constant.DEBUG >= 3) { console.log('VERBOSE - queue record added, id: ' + id); }
+    if (Constant.DEBUG >= 3) { console.log('VERBOSE - queue record added ' + this.getRecord(id)); }
 
     return id;
 };
@@ -73,13 +73,18 @@ Queues.prototype.getRecord = function(id) {
     }
 
     let record = this.queue[id];
-    let output = 'queue record id: ' + id + ' \n';
+    let output = '\n';
     for (let item in record) {
-        output += item + ': ' + record[item] + ', ';
+        output += item + ': ';
+        if (Array.isArray(record[item])) {
+            output += '['+ record[item] + ']';
+        } else {
+            output += record[item]
+        }
+        output += ', ';
     };
 
-    console.log(output);
-    return true;
+    return output;
 }
 
 Queues.prototype.getReport = function() {

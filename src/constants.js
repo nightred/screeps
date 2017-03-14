@@ -26,11 +26,16 @@ var Constants = {
     ENERGY_STORAGE_MIN_WITHDRAW:    100,
 
     CONTROLLER_WITHDRAW_LEVEL:      2,
+    CONTROLLER_RESERVE_MAX:         4000,
+    CONTROLLER_RESERVE_MIN:         1000,
 
     FIND_WAIT_TICKS:                8,
     MANAGE_WAIT_TICKS:              10,
     REPORT_TICKS:                   500,
+    DEFENSE_COOLDOWN:               80,
+    DEFENSE_SPAWN_DELAY:            20,
 
+    SPAWN_COST_DECAY:               200,
     SPAWN_QUEUE_DELAY:              8,
 
     REPAIR_HIT_WORK_MIN:            0.80,
@@ -66,10 +71,11 @@ var Constants = {
         'director.tech',
         'director.haul',
         'director.resupply',
-        'tower.fill',
         'mine',
         'longhaul',
         'upgrade',
+        'reserve',
+        'tower.fill',
         'repair',
         'construction',
         'signcontroller',

@@ -31,7 +31,7 @@ var taskMine = {
 
         let source = Game.getObjectById(creep.memory.harvestTarget);
         if (creep.harvest(source) == ERR_NOT_IN_RANGE) {
-            creep.moveTo(source);
+            creep.moveTo(source, { range: 1, reUsePath: 40, maxOps: 3000, });
         }
 
         return true;

@@ -97,6 +97,23 @@ var Cli = {
 
     work: {
 
+        reserve: function(room, spawn) {
+            if (!room || !spawn) {
+                console.log('ERROR - command need the following values: work room, spawn room');
+                return false;
+            }
+            let record = {
+                workRooms: [ room, ],
+                spawnRoom: spawn,
+                task: 'reserve',
+                managed: true,
+                priority: 70,
+                creepLimit: 1,
+            };
+
+            return Game.Queues.work.addRecord(record);
+        },
+
         claim: function(room) {
             if (!room) {
                 console.log('ERROR - command need the following values: room name');

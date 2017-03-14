@@ -25,6 +25,12 @@ var taskScouting = {
             return true;
         }
 
+        let targets = creep.room.getHostileConstructionSites();
+        if (targets.length > 0) {
+            creep.moveTo(targets[0].pos.x, targets[0].pos.y, { reusePath: 30, });
+            return true;
+        }
+
         task.position = task.position || 0;
 
         let x = 10;
