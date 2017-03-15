@@ -24,14 +24,23 @@ var taskLongHaul = {
         if (!task) { return -1; }
 
         task.manageTick = task.manageTick || 0;
-        if ((task.manageTick + Constant.MANAGE_WAIT_TICKS) > Game.time) {
+        if ((task.manageTick + C.MANAGE_WAIT_TICKS) > Game.time) {
             return true;
         }
         task.manageTick = Game.time;
 
         if (task.workRooms.length <= 0) {
-            if (Constant.DEBUG >= 2) { console.log('DEBUG - missing work rooms on task: ' + task.task + ', id: ' + task.id); }
+            if (C.DEBUG >= 2) { console.log('DEBUG - missing work rooms on task: ' + task.task + ', id: ' + task.id); }
             return false;
+        }
+
+        if (Game.rooms[task.workRooms[0]] && task.creepLimit == 0) {
+            let sources = Game.rooms[task.workRooms[0]].getSources().length;
+            if (sources == 0 ) {
+                Game.Queues.work.delRecord(task.id);
+                return false
+            }
+            task.creepLimit = sources;
         }
 
         // spawn new creeps if needed

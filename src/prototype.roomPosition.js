@@ -6,6 +6,6 @@
  */
  
  RoomPosition.prototype.fromDirection = function(direction) {
-     return new RoomPosition(this.x+Constant.DIRECTIONS[direction][0], this.y+Constant.DIRECTIONS[direction][1], this.roomName);
+     return new RoomPosition(this.x+C.DIRECTIONS[direction][0], this.y+C.DIRECTIONS[direction][1], this.roomName);
  }
  

@@ -15,7 +15,7 @@ StructureContainer.prototype.reserveEnergy = function(energy) {
         this.memory.reservedEnergy = 0;
     }
     
-    if ((this.store[RESOURCE_ENERGY] - this.memory.reservedEnergy) >= Constant.ENERGY_CONTAINER_MIN_WITHDRAW) {
+    if ((this.store[RESOURCE_ENERGY] - this.memory.reservedEnergy) >= C.ENERGY_CONTAINER_MIN_WITHDRAW) {
         this.addReserve(energy);
         
         return true;

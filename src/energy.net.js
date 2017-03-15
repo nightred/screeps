@@ -78,7 +78,7 @@ EnergyNet.prototype.getWithdraw = function(creep, energy, types) {
     for (let i = 0; i < types.length; i++) {
         if (!this.rooms[creep.room.name][types[i]]) { continue; }
         if ((types[i] == 'spawn' || types[i] == 'extention') &&
-            creep.room.energyAvailable <= Constant.ENERGY_ROOM_WITHDRAW_MIN) {
+            creep.room.energyAvailable <= C.ENERGY_ROOM_WITHDRAW_MIN) {
             continue;
         }
         let mod = 0;

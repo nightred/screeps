@@ -26,7 +26,7 @@ var roleController = {
     doRole: function(creep) {
         if (!creep) { return false; }
 
-        if ((creep.memory.idleStart + Constant.CREEP_IDLE_TIME) > Game.time) {
+        if ((creep.memory.idleStart + C.CREEP_IDLE_TIME) > Game.time) {
             creep.moveToIdlePosition();
             return true;
         }
@@ -42,7 +42,7 @@ var roleController = {
         }
 
         if (!creep.doWork()) {
-            if (Constant.DEBUG >= 2) { console.log('DEBUG - do work failed for role: ' + creep.memory.role + ', name: ' + creep.name); }
+            if (C.DEBUG >= 2) { console.log('DEBUG - do work failed for role: ' + creep.memory.role + ', name: ' + creep.name); }
         }
 
         return true;

@@ -16,7 +16,7 @@ var taskRepair = {
         if (!task) { return -1; }
 
         if (task.workRooms.length <= 0) {
-            if (Constant.DEBUG >= 2) { console.log('DEBUG - missing work rooms on task: ' + task.task + ', id: ' + task.id); }
+            if (C.DEBUG >= 2) { console.log('DEBUG - missing work rooms on task: ' + task.task + ', id: ' + task.id); }
             return false;
         }
 
@@ -43,31 +43,31 @@ var taskRepair = {
         if (!task) { return -1; }
 
         task.manageTick = task.manageTick || 0;
-        if ((task.manageTick + Constant.MANAGE_WAIT_TICKS) > Game.time) {
+        if ((task.manageTick + C.MANAGE_WAIT_TICKS) > Game.time) {
             return true;
         }
         task.manageTick = Game.time;
 
         if (task.workRooms.length <= 0) {
-            if (Constant.DEBUG >= 2) { console.log('DEBUG - missing work rooms on task: ' + task.task + ', id: ' + task.id); }
+            if (C.DEBUG >= 2) { console.log('DEBUG - missing work rooms on task: ' + task.task + ', id: ' + task.id); }
             return false;
         }
 
         if (!Game.rooms[task.workRooms[0]]) {
-            if (Constant.DEBUG >= 3) { console.log('VERBOSE - no eyes on room: ' + task.workRooms[0] + ', task: ' + task.task + ', id: ' + task.id); }
+            if (C.DEBUG >= 3) { console.log('VERBOSE - no eyes on room: ' + task.workRooms[0] + ', task: ' + task.task + ', id: ' + task.id); }
             return true;
         }
 
         if (Game.rooms[task.workRooms[0]].getHostiles().length <= 0) {
             task.cooldown = task.cooldown || Game.time;
-            if ((task.cooldown + Constant.DEFENSE_COOLDOWN) < Game.time) {
+            if ((task.cooldown + C.DEFENSE_COOLDOWN) < Game.time) {
                 Game.Queues.work.delRecord(task.id);
                 return true;
             }
         }
 
         task.spawnDelay = task.spawnDelay || Game.time;
-        if ((task.spawnDelay + Constant.DEFENSE_SPAWN_DELAY) > Game.time) {
+        if ((task.spawnDelay + C.DEFENSE_SPAWN_DELAY) > Game.time) {
             return true;
         }
 
@@ -98,7 +98,7 @@ var taskRepair = {
         args = args || {};
 
         room.memory.findTickDefense = room.memory.findTickDefense || 0;
-        if ((room.memory.findTickDefense + Constant.FIND_WAIT_TICKS) > Game.time) {
+        if ((room.memory.findTickDefense + C.FIND_WAIT_TICKS) > Game.time) {
             return true;
         }
         room.memory.findTickDefense = Game.time;

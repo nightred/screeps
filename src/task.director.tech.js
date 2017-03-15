@@ -24,13 +24,13 @@ var taskDirectorMine = {
         if (!task) { return -1; }
 
         task.manageTick = task.manageTick || 0;
-        if ((task.manageTick + Constant.MANAGE_WAIT_TICKS) > Game.time) {
+        if ((task.manageTick + C.MANAGE_WAIT_TICKS) > Game.time) {
             return true;
         }
         task.manageTick = Game.time;
 
         if (task.workRooms.length <= 0) {
-            if (Constant.DEBUG >= 2) { console.log('DEBUG - missing work rooms on task: ' + task.task + ', id: ' + task.id); }
+            if (C.DEBUG >= 2) { console.log('DEBUG - missing work rooms on task: ' + task.task + ', id: ' + task.id); }
             return false;
         }
 

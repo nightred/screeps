@@ -16,7 +16,7 @@ var taskTowerFill = {
         if (!task) { return -1; }
 
         if (task.workRooms.length <= 0) {
-            if (Constant.DEBUG >= 2) { console.log('DEBUG - missing work rooms on task: ' + task.task + ', id: ' + task.id); }
+            if (C.DEBUG >= 2) { console.log('DEBUG - missing work rooms on task: ' + task.task + ', id: ' + task.id); }
             return false;
         }
 
@@ -28,7 +28,7 @@ var taskTowerFill = {
         let target = Game.getObjectById(task.targetId);
         if (!target) { return creep.removeWork(); }
 
-        if (target.energy >= Math.floor(target.energyCapacity * Constant.REFILL_TOWER_MAX)) {
+        if (target.energy >= Math.floor(target.energyCapacity * C.REFILL_TOWER_MAX)) {
             return creep.removeWork();
         }
 
@@ -53,13 +53,13 @@ var taskTowerFill = {
         if (!room) { return -1; }
 
         room.memory.findTickFillTower = room.memory.findTickFillTower || 0;
-        if ((room.memory.findTickFillTower + Constant.FIND_WAIT_TICKS) > Game.time) {
+        if ((room.memory.findTickFillTower + C.FIND_WAIT_TICKS) > Game.time) {
             return true;
         }
         room.memory.findTickFillTower = Game.time;
 
         let targets = _.filter(room.getTowers(), structure =>
-                structure.energy < (structure.energyCapacity * Constant.REFILL_TOWER_MIN)
+                structure.energy < (structure.energyCapacity * C.REFILL_TOWER_MIN)
                 );
 
         if (targets.length <= 0) { return true; }

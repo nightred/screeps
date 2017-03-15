@@ -13,8 +13,8 @@ var WorkQueue = function() {
     this.queue = Memory.queues.queue;
 
     this.tasks = {};
-    for (let i = 0; i < Constant.WORK_TASKS.length; i++) {
-        this.tasks[Constant.WORK_TASKS[i]] = this.getTask(Constant.WORK_TASKS[i]);
+    for (let i = 0; i < C.WORK_TASKS.length; i++) {
+        this.tasks[C.WORK_TASKS[i]] = this.getTask(C.WORK_TASKS[i]);
     }
 
 };
@@ -29,8 +29,8 @@ WorkQueue.prototype.doTask = function(creep) {
 }
 
 WorkQueue.prototype.getTask = function(taskName) {
-    if (Constant.WORK_TASKS.indexOf(taskName) < 0) {
-        if (Constant.DEBUG >= 2) { console.log('DEBUG - failed to load work task: ' + taskName); }
+    if (C.WORK_TASKS.indexOf(taskName) < 0) {
+        if (C.DEBUG >= 2) { console.log('DEBUG - failed to load work task: ' + taskName); }
         return -1;
     }
 
@@ -38,7 +38,7 @@ WorkQueue.prototype.getTask = function(taskName) {
     try {
         task = require('task.' + taskName);
     } catch(e) {
-        if (Constant.DEBUG >= 2) { console.log('DEBUG - failed to load work task: ' + taskName + ', error:\n' + e); }
+        if (C.DEBUG >= 2) { console.log('DEBUG - failed to load work task: ' + taskName + ', error:\n' + e); }
     }
 
     return task;
@@ -59,7 +59,7 @@ WorkQueue.prototype.doManageTasks = function() {
 
 WorkQueue.prototype.doTaskFind = function(room, tasks) {
     if (!room) { return -1; }
-    tasks = tasks || Constant.WORK_TASKS;
+    tasks = tasks || C.WORK_TASKS;
     if (!Array.isArray(tasks)) { return -1; }
 
     for (let i = 0; i < tasks.length; i++) {
@@ -70,7 +70,7 @@ WorkQueue.prototype.doTaskFind = function(room, tasks) {
 };
 
 WorkQueue.prototype.getQueue = function() {
-    return Game.Queues.getQueue({queue: Constant.QUEUE_WORK, });
+    return Game.Queues.getQueue({queue: C.QUEUE_WORK, });
 };
 
 WorkQueue.prototype.getWork = function(tasks, name, args) {
@@ -128,12 +128,12 @@ WorkQueue.prototype.isQueued = function(args) {
 WorkQueue.prototype.addRecord = function(args) {
     if (!args) { return -1; }
     if (!Array.isArray(args.workRooms)) { return -1; }
-    if (Constant.WORK_TASKS.indexOf(args.task) < 0) { return -1; }
+    if (C.WORK_TASKS.indexOf(args.task) < 0) { return -1; }
     args.priority = args.priority || 100;
     args.creepLimit = args.creepLimit || 1;
 
     let record = {
-        queue: Constant.QUEUE_WORK,
+        queue: C.QUEUE_WORK,
         task: args.task,
         workRooms: args.workRooms,
         priority: args.priority,
@@ -146,7 +146,7 @@ WorkQueue.prototype.addRecord = function(args) {
     if (args.managed) { record.managed = args.managed; }
     if (Array.isArray(args.resupplyRooms)) { record.resupplyRooms = args.resupplyRooms; }
 
-    if (Constant.DEBUG >= 3) { console.log('VERBOSE - work queue adding record, task: ' + record.task + ', priority: ' + record.priority); }
+    if (C.DEBUG >= 3) { console.log('VERBOSE - work queue adding record, task: ' + record.task + ', priority: ' + record.priority); }
     return Game.Queues.addRecord(record);
 };
 

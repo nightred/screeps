@@ -16,7 +16,7 @@ var taskConstruction = {
         if (!task) { return -1; }
 
         if (task.workRooms.length <= 0) {
-            if (Constant.DEBUG >= 2) { console.log('DEBUG - missing work rooms on task: ' + task.task + ', id: ' + task.id); }
+            if (C.DEBUG >= 2) { console.log('DEBUG - missing work rooms on task: ' + task.task + ', id: ' + task.id); }
             return false;
         }
 
@@ -29,7 +29,7 @@ var taskConstruction = {
         if (!target) { return creep.removeWork(); }
 
         if (creep.build(target) == ERR_NOT_IN_RANGE) {
-            creep.moveTo(target, { range: 3, reusePath: 50, ignoreCreeps: true, });
+            creep.moveTo(target, { range: 3, reusePath: 50, });
         }
 
         return true;
@@ -51,7 +51,7 @@ var taskConstruction = {
         if (!room) { return -1; }
 
         room.memory.findTickConstruction = room.memory.findTickConstruction || 0;
-        if ((room.memory.findTickConstruction + Constant.FIND_WAIT_TICKS) > Game.time) {
+        if ((room.memory.findTickConstruction + C.FIND_WAIT_TICKS) > Game.time) {
             return true;
         }
         room.memory.findTickConstruction = Game.time;

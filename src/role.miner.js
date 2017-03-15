@@ -43,7 +43,7 @@ var roleMiner = {
             }
         }
 
-        if ((creep.memory.idleStart + Constant.CREEP_IDLE_TIME) > Game.time) {
+        if ((creep.memory.idleStart + C.CREEP_IDLE_TIME) > Game.time) {
             creep.moveToIdlePosition();
             return true;
         }
@@ -59,7 +59,7 @@ var roleMiner = {
 
         if (!creep.memory.working) {
             if (!creep.doWork()) {
-                if (Constant.DEBUG >= 2) { console.log('DEBUG - do work failed for role: ' + creep.memory.role + ', name: ' + creep.name); }
+                if (C.DEBUG >= 2) { console.log('DEBUG - do work failed for role: ' + creep.memory.role + ', name: ' + creep.name); }
             }
         } else {
             let source = Game.getObjectById(creep.memory.harvestTarget);
@@ -68,7 +68,7 @@ var roleMiner = {
             }
 
             if (!creep.doEmptyEnergy(this.energyTargets)) {
-                if (Constant.DEBUG >= 2) { console.log('DEBUG - do empty energy failed for role: ' + creep.memory.role + ', name: ' + creep.name); }
+                if (C.DEBUG >= 2) { console.log('DEBUG - do empty energy failed for role: ' + creep.memory.role + ', name: ' + creep.name); }
             }
         }
 
@@ -103,7 +103,7 @@ var roleMiner = {
 
                 let moveUnits = Math.floor(energy / 50);
                 moveUnits = moveUnits < 1 ? 1 : moveUnits;
-                moveUnits = moveUnits > 8 ? 8 : moveUnits;
+                moveUnits = moveUnits > 4 ? 4 : moveUnits;
 
                 for (let i = 0; i < moveUnits; i++) {
                     body.push(MOVE);

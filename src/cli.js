@@ -203,7 +203,7 @@ var Cli = {
                 spawnRoom: spawnRoom,
                 task: 'longhaul',
                 priority: 40,
-                creepLimit: 1,
+                creepLimit: 0,
                 managed: true,
             };
 

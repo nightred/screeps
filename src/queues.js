@@ -41,7 +41,7 @@ Queues.prototype.delRecord = function(id) {
     if (isNaN(id)) { return -1; }
     if (!this.queue[id]) { return true; }
 
-    if (Constant.DEBUG >= 3) { console.log('VERBOSE - queue record removed ' + this.getRecord(id)); }
+    if (C.DEBUG >= 3) { console.log('VERBOSE - queue record removed:\n' + this.getRecord(id)); }
     delete this.queue[id];
 
     return true;
@@ -60,7 +60,7 @@ Queues.prototype.addRecord = function(args) {
     };
 
     this.queue[id] = record;
-    if (Constant.DEBUG >= 3) { console.log('VERBOSE - queue record added ' + this.getRecord(id)); }
+    if (C.DEBUG >= 3) { console.log('VERBOSE - queue record added:\n' + this.getRecord(id)); }
 
     return id;
 };
@@ -73,7 +73,7 @@ Queues.prototype.getRecord = function(id) {
     }
 
     let record = this.queue[id];
-    let output = '\n';
+    let output = '{';
     for (let item in record) {
         output += item + ': ';
         if (Array.isArray(record[item])) {
@@ -83,6 +83,7 @@ Queues.prototype.getRecord = function(id) {
         }
         output += ', ';
     };
+    output += ']';
 
     return output;
 }
@@ -91,12 +92,12 @@ Queues.prototype.getReport = function() {
     let output = '';
     let queue = this.getQueue();
 
-    let filteredQueue = _.filter(queue, record => record.queue == Constant.QUEUE_WORK);
-    output += '  Queue ' + Constant.QUEUE_WORK + ': ' + filteredQueue.length + '\n';
-    for (let t = 0; t < Constant.WORK_TASKS.length; t++) {
-        let records = _.filter(filteredQueue, record => record.task == Constant.WORK_TASKS[t]);
+    let filteredQueue = _.filter(queue, record => record.queue == C.QUEUE_WORK);
+    output += '  Queue ' + C.QUEUE_WORK + ': ' + filteredQueue.length + '\n';
+    for (let t = 0; t < C.WORK_TASKS.length; t++) {
+        let records = _.filter(filteredQueue, record => record.task == C.WORK_TASKS[t]);
         if (records.length > 0) {
-            output += '    ' + Constant.WORK_TASKS[t] + ': ' + records.length + '\n';
+            output += '    ' + C.WORK_TASKS[t] + ': ' + records.length + '\n';
             output += '      [ ';
             for (let i = 0; i < records.length; i++) {
                 output += records[i].id;
@@ -110,12 +111,12 @@ Queues.prototype.getReport = function() {
         }
     }
 
-    filteredQueue = _.filter(queue, record => record.queue == Constant.QUEUE_SPAWN);
-    output += '  Queue ' + Constant.QUEUE_SPAWN + ': ' + filteredQueue.length + '\n';
-    for (let r = 0; r < Constant.ROLE_TYPES.length; r++) {
-        let records = _.filter(filteredQueue, record => record.role == Constant.ROLE_TYPES[r]);
+    filteredQueue = _.filter(queue, record => record.queue == C.QUEUE_SPAWN);
+    output += '  Queue ' + C.QUEUE_SPAWN + ': ' + filteredQueue.length + '\n';
+    for (let r = 0; r < C.ROLE_TYPES.length; r++) {
+        let records = _.filter(filteredQueue, record => record.role == C.ROLE_TYPES[r]);
         if (records.length > 0) {
-            output += '    ' + Constant.ROLE_TYPES[r] + ': ' + records.length + '\n';
+            output += '    ' + C.ROLE_TYPES[r] + ': ' + records.length + '\n';
             output += '      [ ';
             for (let i = 0; i < records.length; i++) {
                 output += records[i].id;

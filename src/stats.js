@@ -17,7 +17,7 @@ var Stats = {
     },
 
     visuals: function() {
-        if (!Constant.VISUALS) { return true; }
+        if (!C.VISUALS) { return true; }
 
         this.graphCPU();
         this.reportWork();

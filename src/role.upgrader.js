@@ -41,7 +41,7 @@ var roleUpgrader = {
             }
         }
 
-        if ((creep.memory.idleStart + Constant.CREEP_IDLE_TIME) > Game.time) {
+        if ((creep.memory.idleStart + C.CREEP_IDLE_TIME) > Game.time) {
             creep.moveToIdlePosition();
             return true;
         }
@@ -62,11 +62,11 @@ var roleUpgrader = {
 
         if (creep.memory.working) {
             if (!creep.doWork()) {
-                if (Constant.DEBUG >= 2) { console.log('DEBUG - do work failed for role: ' + creep.memory.role + ', name: ' + creep.name); }
+                if (C.DEBUG >= 2) { console.log('DEBUG - do work failed for role: ' + creep.memory.role + ', name: ' + creep.name); }
             }
         } else {
             if (!creep.doFillEnergy(this.energyTargets)) {
-                if (Constant.DEBUG >= 2) { console.log('DEBUG - do fill energy failed for role: ' + creep.memory.role + ', name: ' + creep.name); }
+                if (C.DEBUG >= 2) { console.log('DEBUG - do fill energy failed for role: ' + creep.memory.role + ', name: ' + creep.name); }
             }
         }
 

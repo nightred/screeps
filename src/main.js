@@ -1,7 +1,7 @@
 /*
  * Main Loop
  *
- * Main control function
+ * the main loop of the ai
  *
  */
 
@@ -14,7 +14,7 @@ require('prototype.structureContainer');
 require('prototype.roomPosition');
 
 // global methods
-global.Constant     = require('constants');
+global.C            = require('constants');
 global.cli          = require('cli');
 
 // load the queue systems

@@ -66,7 +66,7 @@ Room.prototype.getHarvestTarget = function() {
                 count++;
             }
         }
-        if (count < Constant.HARVESTERS_PER_SOURCE) {
+        if (count < C.HARVESTERS_PER_SOURCE) {
             sources.push(source);
         }
     }

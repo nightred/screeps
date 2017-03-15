@@ -47,7 +47,8 @@ var roleTech = {
             }
         }
 
-        if ((creep.memory.idleStart + Constant.CREEP_IDLE_TIME) > Game.time) {
+        if (creep.getOffExit()) { return true; }
+        if ((creep.memory.idleStart + C.CREEP_IDLE_TIME) > Game.time) {
             if (!creep.isEnergyFull() && creep.collectDroppedEnergy()) {
                 return true;;
             }
@@ -71,11 +72,11 @@ var roleTech = {
             }
 
             if (!creep.doWork()) {
-                if (Constant.DEBUG >= 2) { console.log('DEBUG - do work failed for role: ' + creep.memory.role + ', name: ' + creep.name); }
+                if (C.DEBUG >= 2) { console.log('DEBUG - do work failed for role: ' + creep.memory.role + ', name: ' + creep.name); }
             }
         } else {
             if (!creep.doFillEnergy(this.energyTargets)) {
-                if (Constant.DEBUG >= 2) { console.log('DEBUG - do fill energy failed for role: ' + creep.memory.role + ', name: ' + creep.name); }
+                if (C.DEBUG >= 2) { console.log('DEBUG - do fill energy failed for role: ' + creep.memory.role + ', name: ' + creep.name); }
             }
         }
 
@@ -90,11 +91,11 @@ var roleTech = {
     getBody: function(energy, args) {
         let workUnits = Math.floor((energy * 0.5) / 100);
         workUnits = workUnits < 1 ? 1 : workUnits;
-        workUnits = workUnits > 5 ? 5 : workUnits;
+        workUnits = workUnits > 6 ? 6 : workUnits;
         energy -= 100 * workUnits;
-        let moveUnits = Math.floor((energy * 0.4) / 50);
+        let moveUnits = Math.floor((energy * 0.5) / 50);
         moveUnits = moveUnits < 1 ? 1 : moveUnits;
-        moveUnits = moveUnits > 6 ? 6 : moveUnits;
+        moveUnits = moveUnits > 8 ? 8 : moveUnits;
         energy -= 50 * moveUnits;
         let carryUnits = Math.floor(energy / 50);
         carryUnits = carryUnits < 1 ? 1 : carryUnits;

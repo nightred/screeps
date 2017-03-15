@@ -59,7 +59,7 @@ Creep.prototype.isDespawnWarning = function() {
         return false;
     }
 
-    return this.ticksToLive <= Constant.CREEP_DESPAWN_TICKS;
+    return this.ticksToLive <= C.CREEP_DESPAWN_TICKS;
 }
 
 Creep.prototype.setDespawn = function() {
@@ -67,7 +67,7 @@ Creep.prototype.setDespawn = function() {
     this.memory.goingTo = false;
     this.memory.harvestTarget = false;
     this.leaveWork();
-    if (Constant.DEBUG >= 3) { console.log('VERBOSE - ' + this.memory.role + ' ' + this.name + ' end of life'); }
+    if (C.DEBUG >= 3) { console.log('VERBOSE - ' + this.memory.role + ' ' + this.name + ' end of life'); }
     return true;
 }
 
@@ -137,7 +137,7 @@ Creep.prototype.transferEnergy = function(target) {
     }
 
     if (this.transfer(target, RESOURCE_ENERGY) == ERR_NOT_IN_RANGE) {
-        this.moveTo(target, { range: 1, reusePath: 10, });
+        this.moveTo(target, { range: 1, reusePath: 20, });
         return true;
     } else {
         this.memory.goingTo = false;
@@ -153,7 +153,7 @@ Creep.prototype.withdrawEnergy = function(target) {
     }
 
     if (this.withdraw(target, RESOURCE_ENERGY) == ERR_NOT_IN_RANGE) {
-        this.moveTo(target, { range: 1, reusePath: 10, });
+        this.moveTo(target, { range: 1, reusePath: 20, });
         return false;
     } else {
         this.memory.goingTo = false;

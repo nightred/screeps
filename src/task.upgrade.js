@@ -16,7 +16,7 @@ var taskUpgrade = {
         if (!task) { return -1; }
 
         if (task.workRooms.length <= 0) {
-            if (Constant.DEBUG >= 2) { console.log('DEBUG - missing work rooms on task: ' + task.task + ', id: ' + task.id); }
+            if (C.DEBUG >= 2) { console.log('DEBUG - missing work rooms on task: ' + task.task + ', id: ' + task.id); }
             return false;
         }
 
@@ -39,18 +39,18 @@ var taskUpgrade = {
         if (!task) { return -1; }
 
         task.manageTick = task.manageTick || 0;
-        if ((task.manageTick + Constant.MANAGE_WAIT_TICKS) > Game.time) {
+        if ((task.manageTick + C.MANAGE_WAIT_TICKS) > Game.time) {
             return true;
         }
         task.manageTick = Game.time;
 
         if (task.workRooms.length <= 0) {
-            if (Constant.DEBUG >= 2) { console.log('DEBUG - missing work rooms on task: ' + task.task + ', id: ' + task.id); }
+            if (C.DEBUG >= 2) { console.log('DEBUG - missing work rooms on task: ' + task.task + ', id: ' + task.id); }
             return false;
         }
         let room = Game.rooms[task.workRooms[0]];
         if (!room) {
-            if (Constant.DEBUG >= 3) { console.log('VERBOSE - no eyes on room: ' + task.workRooms[0] + ', task: ' + task.task + ', id: ' + task.id); }
+            if (C.DEBUG >= 3) { console.log('VERBOSE - no eyes on room: ' + task.workRooms[0] + ', task: ' + task.task + ', id: ' + task.id); }
             return true;
         }
 
@@ -99,7 +99,7 @@ var taskUpgrade = {
                     task.creepLimit = 3;
                 }
         }
-        if (Constant.SIM) { task.creepLimit = 1 };
+        if (C.SIM) { task.creepLimit = 1 };
 
         // spawn new creeps if needed
         if (task.creeps.length < task.creepLimit) {

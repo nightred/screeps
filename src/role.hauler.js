@@ -22,9 +22,9 @@ var roleHauler = {
     * The locations that energy can be stored
     **/
     energyOutTargets: [
-        'storage',
         'spawn',
         'extention',
+        'storage',
         'containerOut',
         'container',
     ],
@@ -46,11 +46,11 @@ var roleHauler = {
         }
 
         if (creep.memory.task &&
-            (creep.memory.idleStart + Constant.CREEP_IDLE_TIME) > Game.time) {
+            (creep.memory.idleStart + C.CREEP_IDLE_TIME) > Game.time) {
             creep.memory.task = false;
             creep.memory.idleStart = 0;
         }
-        if ((creep.memory.idleStart + Constant.CREEP_IDLE_TIME) > Game.time) {
+        if ((creep.memory.idleStart + C.CREEP_IDLE_TIME) > Game.time) {
             if (!creep.isEnergyFull() && creep.collectDroppedEnergy()) {
                 return true;;
             }
@@ -61,11 +61,11 @@ var roleHauler = {
         // working has energy, else need energy
         if (creep.memory.working) {
             if (!creep.doEmptyEnergy(this.energyOutTargets)) {
-                if (Constant.DEBUG >= 2) { console.log('DEBUG - do empty energy failed for role: ' + creep.memory.role + ', name: ' + creep.name); }
+                if (C.DEBUG >= 2) { console.log('DEBUG - do empty energy failed for role: ' + creep.memory.role + ', name: ' + creep.name); }
             }
         } else {
             if (!creep.doFillEnergy(this.energyInTargets)) {
-                if (Constant.DEBUG >= 2) { console.log('DEBUG - do fill energy failed for role: ' + creep.memory.role + ', name: ' + creep.name); }
+                if (C.DEBUG >= 2) { console.log('DEBUG - do fill energy failed for role: ' + creep.memory.role + ', name: ' + creep.name); }
             }
         }
 

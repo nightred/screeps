@@ -13,16 +13,16 @@ var SpawnQueue = function() {
     this.queue = Memory.queues.queue;
 
     this.roles = {};
-    for (let i =0; i < Constant.ROLE_TYPES.length; i++) {
-        this.roles[Constant.ROLE_TYPES[i]] = this.getRole(Constant.ROLE_TYPES[i]);
+    for (let i =0; i < C.ROLE_TYPES.length; i++) {
+        this.roles[C.ROLE_TYPES[i]] = this.getRole(C.ROLE_TYPES[i]);
     }
 
     this.cleanQueue();
 };
 
 SpawnQueue.prototype.getRole = function(name) {
-    if (Constant.ROLE_TYPES.indexOf(name) < 0) {
-        if (Constant.DEBUG >= 2) { console.log('DEBUG - failed to load role: ' + name); }
+    if (C.ROLE_TYPES.indexOf(name) < 0) {
+        if (C.DEBUG >= 2) { console.log('DEBUG - failed to load role: ' + name); }
         return -1;
     }
 
@@ -30,7 +30,7 @@ SpawnQueue.prototype.getRole = function(name) {
     try {
         role = require('role.' + name);
     } catch(e) {
-        if (Constant.DEBUG >= 2) { console.log('DEBUG - failed to load role: ' + name + ', error:\n' + e); }
+        if (C.DEBUG >= 2) { console.log('DEBUG - failed to load role: ' + name + ', error:\n' + e); }
     }
 
     return role;
@@ -52,8 +52,8 @@ SpawnQueue.prototype.cleanQueue = function() {
         if (Game.creeps[records[i].name] && !Game.creeps[records[i].name].spawning) {
             records[i].spawnedTime = records[i].spawnedTime || Game.time;
         }
-        if ((records[i].spawnedTime + Constant.SPAWN_QUEUE_DELAY) < Game.time) {
-            if (Constant.DEBUG >= 3) { console.log('VERBOSE - spawn queue removing record, id: ' + records[i].id + ', role: ' + records[i].role + ', name: ' + records[i].name + ', spawned'); }
+        if ((records[i].spawnedTime + C.SPAWN_QUEUE_DELAY) < Game.time) {
+            if (C.DEBUG >= 3) { console.log('VERBOSE - spawn queue removing record, id: ' + records[i].id + ', role: ' + records[i].role + ', name: ' + records[i].name + ', spawned'); }
             this.delRecord(records[i].id);
         }
     }
@@ -64,7 +64,7 @@ SpawnQueue.prototype.doSpawn = function(room) {
 
     let energy = room.energyAvailable;
     let maxEnergy = room.energyCapacityAvailable * 0.75;
-    if (energy < Constant.ENERGY_CREEP_SPAWN_MIN) { return true; }
+    if (energy < C.ENERGY_CREEP_SPAWN_MIN) { return true; }
 
     let records = _.filter(this.getQueue(), record =>
         record.rooms.indexOf(room.name) >= 0 &&
@@ -83,10 +83,10 @@ SpawnQueue.prototype.doSpawn = function(room) {
             if (records[r].minSize && energy < records[r].minSize) { continue; }
 
             let minSize = 0;
-            if (Game.time < (records[r].tick + Constant.SPAWN_COST_DECAY)) {
-                minSize = maxEnergy * ((Game.time - records[r].tick) / Constant.SPAWN_COST_DECAY)
+            if (Game.time < (records[r].tick + C.SPAWN_COST_DECAY)) {
+                minSize = maxEnergy * ((Game.time - records[r].tick) / C.SPAWN_COST_DECAY)
             }
-            minSize += Constant.ENERGY_CREEP_SPAWN_MIN;
+            minSize += C.ENERGY_CREEP_SPAWN_MIN;
             if (minSize > energy) { continue; }
 
             let args = {};
@@ -103,11 +103,11 @@ SpawnQueue.prototype.doSpawn = function(room) {
                 energy -= this.getBodyCost(body);
                 records[r].spawned = true;
                 records[r].name = name;
-                if (Constant.DEBUG >= 1) { console.log('INFO - spawning name: ' + name + ', role: ' + records[r].role + ', parts:  ' + Game.creeps[name].body.length + ', room:' + room.name); }
+                if (C.DEBUG >= 1) { console.log('INFO - spawning name: ' + name + ', role: ' + records[r].role + ', parts:  ' + Game.creeps[name].body.length + ', room:' + room.name); }
                 break;
             }
         }
-        if (energy < Constant.ENERGY_CREEP_SPAWN_MIN) { break; }
+        if (energy < C.ENERGY_CREEP_SPAWN_MIN) { break; }
     }
 
     return true;
@@ -125,7 +125,7 @@ SpawnQueue.prototype.getBodyCost = function(body) {
 };
 
 SpawnQueue.prototype.getQueue = function() {
-    return Game.Queues.getQueue({queue: Constant.QUEUE_SPAWN, });
+    return Game.Queues.getQueue({queue: C.QUEUE_SPAWN, });
 };
 
 SpawnQueue.prototype.isQueued = function(args) {
@@ -140,11 +140,11 @@ SpawnQueue.prototype.isQueued = function(args) {
 SpawnQueue.prototype.addRecord = function(args) {
     if (!args) { return -1; }
     if (!Array.isArray(args.rooms)) { return -1; }
-    if (Constant.ROLE_TYPES.indexOf(args.role) < 0) { return -1; }
+    if (C.ROLE_TYPES.indexOf(args.role) < 0) { return -1; }
     args.priority = args.priority || 100;
 
     let record = {
-        queue: Constant.QUEUE_SPAWN,
+        queue: C.QUEUE_SPAWN,
         role: args.role,
         rooms: args.rooms,
         priority: args.priority,
@@ -152,7 +152,7 @@ SpawnQueue.prototype.addRecord = function(args) {
     if (args.minSize) { record.minSize = args.minSize; }
     if (args.creepArgs) { record.creepArgs = args.creepArgs; }
 
-    if (Constant.DEBUG >= 3) { console.log('VERBOSE - spawn queue adding record, role: ' + record.role + ', rooms: [' + record.rooms + '], priority: ' + record.priority); }
+    if (C.DEBUG >= 3) { console.log('VERBOSE - spawn queue adding record, role: ' + record.role + ', rooms: [' + record.rooms + '], priority: ' + record.priority); }
     return Game.Queues.addRecord(record);
 };
 

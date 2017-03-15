@@ -33,7 +33,7 @@ var Constants = {
     MANAGE_WAIT_TICKS:              10,
     REPORT_TICKS:                   500,
     DEFENSE_COOLDOWN:               80,
-    DEFENSE_SPAWN_DELAY:            40,
+    DEFENSE_SPAWN_DELAY:            60,
 
     SPAWN_COST_DECAY:               200,
     SPAWN_QUEUE_DELAY:              8,
