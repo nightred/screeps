@@ -89,28 +89,29 @@ var roleTech = {
     **/
     getBody: function(energy, args) {
         let workUnits = Math.floor((energy * 0.5) / 100);
-        let moveUnits = Math.floor((energy * 0.2) / 50);
-        let carryUnits = Math.floor((energy * 0.3) / 50);
-        let bodyParts = [];
-
         workUnits = workUnits < 1 ? 1 : workUnits;
         workUnits = workUnits > 5 ? 5 : workUnits;
+        energy -= 100 * workUnits;
+        let moveUnits = Math.floor((energy * 0.4) / 50);
         moveUnits = moveUnits < 1 ? 1 : moveUnits;
         moveUnits = moveUnits > 6 ? 6 : moveUnits;
+        energy -= 50 * moveUnits;
+        let carryUnits = Math.floor(energy / 50);
         carryUnits = carryUnits < 1 ? 1 : carryUnits;
         carryUnits = carryUnits > 10 ? 10 : carryUnits;
 
+        let body = [];
         for (let i = 0; i < workUnits; i++) {
-            bodyParts.push(WORK);
+            body.push(WORK);
         }
         for (let i = 0; i < moveUnits; i++) {
-            bodyParts.push(MOVE);
+            body.push(MOVE);
         }
         for (let i = 0; i < carryUnits; i++) {
-            bodyParts.push(CARRY);
+            body.push(CARRY);
         }
 
-        return bodyParts;
+        return body;
     },
 
     /**

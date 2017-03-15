@@ -63,7 +63,7 @@ var taskReserve = {
 
         if (room.controller.reservation &&
             room.controller.reservation.ticksToEnd > Constant.CONTROLLER_RESERVE_MAX) {
-            task.creepLimit = task.creepLimit == 0 ? 0 : task.creepLimit;
+            task.creepLimit = task.creepLimit != 0 ? 0 : task.creepLimit;
         }
 
         if (!room.controller.reservation || (room.controller.reservation &&

@@ -9,7 +9,7 @@ Creep.prototype.moveToRoom = function(name) {
     if (!name) { return -1; }
     if (this.room.name == name) { return true; }
     let target = new RoomPosition(25, 25, name);
-    return this.moveTo(target, { range: 23,  reusePath: 40, })
+    return this.moveTo(target, { range: 23,  reusePath: 100, })
 }
 
 Creep.prototype.manageState = function() {

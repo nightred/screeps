@@ -63,7 +63,7 @@ SpawnQueue.prototype.doSpawn = function(room) {
     if (!room) { return -1; }
 
     let energy = room.energyAvailable;
-    let maxEnergy = room.energyCapacityAvailable / 2;
+    let maxEnergy = room.energyCapacityAvailable * 0.75;
     if (energy < Constant.ENERGY_CREEP_SPAWN_MIN) { return true; }
 
     let records = _.filter(this.getQueue(), record =>

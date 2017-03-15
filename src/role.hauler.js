@@ -22,9 +22,9 @@ var roleHauler = {
     * The locations that energy can be stored
     **/
     energyOutTargets: [
+        'storage',
         'spawn',
         'extention',
-        'storage',
         'containerOut',
         'container',
     ],
@@ -81,20 +81,20 @@ var roleHauler = {
         if (isNaN(energy)) { return -1; }
         args = args || {};
 
-        let carryUnits = Math.floor((energy / 2) / 50);
-        let moveUnits = Math.floor((energy / 2) / 50);
+        let move = Math.floor((energy / 2) / 50);
+        move = move < 1 ? 1 : move;
+        move = move > 5 ? 5 : move;
+        energy -= move * 50;
+        let carry = Math.floor(energy / 50);
+        carry = carry < 1 ? 1 : carry;
+        carry = carry > 10 ? 10 : carry;
+
         let body = [];
-
-        moveUnits = moveUnits < 1 ? 1 : moveUnits;
-        moveUnits = moveUnits > 4 ? 4 : moveUnits;
-        carryUnits = carryUnits < 1 ? 1 : carryUnits;
-        carryUnits = carryUnits > 8 ? 8 : carryUnits;
-
-        for (let i = 0; i < moveUnits; i++) {
+        for (let i = 0; i < move; i++) {
             body.push(MOVE);
         }
 
-        for (let i = 0; i < carryUnits; i++) {
+        for (let i = 0; i < carry; i++) {
             body.push(CARRY);
         }
 

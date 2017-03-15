@@ -31,7 +31,7 @@ EnergyNet.prototype.getStore = function(creep, energy, types) {
         if (!this.buildRoom(creep.room)) { return false; }
     }
 
-    let targetId = false;
+    let target = false;
     for (let i = 0; i < types.length; i++) {
         if (!this.rooms[creep.room.name][types[i]]) { continue; }
         let mod = 1;
@@ -41,21 +41,23 @@ EnergyNet.prototype.getStore = function(creep, energy, types) {
             mod = 0.8;
         }
         let targets = _.filter(this.rooms[creep.room.name][types[i]], target =>
-            target.energy < target.energyMax * mod);
+            target.energy < target.energyMax * mod &&
+            !creep.hasGoingTo(target));
         targets = _.sortBy(targets, target => target.energy);
-        targets = _.sortBy(targets, target => creep.pos.getRangeTo(target.pos));
+        //targets = _.sortBy(targets, target => creep.pos.getRangeTo(target.pos));
         if (targets.length <= 0) { continue; }
-        for (let i = 0; i < targets.length; i++) {
-            if (!creep.hasGoingTo(targets[i])) {
-                targetId = targets[i].id;
-                break;
-            }
-        }
-        if (targetId) { break; }
+        target = creep.pos.findClosestByPath(targets, {maxOps: 500});
+        //for (let i = 0; i < targets.length; i++) {
+        //    if (!creep.hasGoingTo(targets[i])) {
+        //        targetId = targets[i].id;
+        //        break;
+        //    }
+        //}
+        if (target) { break; }
     }
-    if (!targetId) { return false; }
+    if (!target) { return false; }
 
-    return Game.getObjectById(targetId);
+    return Game.getObjectById(target.id);
 };
 
 /**
