@@ -21,7 +21,8 @@ global.cli          = require('cli');
 var Queues          = require('queues');
 var SpawnQueue      = require('queue.spawn');
 var WorkQueue       = require('queue.work');
-var EnergyNet       = require('energy.net')
+var EnergyNet       = require('energy.net');
+var Defense         = require('defense');
 
 // managment modules
 var manageRooms     = require('manage.rooms');
@@ -37,13 +38,14 @@ module.exports.loop = function () {
     Game.Queues         = new Queues;
     Game.Queues.spawn   = new SpawnQueue;
     Game.Queues.work    = new WorkQueue;
+    Game.Defense        = new Defense;
     Game.energyNet      = new EnergyNet;
 
     Game.Queues.work.doManageTasks();
     manageRooms.doManage();
     manageCreep.doManage();
 
+    stats.log();
     stats.visuals();
-    stats.logCPU();
 
 }

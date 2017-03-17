@@ -83,7 +83,7 @@ Queues.prototype.getRecord = function(id) {
         }
         output += ', ';
     };
-    output += ']';
+    output += '}';
 
     return output;
 }

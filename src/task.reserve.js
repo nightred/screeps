@@ -71,7 +71,12 @@ var taskReserve = {
             task.creepLimit = task.creepLimit < 2 ? 2 : task.creepLimit;
         }
 
-        if (task.creeps.length >= task.creepLimit) {
+        // spawn new creeps if needed
+        let count = _.filter(Game.creeps, creep =>
+            creep.memory.workId == task.id &&
+            creep.memory.despawn != true
+            ).length;
+        if (count >= task.creepLimit) {
             return true;
         }
 
@@ -82,6 +87,7 @@ var taskReserve = {
                 priority: 70,
                 creepArgs: {
                     workRooms: task.workRooms,
+                    workId: task.id,
                 },
             };
             Game.Queues.spawn.addRecord(record);

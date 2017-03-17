@@ -39,7 +39,7 @@ var Constants = {
     SPAWN_QUEUE_DELAY:              8,
 
     REPAIR_HIT_WORK_MIN:            0.80,
-    REPAIR_HIT_WORK_MAX:            0.95,
+    REPAIR_HIT_WORK_MAX:            0.98,
     RAMPART_HIT_MAX:                100000,
     WALL_HIT_MAX:                   100000,
 

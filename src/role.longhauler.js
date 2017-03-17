@@ -48,6 +48,11 @@ var roleLongHauler = {
             return true;
         }
 
+        if (!creep.room.storage) {
+            this.energyTargets.push('containerOut');
+            this.energyTargets.push('container');
+        }
+
         if (creep.memory.working) {
             if (creep.room.name != creep.memory.spawnRoom) {
                 creep.moveToRoom(creep.memory.spawnRoom);

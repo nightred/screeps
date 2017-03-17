@@ -51,6 +51,7 @@ var manageCreep = {
             creep.setDespawn();
         }
 
+        if (creep.getOffExit()) { return true; }
         if (creep.memory.spawnRoom && creep.room.name != creep.memory.spawnRoom) {
             creep.moveToRoom(creep.memory.spawnRoom);
             return true;
