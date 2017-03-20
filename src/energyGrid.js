@@ -9,7 +9,7 @@
  /**
  * create the empty object to store all room energy targets
  **/
-var EnergyNet = function() {
+var EnergyGrid = function() {
     this.tick = this.tick || 0;
     if (this.tick < Game.time) {
         this.rooms = {};
@@ -23,7 +23,7 @@ var EnergyNet = function() {
 * @param {Number} energy The amount of energy
 * @param {Array} types The storage types
 **/
-EnergyNet.prototype.getStore = function(creep, energy, types) {
+EnergyGrid.prototype.getStore = function(creep, energy, types) {
     if (!creep) { return -1; }
     if (isNaN(energy)) { return -1; }
     if(!Array.isArray(types)) { return -1; }
@@ -68,7 +68,7 @@ EnergyNet.prototype.getStore = function(creep, energy, types) {
 * @param {Number} energy The amount of energy
 * @param {Array} types The storage types
 **/
-EnergyNet.prototype.getWithdraw = function(creep, energy, types) {
+EnergyGrid.prototype.getWithdraw = function(creep, energy, types) {
     if (!creep) { return -1; }
     if (isNaN(energy)) { return -1; }
     if(!Array.isArray(types)) { return -1; }
@@ -110,7 +110,7 @@ EnergyNet.prototype.getWithdraw = function(creep, energy, types) {
 * create a listing of the storage locations for a room
 * @param {Room} room The room to be used
 **/
-EnergyNet.prototype.buildRoom = function(room) {
+EnergyGrid.prototype.buildRoom = function(room) {
     if (!Game.rooms[room.name]) { return false; }
     this.rooms[room.name] = {};
     let energyMap = this.rooms[room.name];
@@ -189,4 +189,4 @@ EnergyNet.prototype.buildRoom = function(room) {
     return true;
 };
 
-module.exports = EnergyNet;
+module.exports = EnergyGrid;
