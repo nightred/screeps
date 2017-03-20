@@ -49,8 +49,8 @@ var roleLongHauler = {
         }
 
         if (!creep.room.storage) {
-            this.energyTargets.push('containerOut');
-            this.energyTargets.push('container');
+            this.energyOutTargets.push('containerOut');
+            this.energyOutTargets.push('container');
         }
 
         if (creep.memory.working) {

@@ -13,7 +13,7 @@
 var Constants = {
 
     // debug: 0 off, 1 info, 2 debug, 3 verbose
-    DEBUG:                          3,
+    DEBUG:                          2,
     SIM:                            false,
     VISUALS:                        true,
 
@@ -37,6 +37,7 @@ var Constants = {
 
     SPAWN_COST_DECAY:               200,
     SPAWN_QUEUE_DELAY:              8,
+    SPAWN_ENERGY_MAX:               0.8,
 
     REPAIR_HIT_WORK_MIN:            0.80,
     REPAIR_HIT_WORK_MAX:            0.98,

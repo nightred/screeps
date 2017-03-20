@@ -41,8 +41,10 @@ EnergyNet.prototype.getStore = function(creep, energy, types) {
             mod = 0.8;
         }
         let targets = _.filter(this.rooms[creep.room.name][types[i]], target =>
-            target.energy < target.energyMax * mod &&
-            !creep.hasGoingTo(target));
+            target.energy < target.energyMax * mod);
+        if (types[i] == 'extention') {
+            targets = _.filter(targets, target => !creep.hasGoingTo(target.id));
+        }
         targets = _.sortBy(targets, target => target.energy);
         //targets = _.sortBy(targets, target => creep.pos.getRangeTo(target.pos));
         if (targets.length <= 0) { continue; }
@@ -90,6 +92,9 @@ EnergyNet.prototype.getWithdraw = function(creep, energy, types) {
         targets = _.sortBy(targets, target => target.energy).reverse();
         if (types[i] != 'containerIn') {
             targets = _.sortBy(targets, target => creep.pos.getRangeTo(target.pos));
+        }
+        if (types[i] == 'containerIn') {
+            targets = _.filter(targets, target => !creep.hasGoingTo(target.id));
         }
         if (targets.length > 0) {
             targetId = targets[0].id;

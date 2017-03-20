@@ -122,17 +122,17 @@ var Stats = {
                 size.t + (size.gh / 2) + ((0.5 + size.gh) * count),
                 { color: '#8a8a8a', opacity: 0.3, }
             );
-            // max energy bot
-            rv.circle(
-                size.l - 0.5 - (size.gw * 2) + ((size.gw / roomMax) * energyMax),
-                size.t + (size.gh / 2) + ((0.5 + (size.gh)) * count),
-                { radius: 0.1, fill: '#7fff00', opacity : 0.5 }
-            );
             // min energy dot
             rv.circle(
                 size.l - 0.5 - (size.gw * 2) + ((size.gw / roomMax) * energyMin),
                 size.t + (size.gh / 2) + ((0.5 + (size.gh)) * count),
                 { radius: 0.1, fill: '#ff0000', opacity : 0.5 }
+            );
+            // max energy bot
+            rv.circle(
+                size.l - 0.5 - (size.gw * 2) + ((size.gw / roomMax) * energyMax),
+                size.t + (size.gh / 2) + ((0.5 + (size.gh)) * count),
+                { radius: 0.1, fill: '#7fff00', opacity : 0.5 }
             );
             // current Energy
             rv.line(

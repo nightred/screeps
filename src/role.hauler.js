@@ -83,11 +83,11 @@ var roleHauler = {
 
         let move = Math.floor((energy / 2) / 50);
         move = move < 1 ? 1 : move;
-        move = move > 5 ? 5 : move;
+        move = move > 7 ? 7 : move;
         energy -= move * 50;
         let carry = Math.floor(energy / 50);
         carry = carry < 1 ? 1 : carry;
-        carry = carry > 10 ? 10 : carry;
+        carry = carry > 14 ? 14 : carry;
 
         let body = [];
         for (let i = 0; i < move; i++) {

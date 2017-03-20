@@ -29,6 +29,17 @@ Room.prototype.getFlags = function() {
     return this.find(FIND_FLAGS);
 };
 
+Room.prototype.getRoomLinearDistance = function(roomName) {
+    if (!room) { return -1; }
+    let posStart = this.name.split(/([N,E,S,W])/);
+    let posEnd = roomName.split(/([N,E,S,W])/);
+
+    let diffX = posStart[1] == posEnd[1] ? Math.abs(posStart[2] - posEnd[2]) : posStart[2] + posEnd[2] + 1;
+    let diffY = posStart[3] == posEnd[3] ? Math.abs(posStart[4] - posEnd[4]) : posStart[4] + posEnd[4] + 1;
+
+    return diffX + diffY;
+}
+
 Room.prototype.getSourceCount = function() {
     if (!this.memory.sourceCount) {
         this.memory.sourceCount = this.getSources().length;

@@ -25,7 +25,25 @@ var taskAttack = {
             return true;
         }
 
-        let targets = creep.room.getHostiles();
+        let targets = creep.room.getHostileStructures()
+        targets = _.filter(targets, target =>
+            target.structureType == STRUCTURE_TOWER);
+        if (targets.length > 0) {
+            targets = _.sortBy(targets, target => creep.pos.getRangeTo(target));
+
+            if (creep.attack(targets[0]) == ERR_NOT_IN_RANGE) {
+                creep.moveTo(targets[0], { reusePath: 50, visualizePathStyle: {
+                    fill: 'transparent',
+                    stroke: '#ff1919',
+                    lineStyle: 'dashed',
+                    strokeWidth: .15,
+                    opacity: .1,
+                }, });
+            }
+            return true;
+        }
+
+        targets = creep.room.getHostiles();
         if (targets.length > 0) {
             targets = _.sortBy(targets, target => creep.pos.getRangeTo(target));
 
@@ -57,6 +75,8 @@ var taskAttack = {
         }
         targets = creep.room.getHostileStructures()
         if (targets.length > 0) {
+            targets = _.filter(targets, target =>
+                target.structureType != STRUCTURE_CONTROLLER);
             targets = _.sortBy(targets, target => creep.pos.getRangeTo(target));
 
             if (creep.attack(targets[0]) == ERR_NOT_IN_RANGE) {

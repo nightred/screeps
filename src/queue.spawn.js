@@ -80,14 +80,15 @@ SpawnQueue.prototype.doSpawn = function(room) {
         if (spawns[s].spawning) { continue; }
         for (let r = 0; r < records.length; r++) {
             if (records[r].spawned) { continue; }
-            if (records[r].minSize && energy < records[r].minSize) { continue; }
+            let spawnEnergy = energy * C.SPAWN_ENERGY_MAX;
+            if (records[r].minSize && spawnEnergy < records[r].minSize) { continue; }
 
             let minSize = 0;
             if (Game.time < (records[r].tick + C.SPAWN_COST_DECAY)) {
                 minSize = maxEnergy * ((Game.time - records[r].tick) / C.SPAWN_COST_DECAY)
             }
             minSize += C.ENERGY_CREEP_SPAWN_MIN;
-            if (minSize > energy) { continue; }
+            if (minSize > spawnEnergy) { continue; }
 
             let args = {};
             args.spawnRoom = room.name;
@@ -97,7 +98,7 @@ SpawnQueue.prototype.doSpawn = function(room) {
                 };
             }
 
-            let body = this.roles[records[r].role].getBody(energy, args);
+            let body = this.roles[records[r].role].getBody(spawnEnergy, args);
             let name = this.roles[records[r].role].doSpawn(spawns[s], body, args);
             if (name != undefined && !(name < 0)) {
                 energy -= this.getBodyCost(body);

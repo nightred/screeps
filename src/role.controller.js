@@ -54,7 +54,24 @@ var roleController = {
     * @param {Object} args Extra arguments
     **/
     getBody: function(energy, args) {
-        let body = [MOVE,MOVE,MOVE,MOVE,CLAIM];
+        args = args || {};
+
+        args.style = args.style || 'default';
+        let body = [];
+        switch (args.style) {
+            case 'reserve':
+                energy -= 200;
+                body = [MOVE,MOVE,MOVE,MOVE];
+                let claim = Math.floor(energy / 600);
+                claim = claim < 1 ? 1 : claim;
+                claim = claim > 4 ? 4 : claim;
+                for (let i = 0; i < claim; i++) {
+                    body.push(CLAIM);
+                }
+                break;
+            default:
+                body = [MOVE,MOVE,MOVE,MOVE,CLAIM];
+        }
 
         return body;
     },

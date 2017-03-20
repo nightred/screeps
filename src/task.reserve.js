@@ -88,6 +88,7 @@ var taskReserve = {
                 creepArgs: {
                     workRooms: task.workRooms,
                     workId: task.id,
+                    style: 'reserve',
                 },
             };
             Game.Queues.spawn.addRecord(record);
