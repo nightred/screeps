@@ -73,7 +73,7 @@ Creep.prototype.setDespawn = function() {
 
 Creep.prototype.leaveWork = function() {
     if (!this.memory.workId) { return true; }
-    Game.Queues.work.removeCreep(this.name, this.memory.workId);
+    Game.Queue.work.removeCreep(this.name, this.memory.workId);
     this.memory.workId = false;
     return true;
 }
@@ -84,13 +84,13 @@ Creep.prototype.getWork = function(tasks, args) {
 
     let list = false;
     if (args.ignoreRoom) {
-        list = Game.Queues.work.getWork(tasks, this.name);
+        list = Game.Queue.work.getWork(tasks, this.name);
     } else if (args.room) {
         list = Work.getWork(tasks, this.name, args);
     } else if (this.memory.workRooms) {
         if (this.memory.workRooms.indexOf(this.room.name) >= 0) {
             args.room = this.room.name;
-            list = Game.Queues.work.getWork(tasks, this.name, args);
+            list = Game.Queue.work.getWork(tasks, this.name, args);
         }
         if (!list || list.length <= 0) {
             for (let i = 0; i < this.memory.workRooms.length; i++) {
@@ -98,26 +98,26 @@ Creep.prototype.getWork = function(tasks, args) {
                     continue;
                 }
                 args.room = this.memory.workRooms[i];
-                list = Game.Queues.work.getWork(tasks, this.name, args);
+                list = Game.Queue.work.getWork(tasks, this.name, args);
                 if (list.length > 0) { break; }
             }
         }
     } else {
         args.room = this.room.name;
-        list = Game.Queues.work.getWork(tasks, this.name, args);
+        list = Game.Queue.work.getWork(tasks, this.name, args);
     }
 
     if (!list || list.length <= 0) { return false; }
     let workId = list[0].id;
 
-    if (!Game.Queues.work.addCreep(this.name, workId)) { return false; }
+    if (!Game.Queue.work.addCreep(this.name, workId)) { return false; }
     this.memory.workId = workId;
     return true;
 }
 
 Creep.prototype.doWork = function() {
     if (!this.memory.workId) { return false; }
-    if (!Game.Queues.work.doTask(this)) {
+    if (!Game.Queue.work.doTask(this)) {
         this.leaveWork();
     }
     return true;
@@ -125,7 +125,7 @@ Creep.prototype.doWork = function() {
 
 Creep.prototype.removeWork = function() {
     if (!this.memory.workId) { return false; }
-    Game.Queues.work.delRecord(this.memory.workId);
+    Game.Queue.work.delRecord(this.memory.workId);
     this.memory.workId = false;
     return true;
 }
@@ -202,7 +202,7 @@ Creep.prototype.getEmptyEnergyTarget = function(types, args) {
     if (!Array.isArray(types)) { return -1; }
     args = args || {};
 
-    let target = Game.EnergyGrid.getStore(this, this.carry[RESOURCE_ENERGY], types);
+    let target = Game.Manage.rooms.energyGrid.getStore(this, this.carry[RESOURCE_ENERGY], types);
     if (target) {
         if (!args.noSet) {
             this.setGoingTo(target);
@@ -236,7 +236,7 @@ Creep.prototype.getFillEnergyTarget = function(types, args) {
     if (!Array.isArray(types)) { return -1; }
     args = args || {};
 
-    let target = Game.EnergyGrid.getWithdraw(this, (this.carryCapacity - _.sum(this.carry)), types);
+    let target = Game.Manage.rooms.energyGrid.getWithdraw(this, (this.carryCapacity - _.sum(this.carry)), types);
     if (target) {
         if (!args.noSet) {
             this.setGoingTo(target);

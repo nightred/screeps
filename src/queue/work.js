@@ -70,7 +70,7 @@ WorkQueue.prototype.doTaskFind = function(room, tasks) {
 };
 
 WorkQueue.prototype.getQueue = function() {
-    return Game.Queues.getQueue({queue: C.QUEUE_WORK, });
+    return Game.Queue.getQueue({queue: C.QUEUE_WORK, });
 };
 
 WorkQueue.prototype.getWork = function(tasks, name, args) {
@@ -147,11 +147,11 @@ WorkQueue.prototype.addRecord = function(args) {
     if (Array.isArray(args.resupplyRooms)) { record.resupplyRooms = args.resupplyRooms; }
 
     if (C.DEBUG >= 3) { console.log('VERBOSE - work queue adding record, task: ' + record.task + ', priority: ' + record.priority); }
-    return Game.Queues.addRecord(record);
+    return Game.Queue.addRecord(record);
 };
 
 WorkQueue.prototype.delRecord = function(id) {
-    return Game.Queues.delRecord(id);
+    return Game.Queue.delRecord(id);
 };
 
 module.exports = WorkQueue;

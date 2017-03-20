@@ -58,7 +58,7 @@ var taskReserve = {
             return true;
         }
         if (!room.controller) {
-            Game.Queues.work.delRecord(task.id);
+            Game.Queue.work.delRecord(task.id);
         }
 
         if (room.controller.reservation &&
@@ -80,7 +80,7 @@ var taskReserve = {
             return true;
         }
 
-        if (!Game.Queues.spawn.isQueued({ room: task.spawnRoom, role: 'controller', })) {
+        if (!Game.Queue.spawn.isQueued({ room: task.spawnRoom, role: 'controller', })) {
             let record = {
                 rooms: [ task.spawnRoom, ],
                 role: 'controller',
@@ -91,7 +91,7 @@ var taskReserve = {
                     style: 'reserve',
                 },
             };
-            Game.Queues.spawn.addRecord(record);
+            Game.Queue.spawn.addRecord(record);
         }
 
         return true;

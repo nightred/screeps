@@ -18,34 +18,20 @@ global.C            = require('constants');
 global.cli          = require('cli');
 
 // load the queue systems
-var Queues          = require('queues');
-var SpawnQueue      = require('queue.spawn');
-var WorkQueue       = require('queue.work');
-var EnergyGrid      = require('energyGrid');
-var Defense         = require('defense');
-
-// managment modules
-var manageRooms     = require('manage.rooms');
-var manageCreep     = require('manage.creep');
-
-// logging
-var stats           = require('stats');
+var Stats           = require('stats');
+var Queue           = require('queue');
+var Manage          = require('manage');
+var Mil             = require('mil');
 
 module.exports.loop = function () {
     Memory.world = Memory.world || {};
-    stats.init();
 
-    Game.Queues         = new Queues;
-    Game.Queues.spawn   = new SpawnQueue;
-    Game.Queues.work    = new WorkQueue;
-    Game.Defense        = new Defense;
-    Game.EnergyGrid     = new EnergyGrid;
+    Game.Stats          = new Stats;
+    Game.Queue          = new Queue;
+    Game.Manage         = new Manage;
+    Game.Mil            = new Mil;
 
-    Game.Queues.work.doManageTasks();
-    manageRooms.doManage();
-    manageCreep.doManage();
-
-    stats.log();
-    stats.visuals();
-
+    Game.Queue.run();
+    Game.Manage.run();
+    Game.Stats.run();
 }

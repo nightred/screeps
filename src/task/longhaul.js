@@ -37,7 +37,7 @@ var taskLongHaul = {
         if (Game.rooms[task.workRooms[0]] && task.creepLimit == 0) {
             let sources = Game.rooms[task.workRooms[0]].getSources().length;
             if (sources == 0 ) {
-                Game.Queues.work.delRecord(task.id);
+                Game.Queue.work.delRecord(task.id);
                 return false
             }
             task.creepLimit = sources;
@@ -49,7 +49,7 @@ var taskLongHaul = {
             creep.memory.despawn != true
             ).length;
         if (count < task.creepLimit) {
-            if (!Game.Queues.spawn.isQueued({ room: task.spawnRoom, role: 'longhauler', })) {
+            if (!Game.Queue.spawn.isQueued({ room: task.spawnRoom, role: 'longhauler', })) {
                 let record = {
                     rooms: [ task.spawnRoom, ],
                     role: 'longhauler',
@@ -60,7 +60,7 @@ var taskLongHaul = {
                         workId: task.id,
                     },
                 };
-                Game.Queues.spawn.addRecord(record);
+                Game.Queue.spawn.addRecord(record);
             }
         }
 

@@ -103,7 +103,7 @@ var taskUpgrade = {
 
         // spawn new creeps if needed
         if (task.creeps.length < task.creepLimit) {
-            if (!Game.Queues.spawn.isQueued({ room: task.spawnRoom, role: 'upgrader', })) {
+            if (!Game.Queue.spawn.isQueued({ room: task.spawnRoom, role: 'upgrader', })) {
                 let record = {
                     rooms: [ task.spawnRoom, ],
                     role: 'upgrader',
@@ -113,7 +113,7 @@ var taskUpgrade = {
                     },
                 };
                 if (task.minSize) { record.minSize = task.minSize; }
-                Game.Queues.spawn.addRecord(record);
+                Game.Queue.spawn.addRecord(record);
             }
         }
 

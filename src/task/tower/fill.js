@@ -65,7 +65,7 @@ var taskTowerFill = {
         if (targets.length <= 0) { return true; }
 
         for (let i = 0; i < targets.length; i++) {
-            if (Game.Queues.work.isQueued({ targetId: targets[i].id, })) {
+            if (Game.Queue.work.isQueued({ targetId: targets[i].id, })) {
                 continue;
             }
 
@@ -77,7 +77,7 @@ var taskTowerFill = {
                 creepLimit: 1,
                 targetId: targets[i].id,
             };
-            Game.Queues.work.addRecord(record);
+            Game.Queue.work.addRecord(record);
         }
 
         return true;

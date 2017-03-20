@@ -42,7 +42,7 @@ var taskDirectorMine = {
             let sources = room.getSources();
             if (sources.length <= 0) { continue; }
             for (let s = 0; s < sources.length; s++) {
-                if (!Game.Queues.work.isQueued({ targetId: sources[s].id, })) {
+                if (!Game.Queue.work.isQueued({ targetId: sources[s].id, })) {
                     let record = {
                         workRooms: [ task.workRooms[0], ],
                         spawnRoom: task.spawnRoom,
@@ -52,7 +52,7 @@ var taskDirectorMine = {
                         managed: true,
                         targetId: sources[s].id,
                     };
-                    Game.Queues.work.addRecord(record);
+                    Game.Queue.work.addRecord(record);
                 }
             }
         }

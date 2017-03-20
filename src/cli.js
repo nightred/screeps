@@ -45,7 +45,7 @@ var Cli = {
                     priority: 30,
                 };
 
-                return Game.Queues.spawn.addRecord(record);
+                return Game.Queue.spawn.addRecord(record);
             },
 
             scout: function(room) {
@@ -60,7 +60,7 @@ var Cli = {
                     priority: 80,
                 };
 
-                return Game.Queues.spawn.addRecord(record);
+                return Game.Queue.spawn.addRecord(record);
             },
 
             combatbrawler: function(room) {
@@ -75,7 +75,7 @@ var Cli = {
                     priority: 36,
                 };
 
-                return Game.Queues.spawn.addRecord(record);
+                return Game.Queue.spawn.addRecord(record);
             },
 
         },
@@ -90,7 +90,7 @@ var Cli = {
                 return false;
             }
 
-            return Game.Queues.delRecord(id);
+            return Game.Queue.delRecord(id);
         },
 
     },
@@ -111,7 +111,7 @@ var Cli = {
                 creepLimit: 1,
             };
 
-            return Game.Queues.work.addRecord(record);
+            return Game.Queue.work.addRecord(record);
         },
 
         claim: function(room) {
@@ -126,7 +126,7 @@ var Cli = {
                 creepLimit: 1,
             };
 
-            return Game.Queues.work.addRecord(record);
+            return Game.Queue.work.addRecord(record);
         },
 
         scouting: function(room) {
@@ -141,7 +141,7 @@ var Cli = {
                 creepLimit: 1,
             };
 
-            return Game.Queues.work.addRecord(record);
+            return Game.Queue.work.addRecord(record);
         },
 
         attack: function(room, limit) {
@@ -156,7 +156,7 @@ var Cli = {
                 creepLimit: limit,
             };
 
-            return Game.Queues.work.addRecord(record);
+            return Game.Queue.work.addRecord(record);
         },
 
         signcontroller: function(roomName, message) {
@@ -172,7 +172,7 @@ var Cli = {
                 message: message,
             };
 
-            return Game.Queues.work.addRecord(record);
+            return Game.Queue.work.addRecord(record);
         },
 
         haul: function(roomName, spawnRoom) {
@@ -190,7 +190,7 @@ var Cli = {
                 managed: true,
             };
 
-            return Game.Queues.work.addRecord(record);
+            return Game.Queue.work.addRecord(record);
         },
 
         longhaul: function(roomName, spawnRoom) {
@@ -207,7 +207,7 @@ var Cli = {
                 managed: true,
             };
 
-            return Game.Queues.work.addRecord(record);
+            return Game.Queue.work.addRecord(record);
         },
 
         upgrade: function(roomName, spawnRoom) {
@@ -225,7 +225,7 @@ var Cli = {
                 managed: true,
             };
 
-            return Game.Queues.work.addRecord(record);
+            return Game.Queue.work.addRecord(record);
         },
 
         tech: function(roomName, spawnRoom) {
@@ -244,7 +244,7 @@ var Cli = {
                 managed: true,
             };
 
-            return Game.Queues.work.addRecord(record);
+            return Game.Queue.work.addRecord(record);
         },
 
         spawnRoom: function(roomName) {
@@ -261,7 +261,7 @@ var Cli = {
                 managed: true,
             };
 
-            return Game.Queues.work.addRecord(record);
+            return Game.Queue.work.addRecord(record);
         },
 
         remoteRoom: function(roomName, spawnRoom) {
@@ -279,7 +279,7 @@ var Cli = {
                 managed: true,
             };
 
-            return Game.Queues.work.addRecord(record);
+            return Game.Queue.work.addRecord(record);
         },
 
         mine: function(roomName, spawnRoom) {
@@ -297,7 +297,7 @@ var Cli = {
                 managed: true,
             };
 
-            return Game.Queues.work.addRecord(record);
+            return Game.Queue.work.addRecord(record);
         },
 
     },

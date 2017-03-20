@@ -1,5 +1,5 @@
 /*
- * queues system
+ * queue system
  *
  * creates the base queue for all sub systems
  * The following use the primary queue as the base
@@ -7,15 +7,26 @@
  *
  */
 
-var Queues = function() {
+ var SpawnQueue      = require('queue.spawn');
+ var WorkQueue       = require('queue.work');
+
+var Queue = function() {
     if (!Memory.queues) { Memory.queues = {}; }
     if (!Memory.queues.queue) { Memory.queues.queue = {}; }
 
     this.memory = Memory.queues;
     this.queue = Memory.queues.queue;
+
+    this.spawn  = new SpawnQueue;
+    this.work   = new WorkQueue;
 };
 
-Queues.prototype.getQueue = function(args) {
+Queue.prototype.run = function() {
+    this.spawn.cleanQueue();
+    this.work.doManageTasks();
+};
+
+Queue.prototype.getQueue = function(args) {
     args = args || {};
 
     return _.filter(this.queue, record =>
@@ -23,7 +34,7 @@ Queues.prototype.getQueue = function(args) {
         );
 };
 
-Queues.prototype.getId = function() {
+Queue.prototype.getId = function() {
     this.memory.queueID = this.memory.queueID || 0;
     this.memory.queueID = this.memory.queueID < 999999 ? this.memory.queueID : 0;
 
@@ -37,7 +48,7 @@ Queues.prototype.getId = function() {
     return newId;
 };
 
-Queues.prototype.delRecord = function(id) {
+Queue.prototype.delRecord = function(id) {
     if (isNaN(id)) { return -1; }
     if (!this.queue[id]) { return true; }
 
@@ -47,7 +58,7 @@ Queues.prototype.delRecord = function(id) {
     return true;
 };
 
-Queues.prototype.addRecord = function(args) {
+Queue.prototype.addRecord = function(args) {
     args = args || {};
 
     let id = this.getId();
@@ -65,7 +76,7 @@ Queues.prototype.addRecord = function(args) {
     return id;
 };
 
-Queues.prototype.getRecord = function(id) {
+Queue.prototype.getRecord = function(id) {
     if (isNaN(id)) { return -1; }
     if (!this.queue[id]) {
         console.log('queue record id: ' + id + ', does not exist');
@@ -88,7 +99,7 @@ Queues.prototype.getRecord = function(id) {
     return output;
 }
 
-Queues.prototype.getReport = function() {
+Queue.prototype.getReport = function() {
     let output = '';
     let queue = this.getQueue();
 
@@ -133,4 +144,4 @@ Queues.prototype.getReport = function() {
     return output;
 }
 
-module.exports = Queues;
+module.exports = Queue;

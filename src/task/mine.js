@@ -50,7 +50,7 @@ var taskMine = {
         task.manageTick = Game.time;
 
         if (task.creeps.length < task.creepLimit) {
-            if (!Game.Queues.spawn.isQueued({ room: task.spawnRoom, role: 'miner', })) {
+            if (!Game.Queue.spawn.isQueued({ room: task.spawnRoom, role: 'miner', })) {
                 let record = {
                     rooms: [ task.spawnRoom, ],
                     role: 'miner',
@@ -63,7 +63,7 @@ var taskMine = {
                 if (task.spawnRoom != task.workRooms[0]) {
                     record.creepArgs.style = 'ranged';
                 }
-                Game.Queues.spawn.addRecord(record);
+                Game.Queue.spawn.addRecord(record);
             }
         }
 

@@ -61,7 +61,7 @@ var taskRepair = {
         if (Game.rooms[task.workRooms[0]].getHostiles().length <= 0) {
             task.cooldown = task.cooldown || Game.time;
             if ((task.cooldown + C.DEFENSE_COOLDOWN) < Game.time) {
-                Game.Queues.work.delRecord(task.id);
+                Game.Queue.work.delRecord(task.id);
                 return true;
             }
         }
@@ -75,7 +75,7 @@ var taskRepair = {
             return true;
         }
 
-        if (!Game.Queues.spawn.isQueued({ room: task.spawnRoom, role: 'combat.brawler', })) {
+        if (!Game.Queue.spawn.isQueued({ room: task.spawnRoom, role: 'combat.brawler', })) {
             let record = {
                 rooms: [ task.spawnRoom, ],
                 role: 'combat.brawler',
@@ -84,7 +84,7 @@ var taskRepair = {
                     workRooms: task.workRooms,
                 },
             };
-            Game.Queues.spawn.addRecord(record);
+            Game.Queue.spawn.addRecord(record);
         }
 
         return true;
@@ -107,7 +107,7 @@ var taskRepair = {
 
         if (targets.length <= 0) { return true; }
 
-        if (Game.Queues.work.isQueued({ task: 'defense', room: room.name, })) {
+        if (Game.Queue.work.isQueued({ task: 'defense', room: room.name, })) {
             return true;
         }
 
@@ -120,7 +120,7 @@ var taskRepair = {
             priority: 10,
             creepLimit: 1,
         };
-        Game.Queues.work.addRecord(record);
+        Game.Queue.work.addRecord(record);
 
         return true;
     },

@@ -40,7 +40,7 @@ var taskDirectorRemote = {
         }
         task.manageTick = Game.time;
 
-        if (!Game.Queues.work.isQueued({ room: task.workRooms[0], task: 'director.mine', })) {
+        if (!Game.Queue.work.isQueued({ room: task.workRooms[0], task: 'director.mine', })) {
             let record = {
                 workRooms: [ task.workRooms[0], ],
                 spawnRoom: task.spawnRoom,
@@ -49,7 +49,7 @@ var taskDirectorRemote = {
                 creepLimit: 0,
                 managed: true,
             };
-            Game.Queues.work.addRecord(record);
+            Game.Queue.work.addRecord(record);
         }
 
         return true;

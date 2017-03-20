@@ -16,8 +16,6 @@ var SpawnQueue = function() {
     for (let i =0; i < C.ROLE_TYPES.length; i++) {
         this.roles[C.ROLE_TYPES[i]] = this.getRole(C.ROLE_TYPES[i]);
     }
-
-    this.cleanQueue();
 };
 
 SpawnQueue.prototype.getRole = function(name) {
@@ -126,7 +124,7 @@ SpawnQueue.prototype.getBodyCost = function(body) {
 };
 
 SpawnQueue.prototype.getQueue = function() {
-    return Game.Queues.getQueue({queue: C.QUEUE_SPAWN, });
+    return Game.Queue.getQueue({queue: C.QUEUE_SPAWN, });
 };
 
 SpawnQueue.prototype.isQueued = function(args) {
@@ -154,11 +152,11 @@ SpawnQueue.prototype.addRecord = function(args) {
     if (args.creepArgs) { record.creepArgs = args.creepArgs; }
 
     if (C.DEBUG >= 3) { console.log('VERBOSE - spawn queue adding record, role: ' + record.role + ', rooms: [' + record.rooms + '], priority: ' + record.priority); }
-    return Game.Queues.addRecord(record);
+    return Game.Queue.addRecord(record);
 };
 
 SpawnQueue.prototype.delRecord = function(id) {
-    return Game.Queues.delRecord(id);
+    return Game.Queue.delRecord(id);
 }
 
 module.exports = SpawnQueue;

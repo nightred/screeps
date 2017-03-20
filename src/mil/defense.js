@@ -15,7 +15,7 @@ Defense.prototype.scanRoom = function(room) {
 
     let targets = room.getHostiles();
     if (targets.length <= 0) { return true; }
-    if (Game.Queues.work.isQueued({ task: 'defense', room: room.name, })) {
+    if (Game.Queue.work.isQueued({ task: 'defense', room: room.name, })) {
         return true;
     }
 
@@ -26,7 +26,7 @@ Defense.prototype.scanRoom = function(room) {
         priority: 10,
         creepLimit: 0,
     };
-    Game.Queues.work.addRecord(record);
+    Game.Queue.work.addRecord(record);
 
     return true;
 };
