@@ -83,7 +83,8 @@ SpawnQueue.prototype.doSpawn = function(room) {
 
             let minSize = 0;
             if (Game.time < (records[r].tick + C.SPAWN_COST_DECAY)) {
-                minSize = maxEnergy * ((Game.time - records[r].tick) / C.SPAWN_COST_DECAY)
+                minSize = (maxEnergy - C.ENERGY_CREEP_SPAWN_MIN) - ((maxEnergy / C.SPAWN_COST_DECAY) * (Game.time - records[r].tick));
+                minSize = minSize >= 0 ? minSize : 0;
             }
             minSize += C.ENERGY_CREEP_SPAWN_MIN;
             if (minSize > spawnEnergy) { continue; }
@@ -97,6 +98,7 @@ SpawnQueue.prototype.doSpawn = function(room) {
             }
 
             let body = this.roles[records[r].role].getBody(spawnEnergy, args);
+            if (this.getBodyCost(body) < energy) { continue; }
             let name = this.roles[records[r].role].doSpawn(spawns[s], body, args);
             if (name != undefined && !(name < 0)) {
                 energy -= this.getBodyCost(body);

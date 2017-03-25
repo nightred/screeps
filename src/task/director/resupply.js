@@ -68,7 +68,7 @@ var taskDirectorResupply = {
         }
 
         if (room.storage) {
-            task.creepLimit = task.creepLimit < 1 ? 1 : task.creepLimit;
+            task.creepLimit = task.creepLimit < 2 ? 2 : task.creepLimit;
 
             // spawn new creeps if needed
             count = _.filter(Game.creeps, creep =>

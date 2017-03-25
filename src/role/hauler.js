@@ -22,11 +22,7 @@ var roleHauler = {
     * The locations that energy can be stored
     **/
     energyOutTargets: [
-        'spawn',
-        'extention',
         'storage',
-        'containerOut',
-        'container',
     ],
 
     /** @param {Creep} creep **/
@@ -43,6 +39,15 @@ var roleHauler = {
         } else if (creep.carry.energy > (creep.carryCapacity * 0.2) && !creep.memory.working)  {
             creep.toggleState();
             creep.say('🚚');
+        }
+
+        if (!creep.room.storage) {
+            this.energyTargets = [
+                'spawn',
+                'extention',
+                'containerOut',
+                'container',
+            ];
         }
 
         if (creep.memory.task &&

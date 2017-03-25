@@ -36,19 +36,19 @@ var Constants = {
     DEFENSE_SPAWN_DELAY:            60,
 
     SPAWN_COST_DECAY:               200,
-    SPAWN_QUEUE_DELAY:              8,
+    SPAWN_QUEUE_DELAY:              2,
     SPAWN_ENERGY_MAX:               0.8,
 
-    REPAIR_HIT_WORK_MIN:            0.80,
+    REPAIR_HIT_WORK_MIN:            0.90,
     REPAIR_HIT_WORK_MAX:            0.98,
     RAMPART_HIT_MAX:                100000,
     WALL_HIT_MAX:                   100000,
 
-    REFILL_TOWER_MAX:               0.90,
-    REFILL_TOWER_MIN:               0.50,
+    REFILL_TOWER_MAX:               0.98,
+    REFILL_TOWER_MIN:               0.70,
 
-    CREEP_DESPAWN_TICKS:            40,
-    CREEP_IDLE_TIME:                5,
+    CREEP_DESPAWN_TICKS:            1,
+    CREEP_IDLE_TIME:                4,
 
     QUEUE_WORK:                     'work',
     QUEUE_SPAWN:                    'spawn',
