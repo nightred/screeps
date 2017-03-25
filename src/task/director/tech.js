@@ -59,19 +59,23 @@ var taskDirectorMine = {
                     }
                     break;
                 case 4:
-                case 5:
-                case 6:
+                    if (task.creepLimit < 2) {
+                        task.creepLimit = 2;
+                    }
                     if (task.minSize < 400) {
                         task.minSize = 400;
+                    }
+                    break;
+                case 5:
+                case 6:
+                    if (task.minSize < 500) {
+                        task.minSize = 500;
                     }
                     break;
                 case 7:
                 case 8:
                     if (task.minSize < 600) {
                         task.minSize = 600;
-                    }
-                    if (task.creepLimit < 2) {
-                        task.creepLimit = 2;
                     }
             }
         }

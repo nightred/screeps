@@ -54,6 +54,14 @@ var roleLongHauler = {
         }
 
         if (creep.memory.working) {
+
+            if (creep.isOnRoad()) {
+                let road = creep.getOnRoad();
+                if (road.hits < road.hitsMax) {
+                    creep.repair(road);
+                }
+            }
+
             if (creep.room.name != creep.memory.spawnRoom) {
                 creep.moveToRoom(creep.memory.spawnRoom);
                 return true;
@@ -84,15 +92,16 @@ var roleLongHauler = {
         if (isNaN(energy)) { return -1; }
         args = args || {};
 
+        energy -= 100;
         let carryUnits = Math.floor((energy * 0.7) / 50);
-        carryUnits = carryUnits < 1 ? 1 : carryUnits;
+        carryUnits = carryUnits < 10 ? 10 : carryUnits;
         carryUnits = carryUnits > 24 ? 24 : carryUnits;
         energy -= carryUnits * 50
         let moveUnits = Math.floor(energy / 50);
-        moveUnits = moveUnits < 1 ? 1 : moveUnits;
-        moveUnits = moveUnits > 12 ? 12 : moveUnits;
+        moveUnits = moveUnits < 6 ? 6 : moveUnits;
+        moveUnits = moveUnits > 13 ? 13 : moveUnits;
         let body = [];
-
+        body.push(WORK);
         for (let i = 0; i < moveUnits; i++) {
             body.push(MOVE);
         }

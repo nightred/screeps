@@ -312,6 +312,10 @@ Creep.prototype.isOnRoad = function() {
     return _.find(this.pos.lookFor(LOOK_STRUCTURES), i => i instanceof StructureRoad) != undefined;
 }
 
+Creep.prototype.getOnRoad = function() {
+    return _.find(this.pos.lookFor(LOOK_STRUCTURES), i => i instanceof StructureRoad);
+}
+
 Creep.prototype.isOnContainer = function() {
     return _.find(this.pos.lookFor(LOOK_STRUCTURES), i => i instanceof StructureContainer) != undefined;
 }
