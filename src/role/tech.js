@@ -75,6 +75,10 @@ var roleTech = {
                 if (C.DEBUG >= 2) { console.log('DEBUG - do work failed for role: ' + creep.memory.role + ', name: ' + creep.name); }
             }
         } else {
+            if (creep.memory.spawnRoom != creep.room.name) {
+                creep.moveToRoom(creep.memory.spawnRoom);
+                return true;
+            }
             if (!creep.doFillEnergy(this.energyTargets)) {
                 if (C.DEBUG >= 2) { console.log('DEBUG - do fill energy failed for role: ' + creep.memory.role + ', name: ' + creep.name); }
             }

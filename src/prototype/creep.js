@@ -292,6 +292,9 @@ Creep.prototype.getOffExit = function() {
             objects.terrain == 'wall'
             ) == -1) {
             this.move(direction);
+            if (this.memory._move) {
+                delete this.memory._move;
+            }
             break;
         }
     }
