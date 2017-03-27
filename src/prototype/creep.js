@@ -9,7 +9,7 @@ Creep.prototype.moveToRoom = function(name) {
     if (!name) { return -1; }
     if (this.room.name == name) { return true; }
     let target = new RoomPosition(25, 25, name);
-    return this.moveTo(target, { range: 23,  reusePath: 100, })
+    return this.goto(target, { range: 23,  reusePath: 100, ignoreCreeps: true, })
 }
 
 Creep.prototype.manageState = function() {
@@ -137,7 +137,7 @@ Creep.prototype.transferEnergy = function(target) {
     }
 
     if (this.transfer(target, RESOURCE_ENERGY) == ERR_NOT_IN_RANGE) {
-        this.moveTo(target, { range: 1, reusePath: 20, });
+        this.goto(target, { range: 1, reusePath: 20, ignoreCreeps: true, });
         return true;
     } else {
         this.memory.goingTo = false;
@@ -153,7 +153,7 @@ Creep.prototype.withdrawEnergy = function(target) {
     }
 
     if (this.withdraw(target, RESOURCE_ENERGY) == ERR_NOT_IN_RANGE) {
-        this.moveTo(target, { range: 1, reusePath: 20, });
+        this.goto(target, { range: 1, reusePath: 20, ignoreCreeps: true, });
         return false;
     } else {
         this.memory.goingTo = false;
@@ -182,6 +182,27 @@ Creep.prototype.hasGoingTo = function(target) {
     return _.filter(this.room.find(FIND_MY_CREEPS), targetCreep =>
         targetCreep.memory.goingTo == target).length > 0 ? true : false;
 }
+
+Creep.prototype.goto = function(target, args) {
+    if (!target) { return -1; }
+    this.memory.moveTick = this.memory.moveTick || 0;
+    this.memory.x = this.memory.x || 0;
+    this.memory.y = this.memory.y || 0;
+
+    if (this.memory._move && (this.memory.moveTick + C.CREEP_STUCK_TICK) < Game.time) {
+        delete this.memory._move;
+        args.ignoreCreeps = false;
+        args.reusePath = 6;
+    }
+
+    if (this.memory.x != this.pos.x || this.memory.y != this.pos.y) {
+        this.memory.moveTick = Game.time;
+        this.memory.x = this.pos.x;
+        this.memory.y = this.pos.y;
+    }
+
+    this.moveTo(target, args);
+};
 
 Creep.prototype.doEmptyEnergy = function(types) {
     if (!Array.isArray(types)) { return -1; }

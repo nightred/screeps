@@ -39,7 +39,7 @@ var Constants = {
     SPAWN_QUEUE_DELAY:              2,
     SPAWN_ENERGY_MAX:               0.8,
 
-    REPAIR_HIT_WORK_MIN:            0.90,
+    REPAIR_HIT_WORK_MIN:            0.80,
     REPAIR_HIT_WORK_MAX:            0.98,
     RAMPART_HIT_MAX:                100000,
     WALL_HIT_MAX:                   100000,
@@ -49,6 +49,7 @@ var Constants = {
 
     CREEP_DESPAWN_TICKS:            1,
     CREEP_IDLE_TIME:                4,
+    CREEP_STUCK_TICK:               4,
 
     QUEUE_WORK:                     'work',
     QUEUE_SPAWN:                    'spawn',

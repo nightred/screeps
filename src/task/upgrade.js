@@ -83,6 +83,19 @@ var taskUpgrade = {
         }
 
         // set spawn limits
+        if (room.storage) {
+            if (!task.highEnergy && room.controller.level < 8 &&
+                room.storage.store[RESOURCE_ENERGY] > 200000 ) {
+                task.highEnergy = true;
+                task.creepLimit += 1;
+                }
+            if (task.highEnergy && room.controller.level < 8 &&
+                room.storage.store[RESOURCE_ENERGY] < 100000 ) {
+                task.highEnergy = false;
+                task.creepLimit -= 1;
+                }
+        }
+
         switch (room.controller.level) {
             case 2:
             case 3:

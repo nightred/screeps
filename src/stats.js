@@ -149,12 +149,12 @@ Stats.prototype.reportEnergy = function() {
 
 Stats.prototype.reportWork = function() {
     let size = {t: 2, l: 1, };
-    let fontSize = 0.5;
+    let fontSize = 0.3;
     let textStyle = {
         align: 'left',
         color: '#BBBBBB',
         font: fontSize,
-        opacity: 0.8,
+        opacity: 0.6,
         background: '#222222',
         stroke : '#222222',
         strokeWidth : 0.15,
@@ -167,7 +167,7 @@ Stats.prototype.reportWork = function() {
     let rv = new RoomVisual();
     let lines = output.split('\n');
     for (let l = 0; l < lines.length; l++) {
-        rv.text(lines[l], size.l, size.t + (l * (0.5 + 0.1)), textStyle);
+        rv.text(lines[l], size.l, size.t + (l * (fontSize + 0.1)), textStyle);
     }
 };
 

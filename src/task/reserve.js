@@ -30,7 +30,7 @@ var taskReserve = {
         }
 
         if (creep.reserveController(creep.room.controller) == ERR_NOT_IN_RANGE) {
-            creep.moveTo(creep.room.controller, { reusePath: 50, range: 1, });
+            creep.goto(creep.room.controller, { reusePath: 50, range: 1, ignoreCreeps: true, });
         }
 
         return true;

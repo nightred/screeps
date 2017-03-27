@@ -31,7 +31,7 @@ var taskMine = {
 
         let source = Game.getObjectById(creep.memory.harvestTarget);
         if (creep.harvest(source) == ERR_NOT_IN_RANGE) {
-            creep.moveTo(source, { range: 1, reUsePath: 80, maxOps: 4000, });
+            creep.goto(source, { range: 1, reUsePath: 80, maxOps: 4000, ignoreCreeps: true, });
         }
 
         return true;
@@ -49,7 +49,11 @@ var taskMine = {
         }
         task.manageTick = Game.time;
 
-        if (task.creeps.length < task.creepLimit) {
+        let count = _.filter(Game.creeps, creep =>
+            creep.memory.workId == task.id &&
+            creep.memory.despawn != true
+            ).length;
+        if (count < task.creepLimit) {
             if (!Game.Queue.spawn.isQueued({ room: task.spawnRoom, role: 'miner', })) {
                 let record = {
                     rooms: [ task.spawnRoom, ],
@@ -58,6 +62,7 @@ var taskMine = {
                     creepArgs: {
                         harvestTarget: task.targetId,
                         workRooms: task.workRooms,
+                        workId: task.id,
                     },
                 };
                 if (task.spawnRoom != task.workRooms[0]) {

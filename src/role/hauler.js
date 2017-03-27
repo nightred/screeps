@@ -42,7 +42,7 @@ var roleHauler = {
         }
 
         if (!creep.room.storage) {
-            this.energyTargets = [
+            this.energyOutTargets = [
                 'spawn',
                 'extention',
                 'containerOut',
@@ -88,11 +88,11 @@ var roleHauler = {
 
         let move = Math.floor((energy / 2) / 50);
         move = move < 1 ? 1 : move;
-        move = move > 7 ? 7 : move;
+        move = move > 10 ? 10 : move;
         energy -= move * 50;
         let carry = Math.floor(energy / 50);
         carry = carry < 1 ? 1 : carry;
-        carry = carry > 14 ? 14 : carry;
+        carry = carry > 20 ? 20 : carry;
 
         let body = [];
         for (let i = 0; i < move; i++) {

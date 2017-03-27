@@ -71,6 +71,7 @@ var roleCombatBrawler = {
         let toughUnits = Math.floor(energy / 10);
         toughUnits = toughUnits < 1 ? 1 : toughUnits;
         toughUnits = toughUnits > 12 ? 12 : toughUnits;
+        toughUnits = toughUnits > (moveUnits * 2) ? (moveUnits * 2) : toughUnits;
 
         let body = [];
         for (let i = 0; i < toughUnits; i++) {
