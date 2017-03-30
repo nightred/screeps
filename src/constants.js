@@ -24,6 +24,10 @@ var Constants = {
     ENERGY_CONTAINER_MIN_PERCENT:   0.1 ,
     ENERGY_CONTAINER_MIN_WITHDRAW:  100,
     ENERGY_STORAGE_MIN_WITHDRAW:    100,
+    ENERGY_LINK_IN_MIN:             0.1,
+    ENERGY_LINK_OUT_MAX:            0.8,
+    ENERGY_LINK_STORAGE_MIN:        0.5,
+    ENERGY_LINK_STORAGE_MAX:        0.75,
 
     CONTROLLER_WITHDRAW_LEVEL:      2,
     CONTROLLER_RESERVE_MAX:         4000,
@@ -33,7 +37,7 @@ var Constants = {
     MANAGE_WAIT_TICKS:              10,
     REPORT_TICKS:                   500,
     DEFENSE_COOLDOWN:               80,
-    DEFENSE_SPAWN_DELAY:            60,
+    DEFENSE_LIMIT_INCREASE_DELAY:   100,
 
     SPAWN_COST_DECAY:               200,
     SPAWN_QUEUE_DELAY:              2,

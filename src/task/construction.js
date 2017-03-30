@@ -29,7 +29,7 @@ var taskConstruction = {
         if (!target) { return creep.removeWork(); }
 
         if (creep.build(target) == ERR_NOT_IN_RANGE) {
-            creep.goto(target, { range: 3, reusePath: 50, ignoreCreeps: true,});
+            creep.goto(target, { range: 3, reusePath: 50, ignoreCreeps: true, maxRooms: 1, });
         }
 
         return true;

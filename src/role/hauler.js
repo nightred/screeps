@@ -12,19 +12,6 @@ var roleHauler = {
     **/
     role: 'hauler',
 
-    /**
-    * The locations that energy can be withdrawn
-    **/
-    energyInTargets: [
-        'containerIn',
-    ],
-    /**
-    * The locations that energy can be stored
-    **/
-    energyOutTargets: [
-        'storage',
-    ],
-
     /** @param {Creep} creep **/
     doRole: function(creep) {
         if (!creep) { return -1; }
@@ -41,9 +28,17 @@ var roleHauler = {
             creep.say('🚚');
         }
 
+        let energyInTargets =  [
+            'containerIn',
+        ];
+
+        let energyOutTargets = [
+            'spawn',
+            'storage',
+        ];
+
         if (!creep.room.storage) {
-            this.energyOutTargets = [
-                'spawn',
+            energyOutTargets = [
                 'extention',
                 'containerOut',
                 'container',
@@ -65,11 +60,11 @@ var roleHauler = {
 
         // working has energy, else need energy
         if (creep.memory.working) {
-            if (!creep.doEmptyEnergy(this.energyOutTargets)) {
+            if (!creep.doEmptyEnergy(energyOutTargets)) {
                 if (C.DEBUG >= 2) { console.log('DEBUG - do empty energy failed for role: ' + creep.memory.role + ', name: ' + creep.name); }
             }
         } else {
-            if (!creep.doFillEnergy(this.energyInTargets)) {
+            if (!creep.doFillEnergy(energyInTargets)) {
                 if (C.DEBUG >= 2) { console.log('DEBUG - do fill energy failed for role: ' + creep.memory.role + ', name: ' + creep.name); }
             }
         }
@@ -88,11 +83,11 @@ var roleHauler = {
 
         let move = Math.floor((energy / 2) / 50);
         move = move < 1 ? 1 : move;
-        move = move > 10 ? 10 : move;
+        move = move > 7 ? 7 : move;
         energy -= move * 50;
         let carry = Math.floor(energy / 50);
         carry = carry < 1 ? 1 : carry;
-        carry = carry > 20 ? 20 : carry;
+        carry = carry > 14 ? 14 : carry;
 
         let body = [];
         for (let i = 0; i < move; i++) {

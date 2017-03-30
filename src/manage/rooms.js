@@ -8,20 +8,24 @@
 // managment modules
 var manageTower     = require('manage.tower');
 var EnergyGrid      = require('manage.energyGrid');
+var Link            = require('manage.link');
 
 var manageRooms = function() {
     this.energyGrid     = new EnergyGrid;
+    this.link           = new Link;
     this.tower          = manageTower;
 };
 
 
 manageRooms.prototype.doManage = function() {
     for (let name in Game.rooms) {
-        if (!Game.rooms[name].controller) { continue; }
-        if (Game.rooms[name].controller.my) {
-            let room = Game.rooms[name];
-
-            this.doContainers(room);
+        let room = Game.rooms[name];
+        this.doContainers(room);
+        Game.Mil.defense.manage(room)
+        if (!room.controller) { continue; }
+        if (room.controller.my) {
+            this.link.manage(room);
+            Game.Mil.spawnMilitia(room);
             Game.Queue.work.doTaskFind(room);
             Game.Queue.spawn.doSpawn(room);
             this.tower.run(room);

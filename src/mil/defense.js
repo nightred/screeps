@@ -10,8 +10,14 @@ var Defense = function() {
     this.status = 'clear';
 };
 
-Defense.prototype.scanRoom = function(room) {
+Defense.prototype.manage = function(room) {
     if (!room) { return -1; }
+
+    room.memory.findTickDefense = room.memory.findTickDefense || 0;
+    if ((room.memory.findTickDefense + C.FIND_WAIT_TICKS) > Game.time) {
+        return true;
+    }
+    room.memory.findTickDefense = Game.time;
 
     let targets = room.getHostiles();
     if (targets.length <= 0) { return true; }
@@ -24,7 +30,7 @@ Defense.prototype.scanRoom = function(room) {
         task: 'defense',
         managed: true,
         priority: 10,
-        creepLimit: 0,
+        creepLimit: 1,
     };
     Game.Queue.work.addRecord(record);
 

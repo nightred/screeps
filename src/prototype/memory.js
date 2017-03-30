@@ -2,7 +2,7 @@
  * Adds memory functions
  *
  */
- 
+
 Object.defineProperty(StructureContainer.prototype, 'memory', {
     get: function() {
         if (_.isUndefined(this.room.memory.structureContainers)) {
@@ -11,7 +11,7 @@ Object.defineProperty(StructureContainer.prototype, 'memory', {
         if (!_.isObject(this.room.memory.structureContainers)) {
             return undefined;
         }
-        
+
         return this.room.memory.structureContainers[this.id] = this.room.memory.structureContainers[this.id] || {};
     },
     set: function(value) {
@@ -25,6 +25,28 @@ Object.defineProperty(StructureContainer.prototype, 'memory', {
     }
 })
 
+Object.defineProperty(StructureLink.prototype, 'memory', {
+    get: function() {
+        if (_.isUndefined(this.room.memory.structureLinks)) {
+            this.room.memory.structureLinks = {};
+        }
+        if (!_.isObject(this.room.memory.structureLinks)) {
+            return undefined;
+        }
+
+        return this.room.memory.structureLinks[this.id] = this.room.memory.structureLinks[this.id] || {};
+    },
+    set: function(value) {
+        if (_.isUndefined(this.room.memory.structureLinks)) {
+            this.room.memory.structureLinks = {};
+        }
+        if (!_.isObject(this.room.memory.structureLinks)) {
+            throw new Error('Unable to set structureLinks memory');
+        }
+        this.room.memory.structureLinks[this.id] = value
+    }
+})
+
 Object.defineProperty(Source.prototype, 'memory', {
     get: function() {
         if (_.isUndefined(this.room.memory.sources)) {
@@ -33,7 +55,7 @@ Object.defineProperty(Source.prototype, 'memory', {
         if (!_.isObject(this.room.memory.sources)) {
             return undefined;
         }
-        
+
         return this.room.memory.sources[this.id] = this.room.memory.sources[this.id] || {};
     },
     set: function(value) {

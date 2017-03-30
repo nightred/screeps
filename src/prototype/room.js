@@ -17,6 +17,14 @@ Room.prototype.getSources = function() {
     return this.find(FIND_SOURCES);
 };
 
+Room.prototype.getLinks = function() {
+    return this.find(FIND_MY_STRUCTURES, {
+        filter: (structure) => {
+            return structure.structureType == STRUCTURE_LINK;
+        }
+    });
+};
+
 Room.prototype.getHostiles = function() {
     return this.find(FIND_HOSTILE_CREEPS);
 };

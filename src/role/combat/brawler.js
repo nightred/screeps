@@ -38,7 +38,7 @@ var roleCombatBrawler = {
                 creep.say('💤');
                 return true;
             } else {
-                creep.say('🥊‍');
+                creep.say('👊‍');
             }
         }
 
@@ -60,17 +60,17 @@ var roleCombatBrawler = {
 
         let attackUnits = Math.floor((energy * 0.6) / 80);
         attackUnits = attackUnits < 1 ? 1 : attackUnits;
-        attackUnits = attackUnits > 20 ? 20 : attackUnits;
+        attackUnits = attackUnits > 6 ? 6 : attackUnits;
         energy -= (attackUnits * 80);
 
         let moveUnits = Math.floor((energy * 0.7) / 50);
         moveUnits = moveUnits < 1 ? 1 : moveUnits;
-        moveUnits = moveUnits > 18 ? 18 : moveUnits;
+        moveUnits = moveUnits > 12 ? 12 : moveUnits;
         energy -= (moveUnits * 50);
 
         let toughUnits = Math.floor(energy / 10);
         toughUnits = toughUnits < 1 ? 1 : toughUnits;
-        toughUnits = toughUnits > 12 ? 12 : toughUnits;
+        toughUnits = toughUnits > 6 ? 6 : toughUnits;
         toughUnits = toughUnits > (moveUnits * 2) ? (moveUnits * 2) : toughUnits;
 
         let body = [];

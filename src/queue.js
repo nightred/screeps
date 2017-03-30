@@ -99,47 +99,11 @@ Queue.prototype.getRecord = function(id) {
     return output;
 }
 
-Queue.prototype.getReport = function() {
+Queue.prototype.getRoomReport = function(room) {
     let output = '';
-    let queue = this.getQueue();
 
-    let filteredQueue = _.filter(queue, record => record.queue == C.QUEUE_WORK);
-    output += '  Queue ' + C.QUEUE_WORK + ': ' + filteredQueue.length + '\n';
-    for (let t = 0; t < C.WORK_TASKS.length; t++) {
-        let records = _.filter(filteredQueue, record => record.task == C.WORK_TASKS[t]);
-        if (records.length > 0) {
-            output += '    ' + C.WORK_TASKS[t] + ': ' + records.length + '\n';
-            output += '      [ ';
-            for (let i = 0; i < records.length; i++) {
-                output += records[i].id;
-                if ((i + 1) % 8 == 0 && i != records.length - 1) {
-                    output += ',\n        ';
-                } else if (i < records.length - 1) {
-                    output += ', ';
-                }
-            }
-            output += ' ]\n';
-        }
-    }
-
-    filteredQueue = _.filter(queue, record => record.queue == C.QUEUE_SPAWN);
-    output += '  Queue ' + C.QUEUE_SPAWN + ': ' + filteredQueue.length + '\n';
-    for (let r = 0; r < C.ROLE_TYPES.length; r++) {
-        let records = _.filter(filteredQueue, record => record.role == C.ROLE_TYPES[r]);
-        if (records.length > 0) {
-            output += '    ' + C.ROLE_TYPES[r] + ': ' + records.length + '\n';
-            output += '      [ ';
-            for (let i = 0; i < records.length; i++) {
-                output += records[i].id;
-                if ((i + 1) % 8 == 0 && i != records.length - 1) {
-                    output += ',\n        ';
-                } else if (i < records.length - 1) {
-                    output += ', ';
-                }
-            }
-            output += ' ]\n';
-        }
-    }
+    output += this.work.getRoomReport(room);
+    output += this.spawn.getRoomReport(room);
 
     return output;
 }

@@ -13,26 +13,6 @@ var roleTech = {
     role: 'tech',
 
     /**
-    * The work tasks that the role is created for
-    **/
-    workTasks: [
-        'tower.fill',
-        'repair',
-        'construction',
-        'signcontroller',
-    ],
-
-    /**
-    * The locations that energy can be taken from
-    **/
-    energyTargets: [
-        'storage',
-        'containerOut',
-        'container',
-        'containerIn',
-    ],
-
-    /**
     * @param {Creep} creep
     **/
     doRole: function(creep) {
@@ -56,14 +36,28 @@ var roleTech = {
             return true;
         }
 
+        let workTasks = [
+            'repair',
+            'tower.fill',
+            'construction',
+            'signcontroller',
+        ];
+
+        let energyTargets = [
+            'storage',
+            'containerOut',
+            'container',
+            'containerIn',
+        ];
+
         if (!creep.room.storage) {
-            this.energyTargets.push('extention');
-            this.energyTargets.push('spawn');
+            energyTargets.push('extention');
+            energyTargets.push('spawn');
         }
 
         if (creep.memory.working) {
             if (!creep.memory.workId) {
-                if (!creep.getWork(this.workTasks)) {
+                if (!creep.getWork(workTasks)) {
                     creep.memory.idleStart = Game.time;
                     creep.say('💤');
 
@@ -79,7 +73,7 @@ var roleTech = {
                 creep.moveToRoom(creep.memory.spawnRoom);
                 return true;
             }
-            if (!creep.doFillEnergy(this.energyTargets)) {
+            if (!creep.doFillEnergy(energyTargets)) {
                 if (C.DEBUG >= 2) { console.log('DEBUG - do fill energy failed for role: ' + creep.memory.role + ', name: ' + creep.name); }
             }
         }

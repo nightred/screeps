@@ -104,7 +104,7 @@ SpawnQueue.prototype.doSpawn = function(room) {
                 energy -= this.getBodyCost(body);
                 records[r].spawned = true;
                 records[r].name = name;
-                if (C.DEBUG >= 1) { console.log('INFO - spawning name: ' + name + ', role: ' + records[r].role + ', parts:  ' + Game.creeps[name].body.length + ', room:' + room.name); }
+                if (C.DEBUG >= 1) { console.log('INFO - spawning name: ' + name + ', role: ' + records[r].role + ', parts: ' + Game.creeps[name].body.length + ', room: <p style=\"display:inline; color: #ed4543\"><a href=\"#!/room/' + room.name + '\">' + room.name + '</a></p>'); }
                 break;
             }
         }
@@ -159,6 +159,33 @@ SpawnQueue.prototype.addRecord = function(args) {
 
 SpawnQueue.prototype.delRecord = function(id) {
     return Game.Queue.delRecord(id);
-}
+};
+
+SpawnQueue.prototype.getRoomReport = function(room) {
+    let output = '';
+    let queue = this.getQueue();
+
+    let filteredQueue = _.filter(queue, record => record.rooms.indexOf(room) >= 0);
+    output += '  Total Spawn Queue: ' + queue.length + '\n';
+    output += '  Room Spawn Queue : ' + filteredQueue.length + '\n';
+    for (let r = 0; r < C.ROLE_TYPES.length; r++) {
+        let records = _.filter(filteredQueue, record => record.role == C.ROLE_TYPES[r]);
+        if (records.length > 0) {
+            output += '    ' + C.ROLE_TYPES[r] + ': ' + records.length + '\n';
+            output += '      [ ';
+            for (let i = 0; i < records.length; i++) {
+                output += records[i].id;
+                if ((i + 1) % 8 == 0 && i != records.length - 1) {
+                    output += ',\n        ';
+                } else if (i < records.length - 1) {
+                    output += ', ';
+                }
+            }
+            output += ' ]\n';
+        }
+    }
+
+    return output;
+};
 
 module.exports = SpawnQueue;

@@ -20,14 +20,6 @@ var roleUpgrader = {
     ],
 
     /**
-    * The locations that energy can be taken from
-    **/
-    energyTargets: [
-        'containerOut',
-        'container',
-    ],
-
-    /**
     * @param {Creep} creep
     **/
     doRole: function(creep) {
@@ -55,9 +47,14 @@ var roleUpgrader = {
             }
         }
 
+        let energyTargets = [
+            'containerOut',
+        ];
+
         if (!creep.room.storage) {
-            this.energyTargets.push('extention');
-            this.energyTargets.push('spawn');
+            energyTargets.push('container');
+            energyTargets.push('extention');
+            energyTargets.push('spawn');
         }
 
         if (creep.memory.working) {
@@ -65,7 +62,7 @@ var roleUpgrader = {
                 if (C.DEBUG >= 2) { console.log('DEBUG - do work failed for role: ' + creep.memory.role + ', name: ' + creep.name); }
             }
         } else {
-            if (!creep.doFillEnergy(this.energyTargets)) {
+            if (!creep.doFillEnergy(energyTargets)) {
                 if (C.DEBUG >= 2) { console.log('DEBUG - do fill energy failed for role: ' + creep.memory.role + ', name: ' + creep.name); }
             }
         }

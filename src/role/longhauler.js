@@ -12,21 +12,6 @@ var roleLongHauler = {
     **/
     role: 'longhauler',
 
-    /**
-    * The locations that energy can be withdrawn
-    **/
-    energyInTargets: [
-        'containerIn',
-    ],
-    /**
-    * The locations that energy can be stored
-    **/
-    energyOutTargets: [
-        'storage',
-        'spawn',
-        'extention',
-    ],
-
     /** @param {Creep} creep **/
     doRole: function(creep) {
         if (!creep) { return false; }
@@ -48,9 +33,17 @@ var roleLongHauler = {
             return true;
         }
 
+        let energyOutTargets = [
+            'storage',
+            'spawn',
+            'extention',
+        ];
+        let energyInTargets = [
+            'containerIn',
+        ];
         if (!creep.room.storage) {
-            this.energyOutTargets.push('containerOut');
-            this.energyOutTargets.push('container');
+            energyOutTargets.push('containerOut');
+            energyOutTargets.push('container');
         }
 
         if (creep.memory.working) {
@@ -67,7 +60,7 @@ var roleLongHauler = {
                 return true;
             }
 
-            if (!creep.doEmptyEnergy(this.energyOutTargets)) {
+            if (!creep.doEmptyEnergy(energyOutTargets)) {
                 if (C.DEBUG >= 2) { console.log('DEBUG - do empty energy failed for role: ' + creep.memory.role + ', name: ' + creep.name); }
             }
         } else {
@@ -75,7 +68,7 @@ var roleLongHauler = {
                 creep.moveToRoom(creep.memory.workRooms[0]);
                 return true;
             }
-            if (!creep.doFillEnergy(this.energyInTargets)) {
+            if (!creep.doFillEnergy(energyInTargets)) {
                 if (C.DEBUG >= 2) { console.log('DEBUG - do fill energy failed for role: ' + creep.memory.role + ', name: ' + creep.name); }
             }
         }

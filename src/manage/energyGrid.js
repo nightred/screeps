@@ -156,6 +156,34 @@ EnergyGrid.prototype.buildRoom = function(room) {
         }
     }
 
+    // link
+    energyMap.linkStorage = {};
+    energyMap.linkIn = {};
+    energyMap.linkOut = {};
+    let links = room.getLinks();
+    if (links.length > 0) {
+        for (let i = 0; i < links.length; i++) {
+            let record = {
+                id: links[i].id,
+                structure: 'link',
+                energy: links[i].energy,
+                energyMax: links[i].energyCapacity,
+                type: links[i].memory.type,
+                pos: links[i].pos,
+            };
+            switch (links[i].memory.type) {
+                case 'in':
+                    energyMap.linkIn[links[i].id] = record;
+                    break;
+                case 'out':
+                    energyMap.linkOut[links[i].id] = record;
+                    break;
+                case 'storage':
+                    energyMap.linkStorage[links[i].id] = record;
+            };
+        }
+    }
+
     // spawn
     energyMap.spawn = {};
     let spawns = room.getSpawns();

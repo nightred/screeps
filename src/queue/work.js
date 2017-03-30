@@ -154,4 +154,31 @@ WorkQueue.prototype.delRecord = function(id) {
     return Game.Queue.delRecord(id);
 };
 
+WorkQueue.prototype.getRoomReport = function(room) {
+    let output = '';
+    let queue = this.getQueue();
+
+    let filteredQueue = _.filter(queue, record => record.workRooms.indexOf(room) >= 0);
+    output += '  Total Work Queue: ' + queue.length + '\n';
+    output += '  Room Work Queue: ' + filteredQueue.length + '\n';
+    for (let t = 0; t < C.WORK_TASKS.length; t++) {
+        let records = _.filter(filteredQueue, record => record.task == C.WORK_TASKS[t]);
+        if (records.length > 0) {
+            output += '    ' + C.WORK_TASKS[t] + ': ' + records.length + '\n';
+            output += '      [ ';
+            for (let i = 0; i < records.length; i++) {
+                output += records[i].id;
+                if ((i + 1) % 8 == 0 && i != records.length - 1) {
+                    output += ',\n        ';
+                } else if (i < records.length - 1) {
+                    output += ', ';
+                }
+            }
+            output += ' ]\n';
+        }
+    }
+
+    return output;
+};
+
 module.exports = WorkQueue;

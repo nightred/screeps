@@ -22,8 +22,8 @@ var roleResupply = {
     * The locations that energy can be stored
     **/
     energyOutTargets: [
-        'spawn',
         'extention',
+        'spawn',
         'containerOut',
     ],
 

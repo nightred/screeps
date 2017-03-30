@@ -66,26 +66,8 @@ var taskRepair = {
             }
         }
 
-        task.spawnDelay = task.spawnDelay || Game.time;
-        if ((task.spawnDelay + C.DEFENSE_SPAWN_DELAY) > Game.time) {
-            return true;
-        }
-
-        if (task.creeps.length >= task.creepLimit) {
-            return true;
-        }
-
-        if (!Game.Queue.spawn.isQueued({ room: task.spawnRoom, role: 'combat.brawler', })) {
-            let record = {
-                rooms: [ task.spawnRoom, ],
-                role: 'combat.brawler',
-                priority: 10,
-                creepArgs: {
-                    workRooms: task.workRooms,
-                },
-            };
-            Game.Queue.spawn.addRecord(record);
-        }
+        let creepLimit = Math.ceil((Game.time - task.tick) / C.DEFENSE_LIMIT_INCREASE_DELAY);
+        task.creepLimit = task.creepLimit >= creepLimit ? task.creepLimit : creepLimit;
 
         return true;
     },
@@ -96,31 +78,6 @@ var taskRepair = {
     doTaskFind: function(room, args) {
         if (!room) { return -1; }
         args = args || {};
-
-        room.memory.findTickDefense = room.memory.findTickDefense || 0;
-        if ((room.memory.findTickDefense + C.FIND_WAIT_TICKS) > Game.time) {
-            return true;
-        }
-        room.memory.findTickDefense = Game.time;
-
-        let targets = room.getHostiles();
-
-        if (targets.length <= 0) { return true; }
-
-        if (Game.Queue.work.isQueued({ task: 'defense', room: room.name, })) {
-            return true;
-        }
-
-        args.spawnRoom = args.spawnRoom || room.name;
-        let record = {
-            workRooms: [ room.name, ],
-            spawnRoom: args.spawnRoom,
-            task: 'defense',
-            managed: true,
-            priority: 10,
-            creepLimit: 1,
-        };
-        Game.Queue.work.addRecord(record);
 
         return true;
     },

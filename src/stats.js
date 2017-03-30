@@ -149,7 +149,8 @@ Stats.prototype.reportEnergy = function() {
 
 Stats.prototype.reportWork = function() {
     let size = {t: 2, l: 1, };
-    let fontSize = 0.3;
+    let fontSize = 0.45;
+    let lineSpace = 0.08;
     let textStyle = {
         align: 'left',
         color: '#BBBBBB',
@@ -160,15 +161,16 @@ Stats.prototype.reportWork = function() {
         strokeWidth : 0.15,
 	};
 
-    let output = 'Work Report\n';
-
-    output += Game.Queue.getReport();
-
-    let rv = new RoomVisual();
-    let lines = output.split('\n');
-    for (let l = 0; l < lines.length; l++) {
-        rv.text(lines[l], size.l, size.t + (l * (fontSize + 0.1)), textStyle);
+    for (let roomName in Game.rooms) {
+        let output = 'Work Report for ' + roomName + '\n';
+        output += Game.Queue.getRoomReport(roomName);
+        let rv = new RoomVisual(roomName);
+        let lines = output.split('\n');
+        for (let l = 0; l < lines.length; l++) {
+            rv.text(lines[l], size.l, size.t + (l * (fontSize + lineSpace)), textStyle);
+        }
     }
+
 };
 
 Stats.prototype.graphCPU = function() {
