@@ -18,15 +18,15 @@ Mil.prototype.spawnMilitia = function(room) {
 
     // spawn brawlers for the militia
     let count = _.filter(Game.creeps, creep =>
-        creep.memory.spawnRoom == room.Name &&
+        creep.memory.spawnRoom == room.name &&
         creep.memory.role == 'combat.brawler' &&
         creep.memory.combatGroup == 'militia' &&
         creep.memory.despawn != true
         ).length;
     if (count < this.brawlerCount) {
-        if (!Game.Queue.spawn.isQueued({ room: task.spawnRoom, role: 'tech', })) {
+        if (!Game.Queue.spawn.isQueued({ room: room.name, role: 'combat.brawler', })) {
             let record = {
-                rooms: [ task.spawnRoom, ],
+                rooms: [ room.name, ],
                 role: 'combat.brawler',
                 priority: 38,
                 creepArgs: {

@@ -285,6 +285,27 @@ Creep.prototype.collectDroppedEnergy = function () {
     return true;
 }
 
+Creep.prototype.getDestructibleStructures = function(path) {
+    if (!path || !path.length) { return -1; }
+
+    for (let i = 0; i < path.length; i++) {
+        let target = new RoomPosition(path[i].x, path[i].y, this.room.name).look();
+        let targetIndex = _.findIndex(target, object =>
+            object.structure &&
+            object.structure.structureType == STRUCTURE_RAMPART);
+        if (targetIndex == -1) {
+            targetIndex = _.findIndex(target, object =>
+                object.structure &&
+                OBSTACLE_OBJECT_TYPES[object.structure.structureType]);
+        }
+        if (targetIndex >= 0) {
+            return target[targetIndex].id;
+        }
+    }
+
+    return false;
+};
+
 Creep.prototype.getOffExit = function() {
     let directionFromExit = {
         x: {
@@ -307,10 +328,10 @@ Creep.prototype.getOffExit = function() {
     if (!moveDirections) { return false; }
     for (let direction of moveDirections) {
         let target = this.pos.fromDirection(direction).look();
-        if (_.findIndex(target, objects =>
-            objects.type == 'creep' ||
-            (objects.structure && OBSTACLE_OBJECT_TYPES[objects.structure.structureType]) ||
-            objects.terrain == 'wall'
+        if (_.findIndex(target, object =>
+            object.type == 'creep' ||
+            (object.structure && OBSTACLE_OBJECT_TYPES[object.structure.structureType]) ||
+            object.terrain == 'wall'
             ) == -1) {
             this.move(direction);
             if (this.memory._move) {

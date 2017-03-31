@@ -86,13 +86,14 @@ var roleLongHauler = {
         args = args || {};
 
         energy -= 100;
-        let carryUnits = Math.floor((energy * 0.7) / 50);
-        carryUnits = carryUnits < 10 ? 10 : carryUnits;
-        carryUnits = carryUnits > 24 ? 24 : carryUnits;
-        energy -= carryUnits * 50
-        let moveUnits = Math.floor(energy / 50);
+        let moveUnits = Math.floor((energy * 0.4) / 50);
         moveUnits = moveUnits < 6 ? 6 : moveUnits;
         moveUnits = moveUnits > 13 ? 13 : moveUnits;
+        energy -= moveUnits * 50
+        let carryUnits = Math.floor( / 50);
+        carryUnits = carryUnits < 10 ? 10 : carryUnits;
+        carryUnits = carryUnits > 24 ? 24 : carryUnits;
+
         let body = [];
         body.push(WORK);
         for (let i = 0; i < moveUnits; i++) {

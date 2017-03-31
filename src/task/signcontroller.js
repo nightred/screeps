@@ -35,7 +35,7 @@ var taskMine = {
         }
 
         if (creep.signController(creep.room.controller, task.message) == ERR_NOT_IN_RANGE) {
-            creep.moveTo(creep.room.controller, { range: 1, });
+            creep.moveTo(creep.room.controller, { range: 1, maxRooms: 1, });
         }
 
         return true;

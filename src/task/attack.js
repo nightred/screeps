@@ -25,70 +25,42 @@ var taskAttack = {
             return true;
         }
 
-        let targets = creep.room.getHostileStructures()
-        targets = _.filter(targets, target =>
-            target.structureType == STRUCTURE_TOWER);
-        if (targets.length > 0) {
-            targets = _.sortBy(targets, target => creep.pos.getRangeTo(target));
+        if (!creep.memory.targetId) {
+            let newTarget = this.getTarget(creep);
+            if (!newTarget) { return true; }
+            creep.memory.targetId = newTarget.id;
+        }
 
-            if (creep.attack(targets[0]) == ERR_NOT_IN_RANGE) {
-                creep.moveTo(targets[0], { reusePath: 50, visualizePathStyle: {
+        let target = Game.getObjectById(creep.memory.targetId);
+        if (!target) {
+            creep.memory.targetId = false;
+            return true;
+        }
+
+        if (creep.attack(target) == ERR_NOT_IN_RANGE) {
+            let opts = {
+                reusePath: 5,
+                visualizePathStyle: {
                     fill: 'transparent',
                     stroke: '#ff1919',
                     lineStyle: 'dashed',
                     strokeWidth: .15,
-                    opacity: .1,
-                }, });
-            }
-            return true;
-        }
+                    opacity: .2,
+                },
+            };
+            if (creep.moveTo(target, opts) == ERR_NO_PATH) {
+                let path = creep.pos.findPathTo(target, {
+                    maxOps: 1000,
+                    ignoreDestructibleStructures: true,
+                    ignoreCreeps: true,
+                    maxRooms: 1, });
 
-        targets = creep.room.getHostiles();
-        if (targets.length > 0) {
-            targets = _.sortBy(targets, target => creep.pos.getRangeTo(target));
+                if (path.length) {
+                    creep.memory.targetId = creep.getDestructibleStructures(path);
+                    return true;
+                }
 
-            if (creep.attack(targets[0]) == ERR_NOT_IN_RANGE) {
-                creep.moveTo(targets[0], { reusePath: 5, visualizePathStyle: {
-                    fill: 'transparent',
-                    stroke: '#990000',
-                    lineStyle: 'dashed',
-                    strokeWidth: .15,
-                    opacity: .1,
-                }, });
             }
-            return true;
-        }
-        targets = creep.room.getHostileSpawns()
-        if (targets.length > 0) {
-            targets = _.sortBy(targets, target => creep.pos.getRangeTo(target));
-
-            if (creep.attack(targets[0]) == ERR_NOT_IN_RANGE) {
-                creep.moveTo(targets[0], { reusePath: 50, visualizePathStyle: {
-                    fill: 'transparent',
-                    stroke: '#ff1919',
-                    lineStyle: 'dashed',
-                    strokeWidth: .15,
-                    opacity: .1,
-                }, });
-            }
-            return true;
-        }
-        targets = creep.room.getHostileStructures()
-        if (targets.length > 0) {
-            targets = _.filter(targets, target =>
-                target.structureType != STRUCTURE_CONTROLLER);
-            targets = _.sortBy(targets, target => creep.pos.getRangeTo(target));
-
-            if (creep.attack(targets[0]) == ERR_NOT_IN_RANGE) {
-                creep.moveTo(targets[0], { reusePath: 50, visualizePathStyle: {
-                    fill: 'transparent',
-                    stroke: '#ec891d',
-                    lineStyle: 'dashed',
-                    strokeWidth: .15,
-                    opacity: .1,
-                }, });
-            }
-            return true;
         }
 
         return true;
@@ -109,6 +81,37 @@ var taskAttack = {
     doTaskFind: function(room) {
         if (!room) { return -1; }
         // task creation for the room
+    },
+
+    getTarget: function(creep) {
+        if (!creep) { return -1; }
+
+        let targets = creep.room.getHostileStructures()
+        targets = _.filter(targets, target =>
+            target.structureType == STRUCTURE_TOWER);
+        if (targets.length > 0) {
+            targets = _.sortBy(targets, target => creep.pos.getRangeTo(target));
+            return targets[0];
+        }
+        targets = creep.room.getHostiles();
+        if (targets.length > 0) {
+            targets = _.sortBy(targets, target => creep.pos.getRangeTo(target));
+            return targets[0];
+        }
+        targets = creep.room.getHostileSpawns()
+        if (targets.length > 0) {
+            targets = _.sortBy(targets, target => creep.pos.getRangeTo(target));
+            return targets[0];
+        }
+        targets = creep.room.getHostileStructures()
+        if (targets.length > 0) {
+            targets = _.filter(targets, target =>
+                target.structureType != STRUCTURE_CONTROLLER);
+            targets = _.sortBy(targets, target => creep.pos.getRangeTo(target));
+            return targets[0];
+        }
+
+        return false;
     },
 
 };
