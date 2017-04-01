@@ -72,7 +72,7 @@ var taskTowerFill = {
             let record = {
                 workRooms: [ room.name, ],
                 spawnRoom: room.name,
-                task: 'tower.fill',
+                task: C.TOWER_REFILL,
                 priority: 30,
                 creepLimit: 1,
                 targetId: targets[i].id,

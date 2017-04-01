@@ -10,7 +10,7 @@ var roleLongHauler = {
     /**
     * The role name
     **/
-    role: 'longhauler',
+    role: C.LONGHAULER,
 
     /** @param {Creep} creep **/
     doRole: function(creep) {
@@ -90,7 +90,7 @@ var roleLongHauler = {
         moveUnits = moveUnits < 6 ? 6 : moveUnits;
         moveUnits = moveUnits > 13 ? 13 : moveUnits;
         energy -= moveUnits * 50
-        let carryUnits = Math.floor( / 50);
+        let carryUnits = Math.floor(energy / 50);
         carryUnits = carryUnits < 10 ? 10 : carryUnits;
         carryUnits = carryUnits > 24 ? 24 : carryUnits;
 

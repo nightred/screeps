@@ -10,7 +10,7 @@ var roleHauler = {
     /**
     * The role name
     **/
-    role: 'hauler',
+    role: C.HAULER,
 
     /** @param {Creep} creep **/
     doRole: function(creep) {

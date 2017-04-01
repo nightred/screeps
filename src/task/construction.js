@@ -67,7 +67,7 @@ var taskConstruction = {
 
             let record = {
                 workRooms: [ room.name, ],
-                task: 'construction',
+                task: C.CONSTRUCTION,
                 priority: 70,
                 creepLimit: 4,
                 targetId: targets[i].id,

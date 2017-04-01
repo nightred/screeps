@@ -61,9 +61,8 @@ SpawnQueue.prototype.doSpawn = function(room) {
     if (!room) { return -1; }
 
     let energy = room.energyAvailable;
-    let maxEnergy = room.energyCapacityAvailable * 0.75;
+    let maxEnergy = room.energyCapacityAvailable * C.SPAWN_ENERGY_MAX;
     if (energy < C.ENERGY_CREEP_SPAWN_MIN) { return true; }
-
     let records = _.filter(this.getQueue(), record =>
         record.rooms.indexOf(room.name) >= 0 &&
         !record.spawned
@@ -78,7 +77,7 @@ SpawnQueue.prototype.doSpawn = function(room) {
         if (spawns[s].spawning) { continue; }
         for (let r = 0; r < records.length; r++) {
             if (records[r].spawned) { continue; }
-            let spawnEnergy = energy * C.SPAWN_ENERGY_MAX;
+            let spawnEnergy = energy > maxEnergy ? maxEnergy : energy;
             if (records[r].minSize && spawnEnergy < records[r].minSize) { continue; }
 
             let minSize = 0;

@@ -10,13 +10,13 @@ var roleMiner = {
     /**
     * The role name
     **/
-    role: 'miner',
+    role: C.MINER,
 
     /**
     * The work tasks that the role is created for
     **/
     workTasks: [
-        'mine',
+        C.MINE,
     ],
 
     /**

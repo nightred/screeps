@@ -72,15 +72,15 @@ var taskDirectorResupply = {
 
             // spawn new creeps if needed
             count = _.filter(Game.creeps, creep =>
-                creep.memory.role == 'resupply' &&
+                creep.memory.role == C.RESUPPLY &&
                 creep.room.name == room.name &&
                 creep.memory.despawn != true
                 ).length;
             if (count < task.creepLimit) {
-                if (!Game.Queue.spawn.isQueued({ room: task.spawnRoom, role: 'resupply', })) {
+                if (!Game.Queue.spawn.isQueued({ room: task.spawnRoom, role: C.RESUPPLY, })) {
                     let record = {
                         rooms: [ task.spawnRoom, ],
-                        role: 'resupply',
+                        role: C.RESUPPLY,
                         priority: 48,
                         creepArgs: {
                             workRooms: task.workRooms,

@@ -1,8 +1,8 @@
 /*
  * Set variables for managment
  *
- * ACTIVE: controls run loop
- * DEBUG: Report on values at runtime
+ * ACTIVE = controls run loop
+ * DEBUG = Report on values at runtime
  *
  * ENERGY_* values set upper and lower usage values
  *
@@ -10,98 +10,126 @@
  *
  */
 
-var Constants = {
+var Constant = {};
 
-    // debug: 0 off, 1 info, 2 debug, 3 verbose
-    DEBUG:                          2,
-    SIM:                            false,
-    VISUALS:                        true,
+// debug = 0 off, 1 info, 2 debug, 3 verbose
+Constant.DEBUG                          = 2;
+Constant.SIM                            = false;
+Constant.VISUALS                        = true;
 
-    ENERGY_ROOM_WITHDRAW_MIN:       200,
-    ENERGY_CREEP_SPAWN_MIN:         200,
-    ENERGY_TOWER_MIN:               300,
-    ENERGY_CONTAINER_MAX_PERCENT:   0.9,
-    ENERGY_CONTAINER_MIN_PERCENT:   0.1 ,
-    ENERGY_CONTAINER_MIN_WITHDRAW:  100,
-    ENERGY_STORAGE_MIN_WITHDRAW:    100,
-    ENERGY_LINK_IN_MIN:             0.1,
-    ENERGY_LINK_OUT_MAX:            0.8,
-    ENERGY_LINK_STORAGE_MIN:        0.5,
-    ENERGY_LINK_STORAGE_MAX:        0.75,
+Constant.ENERGY_ROOM_WITHDRAW_MIN       = 250;
+Constant.ENERGY_CREEP_SPAWN_MIN         = 200;
+Constant.ENERGY_TOWER_MIN               = 300;
+Constant.ENERGY_CONTAINER_MAX_PERCENT   = 0.9;
+Constant.ENERGY_CONTAINER_MIN_PERCENT   = 0.1 ;
+Constant.ENERGY_CONTAINER_MIN_WITHDRAW  = 100;
+Constant.ENERGY_STORAGE_MIN_WITHDRAW    = 100;
+Constant.ENERGY_LINK_IN_MIN             = 0.1;
+Constant.ENERGY_LINK_OUT_MAX            = 0.8;
+Constant.ENERGY_LINK_STORAGE_MIN        = 0.5;
+Constant.ENERGY_LINK_STORAGE_MAX        = 0.75;
 
-    CONTROLLER_WITHDRAW_LEVEL:      2,
-    CONTROLLER_RESERVE_MAX:         4000,
-    CONTROLLER_RESERVE_MIN:         1000,
+Constant.CONTROLLER_WITHDRAW_LEVEL      = 2;
+Constant.CONTROLLER_RESERVE_MAX         = 4000;
+Constant.CONTROLLER_RESERVE_MIN         = 1000;
 
-    FIND_WAIT_TICKS:                8,
-    MANAGE_WAIT_TICKS:              10,
-    REPORT_TICKS:                   500,
-    DEFENSE_COOLDOWN:               80,
-    DEFENSE_LIMIT_INCREASE_DELAY:   100,
+Constant.FIND_WAIT_TICKS                = 8;
+Constant.MANAGE_WAIT_TICKS              = 10;
+Constant.REPORT_TICKS                   = 500;
+Constant.DEFENSE_COOLDOWN               = 80;
+Constant.DEFENSE_LIMIT_INCREASE_DELAY   = 100;
 
-    SPAWN_COST_DECAY:               200,
-    SPAWN_QUEUE_DELAY:              2,
-    SPAWN_ENERGY_MAX:               0.8,
+Constant.SPAWN_COST_DECAY               = 200;
+Constant.SPAWN_QUEUE_DELAY              = 2;
+Constant.SPAWN_ENERGY_MAX               = 0.8;
 
-    REPAIR_HIT_WORK_MIN:            0.80,
-    REPAIR_HIT_WORK_MAX:            0.98,
-    RAMPART_HIT_MAX:                100000,
-    WALL_HIT_MAX:                   100000,
+Constant.REPAIR_HIT_WORK_MIN            = 0.80;
+Constant.REPAIR_HIT_WORK_MAX            = 0.98;
+Constant.RAMPART_HIT_MAX                = 100000;
+Constant.WALL_HIT_MAX                   = 100000;
 
-    REFILL_TOWER_MAX:               0.98,
-    REFILL_TOWER_MIN:               0.70,
+Constant.REFILL_TOWER_MAX               = 0.98;
+Constant.REFILL_TOWER_MIN               = 0.70;
 
-    CREEP_DESPAWN_TICKS:            1,
-    CREEP_IDLE_TIME:                4,
-    CREEP_STUCK_TICK:               4,
+Constant.CREEP_DESPAWN_TICKS            = 1;
+Constant.CREEP_IDLE_TIME                = 4;
+Constant.CREEP_STUCK_TICK               = 4;
+Constant.CREEP_FILL_TICKS               = 6;
 
-    QUEUE_WORK:                     'work',
-    QUEUE_SPAWN:                    'spawn',
+Constant.QUEUE_WORK                     = 'work';
+Constant.QUEUE_SPAWN                    = 'spawn';
 
-    ROLE_TYPES: [
-        'miner',
-        'upgrader',
-        'tech',
-        'hauler',
-        'resupply',
-        'longhauler',
-        'scout',
-        'controller',
-        'combat.brawler',
-        ],
+Constant.MINER                          = 'miner';
+Constant.UPGRADER                       = 'upgrader';
+Constant.TECH                           = 'tech';
+Constant.HAULER                         = 'hauler';
+Constant.RESUPPLY                       = 'resupply';
+Constant.LONGHAULER                     = 'longhauler';
+Constant.SCOUT                          = 'scout';
+Constant.CONTROLLER                     = 'controller';
+Constant.COMBAT_BRAWLER                 = 'combat.brawler';
 
-    WORK_TASKS: [
-        'director.room',
-        'director.remote',
-        'director.mine',
-        'director.tech',
-        'director.haul',
-        'director.resupply',
-        'mine',
-        'longhaul',
-        'upgrade',
-        'reserve',
-        'tower.fill',
-        'repair',
-        'construction',
-        'signcontroller',
-        'scouting',
-        'defense',
-        'attack',
-        'claim',
-        ],
+Constant.ROLE_TYPES = [
+    Constant.MINER,
+    Constant.UPGRADER,
+    Constant.TECH,
+    Constant.HAULER,
+    Constant.RESUPPLY,
+    Constant.LONGHAULER,
+    Constant.SCOUT,
+    Constant.CONTROLLER,
+    Constant.COMBAT_BRAWLER,
+    ];
 
-    DIRECTIONS: {
-        1: [0, -1],
-        2: [1, -1],
-        3: [1, 0],
-        4: [1, 1],
-        5: [0, 1],
-        6: [-1, 1],
-        7: [-1, 0],
-        8: [-1, -1],
-    },
+Constant.DIRECTOR_ROOM                  = 'director.room';
+Constant.DIRECTOR_REMOTE                = 'director.remote';
+Constant.DIRECTOR_MINE                  = 'director.mine';
+Constant.DIRECTOR_TECH                  = 'director.tech';
+Constant.DIRECTOR_HAUL                  = 'director.haul';
+Constant.DIRECTOR_RESUPPLY              = 'director.resupply';
+Constant.MINE                           = 'mine';
+Constant.LONGHAUL                       = 'longhaul';
+Constant.UPGRADE                        = 'upgrade';
+Constant.RESERVE                        = 'reserve';
+Constant.TOWER_REFILL                   = 'tower.fill';
+Constant.REPAIR                         = 'repair';
+Constant.CONSTRUCTION                   = 'construction';
+Constant.SIGNCONTROLLER                 = 'signcontroller';
+Constant.SCOUTING                       = 'scouting';
+Constant.DEFENSE                        = 'defense';
+Constant.ATTACK                         = 'attack';
+Constant.CLAIM                          = 'claim';
 
+Constant.WORK_TASKS = [
+    Constant.DIRECTOR_ROOM,
+    Constant.DIRECTOR_REMOTE,
+    Constant.DIRECTOR_MINE,
+    Constant.DIRECTOR_TECH,
+    Constant.DIRECTOR_HAUL,
+    Constant.DIRECTOR_RESUPPLY,
+    Constant.MINE,
+    Constant.LONGHAUL,
+    Constant.UPGRADE,
+    Constant.RESERVE,
+    Constant.TOWER_REFILL,
+    Constant.REPAIR,
+    Constant.CONSTRUCTION,
+    Constant.SIGNCONTROLLER,
+    Constant.SCOUTING,
+    Constant.DEFENSE,
+    Constant.ATTACK,
+    Constant.CLAIM,
+    ];
+
+Constant.DIRECTIONS = {
+    1: [0, -1],
+    2: [1, -1],
+    3: [1, 0],
+    4: [1, 1],
+    5: [0, 1],
+    6: [-1, 1],
+    7: [-1, 0],
+    8: [-1, -1],
 };
 
-module.exports = Constants;
+module.exports = Constant;

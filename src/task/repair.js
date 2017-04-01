@@ -81,7 +81,7 @@ var taskRepair = {
 
             let record = {
                 workRooms: [ room.name, ],
-                task: 'repair',
+                task: C.REPAIR,
                 priority: 60,
                 creepLimit: 1,
                 targetId: targets[i].id,

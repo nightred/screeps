@@ -21,13 +21,13 @@ Defense.prototype.manage = function(room) {
 
     let targets = room.getHostiles();
     if (targets.length <= 0) { return true; }
-    if (Game.Queue.work.isQueued({ task: 'defense', room: room.name, })) {
+    if (Game.Queue.work.isQueued({ task: C.DEFENSE, room: room.name, })) {
         return true;
     }
 
     let record = {
         workRooms: [ room.name, ],
-        task: 'defense',
+        task: C.DEFENSE,
         managed: true,
         priority: 10,
         creepLimit: 1,

@@ -10,7 +10,7 @@ var roleResupply = {
     /**
     * The role name
     **/
-    role: 'resupply',
+    role: C.RESUPPLY,
 
     /**
     * The locations that energy can be withdrawn

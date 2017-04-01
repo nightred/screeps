@@ -39,8 +39,8 @@ var taskDirectorMine = {
             let room = Game.rooms[task.workRooms[i]];
 
             let remoteTasks = [
-                'repair',
-                'construction',
+                C.REPAIR,
+                C.CONSTRUCTION,
             ];
             Game.Queue.work.doTaskFind(room, remoteTasks);
 
@@ -86,10 +86,10 @@ var taskDirectorMine = {
             creep.memory.despawn != true
             ).length;
         if (count < task.creepLimit) {
-            if (!Game.Queue.spawn.isQueued({ room: task.spawnRoom, role: 'tech', })) {
+            if (!Game.Queue.spawn.isQueued({ room: task.spawnRoom, role: C.TECH, })) {
                 let record = {
                     rooms: [ task.spawnRoom, ],
-                    role: 'tech',
+                    role: C.TECH,
                     priority: 54,
                     creepArgs: {
                         workRooms: task.workRooms,

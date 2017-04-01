@@ -10,14 +10,14 @@ var roleController = {
     /**
     * The role name
     **/
-    role: 'controller',
+    role: C.CONTROLLER,
 
     /**
     * The work tasks that the role is created for
     **/
     workTasks: [
-        'claim',
-        'reserve',
+        C.CLAIM,
+        C.RESERVE,
     ],
 
     /**
@@ -59,7 +59,7 @@ var roleController = {
         args.style = args.style || 'default';
         let body = [];
         switch (args.style) {
-            case 'reserve':
+            case C.RESERVE:
                 energy -= 200;
                 body = [MOVE,MOVE,MOVE,MOVE];
                 let claim = Math.floor(energy / 600);

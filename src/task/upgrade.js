@@ -26,7 +26,7 @@ var taskUpgrade = {
         }
 
         if (creep.upgradeController(creep.room.controller) == ERR_NOT_IN_RANGE) {
-            creep.moveTo(creep.room.controller, { range: 3, });
+            creep.goto(creep.room.controller, { range: 3, reusePath: 50, ignoreCreeps: true, maxRooms: 1, });
         }
 
         return true;
@@ -116,10 +116,10 @@ var taskUpgrade = {
 
         // spawn new creeps if needed
         if (task.creeps.length < task.creepLimit) {
-            if (!Game.Queue.spawn.isQueued({ room: task.spawnRoom, role: 'upgrader', })) {
+            if (!Game.Queue.spawn.isQueued({ room: task.spawnRoom, role: C.UPGRADER, })) {
                 let record = {
                     rooms: [ task.spawnRoom, ],
-                    role: 'upgrader',
+                    role: C.UPGRADER,
                     priority: 60,
                     creepArgs: {
                         workRooms: task.workRooms,

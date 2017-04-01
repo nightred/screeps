@@ -41,7 +41,7 @@ var Cli = {
 
                 let record = {
                     rooms: [ room, ],
-                    role: 'controller',
+                    role: C.CONTROLLER,
                     priority: 30,
                 };
 
@@ -56,7 +56,7 @@ var Cli = {
 
                 let record = {
                     rooms: [ room, ],
-                    role: 'scout',
+                    role: C.SCOUT,
                     priority: 80,
                 };
 
@@ -71,7 +71,7 @@ var Cli = {
 
                 let record = {
                     rooms: [ room, ],
-                    role: 'combat.brawler',
+                    role: C.COMBAT_BRAWLER,
                     priority: 36,
                 };
 
@@ -105,7 +105,7 @@ var Cli = {
             let record = {
                 workRooms: [ room, ],
                 spawnRoom: spawn,
-                task: 'reserve',
+                task: C.RESERVE,
                 managed: true,
                 priority: 70,
                 creepLimit: 1,
@@ -121,7 +121,7 @@ var Cli = {
             }
             let record = {
                 workRooms: [ room, ],
-                task: 'claim',
+                task: C.CLAIM,
                 priority: 20,
                 creepLimit: 1,
             };
@@ -136,7 +136,7 @@ var Cli = {
             }
             let record = {
                 workRooms: [ room, ],
-                task: 'scouting',
+                task: C.SCOUTING,
                 priority: 90,
                 creepLimit: 1,
             };
@@ -151,7 +151,7 @@ var Cli = {
             }
             let record = {
                 workRooms: [ room, ],
-                task: 'attack',
+                task: C.ATTACK,
                 priority: 40,
                 creepLimit: limit,
             };
@@ -166,7 +166,7 @@ var Cli = {
             }
             let record = {
                 workRooms: [ roomName, ],
-                task: 'signcontroller',
+                task: C.SIGNCONTROLLER,
                 priority: 40,
                 creepLimit: 1,
                 message: message,
@@ -184,7 +184,7 @@ var Cli = {
             let record = {
                 workRooms: [ roomName, ],
                 spawnRoom: spawnRoom,
-                task: 'director.haul',
+                task: C.DIRECTOR_HAUL,
                 priority: 22,
                 creepLimit: 0,
                 managed: true,
@@ -201,7 +201,7 @@ var Cli = {
             let record = {
                 workRooms: [ roomName, ],
                 spawnRoom: spawnRoom,
-                task: 'longhaul',
+                task: C.LONGHAUL,
                 priority: 40,
                 creepLimit: 0,
                 managed: true,
@@ -219,7 +219,7 @@ var Cli = {
             let record = {
                 workRooms: [ roomName, ],
                 spawnRoom: spawnRoom,
-                task: 'upgrade',
+                task: C.UPGRADE,
                 priority: 26,
                 creepLimit: 1,
                 managed: true,
@@ -238,7 +238,7 @@ var Cli = {
             let record = {
                 workRooms: workRooms,
                 spawnRoom: spawnRoom,
-                task: 'director.tech',
+                task: C.DIRECTOR_TECH,
                 priority: 30,
                 creepLimit: 1,
                 managed: true,
@@ -255,7 +255,7 @@ var Cli = {
             let record = {
                 workRooms: [ roomName, ],
                 spawnRoom: roomName,
-                task: 'director.room',
+                task: C.DIRECTOR_ROOM,
                 priority: 20,
                 creepLimit: 0,
                 managed: true,
@@ -273,7 +273,7 @@ var Cli = {
             let record = {
                 workRooms: [ roomName, ],
                 spawnRoom: spawnRoom,
-                task: 'director.remote',
+                task: C.DIRECTOR_REMOTE,
                 priority: 30,
                 creepLimit: 0,
                 managed: true,
@@ -291,7 +291,7 @@ var Cli = {
             let record = {
                 workRooms: [ roomName, ],
                 spawnRoom: spawnRoom,
-                task: 'director.mine',
+                task: C.DIRECTOR_MINE,
                 priority: 21,
                 creepLimit: 0,
                 managed: true,

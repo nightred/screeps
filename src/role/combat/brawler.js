@@ -10,14 +10,14 @@ var roleCombatBrawler = {
     /**
     * The role name
     **/
-    role: 'combat.brawler',
+    role: C.COMBAT_BRAWLER,
 
     /**
     * The work tasks that the role is created for
     **/
     workTasks: [
-        'defense',
-        'attack',
+        C.DEFENSE,
+        C.ATTACK,
     ],
 
     /**

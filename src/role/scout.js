@@ -10,13 +10,13 @@ var roleScout = {
     /**
     * The role name
     **/
-    role: 'scout',
+    role: C.SCOUT,
 
     /**
     * The work tasks that the role is created for
     **/
     workTasks: [
-        'scouting'
+        C.SCOUTING
     ],
 
     /**

@@ -75,15 +75,15 @@ var taskDirectorHaul = {
 
             // spawn new creeps if needed
             count = _.filter(Game.creeps, creep =>
-                creep.memory.role == 'hauler' &&
+                creep.memory.role == C.HAULER &&
                 creep.room.name == room.name &&
                 creep.memory.despawn != true
                 ).length;
             if (count < task.creepLimit) {
-                if (!Game.Queue.spawn.isQueued({ room: task.spawnRoom, role: 'hauler', })) {
+                if (!Game.Queue.spawn.isQueued({ room: task.spawnRoom, role: C.HAULER, })) {
                     let record = {
                         rooms: [ task.spawnRoom, ],
-                        role: 'hauler',
+                        role: C.HAULER,
                         priority: 52,
                         creepArgs: {
                             workRooms: task.workRooms,

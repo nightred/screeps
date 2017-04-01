@@ -54,8 +54,8 @@ Creep.prototype.isCarryingEnergy = function() {
 
 Creep.prototype.isDespawnWarning = function() {
     if (this.memory.despawn) { return true; }
-    if (this.memory.role == 'controller' ||
-        this.memory.role == 'scout') {
+    if (this.memory.role == C.CONTROLLER ||
+        this.memory.role == C.SCOUT) {
         return false;
     }
 
@@ -241,8 +241,14 @@ Creep.prototype.getEmptyEnergyTarget = function(types, args) {
 Creep.prototype.doFillEnergy = function(types) {
     if (!Array.isArray(types)) { return -1; }
 
+    this.memory.fillTick = this.memory.fillTick || 0;
+    if ((this.memory.fillTick + C.CREEP_FILL_TICKS) < Game.time) {
+        this.memory.goingTo = false;
+    }
     if (!this.memory.goingTo) {
-        if (!this.getFillEnergyTarget(types)) {
+        if (this.getFillEnergyTarget(types)) {
+            this.memory.fillTick = Game.time;
+        } else {
             this.memory.idleStart = Game.time;
             this.say('💤');
             return true;
@@ -264,7 +270,7 @@ Creep.prototype.getFillEnergyTarget = function(types, args) {
         }
         return true;
     }
-    if (this.room.name != this.memory.spawnRoom && this.memory.role != 'longhauler') {
+    if (this.room.name != this.memory.spawnRoom && this.memory.role != C.LONGHAULER) {
         this.moveToRoom(this.memory.spawnRoom);
         return true;
     }

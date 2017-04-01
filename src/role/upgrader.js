@@ -10,13 +10,13 @@ var roleUpgrader = {
     /**
     * The role name
     **/
-    role: 'upgrader',
+    role: C.UPGRADER,
 
     /**
     * The work tasks that the role is created for
     **/
     workTasks: [
-        'upgrade',
+        C.UPGRADE,
     ],
 
     /**

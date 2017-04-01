@@ -54,10 +54,10 @@ var taskMine = {
             creep.memory.despawn != true
             ).length;
         if (count < task.creepLimit) {
-            if (!Game.Queue.spawn.isQueued({ room: task.spawnRoom, role: 'miner', })) {
+            if (!Game.Queue.spawn.isQueued({ room: task.spawnRoom, role: C.MINER, })) {
                 let record = {
                     rooms: [ task.spawnRoom, ],
-                    role: 'miner',
+                    role: C.MINER,
                     priority: 50,
                     creepArgs: {
                         harvestTarget: task.targetId,

@@ -40,11 +40,11 @@ var taskDirectorRemote = {
         }
         task.manageTick = Game.time;
 
-        if (!Game.Queue.work.isQueued({ room: task.workRooms[0], task: 'director.mine', })) {
+        if (!Game.Queue.work.isQueued({ room: task.workRooms[0], task: C.DIRECTOR_MINE, })) {
             let record = {
                 workRooms: [ task.workRooms[0], ],
                 spawnRoom: task.spawnRoom,
-                task: 'director.mine',
+                task: C.DIRECTOR_MINE,
                 priority: 32,
                 creepLimit: 0,
                 managed: true,

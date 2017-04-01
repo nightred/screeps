@@ -10,7 +10,7 @@ var roleTech = {
     /**
     * The role name
     **/
-    role: 'tech',
+    role: C.TECH,
 
     /**
     * @param {Creep} creep
@@ -37,10 +37,10 @@ var roleTech = {
         }
 
         let workTasks = [
-            'repair',
-            'tower.fill',
-            'construction',
-            'signcontroller',
+            C.REPAIR,
+            C.TOWER_REFILL,
+            C.CONSTRUCTION,
+            C.SIGNCONTROLLER,
         ];
 
         let energyTargets = [

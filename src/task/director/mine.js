@@ -46,7 +46,7 @@ var taskDirectorMine = {
                     let record = {
                         workRooms: [ task.workRooms[0], ],
                         spawnRoom: task.spawnRoom,
-                        task: 'mine',
+                        task: C.MINE,
                         priority: 40,
                         creepLimit: 1,
                         managed: true,
