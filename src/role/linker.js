@@ -82,11 +82,11 @@ var roleLinker = {
 
         let move = Math.floor((energy / 2) / 50);
         move = move < 1 ? 1 : move;
-        move = move > 4 ? 4 : move;
+        move = move > 3 ? 3 : move;
         energy -= move * 50;
         let carry = Math.floor(energy / 50);
         carry = carry < 1 ? 1 : carry;
-        carry = carry > 8 ? 8 : carry;
+        carry = carry > 6 ? 6 : carry;
 
         let body = [];
         for (let i = 0; i < move; i++) {

@@ -137,8 +137,16 @@ Creep.prototype.transferEnergy = function(target) {
     }
 
     if (this.transfer(target, RESOURCE_ENERGY) == ERR_NOT_IN_RANGE) {
-        this.goto(target, { range: 1, reusePath: 20, ignoreCreeps: true, });
-        return true;
+        let args = {
+            range: 1,
+            reusePath: 20,
+            ignoreCreeps: true,
+        };
+        if (this.memory.role == C.RESUPPLY) {
+            args.ignoreCreeps = false;
+        }
+        this.goto(target, args);
+        return false;
     } else {
         this.memory.goingTo = false;
     }
@@ -153,7 +161,15 @@ Creep.prototype.withdrawEnergy = function(target) {
     }
 
     if (this.withdraw(target, RESOURCE_ENERGY) == ERR_NOT_IN_RANGE) {
-        this.goto(target, { range: 1, reusePath: 20, ignoreCreeps: true, });
+        let args = {
+            range: 1,
+            reusePath: 20,
+            ignoreCreeps: true,
+        };
+        if (this.memory.role == C.RESUPPLY) {
+            args.ignoreCreeps = false;
+        }
+        this.goto(target, args);
         return false;
     } else {
         this.memory.goingTo = false;

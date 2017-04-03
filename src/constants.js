@@ -24,8 +24,8 @@ Constant.ENERGY_CONTAINER_MAX_PERCENT   = 0.9;
 Constant.ENERGY_CONTAINER_MIN_PERCENT   = 0.1 ;
 Constant.ENERGY_CONTAINER_MIN_WITHDRAW  = 100;
 Constant.ENERGY_STORAGE_MIN_WITHDRAW    = 100;
-Constant.ENERGY_LINK_IN_MIN             = 0.2;
-Constant.ENERGY_LINK_OUT_MAX            = 0.8;
+Constant.ENERGY_LINK_IN_MIN             = 0.1;
+Constant.ENERGY_LINK_OUT_MAX            = 0.6;
 Constant.ENERGY_LINK_STORAGE_MIN        = 0.2;
 Constant.ENERGY_LINK_STORAGE_MAX        = 0.8;
 

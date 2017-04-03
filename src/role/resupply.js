@@ -37,18 +37,12 @@ var roleResupply = {
                 creep.say('🚚');
             } else {
                 creep.say('🔋');
-                creep.memory.task = false;
             }
         } else if (creep.carry.energy > (creep.carryCapacity * 0.2) && !creep.memory.working)  {
             creep.toggleState();
             creep.say('🚚');
         }
 
-        if (creep.memory.task &&
-            (creep.memory.idleStart + C.CREEP_IDLE_TIME) > Game.time) {
-            creep.memory.task = false;
-            creep.memory.idleStart = 0;
-        }
         if ((creep.memory.idleStart + C.CREEP_IDLE_TIME) > Game.time) {
             if (!creep.isEnergyFull() && creep.collectDroppedEnergy()) {
                 return true;;
