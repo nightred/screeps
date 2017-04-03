@@ -67,11 +67,11 @@ var taskDirectorHaul = {
                 }
         }
 
-        if (room.getContainers().length > 0) {
+        if (room.getContainers().length <= 0) {
+            task.creepLimit = task.creepLimit > 0 ? 0 : task.creepLimit;
+        } else {
             let count = room.getSources().length;
-            if (task.creepLimit < count) {
-                task.creepLimit = count;
-            }
+            task.creepLimit = task.creepLimit < count ? count : task.creepLimit;
 
             // spawn new creeps if needed
             count = _.filter(Game.creeps, creep =>

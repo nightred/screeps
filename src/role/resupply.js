@@ -16,6 +16,7 @@ var roleResupply = {
     * The locations that energy can be withdrawn
     **/
     energyInTargets: [
+        'linkStorage',
         'storage',
     ],
     /**

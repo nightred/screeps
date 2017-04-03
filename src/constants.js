@@ -14,7 +14,7 @@ var Constant = {};
 
 // debug = 0 off, 1 info, 2 debug, 3 verbose
 Constant.DEBUG                          = 2;
-Constant.SIM                            = false;
+Constant.SIM                            = true;
 Constant.VISUALS                        = true;
 
 Constant.ENERGY_ROOM_WITHDRAW_MIN       = 250;
@@ -24,10 +24,10 @@ Constant.ENERGY_CONTAINER_MAX_PERCENT   = 0.9;
 Constant.ENERGY_CONTAINER_MIN_PERCENT   = 0.1 ;
 Constant.ENERGY_CONTAINER_MIN_WITHDRAW  = 100;
 Constant.ENERGY_STORAGE_MIN_WITHDRAW    = 100;
-Constant.ENERGY_LINK_IN_MIN             = 0.1;
+Constant.ENERGY_LINK_IN_MIN             = 0.2;
 Constant.ENERGY_LINK_OUT_MAX            = 0.8;
-Constant.ENERGY_LINK_STORAGE_MIN        = 0.5;
-Constant.ENERGY_LINK_STORAGE_MAX        = 0.75;
+Constant.ENERGY_LINK_STORAGE_MIN        = 0.2;
+Constant.ENERGY_LINK_STORAGE_MAX        = 0.8;
 
 Constant.CONTROLLER_WITHDRAW_LEVEL      = 2;
 Constant.CONTROLLER_RESERVE_MAX         = 4000;
@@ -64,6 +64,7 @@ Constant.UPGRADER                       = 'upgrader';
 Constant.TECH                           = 'tech';
 Constant.HAULER                         = 'hauler';
 Constant.RESUPPLY                       = 'resupply';
+Constant.LINKER                         = 'linker';
 Constant.LONGHAULER                     = 'longhauler';
 Constant.SCOUT                          = 'scout';
 Constant.CONTROLLER                     = 'controller';
@@ -75,6 +76,7 @@ Constant.ROLE_TYPES = [
     Constant.TECH,
     Constant.HAULER,
     Constant.RESUPPLY,
+    Constant.LINKER,
     Constant.LONGHAULER,
     Constant.SCOUT,
     Constant.CONTROLLER,
@@ -87,6 +89,7 @@ Constant.DIRECTOR_MINE                  = 'director.mine';
 Constant.DIRECTOR_TECH                  = 'director.tech';
 Constant.DIRECTOR_HAUL                  = 'director.haul';
 Constant.DIRECTOR_RESUPPLY              = 'director.resupply';
+Constant.DIRECTOR_LINKER                = 'director.linker';
 Constant.MINE                           = 'mine';
 Constant.LONGHAUL                       = 'longhaul';
 Constant.UPGRADE                        = 'upgrade';
@@ -106,6 +109,7 @@ Constant.WORK_TASKS = [
     Constant.DIRECTOR_MINE,
     Constant.DIRECTOR_TECH,
     Constant.DIRECTOR_HAUL,
+    Constant.DIRECTOR_LINKER,
     Constant.DIRECTOR_RESUPPLY,
     Constant.MINE,
     Constant.LONGHAUL,

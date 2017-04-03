@@ -21,16 +21,14 @@ Mil.prototype.spawnMilitia = function(room) {
             break;
         case 2:
         case 3:
-            brawlerCount = 1;
-            break;
         case 4:
         case 5:
-        case 6:
-            brawlerCount = 2;
+            brawlerCount = 1;
             break;
+        case 6:
         case 7:
         case 8:
-            brawlerCount = 3;
+            brawlerCount = 2;
             break;
     }
 

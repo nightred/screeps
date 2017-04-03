@@ -19,18 +19,6 @@ var roleMiner = {
         C.MINE,
     ],
 
-    /**
-    * The locations that energy can be stored
-    **/
-    energyTargets: [
-        'containerIn',
-        'spawn',
-        'extention',
-        'container',
-        'containerOut',
-        'storage',
-    ],
-
     /** @param {Creep} creep **/
     doRole: function(creep) {
         if (!creep) { return false; }
@@ -57,6 +45,16 @@ var roleMiner = {
             }
         }
 
+        let energyTargets = [
+            'linkIn',
+            'containerIn',
+            'spawn',
+            'extention',
+            'container',
+            'containerOut',
+            'storage',
+        ];
+
         if (!creep.memory.working) {
             if (!creep.doWork()) {
                 if (C.DEBUG >= 2) { console.log('DEBUG - do work failed for role: ' + creep.memory.role + ', name: ' + creep.name); }
@@ -67,7 +65,7 @@ var roleMiner = {
                 creep.memory.goingTo = source.getLocalContainer();
             }
 
-            if (!creep.doEmptyEnergy(this.energyTargets)) {
+            if (!creep.doEmptyEnergy(energyTargets)) {
                 if (C.DEBUG >= 2) { console.log('DEBUG - do empty energy failed for role: ' + creep.memory.role + ', name: ' + creep.name); }
             }
         }

@@ -50,7 +50,7 @@ Link.prototype.setType = function(id, type) {
     if (!id) { return -1; }
     if (!type) { return -1; }
 
-    let link = game.getObjectById(id);
+    let link = Game.getObjectById(id);
     if (!link) { return false; }
 
     link.memory.type = type;

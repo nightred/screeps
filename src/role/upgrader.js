@@ -48,6 +48,7 @@ var roleUpgrader = {
         }
 
         let energyTargets = [
+            'linkOut',
             'containerOut',
         ];
 

@@ -44,6 +44,7 @@ var roleTech = {
         ];
 
         let energyTargets = [
+            'linkOut',
             'storage',
             'containerOut',
             'container',
