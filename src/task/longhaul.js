@@ -49,15 +49,16 @@ var taskLongHaul = {
             creep.memory.despawn != true
             ).length;
         if (count < task.creepLimit) {
-            if (!Game.Queue.spawn.isQueued({ room: task.spawnRoom, role: C.LONGHAULER, })) {
+            if (!Game.Queue.spawn.isQueued({ room: task.spawnRoom, role: C.HAULER, })) {
                 let record = {
                     rooms: [ task.spawnRoom, ],
-                    role: C.LONGHAULER,
+                    role: C.HAULER,
                     priority: 68,
                     minSize: 600,
                     creepArgs: {
                         workRooms: task.workRooms,
                         workId: task.id,
+                        style: 'longhauler',
                     },
                 };
                 Game.Queue.spawn.addRecord(record);

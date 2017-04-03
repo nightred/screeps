@@ -26,7 +26,7 @@ var taskUpgrade = {
         }
 
         if (creep.upgradeController(creep.room.controller) == ERR_NOT_IN_RANGE) {
-            creep.goto(creep.room.controller, { range: 3, reusePath: 50, ignoreCreeps: true, maxRooms: 1, });
+            creep.goto(creep.room.controller, { range: 3, reusePath: 20, maxRooms: 1, });
         }
 
         return true;

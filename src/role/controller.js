@@ -59,7 +59,7 @@ var roleController = {
         args.style = args.style || 'default';
         let body = [];
         switch (args.style) {
-            case C.RESERVE:
+            case 'reserve':
                 energy -= 200;
                 body = [MOVE,MOVE,MOVE,MOVE];
                 let claim = Math.floor(energy / 600);

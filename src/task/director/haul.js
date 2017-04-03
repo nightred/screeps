@@ -67,16 +67,16 @@ var taskDirectorHaul = {
                 }
         }
 
-        if (room.getContainers().length <= 0) {
+        if (_.filter(room.getContainers(), structure =>
+            structure.memory.type == 'in').length <= 0) {
             task.creepLimit = task.creepLimit > 0 ? 0 : task.creepLimit;
         } else {
-            let count = room.getSources().length;
-            task.creepLimit = task.creepLimit < count ? count : task.creepLimit;
+            let sourceCount = room.getSources().length;
+            task.creepLimit = task.creepLimit < sourceCount ? sourceCount : task.creepLimit;
 
             // spawn new creeps if needed
-            count = _.filter(Game.creeps, creep =>
-                creep.memory.role == C.HAULER &&
-                creep.room.name == room.name &&
+            let count = _.filter(Game.creeps, creep =>
+                creep.memory.workId == task.id &&
                 creep.memory.despawn != true
                 ).length;
             if (count < task.creepLimit) {
@@ -87,6 +87,8 @@ var taskDirectorHaul = {
                         priority: 52,
                         creepArgs: {
                             workRooms: task.workRooms,
+                            workId: task.id,
+                            style: 'default',
                         },
                     };
                     if (task.minSize) { record.minSize = task.minSize; }
