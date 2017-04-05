@@ -25,6 +25,58 @@ var taskAttack = {
             return true;
         }
 
+        switch(creep.memory.role) {
+            case C.COMBAT_MEDIC:
+                this.doHeal(creep, task);
+                break;
+            default:
+                this.doAttack(creep, task);
+        }
+
+        return true;
+    },
+
+    /**
+    * @param {Task} task The work task passed from the work Queue
+    **/
+    doTaskManaged: function(task) {
+        if (!task) { return -1; }
+
+        return true;
+    },
+
+    /**
+    * @param {Room} room The room object
+    **/
+    doTaskFind: function(room) {
+        if (!room) { return -1; }
+        // task creation for the room
+    },
+
+    doHeal: function(creep, task) {
+        if (!creep) { return -1; }
+        if (!task) { return -1; }
+
+        let targets = _.sortBy(_.filter(creep.room.find(FIND_MY_CREEPS), creep =>
+            creep.hits < creep.hitsMax
+            ), creep => creep.hits);
+
+        if (targets.length <= 0) {
+            return false;
+        }
+
+        targets = _.sortBy(targets, target => creep.pos.getRangeTo(target.pos));
+        if (creep.rangeHeal(targets[0]) == ERR_NOT_IN_RANGE) {
+            creep.goto(targets[0], { range: 3, reUsePath: 4, ignoreCreeps: true, });
+        }
+
+        return true;
+    },
+
+    doAttack: function(creep, task) {
+        if (!creep) { return -1; }
+        if (!task) { return -1; }
+
         if (!creep.memory.targetId) {
             let newTarget = this.getTarget(creep);
             if (newTarget) {
@@ -37,7 +89,9 @@ var taskAttack = {
             creep.memory.targetId = false;
             if (task.rally) {
                 if (task.rally.room == creep.room.name &&
-                    task.rally.x && task.rally.y) {}
+                    task.rally.x && task.rally.y)  {
+                    // marker
+                }
                 let rallyPos = new RoomPosition(task.rally.x, task.rally.y, task.rally.room);
                 creep.goto(rallyPos, { reusePath: 5, maxRooms: 1, });
             } else {
@@ -78,23 +132,6 @@ var taskAttack = {
         }
 
         return true;
-    },
-
-    /**
-    * @param {Task} task The work task passed from the work Queue
-    **/
-    doTaskManaged: function(task) {
-        if (!task) { return -1; }
-
-        return true;
-    },
-
-    /**
-    * @param {Room} room The room object
-    **/
-    doTaskFind: function(room) {
-        if (!room) { return -1; }
-        // task creation for the room
     },
 
     getTarget: function(creep) {

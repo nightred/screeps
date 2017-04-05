@@ -64,7 +64,8 @@ SpawnQueue.prototype.doSpawn = function(room) {
     let maxEnergy = room.energyCapacityAvailable * C.SPAWN_ENERGY_MAX;
     if (energy < C.ENERGY_CREEP_SPAWN_MIN) { return true; }
     let records = _.filter(this.getQueue(), record =>
-        record.rooms.indexOf(room.name) >= 0 &&
+        (record.rooms.indexOf(room.name) >= 0 ||
+        record.rooms.length == 0) &&
         !record.spawned
     );
     if (records.length <= 0) { return true; }
@@ -139,9 +140,9 @@ SpawnQueue.prototype.isQueued = function(args) {
 
 SpawnQueue.prototype.addRecord = function(args) {
     if (!args) { return -1; }
-    if (!Array.isArray(args.rooms)) { return -1; }
     if (C.ROLE_TYPES.indexOf(args.role) < 0) { return -1; }
     args.priority = args.priority || 100;
+    args.rooms = args.rooms || [];
 
     let record = {
         queue: C.QUEUE_SPAWN,

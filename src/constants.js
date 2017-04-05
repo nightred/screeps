@@ -69,6 +69,7 @@ Constant.SCOUT                          = 'scout';
 Constant.CONTROLLER                     = 'controller';
 Constant.COMBAT_BRAWLER                 = 'combat.brawler';
 Constant.COMBAT_SWARMER                 = 'combat.swarmer';
+Constant.COMBAT_MEDIC                   = 'combat.medic';
 
 Constant.ROLE_TYPES = [
     Constant.MINER,
@@ -81,6 +82,7 @@ Constant.ROLE_TYPES = [
     Constant.CONTROLLER,
     Constant.COMBAT_BRAWLER,
     Constant.COMBAT_SWARMER,
+    Constant.COMBAT_MEDIC,
     ];
 
 Constant.DIRECTOR_ROOM                  = 'director.room';

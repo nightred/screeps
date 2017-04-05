@@ -101,6 +101,25 @@ var Cli = {
                 return true;
             },
 
+            combatmedic: function(room, count) {
+                if (!room || isNaN(count)) {
+                    console.log('ERROR - command need the following values: room name, count');
+                    return false;
+                }
+
+                let record = {
+                    rooms: [ room, ],
+                    role: C.COMBAT_MEDIC,
+                    priority: 80,
+                };
+
+                for (let i = 0; i < count; i++) {
+                    Game.Queue.spawn.addRecord(record);
+                }
+
+                return true;
+            },
+
         },
 
     },

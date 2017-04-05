@@ -78,11 +78,11 @@ var taskUpgrade = {
         task.creepLimit = task.creepLimit < 1 ? 1 : task.creepLimit;
         if (room.storage && room.controller.level < 8) {
             if (room.storage.store[RESOURCE_ENERGY] < 100000 ) {
-                task.creepLimit = task.creepLimit > 1 ? 1 : task.creepLimit;
+                task.creepLimit = task.creepLimit != 1 ? 1 : task.creepLimit;
             } else if (room.storage.store[RESOURCE_ENERGY] < 300000 ) {
-                task.creepLimit = task.creepLimit > 2 ? 2 : task.creepLimit;
+                task.creepLimit = task.creepLimit != 2 ? 2 : task.creepLimit;
             } else if (room.storage.store[RESOURCE_ENERGY] < 500000 ) {
-                task.creepLimit = task.creepLimit > 3 ? 3 : task.creepLimit;
+                task.creepLimit = task.creepLimit != 3 ? 3 : task.creepLimit;
             }
         } else if (room.controller.level == 8 ) {
             task.creepLimit = task.creepLimit != 1 ? 1 : task.creepLimit;
