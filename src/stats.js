@@ -74,18 +74,18 @@ Stats.prototype.reportEnergy = function() {
             size.gh,
             { fill: 'transparent', stroke: '#8a8a8a', opacity: 0.3, }
         );
-        rv.line(
-            size.l - size.gw + ((size.gw / 1000000) * this.memory.rooms[name].storage[this.memory.rooms[name].storage.length - 1]),
+        rv.rect(
+            size.l - size.gw + 0.05,
             size.t + 0.05 + ((0.5 + size.gh) * count),
-            size.l - size.gw + ((size.gw / 1000000) * this.memory.rooms[name].storage[this.memory.rooms[name].storage.length - 1]),
-            size.t + size.gh - 0.05 + ((0.5 + size.gh) * count),
-            { color: '#7fff00', opacity: 0.6, }
+            (((size.gw - 0.1) / 1000000) * this.memory.rooms[name].storage[this.memory.rooms[name].storage.length - 1]),
+            size.gh - 0.1,
+            { fill: '#ffff00', opacity: 0.3, }
         );
         rv.text(
             this.memory.rooms[name].storage[this.memory.rooms[name].storage.length - 1],
-            size.l - size.gw + 0.15,
-            size.t + ((size.gh + 0.2) * 0.5) + ((0.5 + size.gh) * count),
-            { align: 'left', color: '#ffff00', font: 0.3, opacity: 0.6, stroke : '#222222', strokeWidth : 0.1, }
+            size.l - (3 * (size.gw / 4)),
+            size.t + ((size.gh + 0.25) * 0.5) + ((0.5 + size.gh) * count),
+            { align: 'left', color: '#7fff00', font: 0.4, opacity: 0.6, stroke : '#222222', strokeWidth : 0.15, }
         );
 
         rv.rect(size.l - 0.5 - (size.gw * 2), size.t + ((0.5 + size.gh) * count), size.gw, size.gh, { fill: 'transparent', stroke: '#8a8a8a', opacity: 0.3, });

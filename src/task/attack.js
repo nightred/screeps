@@ -53,6 +53,23 @@ var taskAttack = {
         // task creation for the room
     },
 
+    doRally: function(creep, task) {
+        if (!creep) { return -1; }
+        if (!task) { return -1; }
+
+        if (task.rally) {
+            if (task.rally.room == creep.room.name &&
+                task.rally.x && task.rally.y)  {
+                // marker
+            }
+            let rallyPos = new RoomPosition(task.rally.x, task.rally.y, task.rally.room);
+            creep.goto(rallyPos, { reusePath: 5, maxRooms: 1, });
+        } else {
+            creep.moveToIdlePosition();
+        }
+        return true;
+    },
+
     doHeal: function(creep, task) {
         if (!creep) { return -1; }
         if (!task) { return -1; }
@@ -62,11 +79,11 @@ var taskAttack = {
             ), creep => creep.hits);
 
         if (targets.length <= 0) {
-            return false;
+            return this.doRally(creep, task);
         }
 
         targets = _.sortBy(targets, target => creep.pos.getRangeTo(target.pos));
-        if (creep.rangeHeal(targets[0]) == ERR_NOT_IN_RANGE) {
+        if (creep.rangedHeal(targets[0]) == ERR_NOT_IN_RANGE) {
             creep.goto(targets[0], { range: 3, reUsePath: 4, ignoreCreeps: true, });
         }
 
@@ -87,17 +104,7 @@ var taskAttack = {
         let target = Game.getObjectById(creep.memory.targetId);
         if (!target) {
             creep.memory.targetId = false;
-            if (task.rally) {
-                if (task.rally.room == creep.room.name &&
-                    task.rally.x && task.rally.y)  {
-                    // marker
-                }
-                let rallyPos = new RoomPosition(task.rally.x, task.rally.y, task.rally.room);
-                creep.goto(rallyPos, { reusePath: 5, maxRooms: 1, });
-            } else {
-                creep.moveToIdlePosition();
-            }
-            return true;
+            return this.doRally(creep, task);
         }
 
         let rampart = target.pos.getRampart();
@@ -105,7 +112,7 @@ var taskAttack = {
 
         if (creep.attack(target) == ERR_NOT_IN_RANGE) {
             let opts = {
-                reusePath: 5,
+                reusePath: 2,
                 ignoreCreeps: true,
                 maxRooms: 1,
                 visualizePathStyle: {
