@@ -27,6 +27,7 @@ var roleHauler = {
             creep.say('🚚');
         }
 
+        if (creep.getOffExit()) { return true; }
         if ((creep.memory.idleStart + C.CREEP_IDLE_TIME) > Game.time) {
             if (!creep.isEnergyFull() && creep.collectDroppedEnergy()) {
                 return true;;

@@ -1,11 +1,11 @@
 /*
- * task Long Haul
+ * task Director Long Haul
  *
- * long haul task handles moving energy from remote rooms to spawn rooms
+ * director long haul task handles moving energy from remote rooms to spawn room
  *
  */
 
-var taskLongHaul = {
+var taskDirectorLongHaul = {
 
     /**
     * @param {Creep} creep The creep object
@@ -78,4 +78,4 @@ var taskLongHaul = {
 
 };
 
-module.exports = taskLongHaul;
+module.exports = taskDirectorLongHaul;

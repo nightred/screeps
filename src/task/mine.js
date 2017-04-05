@@ -65,6 +65,10 @@ var taskMine = {
                         workId: task.id,
                     },
                 };
+                let source = Game.getObjectById(task.targetId);
+                //if (source && source.getContainerAtRange(1)) {
+                //    record.creepArgs.style = 'drop';
+                //} else 
                 if (task.spawnRoom != task.workRooms[0]) {
                     record.creepArgs.style = 'ranged';
                 }

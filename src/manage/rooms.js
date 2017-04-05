@@ -21,9 +21,13 @@ manageRooms.prototype.doManage = function() {
     for (let name in Game.rooms) {
         let room = Game.rooms[name];
         this.doContainers(room);
-        Game.Mil.defense.manage(room)
-        if (!room.controller) { continue; }
-        if (room.controller.my) {
+        if (room.controller &&
+            (room.controller.my ||
+            (room.controller.reservation &&
+            room.controller.reservation.username == 'nightred'))) {
+            Game.Mil.defense.manage(room)
+        }
+        if (room.controller && room.controller.my) {
             this.link.manage(room);
             Game.Mil.spawnMilitia(room);
             Game.Queue.work.doTaskFind(room);

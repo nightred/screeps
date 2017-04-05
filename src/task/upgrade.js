@@ -58,59 +58,36 @@ var taskUpgrade = {
         switch (room.controller.level) {
             case 1:
             case 2:
-                if (task.minSize > 200) {
-                    task.minSize = 200;
-                }
+                task.minSize = task.minSize < 200 ? 200 : task.minSize;
                 break;
             case 3:
-                if (task.minSize < 300) {
-                    task.minSize = 300;
-                }
+                task.minSize = task.minSize < 300 ? 300 : task.minSize;
                 break;
             case 4:
             case 5:
-                if (task.minSize < 400) {
-                    task.minSize = 400;
-                }
+                task.minSize = task.minSize < 400 ? 400 : task.minSize;
                 break;
-
             case 6:
             case 7:
             case 8:
-                if (task.minSize < 600) {
-                    task.minSize = 600;
-                }
+                task.minSize = task.minSize < 600 ? 600 : task.minSize;
+                break;
         }
 
         // set spawn limits
-        if (room.storage) {
-            if (!task.highEnergy && room.controller.level < 8 &&
-                room.storage.store[RESOURCE_ENERGY] > 200000 ) {
-                task.highEnergy = true;
-                task.creepLimit += 1;
-                }
-            if (task.highEnergy && room.controller.level < 8 &&
-                room.storage.store[RESOURCE_ENERGY] < 100000 ) {
-                task.highEnergy = false;
-                task.creepLimit -= 1;
-                }
-        }
-
-        switch (room.controller.level) {
-            case 2:
-            case 3:
-            case 4:
-                if (task.creepLimit < 2) {
-                    task.creepLimit = 2;
-                }
-                break;
-            case 5:
-            case 6:
-            case 7:
-            case 8:
-                if (task.creepLimit < 3) {
-                    task.creepLimit = 3;
-                }
+        task.creepLimit = task.creepLimit < 1 ? 1 : task.creepLimit;
+        if (room.storage && room.controller.level < 8) {
+            if (room.storage.store[RESOURCE_ENERGY] < 100000 ) {
+                task.creepLimit = task.creepLimit > 1 ? 1 : task.creepLimit;
+            } else if (room.storage.store[RESOURCE_ENERGY] < 300000 ) {
+                task.creepLimit = task.creepLimit > 2 ? 2 : task.creepLimit;
+            } else if (room.storage.store[RESOURCE_ENERGY] < 500000 ) {
+                task.creepLimit = task.creepLimit > 3 ? 3 : task.creepLimit;
+            }
+        } else if (room.controller.level == 8 ) {
+            task.creepLimit = task.creepLimit != 1 ? 1 : task.creepLimit;
+        } else {
+            task.creepLimit = task.creepLimit < 2 ? 2 : task.creepLimit;
         }
         if (C.SIM) { task.creepLimit = 1 };
 

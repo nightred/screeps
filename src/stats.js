@@ -214,7 +214,7 @@ Stats.prototype.graphCPU = function() {
 };
 
 Stats.prototype.getCpuGraphColor = function(num) {
-    let col = "#7fff00"
+    let col = "#7fff00";
     col = num > (Game.cpu.limit * 0.4) ? '#6a6aff' : col;
     col = num > (Game.cpu.limit * 0.7) ? '#ffff00' : col;
     col = num > (Game.cpu.limit * 0.9) ? '#ff7f00' : col;

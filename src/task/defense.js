@@ -5,7 +5,7 @@
  *
  */
 
-var taskRepair = {
+var taskDefense = {
 
     /**
     * @param {Creep} creep The creep object
@@ -84,4 +84,4 @@ var taskRepair = {
 
 };
 
-module.exports = taskRepair;
+module.exports = taskDefense;

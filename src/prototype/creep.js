@@ -140,6 +140,7 @@ Creep.prototype.transferEnergy = function(target) {
         let args = {
             range: 1,
             reusePath: 20,
+            maxRooms: 1,
             ignoreCreeps: true,
         };
         if (this.memory.role == C.RESUPPLY) {
@@ -164,6 +165,7 @@ Creep.prototype.withdrawEnergy = function(target) {
         let args = {
             range: 1,
             reusePath: 20,
+            maxRooms: 1,
             ignoreCreeps: true,
         };
         if (this.memory.role == C.RESUPPLY) {
@@ -201,14 +203,16 @@ Creep.prototype.hasGoingTo = function(target) {
 
 Creep.prototype.goto = function(target, args) {
     if (!target) { return -1; }
+    args = args || {};
     this.memory.moveTick = this.memory.moveTick || 0;
     this.memory.x = this.memory.x || 0;
     this.memory.y = this.memory.y || 0;
 
     if (this.memory._move && (this.memory.moveTick + C.CREEP_STUCK_TICK) < Game.time) {
         delete this.memory._move;
+        this.memory.moveTick = Game.time;
         args.ignoreCreeps = false;
-        args.reusePath = 6;
+        args.reusePath = 2;
     }
 
     if (this.memory.x != this.pos.x || this.memory.y != this.pos.y) {
@@ -367,9 +371,19 @@ Creep.prototype.getOffExit = function() {
 }
 
 Creep.prototype.moveToIdlePosition = function() {
-    if (this.getOffExit()) { return true; }
     if (this.isOnRoad() || this.isOnContainer()) {
-        return this.move(Math.floor(Math.random() * 9)) == 0;
+        let direction = 0;
+        while (true) {
+            direction = Math.floor(Math.random() * 8) + 1;
+            if ((this.pos.x + C.DIRECTIONS[direction][0]) != 0 &&
+                (this.pos.y + C.DIRECTIONS[direction][1]) != 0 &&
+                (this.pos.x + C.DIRECTIONS[direction][0]) != 49 &&
+                (this.pos.y + C.DIRECTIONS[direction][1]) != 49) {
+                break;
+            }
+        }
+
+        return this.move(direction);
     }
 
     return true;

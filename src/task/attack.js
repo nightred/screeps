@@ -27,19 +27,33 @@ var taskAttack = {
 
         if (!creep.memory.targetId) {
             let newTarget = this.getTarget(creep);
-            if (!newTarget) { return true; }
-            creep.memory.targetId = newTarget.id;
+            if (newTarget) {
+                creep.memory.targetId = newTarget.id;
+            }
         }
 
         let target = Game.getObjectById(creep.memory.targetId);
         if (!target) {
             creep.memory.targetId = false;
+            if (task.rally) {
+                if (task.rally.room == creep.room.name &&
+                    task.rally.x && task.rally.y) {}
+                let rallyPos = new RoomPosition(task.rally.x, task.rally.y, task.rally.room);
+                creep.goto(rallyPos, { reusePath: 5, maxRooms: 1, });
+            } else {
+                creep.moveToIdlePosition();
+            }
             return true;
         }
+
+        let rampart = target.pos.getRampart();
+        target = rampart || target;
 
         if (creep.attack(target) == ERR_NOT_IN_RANGE) {
             let opts = {
                 reusePath: 5,
+                ignoreCreeps: true,
+                maxRooms: 1,
                 visualizePathStyle: {
                     fill: 'transparent',
                     stroke: '#ff1919',
@@ -48,7 +62,7 @@ var taskAttack = {
                     opacity: .2,
                 },
             };
-            if (creep.moveTo(target, opts) == ERR_NO_PATH) {
+            if (creep.goto(target, opts) == ERR_NO_PATH) {
                 let path = creep.pos.findPathTo(target, {
                     maxOps: 1000,
                     ignoreDestructibleStructures: true,

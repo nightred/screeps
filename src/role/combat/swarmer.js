@@ -1,16 +1,17 @@
 /*
- * role Combat Brawler
+ * role Combat Swarmer
  *
- * combat brawler role defines an attach creep designed for melle combat
+ * combat swarmer role defines an attach creep designed for
+ * large number rapid combat
  *
  */
 
-var roleCombatBrawler = {
+var roleCombatSwarmer = {
 
     /**
     * The role name
     **/
-    role: C.COMBAT_BRAWLER,
+    role: C.COMBAT_SWARMER,
 
     /**
     * @param {Creep} creep
@@ -24,10 +25,7 @@ var roleCombatBrawler = {
             return true;
         }
 
-        let workTasks = [ C.DEFENSE, ];
-        if (!creep.memory.combatGroup) {
-            workTasks.push(C.ATTACK);
-        }
+        let workTasks = [ C.ATTACK, ];
 
         if (!creep.memory.workId) {
             if (!creep.getWork(workTasks, {ignoreRoom: true})) {
@@ -35,7 +33,7 @@ var roleCombatBrawler = {
                 creep.say('💤');
                 return true;
             } else {
-                creep.say('👊');
+                creep.say('🐝');
             }
         }
 
@@ -57,18 +55,18 @@ var roleCombatBrawler = {
 
         let attackUnits = Math.floor((energy * 0.6) / 80);
         attackUnits = attackUnits < 1 ? 1 : attackUnits;
-        attackUnits = attackUnits > 6 ? 6 : attackUnits;
+        attackUnits = attackUnits > 2 ? 2 : attackUnits;
         energy -= (attackUnits * 80);
 
         let moveUnits = Math.floor((energy * 0.7) / 50);
         moveUnits = moveUnits < 1 ? 1 : moveUnits;
-        moveUnits = moveUnits > 12 ? 12 : moveUnits;
+        moveUnits = moveUnits > 6 ? 6 : moveUnits;
         energy -= (moveUnits * 50);
 
         let toughUnits = Math.floor(energy / 10);
         toughUnits = toughUnits < 1 ? 1 : toughUnits;
-        toughUnits = toughUnits > 6 ? 6 : toughUnits;
-        toughUnits = toughUnits > (moveUnits * 2) ? (moveUnits * 2) : toughUnits;
+        toughUnits = toughUnits > 4 ? 4 : toughUnits;
+        toughUnits = toughUnits > (moveUnits + attackUnits) ? (moveUnits + attackUnits) : toughUnits;
 
         let body = [];
         for (let i = 0; i < toughUnits; i++) {
@@ -101,4 +99,4 @@ var roleCombatBrawler = {
 
 };
 
-module.exports = roleCombatBrawler;
+module.exports = roleCombatSwarmer;

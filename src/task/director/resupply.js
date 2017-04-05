@@ -81,7 +81,7 @@ var taskDirectorResupply = {
                     let record = {
                         rooms: [ task.spawnRoom, ],
                         role: C.RESUPPLY,
-                        priority: 48,
+                        priority: 10,
                         creepArgs: {
                             workRooms: task.workRooms,
                         },

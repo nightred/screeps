@@ -63,19 +63,42 @@ var Cli = {
                 return Game.Queue.spawn.addRecord(record);
             },
 
-            combatbrawler: function(room) {
-                if (!room) {
-                    console.log('ERROR - command need the following values: room name');
+            combatbrawler: function(room, count) {
+                if (!room || isNaN(count)) {
+                    console.log('ERROR - command need the following values: room name, count');
                     return false;
                 }
 
                 let record = {
                     rooms: [ room, ],
                     role: C.COMBAT_BRAWLER,
-                    priority: 36,
+                    priority: 80,
                 };
 
-                return Game.Queue.spawn.addRecord(record);
+                for (let i = 0; i < count; i++) {
+                    Game.Queue.spawn.addRecord(record);
+                }
+
+                return true;
+            },
+
+            combatswarm: function(room, count) {
+                if (!room || isNaN(count)) {
+                    console.log('ERROR - command need the following values: room name, count');
+                    return false;
+                }
+
+                let record = {
+                    rooms: [ room, ],
+                    role: C.COMBAT_SWARMER,
+                    priority: 80,
+                };
+
+                for (let i = 0; i < count; i++) {
+                    Game.Queue.spawn.addRecord(record);
+                }
+
+                return true;
             },
 
         },
@@ -201,7 +224,7 @@ var Cli = {
             let record = {
                 workRooms: [ roomName, ],
                 spawnRoom: spawnRoom,
-                task: C.LONGHAUL,
+                task: C.DIRECTOR_LONGHAUL,
                 priority: 40,
                 creepLimit: 0,
                 managed: true,

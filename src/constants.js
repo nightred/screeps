@@ -68,6 +68,7 @@ Constant.LINKER                         = 'linker';
 Constant.SCOUT                          = 'scout';
 Constant.CONTROLLER                     = 'controller';
 Constant.COMBAT_BRAWLER                 = 'combat.brawler';
+Constant.COMBAT_SWARMER                 = 'combat.swarmer';
 
 Constant.ROLE_TYPES = [
     Constant.MINER,
@@ -79,6 +80,7 @@ Constant.ROLE_TYPES = [
     Constant.SCOUT,
     Constant.CONTROLLER,
     Constant.COMBAT_BRAWLER,
+    Constant.COMBAT_SWARMER,
     ];
 
 Constant.DIRECTOR_ROOM                  = 'director.room';
@@ -86,10 +88,10 @@ Constant.DIRECTOR_REMOTE                = 'director.remote';
 Constant.DIRECTOR_MINE                  = 'director.mine';
 Constant.DIRECTOR_TECH                  = 'director.tech';
 Constant.DIRECTOR_HAUL                  = 'director.haul';
+Constant.DIRECTOR_LONGHAUL              = 'director.longhaul';
 Constant.DIRECTOR_RESUPPLY              = 'director.resupply';
 Constant.DIRECTOR_LINKER                = 'director.linker';
 Constant.MINE                           = 'mine';
-Constant.LONGHAUL                       = 'longhaul';
 Constant.UPGRADE                        = 'upgrade';
 Constant.RESERVE                        = 'reserve';
 Constant.TOWER_REFILL                   = 'tower.fill';
@@ -107,10 +109,10 @@ Constant.WORK_TASKS = [
     Constant.DIRECTOR_MINE,
     Constant.DIRECTOR_TECH,
     Constant.DIRECTOR_HAUL,
+    Constant.DIRECTOR_LONGHAUL,
     Constant.DIRECTOR_LINKER,
     Constant.DIRECTOR_RESUPPLY,
     Constant.MINE,
-    Constant.LONGHAUL,
     Constant.UPGRADE,
     Constant.RESERVE,
     Constant.TOWER_REFILL,

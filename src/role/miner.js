@@ -90,36 +90,40 @@ var roleMiner = {
         let extrasCost = 0;
         switch (args.style) {
             case 'drop':
+                energy -= 50;
+                moveUnits = 1;
+
+                workUnits = Math.floor(energy / 100);
+                workUnits = workUnits < 1 ? 1 : workUnits;
+                workUnits = workUnits > 6 ? 6 : workUnits;
                 break;
             case 'ranged':
                 energy -= 50;
                 body.push(CARRY);
+
                 workUnits = Math.floor((energy * 0.8) / 100);
                 workUnits = workUnits < 1 ? 1 : workUnits;
                 workUnits = workUnits > 6 ? 6 : workUnits;
                 energy -= (100 * workUnits);
 
-                let moveUnits = Math.floor(energy / 50);
+                moveUnits = Math.floor(energy / 50);
                 moveUnits = moveUnits < 1 ? 1 : moveUnits;
                 moveUnits = moveUnits > 4 ? 4 : moveUnits;
-
-                for (let i = 0; i < moveUnits; i++) {
-                    body.push(MOVE);
-                }
-                for (let i = 0; i < workUnits; i++) {
-                    body.push(WORK);
-                }
                 break;
             default:
-                extrasCost = 100;
-                body.push(MOVE);
+                energy -= 100;
+                moveUnits = 1;
                 body.push(CARRY);
-                workUnits = Math.floor((energy - extrasCost) / 100);
+
+                workUnits = Math.floor(energy / 100);
                 workUnits = workUnits < 1 ? 1 : workUnits;
                 workUnits = workUnits > 6 ? 6 : workUnits;
-                for (let i = 0; i < workUnits; i++) {
-                    body.push(WORK);
-                }
+        }
+        for (let i = 0; i < moveUnits; i++) {
+            body.push(MOVE);
+        }
+        for (let i = 0; i < workUnits; i++) {
+            body.push(WORK);
         }
 
         return body;
