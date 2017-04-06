@@ -15,3 +15,10 @@ RoomPosition.prototype.getRampart = function() {
         object.structure.structureType == STRUCTURE_RAMPART)[0];
     return rampart || false;
 };
+
+RoomPosition.prototype.getStructure = function() {
+    return _.find(this.look(), object =>
+        object.structure &&
+        (object.structure.structureType == STRUCTURE_RAMPART ||
+        OBSTACLE_OBJECT_TYPES[object.structure.structureType]))[0] || false;
+};

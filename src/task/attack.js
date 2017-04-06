@@ -95,7 +95,13 @@ var taskAttack = {
         if (!task) { return -1; }
 
         if (!creep.memory.targetId) {
-            let newTarget = this.getTarget(creep);
+            let flag = Game.flags[task.id + '_target'];
+            let newTarget = false;
+            if (flag) {
+                newTarget = flag.pos.getStructure();
+            } else {
+                newTarget = this.getTarget(creep);
+            }
             if (newTarget) {
                 creep.memory.targetId = newTarget.id;
             }
@@ -112,7 +118,7 @@ var taskAttack = {
 
         if (creep.attack(target) == ERR_NOT_IN_RANGE) {
             let opts = {
-                reusePath: 2,
+                reusePath: 1,
                 ignoreCreeps: true,
                 maxRooms: 1,
                 visualizePathStyle: {

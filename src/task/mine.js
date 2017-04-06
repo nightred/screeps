@@ -29,9 +29,12 @@ var taskMine = {
             return true;
         }
 
-        let source = Game.getObjectById(creep.memory.harvestTarget);
-        if (creep.harvest(source) == ERR_NOT_IN_RANGE) {
-            creep.goto(source, { range: 1, reUsePath: 80, maxOps: 4000, ignoreCreeps: true, });
+        switch (creep.memory.style) {
+            case 'drop':
+                this.doDropHarvest(creep);
+                break;
+            default:
+                this.doHarvest(creep);
         }
 
         return true;
@@ -84,6 +87,50 @@ var taskMine = {
     doTaskFind: function(room) {
         if (!room) { return -1; }
         // task creation for the room
+    },
+
+    doHarvest: function(creep) {
+        if (!creep) { return -1; }
+        let source = Game.getObjectById(creep.memory.harvestTarget);
+        if (creep.harvest(source) == ERR_NOT_IN_RANGE) {
+            creep.goto(source, { range: 1, reUsePath: 80, maxOps: 4000, ignoreCreeps: true, });
+        }
+
+        return true;
+    },
+
+    doDropHarvest: function(creep) {
+        if (!creep) { return -1; }
+        let source = Game.getObjectById(creep.memory.harvestTarget);
+        let target = Game.getObjectById(source.getDropContainer());
+
+        if (!target) {
+            if (Constant.DEBUG >= 3) { console.log('VERBOSE - harvester ' + creep.name + ' has no drop container'); }
+            source.clearContainer();
+            creep.setDespawn();
+
+            return false;
+        }
+
+        if (!creep.memory.atSource) {
+            if (creep.pos.x == target.pos.x && creep.pos.y == target.pos.y) {
+                creep.memory.atSource = true;
+            } else {
+                creep.moveTo(target.pos.x, target.pos.y, { range: 0, reUsePath: 80, maxOps: 4000, ignoreCreeps: true, });
+                return true;
+            }
+        }
+
+        if (_.sum(target.store) >= (target.storeCapacity * C.ENERGY_CONTAINER_MAX_PERCENT)) {
+            return true;
+        }
+
+        if (creep.harvest(source) == ERR_NOT_IN_RANGE) {
+            if (Constant.DEBUG >= 2) { console.log('DEBUG - harvester ' + creep.name + ' not in range of ' + source.id); }
+            return false;
+        }
+
+        return true;
     },
 
 };

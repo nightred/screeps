@@ -45,13 +45,29 @@ var roleMiner = {
             }
         }
 
+        let energyTargets = [
+            'linkIn',
+            'containerIn',
+            'spawn',
+            'extention',
+            'container',
+            'containerOut',
+            'storage',
+        ];
 
-        switch (creep.memory.style) {
-            case 'drop':
-                this.doDropHarvest(creep);
-                break;
-            default:
-                this.doHarvest(creep);
+        if (!creep.memory.working || creep.memory.style == 'drop') {
+            if (!creep.doWork()) {
+                if (C.DEBUG >= 2) { console.log('DEBUG - do work failed for role: ' + creep.memory.role + ', name: ' + creep.name); }
+            }
+        } else {
+            let source = Game.getObjectById(creep.memory.harvestTarget);
+            if (!creep.memory.goingTo && source) {
+                creep.memory.goingTo = source.getLocalContainer();
+            }
+
+            if (!creep.doEmptyEnergy(energyTargets)) {
+                if (C.DEBUG >= 2) { console.log('DEBUG - do empty energy failed for role: ' + creep.memory.role + ', name: ' + creep.name); }
+            }
         }
 
         return true;
@@ -126,71 +142,6 @@ var roleMiner = {
         args.role = this.role;
 
         return spawn.createCreep(body, undefined, args);
-    },
-
-    doHarvest: function(creep) {
-        if (!creep) { return -1; }
-
-        let energyTargets = [
-            'linkIn',
-            'containerIn',
-            'spawn',
-            'extention',
-            'container',
-            'containerOut',
-            'storage',
-        ];
-
-        if (!creep.memory.working) {
-            if (!creep.doWork()) {
-                if (C.DEBUG >= 2) { console.log('DEBUG - do work failed for role: ' + creep.memory.role + ', name: ' + creep.name); }
-            }
-        } else {
-            let source = Game.getObjectById(creep.memory.harvestTarget);
-            if (!creep.memory.goingTo && source) {
-                creep.memory.goingTo = source.getLocalContainer();
-            }
-
-            if (!creep.doEmptyEnergy(energyTargets)) {
-                if (C.DEBUG >= 2) { console.log('DEBUG - do empty energy failed for role: ' + creep.memory.role + ', name: ' + creep.name); }
-            }
-        }
-
-        return true;
-    },
-
-    doDropHarvest: function(creep) {
-        if (!creep) { return -1; }
-        let source = Game.getObjectById(creep.memory.harvestTarget);
-        let target = Game.getObjectById(source.getDropContainer());
-
-        if (!target) {
-            if (Constant.DEBUG >= 3) { console.log('VERBOSE - harvester ' + creep.name + ' has no drop container'); }
-            source.clearContainer();
-            creep.setDespawn();
-
-            return false;
-        }
-
-        if (!creep.memory.atSource) {
-            if (creep.pos.x == target.pos.x && creep.pos.y == target.pos.y) {
-                creep.memory.atSource = true;
-            } else {
-                creep.moveTo(target.pos.x, target.pos.y, { range: 1, reUsePath: 80, maxOps: 4000, ignoreCreeps: true, });
-                return true;
-            }
-        }
-
-        if (_.sum(target.store) >= (target.storeCapacity * C.ENERGY_CONTAINER_MAX_PERCENT)) {
-            return true;
-        }
-
-        if (creep.harvest(source) == ERR_NOT_IN_RANGE) {
-            if (Constant.DEBUG >= 2) { console.log('DEBUG - harvester ' + creep.name + ' not in range of ' + source.id); }
-            return false;
-        }
-
-        return true;
     },
 
 };

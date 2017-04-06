@@ -13,9 +13,12 @@ Creep.prototype.moveToRoom = function(name) {
 }
 
 Creep.prototype.manageState = function() {
-    if (!this.carryCapacity > 0) {
-        this.memory.working = true;
-        return true;
+    if (this.carryCapacity == 0) {
+        if (this.memory.working != true) {
+            this.memory.working = true;
+            return true;
+        }
+        return false;
     }
 
     if (this.memory.working && this.isEnergyEmpty()) {
