@@ -22,8 +22,13 @@ Source.prototype.getDropContainer = function() {
         this.memory.containerId = false;
     }
 
-    if (!this.memory.containerId || !Game.getObjectById(this.memory.containerId)) {
+    let target = Game.getObjectById(this.memory.containerId);
+    if (!this.memory.containerId) {
         this.memory.containerId = this.getContainerAtRange(1);
+    } else {
+        if (target.structureType != STRUCTURE_CONTAINER) {
+            this.memory.containerId = this.getContainerAtRange(1);
+        }
     }
 
     return this.memory.containerId;

@@ -1,11 +1,11 @@
 /*
  * task Director Tech
  *
- * director tech task handles the spawning od tech units
+ * director tech task handles the spwning od tech units
  *
  */
 
-var taskDirectorTech = {
+var taskDirectorMine = {
 
     /**
     * @param {Creep} creep The creep object
@@ -43,41 +43,6 @@ var taskDirectorTech = {
                 C.CONSTRUCTION,
             ];
             Game.Queue.work.doTaskFind(room, remoteTasks);
-
-            if (!room.controller || !room.controller.my) { continue; }
-
-            switch (room.controller.level) {
-                case 1:
-                case 2:
-                    if (task.minSize > 200) {
-                        task.minSize = 200;
-                    }
-                    break;
-                case 3:
-                    if (task.minSize < 300) {
-                        task.minSize = 300;
-                    }
-                    break;
-                case 4:
-                    if (task.creepLimit < 2) {
-                        task.creepLimit = 2;
-                    }
-                    if (task.minSize < 400) {
-                        task.minSize = 400;
-                    }
-                    break;
-                case 5:
-                case 6:
-                    if (task.minSize < 500) {
-                        task.minSize = 500;
-                    }
-                    break;
-                case 7:
-                case 8:
-                    if (task.minSize < 600) {
-                        task.minSize = 600;
-                    }
-            }
         }
 
         // spawn new creeps if needed
@@ -86,17 +51,16 @@ var taskDirectorTech = {
             creep.memory.despawn != true
             ).length;
         if (count < task.creepLimit) {
-            if (!Game.Queue.spawn.isQueued({ room: task.spawnRoom, role: C.TECH, })) {
+            if (!Game.Queue.spawn.isQueued({ room: task.spawnRoom, role: C.CRASHTECH, })) {
                 let record = {
                     rooms: [ task.spawnRoom, ],
-                    role: C.TECH,
-                    priority: 54,
+                    role: C.CRASHTECH,
+                    priority: 58,
                     creepArgs: {
                         workRooms: task.workRooms,
                         directorId: task.id,
                     },
                 };
-                if (task.minSize) { record.minSize = task.minSize; }
                 Game.Queue.spawn.addRecord(record);
             }
         }
@@ -114,4 +78,4 @@ var taskDirectorTech = {
 
 };
 
-module.exports = taskDirectorTech;
+module.exports = taskDirectorMine;

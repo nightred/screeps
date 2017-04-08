@@ -105,7 +105,7 @@ var taskMine = {
         let target = Game.getObjectById(source.getDropContainer());
 
         if (!target) {
-            if (Constant.DEBUG >= 3) { console.log('VERBOSE - harvester ' + creep.name + ' has no drop container'); }
+            if (C.DEBUG >= 3) { console.log('VERBOSE - harvester ' + creep.name + ' has no drop container'); }
             source.clearContainer();
             creep.setDespawn();
 
@@ -126,7 +126,7 @@ var taskMine = {
         }
 
         if (creep.harvest(source) == ERR_NOT_IN_RANGE) {
-            if (Constant.DEBUG >= 2) { console.log('DEBUG - harvester ' + creep.name + ' not in range of ' + source.id); }
+            if (C.DEBUG >= 2) { console.log('DEBUG - harvester ' + creep.name + ' not in range of ' + source.id); }
             return false;
         }
 

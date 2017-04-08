@@ -24,9 +24,9 @@ Constant.ENERGY_CONTAINER_MAX_PERCENT   = 0.9;
 Constant.ENERGY_CONTAINER_MIN_PERCENT   = 0.1 ;
 Constant.ENERGY_CONTAINER_MIN_WITHDRAW  = 100;
 Constant.ENERGY_STORAGE_MIN_WITHDRAW    = 100;
-Constant.ENERGY_LINK_IN_MIN             = 0.15;
+Constant.ENERGY_LINK_IN_MIN             = 0.1;
 Constant.ENERGY_LINK_OUT_MAX            = 0.8;
-Constant.ENERGY_LINK_STORAGE_MIN        = 0.2;
+Constant.ENERGY_LINK_STORAGE_MIN        = 0.38;
 Constant.ENERGY_LINK_STORAGE_MAX        = 0.8;
 
 Constant.CONTROLLER_WITHDRAW_LEVEL      = 2;
@@ -62,6 +62,7 @@ Constant.QUEUE_SPAWN                    = 'spawn';
 Constant.MINER                          = 'miner';
 Constant.UPGRADER                       = 'upgrader';
 Constant.TECH                           = 'tech';
+Constant.CRASHTECH                      = 'crashtech';
 Constant.HAULER                         = 'hauler';
 Constant.RESUPPLY                       = 'resupply';
 Constant.LINKER                         = 'linker';
@@ -75,6 +76,7 @@ Constant.ROLE_TYPES = [
     Constant.MINER,
     Constant.UPGRADER,
     Constant.TECH,
+    Constant.CRASHTECH,
     Constant.HAULER,
     Constant.RESUPPLY,
     Constant.LINKER,
@@ -89,6 +91,7 @@ Constant.DIRECTOR_ROOM                  = 'director.room';
 Constant.DIRECTOR_REMOTE                = 'director.remote';
 Constant.DIRECTOR_MINE                  = 'director.mine';
 Constant.DIRECTOR_TECH                  = 'director.tech';
+Constant.DIRECTOR_CRASHTECH             = 'director.crashtech';
 Constant.DIRECTOR_HAUL                  = 'director.haul';
 Constant.DIRECTOR_LONGHAUL              = 'director.longhaul';
 Constant.DIRECTOR_RESUPPLY              = 'director.resupply';
@@ -110,6 +113,7 @@ Constant.WORK_TASKS = [
     Constant.DIRECTOR_REMOTE,
     Constant.DIRECTOR_MINE,
     Constant.DIRECTOR_TECH,
+    Constant.DIRECTOR_CRASHTECH,
     Constant.DIRECTOR_HAUL,
     Constant.DIRECTOR_LONGHAUL,
     Constant.DIRECTOR_LINKER,

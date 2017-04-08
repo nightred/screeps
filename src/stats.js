@@ -24,7 +24,11 @@ Stats.prototype.logEnergy = function() {
             this.memory.rooms[name] = this.memory.rooms[name] || {};
             this.memory.rooms[name].energy = this.memory.rooms[name].energy || [];
             this.memory.rooms[name].storage = this.memory.rooms[name].storage || [];
-            this.memory.rooms[name].energy.push(Game.rooms[name].energyAvailable);
+            if (Game.rooms[name].energyAvailable) {
+                this.memory.rooms[name].energy.push(Game.rooms[name].energyAvailable);
+            } else {
+                this.memory.rooms[name].energy.push(0);
+            }
             if (Game.rooms[name].storage) {
                 this.memory.rooms[name].storage.push(_.sum(Game.rooms[name].storage.store));
             } else {
@@ -92,8 +96,8 @@ Stats.prototype.reportEnergy = function() {
         let energyMax = Math.floor(Math.max.apply(null, this.memory.rooms[name].energy) + 2);
         let energyMin = Math.floor(Math.min.apply(null, this.memory.rooms[name].energy) - 2);
         let roomMax = Game.rooms[name].energyCapacityAvailable;
+        roomMax = roomMax || 100;
         let average = _.sum(this.memory.rooms[name].energy) / (this.memory.rooms[name].energy.length + 1);
-        let lowAverage
         energyMin = energyMin < 0 ? 0 : energyMin;
 
         // average block

@@ -81,7 +81,7 @@ var roleUpgrader = {
         let body = [];
 
         workUnits = workUnits < 1 ? 1 : workUnits;
-        workUnits = workUnits > 5 ? 5 : workUnits;
+        workUnits = workUnits > 10 ? 10 : workUnits;
         for (let i = 0; i < workUnits; i++) {
             body.push(WORK);
         }

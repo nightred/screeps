@@ -58,20 +58,39 @@ var manageTower = {
     },
 
     repair: function(tower) {
+        let mod = 0;
+        if (tower.room.storage) {
+            if (tower.room.storage.store[RESOURCE_ENERGY] < 200000) {
+                mod = 0;
+            } else if (tower.room.storage.store[RESOURCE_ENERGY] < 400000) {
+                mod = 2;
+            } else if (tower.room.storage.store[RESOURCE_ENERGY] < 800000) {
+                mod = 4;
+            } else if (tower.room.storage.store[RESOURCE_ENERGY] < 900000) {
+                mod = 8;
+            } else if (tower.room.storage.store[RESOURCE_ENERGY] >= 900000) {
+                mod = 99;
+            }
+        }
+
+        let maxHitRampart = C.RAMPART_HIT_MAX * mod;
+        let maxHitWall = C.WALL_HIT_MAX * mod;
+
+
         let targets = _.sortBy(tower.room.find(FIND_STRUCTURES, {
             filter: (structure) => {
-                return ((structure.structureType != STRUCTURE_WALL &&
-                    structure.structureType != STRUCTURE_RAMPART) ||
-                    (structure.structureType == STRUCTURE_RAMPART &&
-                    structure.hits < C.RAMPART_HIT_MAX)) &&
+                return (structure.structureType != STRUCTURE_WALL &&
+                    structure.structureType != STRUCTURE_RAMPART) &&
                     structure.hits < Math.floor(structure.hitsMax * 0.3)
             }
         }), structure => structure.hits / structure.hitsMax);
         _.filter(tower.room.find(FIND_STRUCTURES), structure =>
             (structure.structureType == STRUCTURE_RAMPART &&
-            structure.hits < C.RAMPART_HIT_MAX) ||
+            (structure.hits < maxHitRampart &&
+            structure.hitsMax > structure.hits)) ||
             (structure.structureType == STRUCTURE_WALL &&
-            structure.hits < C.WALL_HIT_MAX)
+            (structure.hits < maxHitWall &&
+            structure.hitsMax > structure.hits))
             ).forEach(structure => targets.push(structure));
 
         if (targets.length == 0) { return false; }

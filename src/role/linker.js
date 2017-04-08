@@ -18,27 +18,18 @@ var roleLinker = {
 
         if (creep.manageState()) {
             if (creep.memory.working) {
-                creep.say('🚚');
+                creep.say('🔗');
             } else {
                 creep.say('🔋');
                 creep.memory.task = false;
             }
         } else if (creep.carry.energy > (creep.carryCapacity * 0.2) && !creep.memory.working)  {
             creep.toggleState();
-            creep.say('🚚');
-        }
-
-        if ((creep.memory.idleStart + C.CREEP_IDLE_TIME) > Game.time) {
-            if (creep.memory.task) {
-                creep.memory.task = false;
-            }
-            return true;
+            creep.say('🔗');
         }
 
         if (!creep.memory.task) {
             if (!this.getTask(creep))  {
-                creep.memory.idleStart = Game.time;
-                creep.say('💤');
                 return true;
             }
         }

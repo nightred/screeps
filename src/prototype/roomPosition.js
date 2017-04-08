@@ -10,15 +10,19 @@ RoomPosition.prototype.fromDirection = function(direction) {
 };
 
 RoomPosition.prototype.getRampart = function() {
-    let rampart = _.find(this.look(), object =>
+    let targets = _.find(this.look(), object =>
         object.structure &&
-        object.structure.structureType == STRUCTURE_RAMPART)[0];
-    return rampart || false;
+        object.structure.structureType == STRUCTURE_RAMPART);
+    if (targets || targets.length == 0) { return false; }
+    return targets[0];
 };
 
 RoomPosition.prototype.getStructure = function() {
-    return _.find(this.look(), object =>
+    let targets = _.find(this.look(), object =>
         object.structure &&
         (object.structure.structureType == STRUCTURE_RAMPART ||
-        OBSTACLE_OBJECT_TYPES[object.structure.structureType]))[0] || false;
+        OBSTACLE_OBJECT_TYPES[object.structure.structureType]));
+
+    if (targets || targets.length == 0) { return false; }
+    return targets[0];
 };

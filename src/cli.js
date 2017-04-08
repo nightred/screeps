@@ -289,6 +289,25 @@ var Cli = {
             return Game.Queue.work.addRecord(record);
         },
 
+        crashtech: function(roomName, spawnRoom) {
+            if (!roomName) {
+                console.log('ERROR - command need the following values: work room, (opt) spawn room');
+                return false;
+            }
+            spawnRoom = spawnRoom || roomName;
+            workRooms = Array.isArray(roomName) ? roomName : [ roomName ];
+            let record = {
+                workRooms: workRooms,
+                spawnRoom: spawnRoom,
+                task: C.DIRECTOR_CRASHTECH,
+                priority: 48,
+                creepLimit: 1,
+                managed: true,
+            };
+
+            return Game.Queue.work.addRecord(record);
+        },
+
         spawnRoom: function(roomName) {
             if (!roomName) {
                 console.log('ERROR - command need the following values: room name');

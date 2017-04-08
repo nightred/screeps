@@ -46,15 +46,8 @@ EnergyGrid.prototype.getStore = function(creep, energy, types) {
             targets = _.filter(targets, target => !creep.hasGoingTo(target.id));
         }
         targets = _.sortBy(targets, target => target.energy);
-        //targets = _.sortBy(targets, target => creep.pos.getRangeTo(target.pos));
         if (targets.length <= 0) { continue; }
         target = creep.pos.findClosestByPath(targets, {maxOps: 500});
-        //for (let i = 0; i < targets.length; i++) {
-        //    if (!creep.hasGoingTo(targets[i])) {
-        //        targetId = targets[i].id;
-        //        break;
-        //    }
-        //}
         if (target) { break; }
     }
     if (!target) { return false; }
@@ -90,9 +83,6 @@ EnergyGrid.prototype.getWithdraw = function(creep, energy, types) {
         let targets = _.filter(this.rooms[creep.room.name][types[i]], target =>
             target.energy > target.energyMax * mod);
         targets = _.sortBy(targets, target => target.energy).reverse();
-        if (types[i] != 'containerIn') {
-            targets = _.sortBy(targets, target => creep.pos.getRangeTo(target.pos));
-        }
         if (types[i] == 'containerIn') {
             targets = _.filter(targets, target => !creep.hasGoingTo(target.id));
         }

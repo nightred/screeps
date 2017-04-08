@@ -245,10 +245,11 @@ Creep.prototype.doEmptyEnergy = function(types) {
 Creep.prototype.getEmptyEnergyTarget = function(types, args) {
     if (!Array.isArray(types)) { return -1; }
     args = args || {};
+    args.setGoingTo = args.setGoingTo || true;
 
     let target = Game.Manage.rooms.energyGrid.getStore(this, this.carry[RESOURCE_ENERGY], types);
     if (target) {
-        if (!args.noSet) {
+        if (args.setGoingTo) {
             this.setGoingTo(target);
         }
         return true;
@@ -285,10 +286,11 @@ Creep.prototype.doFillEnergy = function(types) {
 Creep.prototype.getFillEnergyTarget = function(types, args) {
     if (!Array.isArray(types)) { return -1; }
     args = args || {};
+    args.setGoingTo = args.setGoingTo || true;
 
     let target = Game.Manage.rooms.energyGrid.getWithdraw(this, (this.carryCapacity - _.sum(this.carry)), types);
     if (target) {
-        if (!args.noSet) {
+        if (args.setGoingTo) {
             this.setGoingTo(target);
         }
         return true;

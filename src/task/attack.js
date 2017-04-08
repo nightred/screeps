@@ -83,8 +83,9 @@ var taskAttack = {
         }
 
         targets = _.sortBy(targets, target => creep.pos.getRangeTo(target.pos));
-        if (creep.rangedHeal(targets[0]) == ERR_NOT_IN_RANGE) {
-            creep.goto(targets[0], { range: 3, reUsePath: 4, ignoreCreeps: true, });
+        if (creep.heal(targets[0]) == ERR_NOT_IN_RANGE) {
+            creep.goto(targets[0], { range: 1, reUsePath: 4, ignoreCreeps: true, });
+            creep.rangedHeal(targets[0]);
         }
 
         return true;
@@ -95,13 +96,13 @@ var taskAttack = {
         if (!task) { return -1; }
 
         if (!creep.memory.targetId) {
-            let flag = Game.flags[task.id + '_target'];
+            //let flag = Game.flags[task.id + '_target'];
             let newTarget = false;
-            if (flag) {
-                newTarget = flag.pos.getStructure();
-            } else {
+            //if (flag) {
+            //    newTarget = flag.pos.getStructure();
+            //} else {
                 newTarget = this.getTarget(creep);
-            }
+            //}
             if (newTarget) {
                 creep.memory.targetId = newTarget.id;
             }
@@ -113,8 +114,8 @@ var taskAttack = {
             return this.doRally(creep, task);
         }
 
-        let rampart = target.pos.getRampart();
-        target = rampart || target;
+        //let rampart = target.pos.getRampart();
+        //target = rampart || target;
 
         if (creep.attack(target) == ERR_NOT_IN_RANGE) {
             let opts = {
