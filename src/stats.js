@@ -19,7 +19,7 @@ Stats.prototype.run = function() {
 
 Stats.prototype.logEnergy = function() {
     for (let name in Game.rooms) {
-        if (!Game.rooms[name].controller) { continue; }
+        if (!Game.rooms[name] || !Game.rooms[name].controller) { continue; }
         if (Game.rooms[name].controller.my) {
             this.memory.rooms[name] = this.memory.rooms[name] || {};
             this.memory.rooms[name].energy = this.memory.rooms[name].energy || [];
@@ -36,6 +36,10 @@ Stats.prototype.logEnergy = function() {
             }
             if ( this.memory.rooms[name].energy.length > 100 ) { this.memory.rooms[name].energy.shift(); }
             if ( this.memory.rooms[name].storage.length > 100 ) { this.memory.rooms[name].storage.shift(); }
+        } else {
+            if (this.memory.rooms[name]) {
+                delete this.memory.rooms[name];
+            }
         }
     }
 };
@@ -70,6 +74,11 @@ Stats.prototype.reportEnergy = function() {
     rv.text('Energy Report', size.l, size.t - 0.5, textStyle);
     let count = 0;
     for (let name in this.memory.rooms) {
+        if (!Game.rooms[name] || !Game.rooms[name].controller) { continue; }
+        if (!Game.rooms[name].controller.my) {
+            delete this.memory.rooms[name];
+            continue;
+        }
         rv.text(name, size.l - 1 - (size.gw * 2), size.t + 0.5 + ((0.5 + size.gh) * count), textStyle);
         rv.rect(
             size.l - size.gw,

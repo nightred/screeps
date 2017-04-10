@@ -32,43 +32,40 @@ var manageTower = {
     },
 
     defence: function(tower) {
-        let targets = _.sortBy(tower.room.find(FIND_HOSTILE_CREEPS), (hostile) => hostile.hits);
+        let targets = tower.room.getHostiles();
+        if (!targets || targets.length == 0) { return false; }
+        targets = _.sortBy(targets, hostile => hostile.hits);
 
-        if (targets.length > 0) {
-            tower.attack(targets[0]);
+        tower.attack(targets[0]);
 
-            return true
-        }
-
-        return false;
+        return true
     },
 
     heal: function(tower) {
-        let targets = _.sortBy(_.filter(tower.room.find(FIND_MY_CREEPS), creep =>
-            creep.hits < creep.hitsMax
-            ), creep => creep.hits);
+        let targets = tower.room.getCreeps();
+        if (!targets || targets.length == 0) { return false; }
+        targets = _.filter(targets, creep => creep.hits < creep.hitsMax);
+        if (!targets || targets.length == 0) { return false; }
+        targets = _.sortBy(targets, creep => creep.hits);
 
-        if (targets.length > 0) {
-            tower.heal(targets[0]);
+        tower.heal(targets[0]);
 
-            return true;
-        }
-
-        return false;
+        return true;
     },
 
     repair: function(tower) {
         let mod = 0;
         if (tower.room.storage) {
-            if (tower.room.storage.store[RESOURCE_ENERGY] < 200000) {
+            let energyStorage = tower.room.storage.store[RESOURCE_ENERGY];
+            if (energyStorage < 200000) {
                 mod = 0;
-            } else if (tower.room.storage.store[RESOURCE_ENERGY] < 400000) {
-                mod = 2;
-            } else if (tower.room.storage.store[RESOURCE_ENERGY] < 800000) {
-                mod = 4;
-            } else if (tower.room.storage.store[RESOURCE_ENERGY] < 900000) {
-                mod = 8;
-            } else if (tower.room.storage.store[RESOURCE_ENERGY] >= 900000) {
+            } else if (energyStorage < 400000) {
+                mod = 5;
+            } else if (energyStorage < 800000) {
+                mod = 10;
+            } else if (energyStorage < 900000) {
+                mod = 20;
+            } else if (energyStorage >= 900000) {
                 mod = 99;
             }
         }
@@ -76,15 +73,15 @@ var manageTower = {
         let maxHitRampart = C.RAMPART_HIT_MAX * mod;
         let maxHitWall = C.WALL_HIT_MAX * mod;
 
-
-        let targets = _.sortBy(tower.room.find(FIND_STRUCTURES, {
-            filter: (structure) => {
-                return (structure.structureType != STRUCTURE_WALL &&
-                    structure.structureType != STRUCTURE_RAMPART) &&
-                    structure.hits < Math.floor(structure.hitsMax * 0.3)
-            }
-        }), structure => structure.hits / structure.hitsMax);
-        _.filter(tower.room.find(FIND_STRUCTURES), structure =>
+        let structures = tower.room.getStructures();
+        if (!structures || structures.length == 0) { return false; }
+        let targets = [];
+        _.filter(structures, structure =>
+            (structure.structureType != STRUCTURE_WALL &&
+            structure.structureType != STRUCTURE_RAMPART) &&
+            structure.hits < Math.floor(structure.hitsMax * 0.3)
+            ).forEach(structure => targets.push(structure));
+        _.filter(structures, structure =>
             (structure.structureType == STRUCTURE_RAMPART &&
             (structure.hits < maxHitRampart &&
             structure.hitsMax > structure.hits)) ||
@@ -94,8 +91,8 @@ var manageTower = {
             ).forEach(structure => targets.push(structure));
 
         if (targets.length == 0) { return false; }
-        targets = _.sortBy(targets, structure => tower.pos.getRangeTo(structure));
-        targets = _.sortBy(targets, structure => structure.hits);
+        targets = _.sortBy(targets, structure =>
+            (tower.pos.getRangeTo(structure) + 1) * (structure.hits / structure.hitsMax));
 
         tower.repair(targets[0]);
 

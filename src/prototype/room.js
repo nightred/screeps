@@ -25,6 +25,14 @@ Room.prototype.getLinks = function() {
     });
 };
 
+Room.prototype.getStructures = function() {
+    return this.find(FIND_STRUCTURES);
+};
+
+Room.prototype.getCreeps = function() {
+    return this.find(FIND_MY_CREEPS);
+};
+
 Room.prototype.getHostiles = function() {
     return this.find(FIND_HOSTILE_CREEPS);
 };

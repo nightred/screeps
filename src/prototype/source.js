@@ -18,15 +18,11 @@ Source.prototype.removeHarvester = function() {
 }
 
 Source.prototype.getDropContainer = function() {
-    if (this.memory.containerId == undefined) {
-        this.memory.containerId = false;
-    }
-
-    let target = Game.getObjectById(this.memory.containerId);
     if (!this.memory.containerId) {
         this.memory.containerId = this.getContainerAtRange(1);
     } else {
-        if (target.structureType != STRUCTURE_CONTAINER) {
+        let target = Game.getObjectById(this.memory.containerId);
+        if (target && target.structureType != STRUCTURE_CONTAINER) {
             this.memory.containerId = this.getContainerAtRange(1);
         }
     }
