@@ -16,8 +16,8 @@ var roleResupply = {
     * The locations that energy can be withdrawn
     **/
     energyInTargets: [
-        'linkStorage',
         'storage',
+        'linkStorage',
     ],
     /**
     * The locations that energy can be stored
@@ -104,9 +104,10 @@ var roleResupply = {
         if (!spawn) { return -1; }
         if (!Array.isArray(body) || body.length < 1) { return -1; }
         args = args || {};
-        args.role = this.role;
+        args.role = args.role || this.role;
+        let name = Game.Queue.spawn.getCreepName(this.role);
 
-        return spawn.createCreep(body, undefined, args);
+        return spawn.createCreep(body, name, args);
     },
 
 };

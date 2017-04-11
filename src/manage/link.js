@@ -34,7 +34,8 @@ Link.prototype.manage = function(room) {
         }
     }
 
-    if (linksOut.length > 0 && linkStorage.cooldown == 0 && linkStorage.energy > 0 ) {
+    if (linksOut.length > 0 && linkStorage.cooldown == 0 &&
+        linkStorage.energy > (linkStorage.energyCapacity * C.LINK_STORAGE_TRANSFER_MIN) ) {
         for (let i = 0; i < linksOut.length; i++) {
             if (linksOut[i].energy < (linksOut[i].energyCapacity * C.ENERGY_LINK_OUT_MAX)) {
                 linkStorage.transferEnergy(linksOut[i]);

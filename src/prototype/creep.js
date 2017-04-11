@@ -113,7 +113,8 @@ Creep.prototype.getWork = function(tasks, args) {
     if (!list || list.length <= 0) { return false; }
     let workId = list[0].id;
 
-    if (!Game.Queue.work.addCreep(this.name, workId)) { return false; }
+
+    //if (!Game.Queue.work.addCreep(this.name, workId)) { return false; }
     this.memory.workId = workId;
     return true;
 }
@@ -295,7 +296,8 @@ Creep.prototype.getFillEnergyTarget = function(types, args) {
         }
         return true;
     }
-    if (this.room.name != this.memory.spawnRoom && this.memory.role != C.LONGHAULER) {
+    if (this.room.name != this.memory.spawnRoom &&
+        (this.memory.role != C.HAULER && this.memory.style != 'longhauler')) {
         this.moveToRoom(this.memory.spawnRoom);
         return true;
     }
@@ -383,7 +385,7 @@ Creep.prototype.moveToIdlePosition = function() {
             if ((this.pos.x + C.DIRECTIONS[direction][0]) != 0 &&
                 (this.pos.y + C.DIRECTIONS[direction][1]) != 0 &&
                 (this.pos.x + C.DIRECTIONS[direction][0]) != 49 &&
-                (this.pos.y + C.DIRECTIONS[direction][1]) != 49) {                    
+                (this.pos.y + C.DIRECTIONS[direction][1]) != 49) {
                 break;
             }
         }

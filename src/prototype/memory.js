@@ -25,6 +25,28 @@ Object.defineProperty(StructureContainer.prototype, 'memory', {
     }
 })
 
+Object.defineProperty(StructureTower.prototype, 'memory', {
+    get: function() {
+        if (_.isUndefined(this.room.memory.structureTowers)) {
+            this.room.memory.structureTowers = {};
+        }
+        if (!_.isObject(this.room.memory.structureTowers)) {
+            return undefined;
+        }
+
+        return this.room.memory.structureTowers[this.id] = this.room.memory.structureTowers[this.id] || {};
+    },
+    set: function(value) {
+        if (_.isUndefined(this.room.memory.structureTowers)) {
+            this.room.memory.structureTowers = {};
+        }
+        if (!_.isObject(this.room.memory.structureTowers)) {
+            throw new Error('Unable to set structureTowers memory');
+        }
+        this.room.memory.structureTowers[this.id] = value
+    }
+})
+
 Object.defineProperty(StructureLink.prototype, 'memory', {
     get: function() {
         if (_.isUndefined(this.room.memory.structureLinks)) {

@@ -26,6 +26,7 @@ Constant.ENERGY_CONTAINER_MIN_WITHDRAW  = 100;
 Constant.ENERGY_STORAGE_MIN_WITHDRAW    = 100;
 Constant.ENERGY_LINK_IN_MIN             = 0.1;
 Constant.ENERGY_LINK_OUT_MAX            = 0.8;
+Constant.LINK_STORAGE_TRANSFER_MIN      = 0.34;
 Constant.ENERGY_LINK_STORAGE_MIN        = 0.38;
 Constant.ENERGY_LINK_STORAGE_MAX        = 0.8;
 
@@ -35,6 +36,8 @@ Constant.CONTROLLER_RESERVE_MIN         = 1000;
 
 Constant.FIND_WAIT_TICKS                = 8;
 Constant.MANAGE_WAIT_TICKS              = 10;
+Constant.MANAGE_MEMORY_TICKS            = 20;
+Constant.TOWER_REPAIR_TICKS             = 5;
 Constant.REPORT_TICKS                   = 500;
 Constant.DEFENSE_COOLDOWN               = 80;
 Constant.DEFENSE_LIMIT_INCREASE_DELAY   = 100;

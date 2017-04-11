@@ -41,6 +41,17 @@ var taskAttack = {
     **/
     doTaskManaged: function(task) {
         if (!task) { return -1; }
+        task.rally = task.rally || {}
+
+        let flag = Game.flags[task.id + '_target'];
+        if (flag) {
+            if (task.workRooms[0] != flag.pos.roomName) {
+                task.workRooms[0] = flag.pos.roomName;
+            }
+            task.rally.x = flag.pos.x;
+            task.rally.y = flag.pos.y;
+            task.rally.room = flag.pos.roomName;
+        }
 
         return true;
     },
@@ -58,11 +69,8 @@ var taskAttack = {
         if (!task) { return -1; }
 
         if (task.rally) {
-            if (task.rally.room == creep.room.name &&
-                task.rally.x && task.rally.y)  {
-                // marker
-            }
             let rallyPos = new RoomPosition(task.rally.x, task.rally.y, task.rally.room);
+
             creep.goto(rallyPos, { reusePath: 5, maxRooms: 1, });
         } else {
             creep.moveToIdlePosition();
@@ -94,15 +102,17 @@ var taskAttack = {
     doAttack: function(creep, task) {
         if (!creep) { return -1; }
         if (!task) { return -1; }
+        creep.memory.targetId = creep.memory.targetId || false;
 
+        let flag = Game.flags[task.id + '_target'];
+        if (flag) {
+            let newTarget = flag.pos.getStructure();
+            if (newTarget.StructureType) {
+                creep.memory.targetId = newTarget.id;
+            }
+        }
         if (!creep.memory.targetId) {
-            //let flag = Game.flags[task.id + '_target'];
-            let newTarget = false;
-            //if (flag) {
-            //    newTarget = flag.pos.getStructure();
-            //} else {
-                newTarget = this.getTarget(creep);
-            //}
+            let newTarget = this.getTarget(creep);
             if (newTarget) {
                 creep.memory.targetId = newTarget.id;
             }
@@ -119,7 +129,7 @@ var taskAttack = {
 
         if (creep.attack(target) == ERR_NOT_IN_RANGE) {
             let opts = {
-                reusePath: 1,
+                reusePath: 10,
                 ignoreCreeps: true,
                 maxRooms: 1,
                 visualizePathStyle: {
@@ -130,6 +140,9 @@ var taskAttack = {
                     opacity: .2,
                 },
             };
+            if (!target.StructureType) {
+                opts.reusePath = 1;
+            }
             if (creep.goto(target, opts) == ERR_NO_PATH) {
                 let path = creep.pos.findPathTo(target, {
                     maxOps: 1000,

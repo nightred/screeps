@@ -23,9 +23,20 @@ WorkQueue.prototype.doTask = function(creep) {
     if (!creep) { return -1; }
 
     if (!this.queue[creep.memory.workId]) { return false; }
-    let work = this.queue[creep.memory.workId];
+    let task = this.queue[creep.memory.workId];
 
-    return this.tasks[work.task].doTask(creep, work);
+    if (task.creeps.length >= task.creepLimit && task.creeps.indexOf(creep.name) < 0) {
+        return false;
+    }
+
+    if (creep.room.name != task.workRooms[0]) {
+        creep.moveToRoom(task.workRooms[0]);
+        return true;
+    } else if (task.creeps.indexOf(creep.name) < 0) {
+        Game.Queue.work.addCreep(creep.name, creep.memory.workId);
+    }
+
+    return this.tasks[task.task].doTask(creep, task);
 }
 
 WorkQueue.prototype.getTask = function(taskName) {

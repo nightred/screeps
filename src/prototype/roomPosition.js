@@ -18,11 +18,9 @@ RoomPosition.prototype.getRampart = function() {
 };
 
 RoomPosition.prototype.getStructure = function() {
-    let targets = _.find(this.look(), object =>
-        object.structure &&
-        (object.structure.structureType == STRUCTURE_RAMPART ||
-        OBSTACLE_OBJECT_TYPES[object.structure.structureType]));
+    let targets = this.look();
+    targets = _.filter(targets, object => object.structure);
+    if (!targets || targets.length == 0) { return false; }
 
-    if (targets || targets.length == 0) { return false; }
-    return targets[0];
+    return targets[0].structure;
 };

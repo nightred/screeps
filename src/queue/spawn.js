@@ -125,6 +125,14 @@ SpawnQueue.prototype.getBodyCost = function(body) {
     return cost;
 };
 
+SpawnQueue.prototype.getCreepName = function(role) {
+    let name = role.replace(/\./g, '_');
+    name += '_' + Math.random().toString(36).substr(2, 1);
+    name += '_' + Game.time % 1000;
+
+    return name;
+};
+
 SpawnQueue.prototype.getQueue = function() {
     return Game.Queue.getQueue({queue: C.QUEUE_SPAWN, });
 };

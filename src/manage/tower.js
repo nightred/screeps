@@ -54,6 +54,12 @@ var manageTower = {
     },
 
     repair: function(tower) {
+        tower.memory.repairTick = tower.memory.repairTick || 0;
+        if ((tower.memory.repairTick + C.TOWER_REPAIR_TICKS) > Game.time) {
+            return true;
+        }
+        tower.memory.repairTick = Game.time;
+
         let mod = 0;
         if (tower.room.storage) {
             let energyStorage = tower.room.storage.store[RESOURCE_ENERGY];

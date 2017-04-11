@@ -195,6 +195,7 @@ var Cli = {
                 workRooms: [ room, ],
                 task: C.ATTACK,
                 priority: 40,
+                managed: true,
                 creepLimit: limit,
             };
 
