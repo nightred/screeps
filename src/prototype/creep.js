@@ -21,11 +21,11 @@ Creep.prototype.manageState = function() {
         return false;
     }
 
-    if (this.memory.working && this.isEnergyEmpty()) {
+    if (this.memory.working && this.isEmpty()) {
         this.memory.working = false;
         return true;
     }
-    if (!this.memory.working && this.isEnergyFull()) {
+    if (!this.memory.working && this.isFull()) {
         this.memory.working = true;
         return true;
     }
@@ -43,12 +43,12 @@ Creep.prototype.toggleState = function() {
     return true;
 }
 
-Creep.prototype.isEnergyEmpty = function() {
-    return this.carry.energy == 0;
+Creep.prototype.isEmpty = function() {
+    return _.sum(this.carry) == 0;
 }
 
-Creep.prototype.isEnergyFull = function() {
-    return this.carry.energy == this.carryCapacity;
+Creep.prototype.isFull = function() {
+    return _.sum(this.carry) == this.carryCapacity;
 }
 
 Creep.prototype.isCarryingEnergy = function() {

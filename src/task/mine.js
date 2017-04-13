@@ -57,7 +57,7 @@ var taskMine = {
             creep.memory.despawn != true
             ).length;
         if (count < task.creepLimit) {
-            if (!Game.Queue.spawn.isQueued({ room: task.spawnRoom, role: C.MINER, })) {
+            if (!Game.Queue.spawn.isQueued({ room: task.spawnRoom, role: C.MINER, workId: task.id, })) {
                 let record = {
                     rooms: [ task.spawnRoom, ],
                     role: C.MINER,

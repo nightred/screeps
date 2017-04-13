@@ -77,13 +77,14 @@ var taskDirectorResupply = {
                 creep.memory.despawn != true
                 ).length;
             if (count < task.creepLimit) {
-                if (!Game.Queue.spawn.isQueued({ room: task.spawnRoom, role: C.RESUPPLY, })) {
+                if (!Game.Queue.spawn.isQueued({ room: task.spawnRoom, role: C.RESUPPLY, workId: task.id, })) {
                     let record = {
                         rooms: [ task.spawnRoom, ],
                         role: C.RESUPPLY,
                         priority: 10,
                         creepArgs: {
                             workRooms: task.workRooms,
+                            workId: task.id,
                         },
                     };
                     if (task.minSize) { record.minSize = task.minSize; }

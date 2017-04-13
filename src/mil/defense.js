@@ -7,7 +7,9 @@
  */
 
 var Defense = function() {
-    this.status = 'clear';
+    Memory.world.mil = Memory.world.mil || {}
+    Memory.world.mil.allies = Memory.world.mil.allies || {}
+    this.memory = Memory.world.mil;
 };
 
 Defense.prototype.manage = function(room) {
@@ -21,6 +23,9 @@ Defense.prototype.manage = function(room) {
 
     let targets = room.getHostiles();
     if (targets.length <= 0) { return true; }
+    for (let i = 0; i < targets.length; i++) {
+        //
+    }
     if (Game.Queue.work.isQueued({ task: C.DEFENSE, room: room.name, })) {
         return true;
     }

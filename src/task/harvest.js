@@ -1,7 +1,7 @@
 /*
- * task Upgrade
+ * task Harvest
  *
- * upgrade task upgrades the room controller
+ * harvest task harvestest the minerals from the extractor in the room
  *
  */
 
@@ -54,26 +54,6 @@ var taskUpgrade = {
             return true;
         }
 
-        // set size limits
-        switch (room.controller.level) {
-            case 1:
-            case 2:
-                task.minSize = task.minSize < 200 ? 200 : task.minSize;
-                break;
-            case 3:
-                task.minSize = task.minSize < 300 ? 300 : task.minSize;
-                break;
-            case 4:
-            case 5:
-                task.minSize = task.minSize < 400 ? 400 : task.minSize;
-                break;
-            case 6:
-            case 7:
-            case 8:
-                task.minSize = task.minSize < 600 ? 600 : task.minSize;
-                break;
-        }
-
         // set spawn limits
         task.creepLimit = task.creepLimit < 1 ? 1 : task.creepLimit;
         if (room.storage && room.controller.level < 8) {
@@ -101,17 +81,16 @@ var taskUpgrade = {
             creep.memory.despawn != true
             ).length;
         if (count < task.creepLimit) {
-            if (!Game.Queue.spawn.isQueued({ room: task.spawnRoom, role: C.UPGRADER, workId: task.id, })) {
+            if (!Game.Queue.spawn.isQueued({ room: task.spawnRoom, role: C.HARVESTER, })) {
                 let record = {
                     rooms: [ task.spawnRoom, ],
-                    role: C.UPGRADER,
+                    role: C.HARVESTER,
                     priority: 60,
                     creepArgs: {
                         workRooms: task.workRooms,
                         workId: task.id,
                     },
                 };
-                if (task.minSize) { record.minSize = task.minSize; }
                 Game.Queue.spawn.addRecord(record);
             }
         }

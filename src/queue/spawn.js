@@ -104,7 +104,11 @@ SpawnQueue.prototype.doSpawn = function(room) {
                 energy -= this.getBodyCost(body);
                 records[r].spawned = true;
                 records[r].name = name;
-                if (C.DEBUG >= 1) { console.log('INFO - spawning name: ' + name + ', role: ' + records[r].role + ', parts: ' + Game.creeps[name].body.length + ', room: <p style=\"display:inline; color: #ed4543\"><a href=\"#!/room/' + room.name + '\">' + room.name + '</a></p>'); }
+                if (C.DEBUG >= 1) { console.log('INFO - spawning' +
+                ' room: <p style=\"display:inline; color: #ed4543\"><a href=\"#!/room/' + room.name + '\">' + room.name + '</a></p>' +
+                ', role: ' + records[r].role +
+                ', parts: ' + Game.creeps[name].body.length +
+                ', name: ' + name); }
                 break;
             }
         }
@@ -142,6 +146,8 @@ SpawnQueue.prototype.isQueued = function(args) {
 
     return _.filter(this.getQueue(), record =>
         (!args.role || record.role == args.role) &&
+        (!args.workId || record.creepArgs.workId == args.workId) &&
+        (!args.directorId || record.creepArgs.directorId == args.workId) &&
         (!args.room || record.rooms.indexOf(args.room) >= 0)
     ).length > 0 ? true : false;
 };

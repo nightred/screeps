@@ -10,6 +10,8 @@ var Defense = require('mil.defense');
 var Mil = function() {
     this.defense = new Defense;
 
+    Memory.world.mil = Memory.world.mil || {}
+    this.memory = Memory.world.mil;
 };
 
 Mil.prototype.spawnMilitia = function(room) {

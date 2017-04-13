@@ -60,17 +60,16 @@ var roleController = {
         let body = [];
         switch (args.style) {
             case 'reserve':
-                energy -= 200;
-                body = [MOVE,MOVE,MOVE,MOVE];
-                let claim = Math.floor(energy / 600);
+                let claim = Math.floor(energy / 650);
                 claim = claim < 1 ? 1 : claim;
-                claim = claim > 4 ? 4 : claim;
+                claim = claim > 5 ? 5 : claim;
                 for (let i = 0; i < claim; i++) {
                     body.push(CLAIM);
+                    body.push(MOVE);
                 }
                 break;
             default:
-                body = [MOVE,MOVE,MOVE,MOVE,CLAIM];
+                body = [MOVE,CLAIM];
         }
 
         return body;

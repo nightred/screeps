@@ -80,7 +80,7 @@ var taskReserve = {
             return true;
         }
 
-        if (!Game.Queue.spawn.isQueued({ room: task.spawnRoom, role: C.CONTROLLER, })) {
+        if (!Game.Queue.spawn.isQueued({ room: task.spawnRoom, role: C.CONTROLLER, workId: task.id, })) {
             let record = {
                 rooms: [ task.spawnRoom, ],
                 role: C.CONTROLLER,

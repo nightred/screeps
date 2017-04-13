@@ -64,7 +64,7 @@ var manageTower = {
         if (tower.room.storage) {
             let energyStorage = tower.room.storage.store[RESOURCE_ENERGY];
             if (energyStorage < 200000) {
-                mod = 0;
+                mod = 1;
             } else if (energyStorage < 400000) {
                 mod = 5;
             } else if (energyStorage < 800000) {

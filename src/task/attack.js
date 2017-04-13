@@ -107,7 +107,7 @@ var taskAttack = {
         let flag = Game.flags[task.id + '_target'];
         if (flag) {
             let newTarget = flag.pos.getStructure();
-            if (newTarget.StructureType) {
+            if (newTarget.structureType) {
                 creep.memory.targetId = newTarget.id;
             }
         }
