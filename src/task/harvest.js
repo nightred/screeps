@@ -81,7 +81,7 @@ var taskUpgrade = {
             creep.memory.despawn != true
             ).length;
         if (count < task.creepLimit) {
-            if (!Game.Queue.spawn.isQueued({ room: task.spawnRoom, role: C.HARVESTER, })) {
+            if (!Game.Queue.spawn.isQueued({ workId: task.id, role: C.HARVESTER, })) {
                 let record = {
                     rooms: [ task.spawnRoom, ],
                     role: C.HARVESTER,

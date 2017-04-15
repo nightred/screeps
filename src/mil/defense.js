@@ -15,6 +15,13 @@ var Defense = function() {
 Defense.prototype.manage = function(room) {
     if (!room) { return -1; }
 
+    if (room.controller &&
+        ((!room.controller.my && room.controller.owner) ||
+        (room.controller.reservation &&
+        !room.controller.reservation.username == C.USERNAME))) {
+        return true;
+    }
+
     room.memory.findTickDefense = room.memory.findTickDefense || 0;
     if ((room.memory.findTickDefense + C.FIND_WAIT_TICKS) > Game.time) {
         return true;

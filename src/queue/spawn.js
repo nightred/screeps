@@ -147,7 +147,7 @@ SpawnQueue.prototype.isQueued = function(args) {
     return _.filter(this.getQueue(), record =>
         (!args.role || record.role == args.role) &&
         (!args.workId || record.creepArgs.workId == args.workId) &&
-        (!args.directorId || record.creepArgs.directorId == args.workId) &&
+        (!args.directorId || record.creepArgs.directorId == args.directorId) &&
         (!args.room || record.rooms.indexOf(args.room) >= 0)
     ).length > 0 ? true : false;
 };

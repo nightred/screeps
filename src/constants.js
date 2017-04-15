@@ -12,6 +12,8 @@
 
 var Constant = {};
 
+Constant.USERNAME                       = 'nightred';
+
 // debug = 0 off, 1 info, 2 debug, 3 verbose
 Constant.DEBUG                          = 2;
 Constant.SIM                            = false;

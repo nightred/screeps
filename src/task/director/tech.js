@@ -86,7 +86,7 @@ var taskDirectorTech = {
             creep.memory.despawn != true
             ).length;
         if (count < task.creepLimit) {
-            if (!Game.Queue.spawn.isQueued({ room: task.spawnRoom, role: C.TECH, directorId: task.id, })) {
+            if (!Game.Queue.spawn.isQueued({ role: C.TECH, directorId: task.id, })) {
                 let record = {
                     rooms: [ task.spawnRoom, ],
                     role: C.TECH,
