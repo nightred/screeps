@@ -131,12 +131,9 @@ Room.prototype.findSpawn = function() {
 
 Room.prototype.getSpawns = function() {
     let targets = this.find(FIND_MY_SPAWNS);
+    if (targets.length <= 0) { return false; }
 
-    if (targets.length > 0) {
-        return targets;
-    }
-
-    return false;
+    return targets;
 };
 
 Room.prototype.getHostileSpawns = function() {

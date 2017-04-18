@@ -22,18 +22,13 @@ manageRooms.prototype.doManage = function() {
         let room = Game.rooms[name];
         this.doContainers(room);
         this.doTowers(room);
-        if (room.controller &&
-            (room.controller.my ||
-            (room.controller.reservation &&
-            room.controller.reservation.username == 'nightred'))) {
-            Game.Mil.defense.manage(room)
-        }
+        Game.Mil.defense.doRoom(room);
         if (room.controller && room.controller.my) {
-            this.link.manage(room);
-            Game.Mil.spawnMilitia(room);
+            this.link.doRoom(room);
+            Game.Mil.doRoom(room);
             Game.Queue.work.doTaskFind(room);
             Game.Queue.spawn.doSpawn(room);
-            this.tower.run(room);
+            this.tower.doRoom(room);
         }
     }
 

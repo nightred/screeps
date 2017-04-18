@@ -14,6 +14,14 @@ var Mil = function() {
     this.memory = Memory.world.mil;
 };
 
+Mil.prototype.doRoom = function(room) {
+    if (!room) { return -1; }
+
+    this.spawnMilitia(room);
+
+    return true;
+};
+
 Mil.prototype.spawnMilitia = function(room) {
     if (!room) { return -1; }
 
