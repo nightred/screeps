@@ -56,6 +56,7 @@ Defense.prototype.doDefenseMode = function(room) {
         creepLimit: 1,
     };
     Game.Queue.work.addRecord(record);
+    if (C.DEBUG >= 1) { console.log('INFO - defense mode activated in room: <p style=\"display:inline; color: #ed4543\"><a href=\"#!/room/' + room.name + '\">' + room.name + '</a></p>'); }
 
     return true;
 };
@@ -66,7 +67,7 @@ Defense.prototype.doSafeMode = function(room) {
     let spawns = room.getSpawns();
     if (spawns.length <= 0) { return false; }
 
-    let alert = falsel
+    let alert = false;
     for (let i = 0; i < spawns.length; i++) {
         if (spawns[i].hits < (spawns[i].hitsMax / 2)) {
             alert = true;
