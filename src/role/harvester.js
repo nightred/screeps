@@ -50,9 +50,16 @@ var roleHarvester = {
                 if (C.DEBUG >= 2) { console.log('DEBUG - do work failed for role: ' + creep.memory.role + ', name: ' + creep.name); }
             }
         } else {
-            let emptyTargets = ['storage'];
+            let emptyTargets = [
+                'containerIn',
+                'storage',
+            ];
+            let mineral = Game.getObjectById(creep.memory.mineralId);
+            if (!creep.memory.goingTo && mineral) {
+                creep.memory.goingTo = mineral.getLocalContainer();
+            }
 
-            if (!creep.doEmpty(emptyTargets)) {
+            if (!creep.doEmptyMineral(emptyTargets)) {
                 if (C.DEBUG >= 2) { console.log('DEBUG - do empty failed for role: ' + creep.memory.role + ', name: ' + creep.name); }
             }
         }
@@ -72,7 +79,7 @@ var roleHarvester = {
 
         let body = [];
         let workUnits = 1;
-        let moveUnits = 2;
+        let moveUnits = 1;
         let carryUnits = 1;
         let extrasCost = 0;
 

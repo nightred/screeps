@@ -45,21 +45,20 @@ var roleMiner = {
             }
         }
 
-        let energyTargets = [
-            'linkIn',
-            'containerIn',
-            'spawn',
-            'extention',
-            'container',
-            'containerOut',
-            'storage',
-        ];
-
         if (!creep.memory.working || creep.memory.style == 'drop') {
             if (!creep.doWork()) {
                 if (C.DEBUG >= 2) { console.log('DEBUG - do work failed for role: ' + creep.memory.role + ', name: ' + creep.name); }
             }
         } else {
+            let energyTargets = [
+                'linkIn',
+                'containerIn',
+                'spawn',
+                'extention',
+                'container',
+                'containerOut',
+                'storage',
+            ];
             let source = Game.getObjectById(creep.memory.harvestTarget);
             if (!creep.memory.goingTo && source) {
                 creep.memory.goingTo = source.getLocalContainer();
@@ -90,34 +89,28 @@ var roleMiner = {
         let extrasCost = 0;
         switch (args.style) {
             case 'drop':
-                energy -= 50;
-                moveUnits = 1;
-
-                workUnits = Math.floor(energy / 100);
+                workUnits = Math.floor(energy / 150);
                 workUnits = workUnits < 1 ? 1 : workUnits;
                 workUnits = workUnits > 6 ? 6 : workUnits;
+                moveUnits = workUnits;
                 break;
             case 'ranged':
                 energy -= 50;
                 body.push(CARRY);
 
-                workUnits = Math.floor((energy * 0.8) / 100);
+                workUnits = Math.floor(energy / 150);
                 workUnits = workUnits < 1 ? 1 : workUnits;
                 workUnits = workUnits > 6 ? 6 : workUnits;
-                energy -= (100 * workUnits);
-
-                moveUnits = Math.floor(energy / 50);
-                moveUnits = moveUnits < 1 ? 1 : moveUnits;
-                moveUnits = moveUnits > 4 ? 4 : moveUnits;
+                moveUnits = workUnits;
                 break;
             default:
-                energy -= 100;
-                moveUnits = 1;
+                energy -= 50;
                 body.push(CARRY);
 
-                workUnits = Math.floor(energy / 100);
+                workUnits = Math.floor(energy / 150);
                 workUnits = workUnits < 1 ? 1 : workUnits;
                 workUnits = workUnits > 6 ? 6 : workUnits;
+                moveUnits = workUnits;
         }
         for (let i = 0; i < moveUnits; i++) {
             body.push(MOVE);

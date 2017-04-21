@@ -9,6 +9,7 @@
 require('prototype.memory');
 require('prototype.creep');
 require('prototype.source');
+require('prototype.mineral');
 require('prototype.room');
 require('prototype.structureContainer');
 require('prototype.roomPosition');
@@ -24,8 +25,6 @@ var Manage          = require('manage');
 var Mil             = require('mil');
 
 module.exports.loop = function () {
-    Memory.world = Memory.world || {};
-
     Game.Stats          = new Stats;
     Game.Queue          = new Queue;
     Game.Manage         = new Manage;

@@ -25,8 +25,25 @@ var taskUpgrade = {
             return true;
         }
 
-        if (creep.upgradeController(creep.room.controller) == ERR_NOT_IN_RANGE) {
-            creep.goto(creep.room.controller, { range: 3, reusePath: 20, maxRooms: 1, });
+        let extractor = Game.getObjectById(creep.extractorId);
+        if (!extractor) {
+            if (C.DEBUG >= 3) { console.log('VERBOSE - extractor missing in room: ' + creep.room.name + ', creep: ' + creep.name); }
+            creep.setDespawn();
+            return false;
+        }
+        if (extractor.cooldown > 0) {
+            return true;
+        }
+
+        let mineral = Game.getObjectById(creep.mineralId);
+        if (!mineral) {
+            if (C.DEBUG >= 3) { console.log('VERBOSE - mineral missing in room: ' + creep.room.name + ', creep: ' + creep.name); }
+            creep.setDespawn();
+            return false;
+        }
+
+        if (creep.harvest(mineral) == ERR_NOT_IN_RANGE) {
+            creep.goto(mineral, { range: 1, reusePath: 30, maxRooms: 1, ignoreCreeps: true, });
         }
 
         return true;
@@ -54,26 +71,33 @@ var taskUpgrade = {
             return true;
         }
 
-        // set spawn limits
-        task.creepLimit = task.creepLimit < 1 ? 1 : task.creepLimit;
-        if (room.storage && room.controller.level < 8) {
-            if (room.storage.store[RESOURCE_ENERGY] < 100000 ) {
-                task.creepLimit = task.creepLimit != 1 ? 1 : task.creepLimit;
-            } else if (room.storage.store[RESOURCE_ENERGY] < 300000 ) {
-                task.creepLimit = task.creepLimit != 2 ? 2 : task.creepLimit;
-            } else if (room.storage.store[RESOURCE_ENERGY] < 500000 ) {
-                task.creepLimit = task.creepLimit != 3 ? 3 : task.creepLimit;
-            } else if (room.storage.store[RESOURCE_ENERGY] < 800000 ) {
-                task.creepLimit = task.creepLimit != 4 ? 4 : task.creepLimit;
+        if (!task.mineralId) {
+            let minerals = room.getMinerals();
+            if (minerals.length > 0) {
+                task.mineralId = task.mineralId != minerals[0].id ? minerals[0].id : task.mineralId;
             } else {
-                task.creepLimit = task.creepLimit != 5 ? 5 : task.creepLimit;
+                task.mineralId = task.mineralId ? false : task.mineralId;
+                return true;
             }
-        } else if (room.controller.level == 8 ) {
-            task.creepLimit = task.creepLimit != 1 ? 1 : task.creepLimit;
-        } else {
-            task.creepLimit = task.creepLimit < 2 ? 2 : task.creepLimit;
         }
-        if (C.SIM) { task.creepLimit = 1 };
+
+        if (task.extractorId) {
+            if (!Game.getObjectById(task.extractorId)) {
+                task.creepLimit = 0;
+                task.extractorId = false;
+                return true;
+            }
+        } else {
+            let extractors = room.getExtractors();
+            if (extractors.length > 0) {
+                task.creepLimit = 1;
+                task.extractorId = extractors[0].id;
+            } else {
+                task.creepLimit = 0;
+                task.extractorId = false;
+                return true;
+            }
+        }
 
         // spawn new creeps if needed
         let count = _.filter(Game.creeps, creep =>
@@ -85,10 +109,12 @@ var taskUpgrade = {
                 let record = {
                     rooms: [ task.spawnRoom, ],
                     role: C.HARVESTER,
-                    priority: 60,
+                    priority: 78,
                     creepArgs: {
                         workRooms: task.workRooms,
                         workId: task.id,
+                        extractorId: task.extractorId,
+                        mineralId: task.mineralId,
                     },
                 };
                 Game.Queue.spawn.addRecord(record);
