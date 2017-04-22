@@ -36,7 +36,7 @@ Queue.prototype.getQueue = function(args) {
 
 Queue.prototype.getId = function() {
     this.memory.queueID = this.memory.queueID || 0;
-    this.memory.queueID = this.memory.queueID < 999999 ? this.memory.queueID : 0;
+    this.memory.queueID = this.memory.queueID < 99999 ? this.memory.queueID : 0;
 
     let newId = this.memory.queueID;
     while (true) {

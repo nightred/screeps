@@ -22,6 +22,7 @@ manageRooms.prototype.doManage = function() {
         let room = Game.rooms[name];
         this.doContainers(room);
         this.doTowers(room);
+        this.doLinks(room);
         Game.Mil.defense.doRoom(room);
         if (room.controller && room.controller.my) {
             this.link.doRoom(room);
@@ -79,6 +80,25 @@ manageRooms.prototype.doTowers = function(room) {
         if (!Game.getObjectById(towerId)) {
             delete room.memory.structureTowers[towerId];
             if (C.DEBUG >= 1) { console.log('INFO - clearing non-existant tower: ' + towerId); }
+        }
+    }
+
+    return true;
+};
+
+manageRooms.prototype.doLinks = function(room) {
+    if (!room) {return false; }
+
+    room.memory.linksMemory = room.memory.linksMemory || 0;
+    if ((room.memory.linksMemory + C.MANAGE_MEMORY_TICKS) > Game.time) {
+        return true;
+    }
+    room.memory.linksMemory = Game.time;
+
+    for (let linkId in room.memory.structureLinks) {
+        if (!Game.getObjectById(linkId)) {
+            delete room.memory.structureLinks[linkId];
+            if (C.DEBUG >= 1) { console.log('INFO - clearing non-existant link: ' + linkId); }
         }
     }
 

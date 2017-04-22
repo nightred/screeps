@@ -88,12 +88,16 @@ WorkQueue.prototype.getWork = function(tasks, name, args) {
     if (!Array.isArray(tasks)) { return -1; }
     args = args || {};
 
-    return _.sortBy(_.filter(this.getQueue(), record =>
-        tasks.indexOf(record.task) >= 0 &&
-        (!args.room || record.workRooms.indexOf(args.room) >= 0) &&
-        record.creeps.indexOf(name) == -1 &&
-        record.creeps.length < record.creepLimit
-    ), record => record.priority);
+    return _.sortBy(
+        _.sortBy(
+            _.filter(this.getQueue(), record =>
+                tasks.indexOf(record.task) >= 0 &&
+                (!args.room || record.workRooms.indexOf(args.room) >= 0) &&
+                record.creeps.indexOf(name) == -1 &&
+                record.creeps.length < record.creepLimit
+            ), record => record.priority
+        ), record => record.tick
+    );
 };
 
 WorkQueue.prototype.addCreep = function(name, id) {

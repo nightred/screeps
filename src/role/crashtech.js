@@ -121,7 +121,7 @@ var roleCrashTech = {
         if (!creep.memory.harvestTarget) {
             let sources = creep.room.getSources();
             if (sources.length <= 0) { return true; }
-            sources = _.sortBy(sources, object => creep.pos.getRangeTo(object.pos));
+            sources = _.sortBy(sources, source => source.energy).reverse();
             creep.memory.harvestTarget = sources[0].id;
         }
 

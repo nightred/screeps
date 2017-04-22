@@ -77,16 +77,16 @@ var roleUpgrader = {
     * @param {Object} args Extra arguments
     **/
     getBody: function(energy, args) {
-        let workUnits = Math.floor((energy - 100) / 100);
+        energy -= 50;
+        let workUnits = Math.floor(energy / 150);
         let body = [];
 
         workUnits = workUnits < 1 ? 1 : workUnits;
         workUnits = workUnits > 10 ? 10 : workUnits;
         for (let i = 0; i < workUnits; i++) {
             body.push(WORK);
+            body.push(MOVE);
         }
-
-        body.push(MOVE);
         body.push(CARRY);
 
         return body;
