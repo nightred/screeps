@@ -58,6 +58,9 @@ var roleLinker = {
                 if (C.DEBUG >= 2) { console.log('DEBUG - do fill energy failed for role: ' + creep.memory.role + ', name: ' + creep.name); }
             }
         }
+        if (creep.memory.idleStart && creep.memory.idleStart == Game.time) {
+            creep.memory.task = false;
+        }
 
         return true;
     },

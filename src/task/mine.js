@@ -115,7 +115,7 @@ var taskMine = {
             if (creep.pos.x == target.pos.x && creep.pos.y == target.pos.y) {
                 creep.memory.atSource = true;
             } else {
-                creep.moveTo(target.pos.x, target.pos.y, { range: 0, reUsePath: 80, maxOps: 4000, ignoreCreeps: true, });
+                creep.moveTo(target.pos.x, target.pos.y, { range: 0, reUsePath: 80, maxOps: 4000, });
                 return true;
             }
         }

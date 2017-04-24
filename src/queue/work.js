@@ -95,8 +95,8 @@ WorkQueue.prototype.getWork = function(tasks, name, args) {
                 (!args.room || record.workRooms.indexOf(args.room) >= 0) &&
                 record.creeps.indexOf(name) == -1 &&
                 record.creeps.length < record.creepLimit
-            ), record => record.priority
-        ), record => record.tick
+            ), record => record.tick
+        ), record => record.priority
     );
 };
 

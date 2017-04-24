@@ -172,6 +172,7 @@ var roleHauler = {
         if (!creep.room.storage) {
             energyOutTargets = [
                 'extention',
+                'spawn',
                 'containerOut',
                 'container',
             ];
