@@ -11,48 +11,7 @@ var WorkQueue = function() {
 
     this.memory = Memory.queues;
     this.queue = Memory.queues.queue;
-
-    this.tasks = {};
-    for (let i = 0; i < C.WORK_TASKS.length; i++) {
-        this.tasks[C.WORK_TASKS[i]] = this.getTask(C.WORK_TASKS[i]);
-    }
-
-};
-
-WorkQueue.prototype.doTask = function(creep) {
-    if (!creep) { return -1; }
-
-    if (!this.queue[creep.memory.workId]) { return false; }
-    let task = this.queue[creep.memory.workId];
-
-    if (task.creeps.length >= task.creepLimit && task.creeps.indexOf(creep.name) < 0) {
-        return false;
-    }
-
-    if (creep.room.name != task.workRooms[0]) {
-        creep.moveToRoom(task.workRooms[0]);
-        return true;
-    } else if (task.creeps.indexOf(creep.name) < 0) {
-        Game.Queue.work.addCreep(creep.name, creep.memory.workId);
-    }
-
-    return this.tasks[task.task].doTask(creep, task);
-}
-
-WorkQueue.prototype.getTask = function(taskName) {
-    if (C.WORK_TASKS.indexOf(taskName) < 0) {
-        if (C.DEBUG >= 2) { console.log('DEBUG - failed to load work task: ' + taskName); }
-        return -1;
-    }
-
-    let task = false;
-    try {
-        task = require('task.' + taskName);
-    } catch(e) {
-        if (C.DEBUG >= 2) { console.log('DEBUG - failed to load work task: ' + taskName + ', error:\n' + e); }
-    }
-
-    return task;
+    this.tasks = Game.Manage.creep.tasks;
 };
 
 WorkQueue.prototype.doManageTasks = function() {

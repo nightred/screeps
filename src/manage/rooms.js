@@ -6,9 +6,9 @@
  */
 
 // managment modules
-var manageTower     = require('manage.tower');
-var EnergyGrid      = require('manage.energyGrid');
-var Link            = require('manage.link');
+var manageTower     = require('manage.room.tower');
+var EnergyGrid      = require('manage.room.energyGrid');
+var Link            = require('manage.room.link');
 
 var manageRooms = function() {
     this.energyGrid     = new EnergyGrid;

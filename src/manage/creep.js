@@ -1,19 +1,80 @@
 /*
- * Creep spawn managment
+ * Creep managment
  *
- * Checks how many creeps are active
- * Spawns new creeps to fill out numbers as needed
- *
- * Priority:
- *  harvester, upgrader, builder, hauler, repairer
- *
+ * This manages the roles and tasks for creeps
  */
 
-// managment modules
-var manageRole      = require('manage.role');
-
 var manageCreep = function() {
-    this.role = manageRole;
+    if (!Memory.queues) { Memory.queues = {}; }
+    if (!Memory.queues.queue) { Memory.queues.queue = {}; }
+    this.queue = Memory.queues.queue;
+
+    this.roles = {};
+    for (let i = 0; i < C.ROLE_TYPES.length; i++) {
+        this.roles[C.ROLE_TYPES[i]] = this.getRole(C.ROLE_TYPES[i]);
+    }
+
+    this.tasks = {};
+    for (let i = 0; i < C.WORK_TASKS.length; i++) {
+        this.tasks[C.WORK_TASKS[i]] = this.getTask(C.WORK_TASKS[i]);
+    }
+};
+
+manageCreep.prototype.doRole = function(creep) {
+    if (!creep) { return false; }
+    if (C.ROLE_TYPES.indexOf(creep.memory.role) < 0) { return false; }
+
+    return this.roles[creep.memory.role].doRole(creep);
+};
+
+WorkQueue.prototype.doTask = function(creep) {
+    if (!creep) { return -1; }
+
+    if (!this.queue[creep.memory.workId]) { return false; }
+    let task = this.queue[creep.memory.workId];
+
+    if (task.creeps.length >= task.creepLimit && task.creeps.indexOf(creep.name) < 0) {
+        return false;
+    }
+
+    if (creep.room.name != task.workRooms[0]) {
+        creep.moveToRoom(task.workRooms[0]);
+        return true;
+    } else if (task.creeps.indexOf(creep.name) < 0) {
+        Game.Queue.work.addCreep(creep.name, creep.memory.workId);
+    }
+
+    return this.tasks[task.task].doTask(creep, task);
+}
+
+manageCreep.prototype.getRole = function(name) {
+    if (C.ROLE_TYPES.indexOf(name) < 0) {
+        if (C.DEBUG >= 2) { console.log('DEBUG - failed to load role: ' + name); }
+        return -1;
+    }
+
+    let role = false;
+    try {
+        role = require('role.' + name);
+    } catch(e) {
+        if (C.DEBUG >= 2) { console.log('DEBUG - failed to load role: ' + name + ', error:\n' + e); }
+    }
+    return role;
+};
+
+WorkQueue.prototype.getTask = function(name) {
+    if (C.WORK_TASKS.indexOf(name) < 0) {
+        if (C.DEBUG >= 2) { console.log('DEBUG - failed to load work task: ' + name); }
+        return -1;
+    }
+
+    let task = false;
+    try {
+        task = require('task.' + name);
+    } catch(e) {
+        if (C.DEBUG >= 2) { console.log('DEBUG - failed to load work task: ' + name + ', error:\n' + e); }
+    }
+    return task;
 };
 
 manageCreep.prototype.cleanCreeps = function() {
@@ -41,7 +102,7 @@ manageCreep.prototype.doManage = function() {
             continue;
         }
 
-        this.role.doRole(creep);
+        this.doRole(creep);
     }
 
 };

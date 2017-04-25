@@ -12,26 +12,7 @@ var SpawnQueue = function() {
     this.memory = Memory.queues;
     this.queue = Memory.queues.queue;
 
-    this.roles = {};
-    for (let i =0; i < C.ROLE_TYPES.length; i++) {
-        this.roles[C.ROLE_TYPES[i]] = this.getRole(C.ROLE_TYPES[i]);
-    }
-};
-
-SpawnQueue.prototype.getRole = function(name) {
-    if (C.ROLE_TYPES.indexOf(name) < 0) {
-        if (C.DEBUG >= 2) { console.log('DEBUG - failed to load role: ' + name); }
-        return -1;
-    }
-
-    let role = false;
-    try {
-        role = require('role.' + name);
-    } catch(e) {
-        if (C.DEBUG >= 2) { console.log('DEBUG - failed to load role: ' + name + ', error:\n' + e); }
-    }
-
-    return role;
+    this.roles = Game.Manage.creep.roles;
 };
 
 SpawnQueue.prototype.cleanQueue = function() {

@@ -24,7 +24,7 @@ Link.prototype.doRoom = function(room) {
         linkStorage = linksStorage[0];
     }
     if (!linkStorage) { return true; }
-        
+
     if (linksStorage.length > 1) {
         if (C.DEBUG >= 2) { console.log('DEBUG - room: ' + room.name + ' has more then one storage link'); }
     }
