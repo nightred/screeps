@@ -11,13 +11,20 @@ var Link = function() {
 
 Link.prototype.doRoom = function(room) {
     if (!room) { return -1; }
+    if (!room.storage) { return true; }
 
     let links = room.getLinks();
     if (links.length <= 0) { return true; }
 
     let linksStorage = _.filter(links, structure => structure.memory.type == 'storage');
-    if (linksStorage.length <= 0) { return true; }
-    let linkStorage = linksStorage[0];
+    let linkStorage = false;
+    if (linksStorage.length <= 0) {
+        linkStorage = Game.getObjectById(room.storage.getLinkAtRange(2));
+    } else {
+        linkStorage = linksStorage[0];
+    }
+    if (!linkStorage) { return true; }
+        
     if (linksStorage.length > 1) {
         if (C.DEBUG >= 2) { console.log('DEBUG - room: ' + room.name + ' has more then one storage link'); }
     }
