@@ -60,7 +60,7 @@ var manageTower = {
         }
         tower.memory.repairTick = Game.time;
 
-        let mod = 0;
+        let mod = 1;
         if (tower.room.storage) {
             let energyStorage = tower.room.storage.store[RESOURCE_ENERGY];
             if (energyStorage < 200000) {
