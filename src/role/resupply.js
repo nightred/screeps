@@ -44,7 +44,7 @@ var roleResupply = {
         }
 
         if ((creep.memory.idleStart + C.CREEP_IDLE_TIME) > Game.time) {
-            if (!creep.isEnergyFull() && creep.collectDroppedEnergy()) {
+            if (!creep.isFull() && creep.collectDroppedEnergy()) {
                 return true;;
             }
             creep.moveToIdlePosition();

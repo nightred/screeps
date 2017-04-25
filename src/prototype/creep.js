@@ -121,7 +121,7 @@ Creep.prototype.getWork = function(tasks, args) {
 
 Creep.prototype.doWork = function() {
     if (!this.memory.workId) { return false; }
-    if (!Game.Queue.work.doTask(this)) {
+    if (!Game.Manage.creep.doTask(this)) {
         this.leaveWork();
     }
     return true;

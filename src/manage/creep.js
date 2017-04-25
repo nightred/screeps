@@ -27,7 +27,7 @@ manageCreep.prototype.doRole = function(creep) {
     return this.roles[creep.memory.role].doRole(creep);
 };
 
-WorkQueue.prototype.doTask = function(creep) {
+manageCreep.prototype.doTask = function(creep) {
     if (!creep) { return -1; }
 
     if (!this.queue[creep.memory.workId]) { return false; }
@@ -62,7 +62,7 @@ manageCreep.prototype.getRole = function(name) {
     return role;
 };
 
-WorkQueue.prototype.getTask = function(name) {
+manageCreep.prototype.getTask = function(name) {
     if (C.WORK_TASKS.indexOf(name) < 0) {
         if (C.DEBUG >= 2) { console.log('DEBUG - failed to load work task: ' + name); }
         return -1;
