@@ -68,7 +68,7 @@ var taskReserve = {
 
         if (!room.controller.reservation || (room.controller.reservation &&
             room.controller.reservation.ticksToEnd < C.CONTROLLER_RESERVE_MIN)) {
-            task.creepLimit = task.creepLimit < 2 ? 2 : task.creepLimit;
+            task.creepLimit = task.creepLimit < 1 ? 1 : task.creepLimit;
         }
 
         // spawn new creeps if needed

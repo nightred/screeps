@@ -15,10 +15,10 @@ var Defense = function() {
 Defense.prototype.doRoom = function(room) {
     if (!room) { return -1; }
 
-    if (room.controller &&
+    if (!room.controller || (room.controller &&
         ((!room.controller.my && room.controller.owner) ||
         (room.controller.reservation &&
-        !room.controller.reservation.username == C.USERNAME))) {
+        !room.controller.reservation.username == C.USERNAME)))) {
         return true;
     }
 
