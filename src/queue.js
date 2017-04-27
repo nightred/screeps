@@ -78,6 +78,12 @@ Queue.prototype.addRecord = function(args) {
 
 Queue.prototype.getRecord = function(id) {
     if (isNaN(id)) { return -1; }
+    if (!this.queue[id]) { return false; }
+    return this.queue[id];
+}
+
+Queue.prototype.print = function(id) {
+    if (isNaN(id)) { return -1; }
     if (!this.queue[id]) {
         console.log('queue record id: ' + id + ', does not exist');
         return false;

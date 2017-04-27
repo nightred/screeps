@@ -20,21 +20,42 @@ Stats.prototype.run = function() {
 Stats.prototype.logEnergy = function() {
     for (let name in Game.rooms) {
         if (!Game.rooms[name] || !Game.rooms[name].controller) { continue; }
-        if (Game.rooms[name].controller.my) {
+        if (Game.rooms[name] && Game.rooms[name].controller.my) {
+            // spawn energy
             this.memory.rooms[name] = this.memory.rooms[name] || {};
             this.memory.rooms[name].energy = this.memory.rooms[name].energy || [];
+            this.memory.rooms[name].energyChange = this.memory.rooms[name].energyChange || [];
             this.memory.rooms[name].storage = this.memory.rooms[name].storage || [];
             if (Game.rooms[name].energyAvailable) {
                 this.memory.rooms[name].energy.push(Game.rooms[name].energyAvailable);
             } else {
                 this.memory.rooms[name].energy.push(0);
             }
+
+            // storage
             if (Game.rooms[name].storage) {
                 this.memory.rooms[name].storage.push(_.sum(Game.rooms[name].storage.store));
             } else {
                 this.memory.rooms[name].storage.push(0);
             }
+
+            // energy change
+            let energy = 0;
+            if (Game.rooms[name].storage) {
+                energy += Game.rooms[name].storage.store[RESOURCE_ENERGY];
+            }
+            if (Game.rooms[name].energyAvailable) {
+                energy += Game.rooms[name].energyAvailable;
+            }
+            LastTickEnergy = this.memory.rooms[name].lastTickEnergy;
+            this.memory.rooms[name].lastTickEnergy = energy;
+            if ((energy - LastTickEnergy) != 0) {
+                this.memory.rooms[name].energyChange.push(energy - LastTickEnergy);
+            }
+
+            // length
             if ( this.memory.rooms[name].energy.length > 100 ) { this.memory.rooms[name].energy.shift(); }
+            if ( this.memory.rooms[name].energyChange.length > 100 ) { this.memory.rooms[name].energyChange.shift(); }
             if ( this.memory.rooms[name].storage.length > 100 ) { this.memory.rooms[name].storage.shift(); }
         } else {
             if (this.memory.rooms[name]) {
@@ -53,6 +74,7 @@ Stats.prototype.visuals = function() {
     if (!C.VISUALS) { return true; }
 
     this.graphCPU();
+    this.graphEnergyChange();
     this.reportEnergy();
     this.reportWork();
 };
@@ -186,12 +208,59 @@ Stats.prototype.reportWork = function() {
 
 };
 
+Stats.prototype.graphEnergyChange = function() {
+    let size = {w: 12, h: 3, t: 45, l: 35, };
+
+    for (let roomName in Game.rooms) {
+        if (!this.memory.rooms[roomName] || !this.memory.rooms[roomName].energyChange) {
+            continue;
+        }
+        let energyChange = this.memory.rooms[roomName].energyChange;
+        let energyMax = Math.floor(Math.max.apply(null, energyChange) + 2);
+        let energyMin = Math.floor(Math.min.apply(null, energyChange) - 2);
+        let step = Math.floor((energyMax - energyMin) / 4);
+        let recCount =  energyChange.length - 1;
+        let rv = new RoomVisual(roomName);
+
+        rv.rect(size.l - 0.1, size.t - 0.1, size.w + 0.2, size.h + 0.2, { fill: 'transparent', stroke: '#8a8a8a', opacity: 0.3, });
+        rv.line(size.l, size.t + (size.h * 0.25), size.l + size.w, size.t + (size.h * 0.25), { color: '#8a8a8a', opacity: 0.3, lineStyle: 'dashed', });
+        rv.line(size.l, size.t + (size.h * 0.50), size.l + size.w, size.t + (size.h * 0.50), { color: '#8a8a8a', opacity: 0.3, lineStyle: 'dashed', });
+        rv.line(size.l, size.t + (size.h * 0.75), size.l + size.w, size.t + (size.h * 0.75), { color: '#8a8a8a', opacity: 0.3, lineStyle: 'dashed', });
+        rv.text("Energy Change Graph", size.l, size.t - 0.5, {color: "#BBBBBB", align: "left", size: 0.45, stroke : '#222222', strokeWidth : 0.15, background: "222222" });
+        rv.text(energyMax, size.l - 0.3, size.t + 0.2, {color: this.getEnergyGraphColor(energyMax), align: "right", size: 0.45, stroke : '#222222', strokeWidth : 0.15, background: "222222" });
+        rv.text(energyMin + (step * 3), size.l - 0.3, size.t + (size.h - (size.h * 0.75)) + 0.2, {color: this.getEnergyGraphColor(energyMin + (step * 3)), align: "right", size: 0.45, stroke : '#222222', strokeWidth : 0.15, background: "222222" });
+        rv.text(energyMin + (step * 2), size.l - 0.3,  size.t + (size.h - (size.h * 0.5)) + 0.2, {color: this.getEnergyGraphColor(energyMin + (step * 2)), align: "right", size: 0.45, stroke : '#222222', strokeWidth : 0.15, background: "222222" });
+        rv.text(energyMin + (step * 1), size.l - 0.3,  size.t + (size.h - (size.h * 0.25)) + 0.2, {color: this.getEnergyGraphColor(energyMin + (step * 1)), align: "right", size: 0.45, stroke : '#222222', strokeWidth : 0.15, background: "222222" });
+        rv.text(energyMin, size.l - 0.3,  size.t + size.h + 0.2, {color: this.getEnergyGraphColor(energyMin), align: "right", size: 0.45, stroke : '#222222', strokeWidth : 0.15, background: "222222" });
+
+        for ( let i = 0; i < energyChange.length; i ++ ) {
+            let energyUsed = energyChange[i];
+            let energyUsedLast = energyChange[i-1];
+
+            if ( i > 0 ) {
+                rv.line(
+                    size.l + ((size.w / recCount) * i),
+                    size.t + ((size.h / (energyMax - energyMin)) * (energyMax - energyUsed)),
+                    size.l + ((size.w / recCount) * (i - 1)),
+                    size.t + ((size.h / (energyMax - energyMin)) * (energyMax - energyUsedLast)),
+                    { color: '#9c9c9c' }
+                );
+            }
+            rv.circle(
+                size.l + ((size.w / recCount) * i),
+                size.t + ((size.h / (energyMax - energyMin)) * (energyMax - energyUsed)),
+                { radius: 0.1, fill: this.getEnergyGraphColor(energyUsed), opacity : 0.5 }
+            );
+        }
+    }
+};
+
 Stats.prototype.graphCPU = function() {
     let cpuMax = Math.floor(Math.max.apply(null, this.memory.cpugraphdata) + 2);
     let cpuMin = Math.floor(Math.min.apply(null, this.memory.cpugraphdata) - 2);
     cpuMin = cpuMin < 0 ? 0 : cpuMin;
     let step = Math.floor((cpuMax - cpuMin) / 4);
-    let size = {w: 22, h: 4, t: 44, l: 2, };
+    let size = {w: 18, h: 4, t: 44, l: 2, };
     let rv = new RoomVisual();
 
     rv.rect(size.l - 0.1, size.t - 0.1, size.w + 0.2, size.h + 0.2, { fill: 'transparent', stroke: '#8a8a8a', opacity: 0.3, });
@@ -227,13 +296,24 @@ Stats.prototype.graphCPU = function() {
 };
 
 Stats.prototype.getCpuGraphColor = function(num) {
-    let col = "#7fff00";
-    col = num > (Game.cpu.limit * 0.4) ? '#6a6aff' : col;
-    col = num > (Game.cpu.limit * 0.7) ? '#ffff00' : col;
-    col = num > (Game.cpu.limit * 0.9) ? '#ff7f00' : col;
-    col = num > (Game.cpu.limit * 0.98) ? '#ff0000' : col;
+    let color = "#7fff00";
+    color = num > (Game.cpu.limit * 0.4) ? '#6a6aff' : color;
+    color = num > (Game.cpu.limit * 0.7) ? '#ffff00' : color;
+    color = num > (Game.cpu.limit * 0.9) ? '#ff7f00' : color;
+    color = num > (Game.cpu.limit * 0.98) ? '#ff0000' : color;
+    return color;
+};
 
-    return col;
+Stats.prototype.getEnergyGraphColor = function(num) {
+    let color = "#99ff66";
+    color = num > 200 ? '#33cc33' : color;
+    color = num > 600 ? '#006600' : color;
+
+    color = num < 0 ? '#ffff00' : color;
+    color = num < -200 ? '#ff9900' : color;
+    color = num < -500 ? '#ff6600' : color;
+    color = num < -1000 ? '#cc0000' : color;
+    return color;
 };
 
 module.exports = Stats

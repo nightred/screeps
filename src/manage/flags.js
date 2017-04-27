@@ -25,7 +25,7 @@ Flags.prototype.doManage = function() {
                 // mil flag
                 break;
             case COLOR_GREEN:
-                // job creation
+                Game.Queue.work.doFlag(flag);
                 break;
         }
     }
