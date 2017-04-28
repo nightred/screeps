@@ -94,7 +94,6 @@ Constant.ROLE_TYPES = [
     ];
 
 Constant.DIRECTOR_ROOM                  = 'director.room';
-Constant.DIRECTOR_REMOTE                = 'director.remote';
 Constant.DIRECTOR_MINE                  = 'director.mine';
 Constant.DIRECTOR_TECH                  = 'director.tech';
 Constant.DIRECTOR_CRASHTECH             = 'director.crashtech';
@@ -102,11 +101,11 @@ Constant.DIRECTOR_HAUL                  = 'director.haul';
 Constant.DIRECTOR_LONGHAUL              = 'director.longhaul';
 Constant.DIRECTOR_RESUPPLY              = 'director.resupply';
 Constant.DIRECTOR_LINKER                = 'director.linker';
+Constant.TOWER_REFILL                   = 'tower.fill';
 Constant.MINE                           = 'mine';
 Constant.HARVEST                        = 'harvest';
 Constant.UPGRADE                        = 'upgrade';
 Constant.RESERVE                        = 'reserve';
-Constant.TOWER_REFILL                   = 'tower.fill';
 Constant.REPAIR                         = 'repair';
 Constant.CONSTRUCTION                   = 'construction';
 Constant.SIGNCONTROLLER                 = 'signcontroller';
@@ -117,7 +116,6 @@ Constant.CLAIM                          = 'claim';
 
 Constant.WORK_TASKS = [
     Constant.DIRECTOR_ROOM,
-    Constant.DIRECTOR_REMOTE,
     Constant.DIRECTOR_MINE,
     Constant.DIRECTOR_TECH,
     Constant.DIRECTOR_CRASHTECH,
@@ -125,10 +123,10 @@ Constant.WORK_TASKS = [
     Constant.DIRECTOR_LONGHAUL,
     Constant.DIRECTOR_LINKER,
     Constant.DIRECTOR_RESUPPLY,
+    Constant.TOWER_REFILL,
     Constant.MINE,
     Constant.UPGRADE,
     Constant.RESERVE,
-    Constant.TOWER_REFILL,
     Constant.REPAIR,
     Constant.CONSTRUCTION,
     Constant.SIGNCONTROLLER,

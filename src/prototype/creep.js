@@ -8,6 +8,7 @@
 Creep.prototype.moveToRoom = function(name) {
     if (!name) { return -1; }
     if (this.room.name == name) { return true; }
+    if (Game.cpu.bucket < 1000) { return true; }
     let target = new RoomPosition(25, 25, name);
     return this.goto(target, { range: 23,  reusePath: 100, ignoreCreeps: true, })
 }

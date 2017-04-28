@@ -83,6 +83,20 @@ var taskScouting = {
         // task creation for the room
     },
 
+    /**
+    * @param {Room} room The room object
+    **/
+    createTask: function(room) {
+        if (!room) { return -1; }
+        let record = {
+            workRooms: [ room.name, ],
+            task: C.SCOUTING,
+            priority: 90,
+            creepLimit: 1,
+        };
+        return Game.Queue.work.addRecord(record);
+    },
+
 };
 
 module.exports = taskScouting;

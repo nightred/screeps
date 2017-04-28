@@ -47,6 +47,17 @@ var taskMine = {
     doTaskManaged: function(task) {
         if (!task) { return -1; }
 
+        if (!task.init) {
+            this.printConfig(task);
+            task.init = 1;
+        }
+
+        if (!task.message) {
+            return true;
+        }
+
+        task.creepLimit = task.creepLimit != 1 ? 1 : task.creepLimit;
+
         return true;
     },
 
@@ -56,6 +67,38 @@ var taskMine = {
     doTaskFind: function(room) {
         if (!room) { return -1; }
         // task creation for the room
+    },
+
+    /**
+    * @param {Room} room The room object
+    **/
+    createTask: function(room) {
+        if (!room) { return -1; }
+        let record = {
+            workRooms: [ room.name, ],
+            task: C.SIGNCONTROLLER,
+            priority: 99,
+            creepLimit: 0,
+            managed: true,
+        };
+        return Game.Queue.work.addRecord(record);
+    },
+
+    /**
+    * @param {Task} task The work task passed from the work Queue
+    **/
+    printConfig: function(task) {
+        if (!task) { return -1; }
+
+        let output = ""
+        output += task.name + " task config, id " + task.id + "\n";
+
+        output += "Game.Queue.queue[" + task.id + "].message = " + task.message + "\n";
+
+        output += "Update the records for operation.";
+
+        Console.log(output);
+        return true;
     },
 
 };

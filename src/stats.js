@@ -49,13 +49,14 @@ Stats.prototype.logEnergy = function() {
             }
             LastTickEnergy = this.memory.rooms[name].lastTickEnergy;
             this.memory.rooms[name].lastTickEnergy = energy;
-            if ((energy - LastTickEnergy) != 0) {
-                this.memory.rooms[name].energyChange.push(energy - LastTickEnergy);
+            let change = (energy - LastTickEnergy) / LastTickEnergy;
+            if (change != 0) {
+                this.memory.rooms[name].energyChange.push(change);
             }
 
             // length
             if ( this.memory.rooms[name].energy.length > 100 ) { this.memory.rooms[name].energy.shift(); }
-            if ( this.memory.rooms[name].energyChange.length > 100 ) { this.memory.rooms[name].energyChange.shift(); }
+            if ( this.memory.rooms[name].energyChange.length > 40 ) { this.memory.rooms[name].energyChange.shift(); }
             if ( this.memory.rooms[name].storage.length > 100 ) { this.memory.rooms[name].storage.shift(); }
         } else {
             if (this.memory.rooms[name]) {
@@ -216,22 +217,22 @@ Stats.prototype.graphEnergyChange = function() {
             continue;
         }
         let energyChange = this.memory.rooms[roomName].energyChange;
-        let energyMax = Math.floor(Math.max.apply(null, energyChange) + 2);
-        let energyMin = Math.floor(Math.min.apply(null, energyChange) - 2);
-        let step = Math.floor((energyMax - energyMin) / 4);
-        let recCount =  energyChange.length - 1;
+        let energyMax = Math.max.apply(null, energyChange) + 0.006;
+        let energyMin = Math.min.apply(null, energyChange) - 0.006;
+        let step = (energyMax - energyMin) / 4;
         let rv = new RoomVisual(roomName);
+        let recCount =  energyChange.length - 1;
 
         rv.rect(size.l - 0.1, size.t - 0.1, size.w + 0.2, size.h + 0.2, { fill: 'transparent', stroke: '#8a8a8a', opacity: 0.3, });
         rv.line(size.l, size.t + (size.h * 0.25), size.l + size.w, size.t + (size.h * 0.25), { color: '#8a8a8a', opacity: 0.3, lineStyle: 'dashed', });
         rv.line(size.l, size.t + (size.h * 0.50), size.l + size.w, size.t + (size.h * 0.50), { color: '#8a8a8a', opacity: 0.3, lineStyle: 'dashed', });
         rv.line(size.l, size.t + (size.h * 0.75), size.l + size.w, size.t + (size.h * 0.75), { color: '#8a8a8a', opacity: 0.3, lineStyle: 'dashed', });
         rv.text("Energy Change Graph", size.l, size.t - 0.5, {color: "#BBBBBB", align: "left", size: 0.45, stroke : '#222222', strokeWidth : 0.15, background: "222222" });
-        rv.text(energyMax, size.l - 0.3, size.t + 0.2, {color: this.getEnergyGraphColor(energyMax), align: "right", size: 0.45, stroke : '#222222', strokeWidth : 0.15, background: "222222" });
-        rv.text(energyMin + (step * 3), size.l - 0.3, size.t + (size.h - (size.h * 0.75)) + 0.2, {color: this.getEnergyGraphColor(energyMin + (step * 3)), align: "right", size: 0.45, stroke : '#222222', strokeWidth : 0.15, background: "222222" });
-        rv.text(energyMin + (step * 2), size.l - 0.3,  size.t + (size.h - (size.h * 0.5)) + 0.2, {color: this.getEnergyGraphColor(energyMin + (step * 2)), align: "right", size: 0.45, stroke : '#222222', strokeWidth : 0.15, background: "222222" });
-        rv.text(energyMin + (step * 1), size.l - 0.3,  size.t + (size.h - (size.h * 0.25)) + 0.2, {color: this.getEnergyGraphColor(energyMin + (step * 1)), align: "right", size: 0.45, stroke : '#222222', strokeWidth : 0.15, background: "222222" });
-        rv.text(energyMin, size.l - 0.3,  size.t + size.h + 0.2, {color: this.getEnergyGraphColor(energyMin), align: "right", size: 0.45, stroke : '#222222', strokeWidth : 0.15, background: "222222" });
+        rv.text((energyMax).toFixed(2), size.l - 0.3, size.t + 0.2, {color: this.getEnergyGraphColor(energyMax), align: "right", size: 0.45, stroke : '#222222', strokeWidth : 0.15, background: "222222" });
+        rv.text((energyMin + (step * 3)).toFixed(2), size.l - 0.3, size.t + (size.h - (size.h * 0.75)) + 0.2, {color: this.getEnergyGraphColor(energyMin + (step * 3)), align: "right", size: 0.45, stroke : '#222222', strokeWidth : 0.15, background: "222222" });
+        rv.text((energyMin + (step * 2)).toFixed(2), size.l - 0.3,  size.t + (size.h - (size.h * 0.5)) + 0.2, {color: this.getEnergyGraphColor(energyMin + (step * 2)), align: "right", size: 0.45, stroke : '#222222', strokeWidth : 0.15, background: "222222" });
+        rv.text((energyMin + (step * 1)).toFixed(2), size.l - 0.3,  size.t + (size.h - (size.h * 0.25)) + 0.2, {color: this.getEnergyGraphColor(energyMin + (step * 1)), align: "right", size: 0.45, stroke : '#222222', strokeWidth : 0.15, background: "222222" });
+        rv.text((energyMin).toFixed(2), size.l - 0.3,  size.t + size.h + 0.2, {color: this.getEnergyGraphColor(energyMin), align: "right", size: 0.45, stroke : '#222222', strokeWidth : 0.15, background: "222222" });
 
         for ( let i = 0; i < energyChange.length; i ++ ) {
             let energyUsed = energyChange[i];
@@ -306,13 +307,12 @@ Stats.prototype.getCpuGraphColor = function(num) {
 
 Stats.prototype.getEnergyGraphColor = function(num) {
     let color = "#99ff66";
-    color = num > 200 ? '#33cc33' : color;
-    color = num > 600 ? '#006600' : color;
-
+    color = num > 0.02 ? '#33cc33' : color;
+    color = num > 0.5 ? '#006600' : color;
     color = num < 0 ? '#ffff00' : color;
-    color = num < -200 ? '#ff9900' : color;
-    color = num < -500 ? '#ff6600' : color;
-    color = num < -1000 ? '#cc0000' : color;
+    color = num < -0.02 ? '#ff9900' : color;
+    color = num < -0.08 ? '#ff6600' : color;
+    color = num < -0.2 ? '#cc0000' : color;
     return color;
 };
 

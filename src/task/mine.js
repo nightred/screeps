@@ -89,6 +89,14 @@ var taskMine = {
         // task creation for the room
     },
 
+    /**
+    * @param {Room} room The room object
+    **/
+    createTask: function(room) {
+        if (!room) { return -1; }
+        return false;
+    },
+
     doHarvest: function(creep) {
         if (!creep) { return -1; }
         let source = Game.getObjectById(creep.memory.harvestTarget);

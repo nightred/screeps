@@ -23,6 +23,11 @@ var taskDirectorResupply = {
     doTaskManaged: function(task) {
         if (!task) { return -1; }
 
+        if (!task.init) {
+            this.printConfig(task);
+            task.init = 1;
+        }
+
         task.manageTick = task.manageTick || 0;
         if ((task.manageTick + C.MANAGE_WAIT_TICKS) > Game.time) {
             return true;
@@ -102,6 +107,32 @@ var taskDirectorResupply = {
     doTaskFind: function(room) {
         if (!room) { return -1; }
         // task creation for the room
+    },
+
+    /**
+    * @param {Room} room The room object
+    **/
+    createTask: function(room) {
+        if (!room) { return -1; }
+        let record = {
+            workRooms: [ room.name, ],
+            spawnRoom: room.name,
+            task: C.DIRECTOR_RESUPPLY,
+            priority: 22,
+            creepLimit: 0,
+            managed: true,
+        };
+        return Game.Queue.work.addRecord(record);
+    },
+
+    /**
+    * @param {Task} task The work task passed from the work Queue
+    **/
+    printConfig: function(task) {
+        if (!task) { return -1; }
+        let output = task.name + " task created, room: " + task.spawnRoom + ", id: " + task.id;
+        Console.log(output);
+        return true;
     },
 
 };

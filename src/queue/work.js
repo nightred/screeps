@@ -41,14 +41,14 @@ WorkQueue.prototype.doTaskFind = function(room, tasks) {
 
 WorkQueue.prototype.doFlag = function(flag) {
     if (!flag) { return -1; }
-    let taskName = flag.name;
-    if (C.WORK_TASKS.indexOf(taskName) < 0) {
-        flag.name += ':error';
-        return false;
-    }
+    if (C.WORK_TASKS.indexOf(flag.name) < 0) { return false; }
+    return Game.Manage.task.createTask(taskName, flag.room);
+};
 
-    flag.name += ':' + Game.Manage.task.createTask(taskName, flag.room);
-    return true;
+WorkQueue.prototype.printConfig = function(id) {
+    if (isNaN(id)) { return -1; }
+    if (!this.queue[id]) { return -1; }
+    return Game.Manage.task.printConfig(this.queue[id]);
 };
 
 WorkQueue.prototype.getQueue = function() {

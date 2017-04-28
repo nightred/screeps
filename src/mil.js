@@ -18,6 +18,8 @@ var Mil = function() {
 Mil.prototype.doRoom = function(room) {
     if (!room) { return -1; }
 
+    if (Game.cpu.bucket < 1000) { return true; }
+
     this.spawnMilitia(room);
 
     return true;

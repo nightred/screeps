@@ -150,7 +150,7 @@ var Cli = {
                 task: C.RESERVE,
                 managed: true,
                 priority: 70,
-                creepLimit: 1,
+                creepLimit: 0,
             };
 
             return Game.Queue.work.addRecord(record);
@@ -319,24 +319,6 @@ var Cli = {
                 spawnRoom: roomName,
                 task: C.DIRECTOR_ROOM,
                 priority: 20,
-                creepLimit: 0,
-                managed: true,
-            };
-
-            return Game.Queue.work.addRecord(record);
-        },
-
-        remoteRoom: function(roomName, spawnRoom) {
-            if (!roomName) {
-                console.log('ERROR - command need the following values: room name');
-                return false;
-            }
-            spawnRoom = spawnRoom || roomName;
-            let record = {
-                workRooms: [ roomName, ],
-                spawnRoom: spawnRoom,
-                task: C.DIRECTOR_REMOTE,
-                priority: 30,
                 creepLimit: 0,
                 managed: true,
             };

@@ -82,6 +82,15 @@ var taskTowerFill = {
 
         return true;
     },
+
+    /**
+    * @param {Room} room The room object
+    **/
+    createTask: function(room) {
+        if (!room) { return -1; }
+        return false;
+    },
+
 };
 
 module.exports = taskTowerFill;

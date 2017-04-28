@@ -98,13 +98,14 @@ var taskDirectorMine = {
     printConfig: function(task) {
         if (!task) { return -1; }
 
-        let output = "config for task " + task.name + " id " + task.id + "\n";
-        output += "Game.Queue.queue[" + task.id + "].spawnRoom = ";
-        if (task.spawnRoom) {
-            output += "'" + task.spawnRoom + "'";
-        } else {
-            output += "'room'\nEnter the room ranme and run the command.";
-        }
+        let output = ""
+        output += task.name + " task config, id " + task.id + "\n";
+
+        output += "Game.Queue.queue[" + task.id + "].workRooms = [" + task.workRooms + "]\n";
+        output += "Game.Queue.queue[" + task.id + "].spawnRoom = '" + task.spawnRoom + "'\n";
+
+        output += "Update the records for operation.";
+
         Console.log(output);
         return true;
     },

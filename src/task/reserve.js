@@ -42,6 +42,15 @@ var taskReserve = {
     doTaskManaged: function(task) {
         if (!task) { return -1; }
 
+        if (!task.init) {
+            this.printConfig(task);
+            task.init = 1;
+        }
+
+        if (!task.spawnRoom) {
+            return true;
+        }
+
         task.manageTick = task.manageTick || 0;
         if ((task.manageTick + C.MANAGE_WAIT_TICKS) > Game.time) {
             return true;
@@ -103,6 +112,38 @@ var taskReserve = {
     doTaskFind: function(room) {
         if (!room) { return -1; }
         // task creation for the room
+    },
+
+    /**
+    * @param {Room} room The room object
+    **/
+    createTask: function(room) {
+        if (!room) { return -1; }
+        let record = {
+            workRooms: [ room.name, ],
+            task: C.RESERVE,
+            priority: 70,
+            creepLimit: 0,
+            managed: true,
+        };
+        return Game.Queue.work.addRecord(record);
+    },
+
+    /**
+    * @param {Task} task The work task passed from the work Queue
+    **/
+    printConfig: function(task) {
+        if (!task) { return -1; }
+
+        let output = ""
+        output += task.name + " task config, id " + task.id + "\n";
+
+        output += "Game.Queue.queue[" + task.id + "].spawnRoom = '" + task.spawnRoom + "'\n";
+
+        output += "Update the records for operation.";
+
+        Console.log(output);
+        return true;
     },
 
 };
