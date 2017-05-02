@@ -1,5 +1,6 @@
 .git/
 .tern-project
+.screeps.json
 package.json
 gruntfile.js
 

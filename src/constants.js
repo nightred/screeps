@@ -63,6 +63,7 @@ Constant.CREEP_FILL_TICKS               = 6;
 
 Constant.QUEUE_WORK                     = 'work';
 Constant.QUEUE_SPAWN                    = 'spawn';
+Constant.QUEUE_MIL                      = 'mil';
 
 Constant.MINER                          = 'miner';
 Constant.HARVESTER                      = 'harvester';

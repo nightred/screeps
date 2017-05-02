@@ -25,6 +25,29 @@ Mil.prototype.doRoom = function(room) {
     return true;
 };
 
+Mil.prototype.doFlag = function(flag) {
+    if (!flag) { return -1; }
+
+    if (!Game.Queue.mil.getSquad(flag.name)) {
+        let record = {
+            squad: flag.name,
+            opRoon: flag.room.name,
+        };
+        Game.Queue.mil.addRecord(record);
+    }
+
+    let squad = Game.Queue.mil.getSquad(flag.name);
+    if (!squad) {
+        return false;
+    }
+
+    squad.opRoom = flag.room.name != squad.opRoom ? flag.room.name : squad.opRoom;
+    squad.opRoomRallyX = flag.pos.x != squad.opRoomRallyX ? flag.pos.x : squad.opRoomRallyX;
+    squad.opRoomRallyY = flag.pos.y != squad.opRoomRallyY ? flag.pos.y : squad.opRoomRallyY;
+
+    return true;
+}
+
 Mil.prototype.spawnMilitia = function(room) {
     if (!room) { return -1; }
 

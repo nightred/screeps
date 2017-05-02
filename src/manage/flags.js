@@ -24,7 +24,7 @@ Flags.prototype.doManage = function() {
         let result = false;
         switch (flag.color) {
             case COLOR_RED:
-                // mil flag
+                Game.Mil.doFlag(flag);
                 break;
             case COLOR_GREEN:
                 result = Game.Queue.work.doFlag(flag);

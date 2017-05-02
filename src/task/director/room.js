@@ -45,7 +45,7 @@ var taskDirectorRoom = {
             return true;
         }
 
-        if (!Game.Queue.work.isQueued({ room: task.workRooms[0], task: C.DIRECTOR_MINE, })) {
+        if (!Game.Queue.getRecord(task.taskDirectorMine)) {
             let record = {
                 workRooms: [ task.workRooms[0], ],
                 spawnRoom: task.spawnRoom,
@@ -54,10 +54,10 @@ var taskDirectorRoom = {
                 creepLimit: 0,
                 managed: true,
             };
-            Game.Queue.work.addRecord(record);
+            task.taskDirectorMine = Game.Queue.work.addRecord(record);
         }
 
-        if (!Game.Queue.work.isQueued({ room: task.workRooms[0], task: C.DIRECTOR_RESUPPLY, })) {
+        if (!Game.Queue.getRecord(task.taskDirectorResupply)) {
             let record = {
                 workRooms: [ task.workRooms[0], ],
                 spawnRoom: task.spawnRoom,
@@ -66,10 +66,10 @@ var taskDirectorRoom = {
                 creepLimit: 0,
                 managed: true,
             };
-            Game.Queue.work.addRecord(record);
+            task.taskDirectorResupply = Game.Queue.work.addRecord(record);
         }
 
-        if (!Game.Queue.work.isQueued({ room: task.workRooms[0], task: C.DIRECTOR_LINKER, })) {
+        if (!Game.Queue.getRecord(task.taskDirectorLinker)) {
             let record = {
                 workRooms: [ task.workRooms[0], ],
                 spawnRoom: task.spawnRoom,
@@ -78,10 +78,10 @@ var taskDirectorRoom = {
                 creepLimit: 0,
                 managed: true,
             };
-            Game.Queue.work.addRecord(record);
+            task.taskDirectorLinker = Game.Queue.work.addRecord(record);
         }
 
-        if (!Game.Queue.work.isQueued({ room: task.workRooms[0], task: C.DIRECTOR_HAUL, })) {
+        if (!Game.Queue.getRecord(task.taskDirectorHaul)) {
             let record = {
                 workRooms: [ task.workRooms[0], ],
                 spawnRoom: task.spawnRoom,
@@ -90,10 +90,10 @@ var taskDirectorRoom = {
                 creepLimit: 0,
                 managed: true,
             };
-            Game.Queue.work.addRecord(record);
+            task.taskDirectorHaul = Game.Queue.work.addRecord(record);
         }
 
-        if (!Game.Queue.work.isQueued({ room: task.workRooms[0], task: C.DIRECTOR_TECH, })) {
+        if (!Game.Queue.getRecord(task.taskDirectorTech)) {
             let record = {
                 workRooms: [ task.workRooms[0], ],
                 spawnRoom: task.spawnRoom,
@@ -102,10 +102,10 @@ var taskDirectorRoom = {
                 creepLimit: 0,
                 managed: true,
             };
-            Game.Queue.work.addRecord(record);
+            task.taskDirectorTech = Game.Queue.work.addRecord(record);
         }
 
-        if (!Game.Queue.work.isQueued({ room: task.workRooms[0], task: C.UPGRADE, })) {
+        if (!Game.Queue.getRecord(task.taskDirectorUpgrade)) {
             let record = {
                 workRooms: [ task.workRooms[0], ],
                 spawnRoom: task.spawnRoom,
@@ -114,7 +114,7 @@ var taskDirectorRoom = {
                 creepLimit: 1,
                 managed: true,
             };
-            Game.Queue.work.addRecord(record);
+            task.taskDirectorUpgrade = Game.Queue.work.addRecord(record);
         }
 
         return true;

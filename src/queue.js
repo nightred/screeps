@@ -9,6 +9,7 @@
 
  var SpawnQueue      = require('queue.spawn');
  var WorkQueue       = require('queue.work');
+ var MilQueue       = require('queue.mil');
 
 var Queue = function() {
     if (!Memory.queues) { Memory.queues = {}; }
@@ -19,6 +20,7 @@ var Queue = function() {
 
     this.spawn  = new SpawnQueue;
     this.work   = new WorkQueue;
+    this.mil    = new MilQueue;
 };
 
 Queue.prototype.run = function() {
