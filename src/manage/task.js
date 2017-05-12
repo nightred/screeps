@@ -60,4 +60,15 @@ manageTask.prototype.getTask = function(name) {
     return task;
 };
 
+manageTask.prototype.cooldown = function(task) {
+    if (!task) { return -1; }
+
+    task.manageTick = task.manageTick || 0;
+    if ((task.manageTick + C.MANAGE_WAIT_TICKS) > Game.time) {
+        return true;
+    }
+    task.manageTick = Game.time;
+    return false;
+};
+
 module.exports = manageTask;

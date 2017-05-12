@@ -28,11 +28,7 @@ var taskDirectorResupply = {
             task.init = 1;
         }
 
-        task.manageTick = task.manageTick || 0;
-        if ((task.manageTick + C.MANAGE_WAIT_TICKS) > Game.time) {
-            return true;
-        }
-        task.manageTick = Game.time;
+        if (Game.Manage.task.cooldown(task)) { return true; }
 
         if (task.workRooms.length <= 0) {
             if (C.DEBUG >= 2) { console.log('DEBUG - missing work rooms on task: ' + task.task + ', id: ' + task.id); }

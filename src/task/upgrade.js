@@ -25,10 +25,17 @@ var taskUpgrade = {
             return true;
         }
 
-        if (creep.upgradeController(creep.room.controller) == ERR_NOT_IN_RANGE) {
-            creep.goto(creep.room.controller, { range: 3, reusePath: 20, maxRooms: 1, });
+        if (!creep.pos.inRangeTo(creep.room.controller, 3)) {
+            let args = {
+                range: 3,
+                reusePath: 30,
+                maxRooms: 1,
+            };
+            creep.goto(creep.room.controller, args);
+            return false;
         }
 
+        creep.upgradeController(creep.room.controller)
         return true;
     },
 
@@ -43,11 +50,7 @@ var taskUpgrade = {
             task.init = 1;
         }
 
-        task.manageTick = task.manageTick || 0;
-        if ((task.manageTick + C.MANAGE_WAIT_TICKS) > Game.time) {
-            return true;
-        }
-        task.manageTick = Game.time;
+        if (Game.Manage.task.cooldown(task)) { return true; }
 
         if (task.workRooms.length <= 0) {
             if (C.DEBUG >= 2) { console.log('DEBUG - missing work rooms on task: ' + task.task + ', id: ' + task.id); }
@@ -95,6 +98,7 @@ var taskUpgrade = {
             }
         } else if (room.controller.level == 8 ) {
             task.creepLimit = task.creepLimit != 1 ? 1 : task.creepLimit;
+            task.rcl8 = task.rcl8 ? task.rcl8 : 1;
         } else {
             task.creepLimit = task.creepLimit < 2 ? 2 : task.creepLimit;
         }
@@ -116,6 +120,7 @@ var taskUpgrade = {
                         workId: task.id,
                     },
                 };
+                if (task.rcl8) { record.style = 'rcl8'; }
                 if (task.minSize) { record.minSize = task.minSize; }
                 Game.Queue.spawn.addRecord(record);
             }

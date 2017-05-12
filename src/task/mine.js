@@ -46,11 +46,7 @@ var taskMine = {
     doTaskManaged: function(task) {
         if (!task) { return -1; }
 
-        task.manageTick = task.manageTick || 0;
-        if ((task.manageTick + C.MANAGE_WAIT_TICKS) > Game.time) {
-            return true;
-        }
-        task.manageTick = Game.time;
+        if (Game.Manage.task.cooldown(task)) { return true; }
 
         let count = _.filter(Game.creeps, creep =>
             creep.memory.workId == task.id &&

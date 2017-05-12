@@ -80,37 +80,36 @@ var roleMiner = {
     getBody: function(energy, args) {
         if (isNaN(energy)) { return -1; }
         args = args || {};
-        if (!args.style) { args.style = 'default'; }
+        args.style = args.style || 'default';
 
         let body = [];
-        let workUnits = 1;
-        let moveUnits = 1;
-        let carryUnits = 1;
+        let workUnits = 0;
+        let moveUnits = 0;
+        let carryUnits = 0;
         let extrasCost = 0;
         switch (args.style) {
             case 'drop':
-                workUnits = Math.floor(energy / 150);
+                workUnits = Math.floor(energy / 125);
                 workUnits = workUnits < 1 ? 1 : workUnits;
                 workUnits = workUnits > 6 ? 6 : workUnits;
-                moveUnits = workUnits;
                 break;
             case 'ranged':
                 energy -= 50;
                 body.push(CARRY);
-
-                workUnits = Math.floor(energy / 150);
+                workUnits = Math.floor(energy / 125);
                 workUnits = workUnits < 1 ? 1 : workUnits;
                 workUnits = workUnits > 6 ? 6 : workUnits;
-                moveUnits = workUnits;
                 break;
             default:
                 energy -= 50;
                 body.push(CARRY);
-
-                workUnits = Math.floor(energy / 150);
+                workUnits = Math.floor(energy / 125);
                 workUnits = workUnits < 1 ? 1 : workUnits;
                 workUnits = workUnits > 6 ? 6 : workUnits;
-                moveUnits = workUnits;
+        }
+        moveUnits = Math.ceil(workUnits / 2);
+        if (moveUnits == Math.floor(workUnits / 2)) {
+            moveUnits += 1;
         }
         for (let i = 0; i < moveUnits; i++) {
             body.push(MOVE);

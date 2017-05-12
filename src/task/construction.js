@@ -28,10 +28,18 @@ var taskConstruction = {
         let target = Game.getObjectById(task.targetId);
         if (!target) { return creep.removeWork(); }
 
-        if (creep.build(target) == ERR_NOT_IN_RANGE) {
-            creep.goto(target, { range: 3, reusePath: 50, ignoreCreeps: true, maxRooms: 1, });
+        if (!creep.pos.inRangeTo(target, 3)) {
+            let args = {
+                range: 3,
+                reusePath: 50,
+                maxRooms: 1,
+                ignoreCreeps: true,
+            };
+            creep.goto(target, args);
+            return false;
         }
 
+        creep.build(target)
         return true;
     },
 
@@ -50,11 +58,7 @@ var taskConstruction = {
     doTaskFind: function(room) {
         if (!room) { return -1; }
 
-        room.memory.findTickConstruction = room.memory.findTickConstruction || 0;
-        if ((room.memory.findTickConstruction + C.FIND_WAIT_TICKS) > Game.time) {
-            return true;
-        }
-        room.memory.findTickConstruction = Game.time;
+        if (Game.Manage.task.cooldown(task)) { return true; }
 
         let targets = room.getConstructionSites();
 

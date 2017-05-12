@@ -10,18 +10,14 @@ Creep.prototype.moveToRoom = function(name) {
     if (this.room.name == name) { return true; }
     if (Game.cpu.bucket < 1000) { return true; }
     let target = new RoomPosition(25, 25, name);
-    return this.goto(target, { range: 23,  reusePath: 100, ignoreCreeps: true, })
+    return this.goto(target, { range: 10,  reusePath: 100, ignoreCreeps: true, })
 }
 
 Creep.prototype.manageState = function() {
     if (this.carryCapacity == 0) {
-        if (this.memory.working != true) {
-            this.memory.working = true;
-            return true;
-        }
+        this.memory.working = this.memory.working != true ? true : this.memory.working;
         return false;
     }
-
     if (this.memory.working && this.isEmpty()) {
         this.memory.working = false;
         return true;
@@ -30,7 +26,6 @@ Creep.prototype.manageState = function() {
         this.memory.working = true;
         return true;
     }
-
     return false;
 }
 
@@ -40,7 +35,6 @@ Creep.prototype.toggleState = function() {
     } else {
         this.memory.working = true;
     }
-
     return true;
 }
 
@@ -62,7 +56,6 @@ Creep.prototype.isDespawnWarning = function() {
         this.memory.role == C.SCOUT) {
         return false;
     }
-
     return this.ticksToLive <= C.CREEP_DESPAWN_TICKS;
 }
 
@@ -113,9 +106,6 @@ Creep.prototype.getWork = function(tasks, args) {
 
     if (!list || list.length <= 0) { return false; }
     let workId = list[0].id;
-
-
-    //if (!Game.Queue.work.addCreep(this.name, workId)) { return false; }
     this.memory.workId = workId;
     return true;
 }
@@ -135,20 +125,17 @@ Creep.prototype.removeWork = function() {
     return true;
 }
 
-Creep.prototype.transferMineral = function(target) {
+Creep.prototype.doTransfer = function(target, resourceType) {
     if (!target) {
         this.memory.goingTo = false;
-        return false;
+        return -1;
+    }
+    if (resourceType && RESOURCES_ALL.indexOf(resourceType) < 0) {
+        this.memory.goingTo = false;
+        return -1;
     }
 
-    let resource = false;
-    for (let k in this.carry) {
-        if (this.carry[k] > 0) {
-            resource = k;
-            break;
-        }
-    }
-    if (this.transfer(target, resource) == ERR_NOT_IN_RANGE) {
+    if (!this.pos.inRangeTo(target, 1)) {
         let args = {
             range: 1,
             reusePath: 20,
@@ -164,16 +151,28 @@ Creep.prototype.transferMineral = function(target) {
         this.memory.goingTo = false;
     }
 
+    if (resourceType) {
+        this.transfer(target, resourceType);
+    } else {
+        for (var resource in target.) {
+            this.transfer(target, resource);
+        }
+    }
+
     return true;
 }
 
-Creep.prototype.transferEnergy = function(target) {
+Creep.prototype.doWithdraw = function(target, resourceType) {
     if (!target) {
         this.memory.goingTo = false;
-        return false;
+        return -1;
+    }
+    if (resourceType && RESOURCES_ALL.indexOf(resourceType) < 0) {
+        this.memory.goingTo = false;
+        return -1;
     }
 
-    if (this.transfer(target, RESOURCE_ENERGY) == ERR_NOT_IN_RANGE) {
+    if (!this.pos.inRangeTo(target, 1)) {
         let args = {
             range: 1,
             reusePath: 20,
@@ -189,33 +188,57 @@ Creep.prototype.transferEnergy = function(target) {
         this.memory.goingTo = false;
     }
 
-    return true;
-}
-
-Creep.prototype.withdrawEnergy = function(target) {
-    if (!target) {
-        this.memory.goingTo = false;
-        return false;
-    }
-
-    if (this.withdraw(target, RESOURCE_ENERGY) == ERR_NOT_IN_RANGE) {
-        let args = {
-            range: 1,
-            reusePath: 20,
-            maxRooms: 1,
-            ignoreCreeps: true,
-        };
-        if (this.memory.role == C.RESUPPLY) {
-            args.ignoreCreeps = false;
-        }
-        this.goto(target, args);
-        return false;
+    if (resourceType) {
+        this.withdraw(target, resourceType);
     } else {
-        this.memory.goingTo = false;
+        if (!target.store) {
+            this.withdraw(target, RESOURCE_ENERGY);
+        } else {
+            for (var resource in target.store) {
+                this.withdraw(target, resource);
+            }
+        }
     }
 
     return true;
 }
+
+Creep.prototype.doEmpty = function(types, resourceType) {
+    if (!Array.isArray(types)) { return -1; }
+    if (resourceType && RESOURCES_ALL.indexOf(resourceType) < 0) {
+        return -1;
+    }
+
+    if (!this.memory.goingTo) {
+        let resourceSum = _.sum(this.carry);
+        if (!this.getEmptyTarget(types, resourceSum)) {
+            this.memory.idleStart = Game.time;
+            this.say('💤');
+            return true;
+        }
+    }
+
+    this.doTransfer(Game.getObjectById(this.memory.goingTo), resourceType);
+    return true;
+};
+
+Creep.prototype.getEmptyTarget = function(types, resourceSum) {
+    if (!Array.isArray(types)) { return -1; }
+    if (isNan(resourceSum)) { return -1; }
+
+    let target = Game.Manage.rooms.storage.getStore(this, resourceSum, types);
+    if (target) {
+        this.setGoingTo(target);
+        return true;
+    }
+
+    if (this.room.name != this.memory.spawnRoom) {
+        this.moveToRoom(this.memory.spawnRoom);
+        return true;
+    }
+
+    return false;
+};
 
 Creep.prototype.setGoingTo = function(target, leaveRoom) {
     leaveRoom = typeof leaveRoom !== 'undefined' ? leaveRoom : false;
@@ -259,21 +282,6 @@ Creep.prototype.goto = function(target, args) {
     }
 
     this.moveTo(target, args);
-};
-
-Creep.prototype.doEmptyMineral = function(types) {
-    if (!Array.isArray(types)) { return -1; }
-
-    if (!this.memory.goingTo) {
-        if (!this.getEmptyEnergyTarget(types)) {
-            this.memory.idleStart = Game.time;
-            this.say('💤');
-            return true;
-        }
-    }
-
-    this.transferMineral(Game.getObjectById(this.memory.goingTo));
-    return true;
 };
 
 Creep.prototype.doEmptyEnergy = function(types) {
