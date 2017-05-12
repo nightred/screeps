@@ -29,10 +29,18 @@ var taskReserve = {
             return creep.removeWork();
         }
 
-        if (creep.reserveController(creep.room.controller) == ERR_NOT_IN_RANGE) {
-            creep.goto(creep.room.controller, { reusePath: 50, range: 1, ignoreCreeps: true, });
+        if (!creep.pos.inRangeTo(creep.room.controller, 1)) {
+            let args = {
+                range: 1,
+                reusePath: 50,
+                maxRooms: 1,
+                ignoreCreeps: true,
+            };
+            creep.goto(creep.room.controller, args);
+            return true;
         }
 
+        creep.reserveController(creep.room.controller);
         return true;
     },
 

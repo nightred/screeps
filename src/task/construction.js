@@ -36,7 +36,7 @@ var taskConstruction = {
                 ignoreCreeps: true,
             };
             creep.goto(target, args);
-            return false;
+            return true;
         }
 
         creep.build(target)

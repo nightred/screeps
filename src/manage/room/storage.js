@@ -1,20 +1,16 @@
 /*
- * Energy Net system
+ * Storage system
  *
- * energy net records the energy needs of a room
- * provides storage and provider locations for energy
+ * storage records the storage locations of a room
+ * provides locations to store or withdraw from
  *
  */
 
  /**
  * create the empty object to store all room energy targets
  **/
-var EnergyGrid = function() {
-    this.tick = this.tick || 0;
-    if (this.tick < Game.time) {
-        this.rooms = {};
-        this.tick = Game.time;
-    }
+var Storage = function() {
+    // Init
 };
 
 /**
@@ -23,9 +19,9 @@ var EnergyGrid = function() {
 * @param {Number} energy The amount of energy
 * @param {Array} types The storage types
 **/
-EnergyGrid.prototype.getStore = function(creep, energy, types) {
+Storage.prototype.getStore = function(creep, amount, types) {
     if (!creep) { return -1; }
-    if (isNaN(energy)) { return -1; }
+    if (isNaN(amount)) { return -1; }
     if(!Array.isArray(types)) { return -1; }
     if (!this.rooms[creep.room.name]) {
         if (!this.buildRoom(creep.room)) { return false; }
@@ -61,7 +57,7 @@ EnergyGrid.prototype.getStore = function(creep, energy, types) {
 * @param {Number} energy The amount of energy
 * @param {Array} types The storage types
 **/
-EnergyGrid.prototype.getWithdraw = function(creep, energy, types) {
+Storage.prototype.getWithdraw = function(creep, energy, types) {
     if (!creep) { return -1; }
     if (isNaN(energy)) { return -1; }
     if(!Array.isArray(types)) { return -1; }
@@ -100,7 +96,7 @@ EnergyGrid.prototype.getWithdraw = function(creep, energy, types) {
 * create a listing of the storage locations for a room
 * @param {Room} room The room to be used
 **/
-EnergyGrid.prototype.buildRoom = function(room) {
+Storage.prototype.buildRoom = function(room) {
     if (!Game.rooms[room.name]) { return false; }
     this.rooms[room.name] = {};
     let energyMap = this.rooms[room.name];
@@ -207,4 +203,4 @@ EnergyGrid.prototype.buildRoom = function(room) {
     return true;
 };
 
-module.exports = EnergyGrid;
+module.exports = Storage;

@@ -32,7 +32,7 @@ var taskUpgrade = {
                 maxRooms: 1,
             };
             creep.goto(creep.room.controller, args);
-            return false;
+            return true;
         }
 
         creep.upgradeController(creep.room.controller)

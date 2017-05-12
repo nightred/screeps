@@ -40,7 +40,7 @@ var taskRepair = {
                 ignoreCreeps: true,
             };
             creep.goto(target, args);
-            return false;
+            return true;
         }
 
         creep.repair(target)

@@ -92,7 +92,6 @@ var roleUpgrader = {
                 workUnits = Math.floor(energy / 125);
                 workUnits = workUnits < 1 ? 1 : workUnits;
                 workUnits = workUnits > 15 ? 15 : workUnits;
-                moveUnits = workUnits;
                 break;
             default:
                 workUnits = Math.floor(energy / 125);

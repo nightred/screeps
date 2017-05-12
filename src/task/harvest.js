@@ -42,10 +42,18 @@ var taskUpgrade = {
             return false;
         }
 
-        if (creep.harvest(mineral) == ERR_NOT_IN_RANGE) {
-            creep.goto(mineral, { range: 1, reusePath: 30, maxRooms: 1, ignoreCreeps: true, });
+        if (!creep.pos.inRangeTo(mineral, 1)) {
+            let args = {
+                range: 1,
+                reusePath: 30,
+                maxRooms: 1,
+                ignoreCreeps: true,
+            };
+            creep.goto(mineral, args);
+            return true;
         }
 
+        creep.harvest(mineral)
         return true;
     },
 

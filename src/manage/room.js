@@ -1,5 +1,5 @@
 /*
- * Rooms managment
+ * Room managment
  *
  * runs proccesses to manage each room
  *
@@ -10,14 +10,14 @@ var manageTower     = require('manage.room.tower');
 var EnergyGrid      = require('manage.room.energyGrid');
 var Link            = require('manage.room.link');
 
-var manageRooms = function() {
+var manageRoom = function() {
     this.energyGrid     = new EnergyGrid;
     this.link           = new Link;
     this.tower          = manageTower;
 };
 
 
-manageRooms.prototype.doManage = function() {
+manageRoom.prototype.doManage = function() {
     for (let name in Game.rooms) {
         let room = Game.rooms[name];
         this.doContainers(room);
@@ -36,7 +36,7 @@ manageRooms.prototype.doManage = function() {
     return true;
 };
 
-manageRooms.prototype.doContainers = function(room) {
+manageRoom.prototype.doContainers = function(room) {
     if (!room) {return false; }
 
     room.memory.containersMemory = room.memory.containersMemory || 0;
@@ -67,7 +67,7 @@ manageRooms.prototype.doContainers = function(room) {
     return true;
 };
 
-manageRooms.prototype.doTowers = function(room) {
+manageRoom.prototype.doTowers = function(room) {
     if (!room) {return false; }
 
     room.memory.towersMemory = room.memory.towersMemory || 0;
@@ -86,7 +86,7 @@ manageRooms.prototype.doTowers = function(room) {
     return true;
 };
 
-manageRooms.prototype.doLinks = function(room) {
+manageRoom.prototype.doLinks = function(room) {
     if (!room) {return false; }
 
     room.memory.linksMemory = room.memory.linksMemory || 0;
@@ -105,4 +105,4 @@ manageRooms.prototype.doLinks = function(room) {
     return true;
 };
 
-module.exports = manageRooms;
+module.exports = manageRoom;
