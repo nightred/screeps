@@ -26,6 +26,7 @@ var roleController = {
     doRole: function(creep) {
         if (!creep) { return false; }
 
+        if (creep.getOffExit()) { return true; }
         if ((creep.memory.idleStart + C.CREEP_IDLE_TIME) > Game.time) {
             creep.moveToIdlePosition();
             return true;

@@ -72,6 +72,10 @@ SpawnQueue.prototype.doSpawn = function(room) {
             minSize += C.ENERGY_CREEP_SPAWN_MIN;
             if (minSize > spawnEnergy) { continue; }
 
+            if (records[r].maxSize && spawnEnergy > records[r].maxSize) {
+                spawnEnergy = records[r].maxSize;
+            }
+
             let args = {};
             args.spawnRoom = room.name;
             if (records[r].creepArgs) {
