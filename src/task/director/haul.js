@@ -45,27 +45,23 @@ var taskDirectorHaul = {
         switch (room.controller.level) {
             case 1:
             case 2:
-                if (task.minSize > 200) {
-                    task.minSize = 200;
-                }
+                task.minSize = task.minSize != 200 ? 200 : task.minSize;
+                task.maxSize = task.maxSize != 300 ? 300 : task.maxSize;
                 break;
             case 3:
-                if (task.minSize < 300) {
-                    task.minSize = 300;
-                }
-                break;
             case 4:
-            case 5:
-                if (task.minSize < 400) {
-                    task.minSize = 400;
-                }
+                task.minSize = task.minSize != 300 ? 300 : task.minSize;
+                task.maxSize = task.maxSize != 400 ? 400 : task.maxSize;
                 break;
+            case 5:
             case 6:
+                task.minSize = task.minSize != 400 ? 400 : task.minSize;
+                task.maxSize = task.maxSize != 500 ? 500 : task.maxSize;
+                break;
             case 7:
             case 8:
-                if (task.minSize < 600) {
-                    task.minSize = 600;
-                }
+                task.minSize = task.minSize != 500 ? 500 : task.minSize;
+                task.maxSize = task.maxSize < 9999 ? 9999 : task.maxSize;
         }
 
         if (_.filter(room.getContainers(), structure =>
@@ -93,6 +89,7 @@ var taskDirectorHaul = {
                         },
                     };
                     if (task.minSize) { record.minSize = task.minSize; }
+                    if (task.maxSize) { record.maxSize = task.maxSize; }
                     Game.Queue.spawn.addRecord(record);
                 }
             }

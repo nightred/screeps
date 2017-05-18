@@ -6,6 +6,7 @@
  */
 
 var Flags = function() {
+    // init
     Memory.flags = Memory.flags || {}
     this.memory = Memory.flags;
 };

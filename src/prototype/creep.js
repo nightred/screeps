@@ -9,8 +9,9 @@ Creep.prototype.moveToRoom = function(name) {
     if (!name) { return -1; }
     if (this.room.name == name) { return true; }
     if (Game.cpu.bucket < 1000) { return true; }
+
     let target = new RoomPosition(25, 25, name);
-    return this.goto(target, { range: 10,  reusePath: 100, ignoreCreeps: true, })
+    return this.goto(target, { range: 10,  reusePath: 50, ignoreCreeps: true, })
 }
 
 Creep.prototype.manageState = function() {
@@ -210,7 +211,15 @@ Creep.prototype.doEmpty = function(types, resourceType) {
     }
 
     if (!this.memory.goingTo) {
-        let resourceSum = _.sum(this.carry);
+        let resourceSum = false;
+        if (resourceType) {
+            resourceSum = this.carry[resourceType];
+        } else {
+            resourceSum = _.sum(this.carry);
+        }
+
+        if (!resourceSum) { return false; }
+
         if (!this.getEmptyTarget(types, resourceSum)) {
             this.memory.idleStart = Game.time;
             this.say('💤');
@@ -226,13 +235,53 @@ Creep.prototype.getEmptyTarget = function(types, resourceSum) {
     if (!Array.isArray(types)) { return -1; }
     if (isNan(resourceSum)) { return -1; }
 
-    let target = Game.Manage.room.storage.getStore(this, resourceSum, types);
-    if (target) {
-        this.setGoingTo(target);
+    let targetId = Game.Manage.room.storage.getStore(this, resourceSum, types);
+    if (targetId) {
+        this.setGoingTo(targetId);
         return true;
     }
 
     if (this.room.name != this.memory.spawnRoom) {
+        this.moveToRoom(this.memory.spawnRoom);
+        return true;
+    }
+
+    return false;
+};
+
+Creep.prototype.doFill = function(types, resourceType) {
+    if (!Array.isArray(types)) { return -1; }
+
+    this.memory.fillTick = this.memory.fillTick || 0;
+    if ((this.memory.fillTick + C.CREEP_FILL_TICKS) < Game.time) {
+        this.memory.goingTo = false;
+    }
+
+    if (!this.memory.goingTo) {
+        if (this.getFillTarget(types, resourceType)) {
+            this.memory.fillTick = Game.time;
+        } else {
+            this.memory.idleStart = Game.time;
+            this.say('💤');
+            return true;
+        }
+    }
+
+    this.doWithdraw(Game.getObjectById(this.memory.goingTo), resourceType);
+    return true;
+};
+
+Creep.prototype.getFillTarget = function(types) {
+    if (!Array.isArray(types)) { return -1; }
+
+    let targetId = Game.Manage.room.energyGrid.getWithdraw(this, (this.carryCapacity - _.sum(this.carry)), types);
+    if (targetId) {
+        this.setGoingTo(target);
+        return true;
+    }
+
+    if (this.room.name != this.memory.spawnRoom &&
+        (this.memory.role != C.HAULER && this.memory.style != 'longhauler')) {
         this.moveToRoom(this.memory.spawnRoom);
         return true;
     }
@@ -247,6 +296,7 @@ Creep.prototype.setGoingTo = function(target, leaveRoom) {
         this.memory.goingTo = false;
         return false;
     }
+
     if (!leaveRoom && (target.pos.x < 1 || target.pos.y < 1 || target.pos.x > 48 || target.pos.y > 48)) {
         this.memory.goingTo = false;
        return false;
@@ -282,83 +332,6 @@ Creep.prototype.goto = function(target, args) {
     }
 
     this.moveTo(target, args);
-};
-
-Creep.prototype.doEmptyEnergy = function(types) {
-    if (!Array.isArray(types)) { return -1; }
-
-    if (!this.memory.goingTo) {
-        if (!this.getEmptyEnergyTarget(types)) {
-            this.memory.idleStart = Game.time;
-            this.say('💤');
-            return true;
-        }
-    }
-
-    this.transferEnergy(Game.getObjectById(this.memory.goingTo));
-    return true;
-};
-
-Creep.prototype.getEmptyEnergyTarget = function(types, args) {
-    if (!Array.isArray(types)) { return -1; }
-    args = args || {};
-    args.setGoingTo = args.setGoingTo || true;
-
-    let target = Game.Manage.room.energyGrid.getStore(this, this.carry[RESOURCE_ENERGY], types);
-    if (target) {
-        if (args.setGoingTo) {
-            this.setGoingTo(target);
-        }
-        return true;
-    }
-    if (this.room.name != this.memory.spawnRoom) {
-        this.moveToRoom(this.memory.spawnRoom);
-        return true;
-    }
-
-    return false;
-};
-
-Creep.prototype.doFillEnergy = function(types) {
-    if (!Array.isArray(types)) { return -1; }
-
-    this.memory.fillTick = this.memory.fillTick || 0;
-    if ((this.memory.fillTick + C.CREEP_FILL_TICKS) < Game.time) {
-        this.memory.goingTo = false;
-    }
-    if (!this.memory.goingTo) {
-        if (this.getFillEnergyTarget(types)) {
-            this.memory.fillTick = Game.time;
-        } else {
-            this.memory.idleStart = Game.time;
-            this.say('💤');
-            return true;
-        }
-    }
-
-    this.withdrawEnergy(Game.getObjectById(this.memory.goingTo));
-    return true;
-};
-
-Creep.prototype.getFillEnergyTarget = function(types, args) {
-    if (!Array.isArray(types)) { return -1; }
-    args = args || {};
-    args.setGoingTo = args.setGoingTo || true;
-
-    let target = Game.Manage.room.energyGrid.getWithdraw(this, (this.carryCapacity - _.sum(this.carry)), types);
-    if (target) {
-        if (args.setGoingTo) {
-            this.setGoingTo(target);
-        }
-        return true;
-    }
-    if (this.room.name != this.memory.spawnRoom &&
-        (this.memory.role != C.HAULER && this.memory.style != 'longhauler')) {
-        this.moveToRoom(this.memory.spawnRoom);
-        return true;
-    }
-
-    return false;
 };
 
 Creep.prototype.collectDroppedEnergy = function () {

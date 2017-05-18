@@ -30,12 +30,14 @@ Storage.prototype.getStore = function(creep, amount, types) {
     let target = false;
     for (let i = 0; i < types.length; i++) {
         if (!this.rooms[creep.room.name][types[i]]) { continue; }
+
         let mod = 1;
         if (types[i] == 'containerOut' ||
             types[i] == 'container'||
             types[i] == 'storage') {
             mod = 0.8;
         }
+
         let targets = _.filter(this.rooms[creep.room.name][types[i]], target =>
             target.store < target.storeMax * mod);
         if (types[i] == 'extention') {

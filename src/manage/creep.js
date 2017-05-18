@@ -5,10 +5,17 @@
  */
 
 var manageCreep = function() {
-    // init
+    Memory.world = Memory.world || {};
+    this.memory = Memory.world;
 };
 
 manageCreep.prototype.cleanCreeps = function() {
+    this.memory.creepCleanUp = this.memory.creepCleanUp || Game.time;
+
+    if ((this.memory.creepCleanUp + C.MANAGE_WAIT_TICKS) > Game.time) {
+        return true;
+    }
+
     for(let name in Memory.creeps) {
         if(!Game.creeps[name]) {
             if (Memory.creeps[name].workId) {
@@ -19,6 +26,7 @@ manageCreep.prototype.cleanCreeps = function() {
         }
     }
 
+    this.memory.creepCleanUp = Game.time;
     return true;
 };
 
