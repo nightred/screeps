@@ -64,7 +64,7 @@ var roleMiner = {
                 creep.memory.goingTo = source.getLocalContainer();
             }
 
-            if (!creep.doEmptyEnergy(energyTargets)) {
+            if (!creep.doEmpty(energyTargets, RESOURCE_ENERGY)) {
                 if (C.DEBUG >= 2) { console.log('DEBUG - do empty energy failed for role: ' + creep.memory.role + ', name: ' + creep.name); }
             }
         }

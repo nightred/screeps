@@ -74,7 +74,7 @@ var roleTech = {
                 creep.moveToRoom(creep.memory.spawnRoom);
                 return true;
             }
-            if (!creep.doFillEnergy(energyTargets)) {
+            if (!creep.doFill(energyTargets, RESOURCE_ENERGY)) {
                 if (C.DEBUG >= 2) { console.log('DEBUG - do fill energy failed for role: ' + creep.memory.role + ', name: ' + creep.name); }
             }
         }

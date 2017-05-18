@@ -141,7 +141,7 @@ var roleHauler = {
                 return true;
             }
 
-            if (!creep.doEmptyEnergy(energyOutTargets)) {
+            if (!creep.doEmpty(energyOutTargets, RESOURCE_ENERGY)) {
                 if (C.DEBUG >= 2) { console.log('DEBUG - do empty energy failed for role: ' + creep.memory.role + ', name: ' + creep.name); }
             }
         } else {
@@ -149,7 +149,7 @@ var roleHauler = {
                 creep.moveToRoom(creep.memory.workRooms[0]);
                 return true;
             }
-            if (!creep.doFillEnergy(energyInTargets)) {
+            if (!creep.doFill(energyInTargets, RESOURCE_ENERGY)) {
                 if (C.DEBUG >= 2) { console.log('DEBUG - do fill energy failed for role: ' + creep.memory.role + ', name: ' + creep.name); }
             }
         }
@@ -180,11 +180,11 @@ var roleHauler = {
 
         // working has energy, else need energy
         if (creep.memory.working) {
-            if (!creep.doEmptyEnergy(energyOutTargets)) {
+            if (!creep.doEmpty(energyOutTargets, RESOURCE_ENERGY)) {
                 if (C.DEBUG >= 2) { console.log('DEBUG - do empty energy failed for role: ' + creep.memory.role + ', name: ' + creep.name); }
             }
         } else {
-            if (!creep.doFillEnergy(energyInTargets)) {
+            if (!creep.doFill(energyInTargets, RESOURCE_ENERGY)) {
                 if (C.DEBUG >= 2) { console.log('DEBUG - do fill energy failed for role: ' + creep.memory.role + ', name: ' + creep.name); }
             }
         }

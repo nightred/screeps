@@ -53,11 +53,11 @@ var roleResupply = {
 
         // working has energy, else need energy
         if (creep.memory.working) {
-            if (!creep.doEmptyEnergy(this.energyOutTargets)) {
+            if (!creep.doEmpty(this.energyOutTargets, RESOURCE_ENERGY)) {
                 if (C.DEBUG >= 2) { console.log('DEBUG - do empty energy failed for role: ' + creep.memory.role + ', name: ' + creep.name); }
             }
         } else {
-            if (!creep.doFillEnergy(this.energyInTargets)) {
+            if (!creep.doFill(this.energyInTargets, RESOURCE_ENERGY)) {
                 if (C.DEBUG >= 2) { console.log('DEBUG - do fill energy failed for role: ' + creep.memory.role + ', name: ' + creep.name); }
             }
         }

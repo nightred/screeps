@@ -63,7 +63,7 @@ var roleUpgrader = {
                 if (C.DEBUG >= 2) { console.log('DEBUG - do work failed for role: ' + creep.memory.role + ', name: ' + creep.name); }
             }
         } else {
-            if (!creep.doFillEnergy(energyTargets)) {
+            if (!creep.doFill(energyTargets, RESOURCE_ENERGY)) {
                 if (C.DEBUG >= 2) { console.log('DEBUG - do fill energy failed for role: ' + creep.memory.role + ', name: ' + creep.name); }
             }
         }
