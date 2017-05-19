@@ -47,7 +47,7 @@ EnergyGrid.prototype.getStore = function(creep, energy, types) {
         }
         targets = _.sortBy(targets, target => target.energy);
         if (targets.length <= 0) { continue; }
-        target = creep.pos.findClosestByPath(targets, {maxOps: 500});
+        target = creep.pos.findClosestByRange(targets);
         if (target) { break; }
     }
     if (!target) { return false; }

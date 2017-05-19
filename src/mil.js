@@ -10,17 +10,6 @@ var Defense = require('mil.defense');
 var Mil = function() {
     this.defense = new Defense;
 
-    Memory.world = Memory.world || {};
-    Memory.world.mil = Memory.world.mil || {}
-    this.memory = Memory.world.mil;
-};
-
-Mil.prototype.doRoom = function(room) {
-    if (!room) { return -1; }
-
-    this.spawnMilitia(room);
-
-    return true;
 };
 
 Mil.prototype.spawnMilitia = function(room) {
@@ -29,9 +18,9 @@ Mil.prototype.spawnMilitia = function(room) {
     let brawlerCount = 0;
     switch (room.controller.level) {
         case 1:
-            break;
         case 2:
         case 3:
+            break;
         case 4:
         case 5:
             brawlerCount = 1;
