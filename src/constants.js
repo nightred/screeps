@@ -65,7 +65,6 @@ Constant.QUEUE_WORK                     = 'work';
 Constant.QUEUE_SPAWN                    = 'spawn';
 
 Constant.MINER                          = 'miner';
-Constant.HARVESTER                      = 'harvester';
 Constant.UPGRADER                       = 'upgrader';
 Constant.TECH                           = 'tech';
 Constant.CRASHTECH                      = 'crashtech';
@@ -103,7 +102,6 @@ Constant.DIRECTOR_LONGHAUL              = 'director.longhaul';
 Constant.DIRECTOR_RESUPPLY              = 'director.resupply';
 Constant.DIRECTOR_LINKER                = 'director.linker';
 Constant.MINE                           = 'mine';
-Constant.HARVEST                        = 'harvest';
 Constant.UPGRADE                        = 'upgrade';
 Constant.RESERVE                        = 'reserve';
 Constant.TOWER_REFILL                   = 'tower.fill';
