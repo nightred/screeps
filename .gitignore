@@ -2,7 +2,6 @@
 .tern-project
 .screeps.json
 package.json
-gruntfile.js
 
 ScreepsAutocomplete/
 node_modules/
