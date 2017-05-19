@@ -23,13 +23,13 @@ manageRoom.prototype.doManage = function() {
         this.doContainers(room);
         this.doTowers(room);
         this.doLinks(room);
-        Game.Mil.defense.doRoom(room);
+        Game.Mil.defense.manage(room);
         if (room.controller && room.controller.my) {
-            this.link.doRoom(room);
-            Game.Mil.doRoom(room);
+            this.link.manage(room);
+            Game.Mil.spawnMilitia(room);
             Game.Queue.work.doTaskFind(room);
             Game.Queue.spawn.doSpawn(room);
-            this.tower.doRoom(room);
+            this.tower.run(room);
         }
     }
 

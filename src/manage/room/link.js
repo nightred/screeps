@@ -9,7 +9,7 @@ var Link = function() {
     // init
 };
 
-Link.prototype.doRoom = function(room) {
+Link.prototype.manage = function(room) {
     if (!room) { return -1; }
     if (!room.storage) { return true; }
 

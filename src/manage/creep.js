@@ -7,6 +7,11 @@
 var manageCreep = function() {
     Memory.world = Memory.world || {};
     this.memory = Memory.world;
+<<<<<<< HEAD
+=======
+
+    this.role = manageRole;
+>>>>>>> master
 };
 
 manageCreep.prototype.cleanCreeps = function() {

@@ -110,18 +110,19 @@ var taskUpgrade = {
             creep.memory.despawn != true
             ).length;
         if (count < task.creepLimit) {
-            if (!Game.Queue.spawn.isQueued({ role: C.UPGRADER, workId: task.id, })) {
+            if (!Game.Queue.spawn.isQueued({ role: C.UPGRADER, workId: task.workId, })) {
                 let record = {
                     rooms: [ task.spawnRoom, ],
                     role: C.UPGRADER,
                     priority: 60,
                     creepArgs: {
                         workRooms: task.workRooms,
-                        workId: task.id,
+                        workId: task.workId,
                     },
                 };
                 if (task.rcl8) { record.style = 'rcl8'; }
                 if (task.minSize) { record.minSize = task.minSize; }
+                if (task.rcl8) { record.style = 'rcl8'; }
                 Game.Queue.spawn.addRecord(record);
             }
         }

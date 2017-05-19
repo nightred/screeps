@@ -75,8 +75,8 @@ Stats.prototype.visuals = function() {
     if (!C.VISUALS) { return true; }
 
     this.graphCPU();
-    this.graphEnergyChange();
-    this.reportEnergy();
+    //this.graphEnergyChange();
+    //this.reportEnergy();
     this.reportWork();
 };
 

@@ -115,6 +115,8 @@ var roleHauler = {
     doLongHaul: function(creep) {
         if (!creep) { return false; }
 
+        if (Game.cpu.bucket < 500) { return true; }
+
         let energyOutTargets = [
             'storage',
             'spawn',

@@ -7,7 +7,7 @@
 
 var manageTower = {
 
-    doRoom: function(room)  {
+    run: function(room)  {
         var towers = room.getTowers();
 
         if (towers.length > 0) {
@@ -98,7 +98,7 @@ var manageTower = {
 
         if (targets.length == 0) { return false; }
         targets = _.sortBy(targets, structure =>
-            (tower.pos.getRangeTo(structure) + 1) * (structure.hits / structure.hitsMax));
+            (tower.pos.getRangeTo(structure) + 1) * (structure.hits / 300000000));
 
         tower.repair(targets[0]);
 

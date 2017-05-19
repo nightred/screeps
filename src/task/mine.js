@@ -112,6 +112,7 @@ var taskMine = {
             if (C.DEBUG >= 3) { console.log('VERBOSE - drop container missing in room: ' + creep.room.name + ', creep: ' + creep.name); }
             source.clearContainer();
             creep.setDespawn();
+
             return false;
         }
 

@@ -5,7 +5,6 @@
  *
  */
 
-// Find wrappers
 Room.prototype.getHostileConstructionSites = function() {
     return this.find(FIND_HOSTILE_CONSTRUCTION_SITES);
 };
@@ -18,16 +17,16 @@ Room.prototype.getSources = function() {
     return this.find(FIND_SOURCES);
 };
 
-Room.prototype.getMinerals = function() {
-    return this.find(FIND_MINERALS);
+Room.prototype.getLinks = function() {
+    return this.find(FIND_MY_STRUCTURES, {
+        filter: (structure) => {
+            return structure.structureType == STRUCTURE_LINK;
+        }
+    });
 };
 
 Room.prototype.getStructures = function() {
     return this.find(FIND_STRUCTURES);
-};
-
-Room.prototype.getMyStructures = function() {
-    return this.find(FIND_MY_STRUCTURES);
 };
 
 Room.prototype.getCreeps = function() {
@@ -46,41 +45,6 @@ Room.prototype.getFlags = function() {
     return this.find(FIND_FLAGS);
 };
 
-Room.prototype.getSpawns = function() {
-    return this.find(FIND_MY_SPAWNS);
-};
-
-Room.prototype.getHostileSpawns = function() {
-    return this.find(FIND_HOSTILE_SPAWNS);
-};
-
-// find exact structures using native cache
-Room.prototype.getLinks = function() {
-    return _.filter(this.getMyStructures(), structure =>
-        structure.structureType == STRUCTURE_LINK);
-};
-
-Room.prototype.getContainers = function() {
-    return _.filter(this.getStructures(), structure =>
-        structure.structureType == STRUCTURE_CONTAINER);
-};
-
-Room.prototype.getTowers = function() {
-    return _.filter(this.getMyStructures(), structure =>
-        structure.structureType == STRUCTURE_TOWER);
-};
-
-Room.prototype.getExtensions = function() {
-    return _.filter(this.getMyStructures(), structure =>
-        structure.structureType == STRUCTURE_EXTENSION);
-};
-
-Room.prototype.getExtractors = function() {
-    return _.filter(this.getMyStructures(), structure =>
-        structure.structureType == STRUCTURE_EXTRACTOR);
-};
-
-// room distances
 Room.prototype.getRoomLinearDistance = function(roomName) {
     if (!room) { return -1; }
     let posStart = this.name.split(/([N,E,S,W])/);
@@ -163,4 +127,48 @@ Room.prototype.findSpawn = function() {
     } else {
         this.memory.spawnId = false;
     }
+};
+
+Room.prototype.getSpawns = function() {
+    let targets = this.find(FIND_MY_SPAWNS);
+
+    if (targets.length > 0) {
+        return targets;
+    }
+
+    return false;
+};
+
+Room.prototype.getHostileSpawns = function() {
+    let targets = this.find(FIND_HOSTILE_SPAWNS);
+
+    if (targets.length > 0) {
+        return targets;
+    }
+
+    return false;
+};
+
+Room.prototype.getContainers = function() {
+    return this.find(FIND_STRUCTURES, {
+        filter: (structure) => {
+            return structure.structureType == STRUCTURE_CONTAINER;
+        }
+    });
+};
+
+Room.prototype.getTowers = function() {
+    return this.find(FIND_MY_STRUCTURES, {
+        filter: (structure) => {
+            return structure.structureType == STRUCTURE_TOWER;
+        }
+    });
+};
+
+Room.prototype.getExtensions = function() {
+    return this.find(FIND_MY_STRUCTURES, {
+        filter: (structure) => {
+            return structure.structureType == STRUCTURE_EXTENSION;
+        }
+    });
 };

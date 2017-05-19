@@ -63,6 +63,30 @@ var taskDirectorLongHaul = {
                 task.maxSize = task.maxSize < 9999 ? 9999 : task.maxSize;
         }
 
+        if (!Game.rooms[task.spawnRoom]) { return true; }
+        let room = Game.rooms[task.spawnRoom];
+
+        if (!room.controller || !room.controller.my) { return true; }
+
+        switch (room.controller.level) {
+            case 1:
+            case 2:
+            case 3:
+                task.minSize = task.minSize != 200 ? 200 : task.minSize;
+                task.maxSize = task.maxSize != 300 ? 300 : task.maxSize;
+                break;
+            case 4:
+            case 5:
+            case 6:
+                task.minSize = task.minSize != 400 ? 400 : task.minSize;
+                task.maxSize = task.maxSize != 600 ? 600 : task.maxSize;
+                break;
+            case 7:
+            case 8:
+                task.minSize = task.minSize != 500 ? 500 : task.minSize;
+                task.maxSize = task.maxSize < 9999 ? 9999 : task.maxSize;
+        }
+
         // spawn new creeps if needed
         let count = _.filter(Game.creeps, creep =>
             creep.memory.workId == task.id &&

@@ -56,8 +56,8 @@ var roleController = {
     **/
     getBody: function(energy, args) {
         args = args || {};
-
         args.style = args.style || 'default';
+
         let body = [];
         switch (args.style) {
             case 'reserve':
@@ -70,7 +70,7 @@ var roleController = {
                 }
                 break;
             default:
-                body = [MOVE,CLAIM];
+                body = [MOVE,MOVE,MOVE,MOVE,CLAIM];
         }
 
         return body;
