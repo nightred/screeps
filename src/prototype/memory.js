@@ -82,11 +82,33 @@ Object.defineProperty(Source.prototype, 'memory', {
     },
     set: function(value) {
         if (_.isUndefined(this.room.memory.sources)) {
-            this.room.memory.structureContainers = {};
+            this.room.memory.sources = {};
         }
         if (!_.isObject(this.room.memory.sources)) {
             throw new Error('Unable to set sources memory');
         }
         this.room.memory.sources[this.id] = value
+    }
+})
+
+Object.defineProperty(Mineral.prototype, 'memory', {
+    get: function() {
+        if (_.isUndefined(this.room.memory.minerals)) {
+            this.room.memory.minerals = {};
+        }
+        if (!_.isObject(this.room.memory.minerals)) {
+            return undefined;
+        }
+
+        return this.room.memory.minerals[this.id] = this.room.memory.minerals[this.id] || {};
+    },
+    set: function(value) {
+        if (_.isUndefined(this.room.memory.minerals)) {
+            this.room.memory.minerals = {};
+        }
+        if (!_.isObject(this.room.memory.minerals)) {
+            throw new Error('Unable to set minerals memory');
+        }
+        this.room.memory.minerals[this.id] = value
     }
 })

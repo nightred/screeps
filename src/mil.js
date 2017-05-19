@@ -54,9 +54,9 @@ Mil.prototype.spawnMilitia = function(room) {
     let brawlerCount = 0;
     switch (room.controller.level) {
         case 1:
+            break;
         case 2:
         case 3:
-            break;
         case 4:
         case 5:
             brawlerCount = 1;

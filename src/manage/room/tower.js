@@ -7,7 +7,7 @@
 
 var manageTower = {
 
-    run: function(room)  {
+    doRoom: function(room)  {
         var towers = room.getTowers();
 
         if (towers.length > 0) {

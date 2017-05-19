@@ -70,7 +70,7 @@ var roleController = {
                 }
                 break;
             default:
-                body = [MOVE,MOVE,MOVE,MOVE,CLAIM];
+                body = [MOVE,CLAIM];
         }
 
         return body;

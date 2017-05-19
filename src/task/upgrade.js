@@ -110,14 +110,14 @@ var taskUpgrade = {
             creep.memory.despawn != true
             ).length;
         if (count < task.creepLimit) {
-            if (!Game.Queue.spawn.isQueued({ role: C.UPGRADER, workId: task.workId, })) {
+            if (!Game.Queue.spawn.isQueued({ role: C.UPGRADER, workId: task.id, })) {
                 let record = {
                     rooms: [ task.spawnRoom, ],
                     role: C.UPGRADER,
                     priority: 60,
                     creepArgs: {
                         workRooms: task.workRooms,
-                        workId: task.workId,
+                        workId: task.id,
                     },
                 };
                 if (task.rcl8) { record.style = 'rcl8'; }

@@ -7,34 +7,24 @@
 
 Source.prototype.setHarvester = function(creepName) {
     this.memory.harvester = creepName;
-
     return true;
 }
 
 Source.prototype.removeHarvester = function() {
     this.memory.harvester = false;
-
     return true;
 }
 
 Source.prototype.getDropContainer = function() {
-    if (!this.memory.containerId) {
+    if (!this.memory.containerId || !Game.getObjectById(this.memory.containerId)) {
         this.memory.containerId = this.getContainerAtRange(1);
-    } else {
-        let target = Game.getObjectById(this.memory.containerId);
-        if (target && target.structureType != STRUCTURE_CONTAINER) {
-            this.memory.containerId = this.getContainerAtRange(1);
-        }
+    } else if (Game.getObjectById(this.memory.containerId).structureType != STRUCTURE_CONTAINER) {
+        this.memory.containerId = this.getContainerAtRange(1);
     }
-
     return this.memory.containerId;
 }
 
 Source.prototype.getLocalContainer = function() {
-    if (this.memory.containerId == undefined) {
-        this.memory.containerId = false;
-    }
-
     if (!this.memory.containerId || !Game.getObjectById(this.memory.containerId)) {
         let target = false;
         target = this.getLinkAtRange(2);
@@ -43,7 +33,6 @@ Source.prototype.getLocalContainer = function() {
         }
         this.memory.containerId = target;
     }
-
     return this.memory.containerId;
 }
 
@@ -73,6 +62,5 @@ Source.prototype.getLinkAtRange = function(size) {
 
 Source.prototype.clearContainer = function() {
     this.memory.containerId = false;
-
     return true;
 }
