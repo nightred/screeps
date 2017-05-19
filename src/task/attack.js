@@ -15,6 +15,8 @@ var taskAttack = {
         if (!creep) { return -1; }
         if (!task) { return -1; }
 
+        if (Game.cpu.bucket < 1000) { return true; }
+
         if (task.workRooms.length <= 0) {
             if (C.DEBUG >= 2) { console.log('DEBUG - missing work rooms on task: ' + task.task + ', id: ' + task.id); }
             return false;

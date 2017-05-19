@@ -26,6 +26,7 @@ var roleController = {
     doRole: function(creep) {
         if (!creep) { return false; }
 
+        if (creep.getOffExit()) { return true; }
         if ((creep.memory.idleStart + C.CREEP_IDLE_TIME) > Game.time) {
             creep.moveToIdlePosition();
             return true;
@@ -55,8 +56,8 @@ var roleController = {
     **/
     getBody: function(energy, args) {
         args = args || {};
-
         args.style = args.style || 'default';
+
         let body = [];
         switch (args.style) {
             case 'reserve':
@@ -69,7 +70,7 @@ var roleController = {
                 }
                 break;
             default:
-                body = [MOVE,CLAIM];
+                body = [MOVE,MOVE,MOVE,MOVE,CLAIM];
         }
 
         return body;

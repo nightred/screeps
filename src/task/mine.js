@@ -57,7 +57,7 @@ var taskMine = {
             creep.memory.despawn != true
             ).length;
         if (count < task.creepLimit) {
-            if (!Game.Queue.spawn.isQueued({ role: C.MINER, workId: task.id, })) {
+            if (!Game.Queue.spawn.isQueued({ workId: task.id, role: C.MINER, })) {
                 let record = {
                     rooms: [ task.spawnRoom, ],
                     role: C.MINER,
@@ -93,7 +93,7 @@ var taskMine = {
         if (!creep) { return -1; }
         let source = Game.getObjectById(creep.memory.harvestTarget);
         if (creep.harvest(source) == ERR_NOT_IN_RANGE) {
-            creep.goto(source, { range: 1, reUsePath: 80, maxOps: 4000, ignoreCreeps: true, });
+            creep.goto(source, { range: 1, reUsePath: 80, maxOps: 4000, ignoreCreeps: true, maxRooms: 1, });
         }
 
         return true;
@@ -105,9 +105,10 @@ var taskMine = {
         let target = Game.getObjectById(source.getDropContainer());
 
         if (!target) {
-            if (C.DEBUG >= 3) { console.log('VERBOSE - drop container missing in room: ' + creep.room.name + ', creep: ' + creep.name); }
+            if (C.DEBUG >= 3) { console.log('VERBOSE - harvester ' + creep.name + ' has no drop container'); }
             source.clearContainer();
             creep.setDespawn();
+
             return false;
         }
 
@@ -115,7 +116,7 @@ var taskMine = {
             if (creep.pos.x == target.pos.x && creep.pos.y == target.pos.y) {
                 creep.memory.atSource = true;
             } else {
-                creep.moveTo(target.pos.x, target.pos.y, { range: 0, reUsePath: 80, maxOps: 4000, });
+                creep.moveTo(target.pos.x, target.pos.y, { range: 0, reUsePath: 80, maxOps: 4000, maxRooms: 1, });
                 return true;
             }
         }
@@ -125,7 +126,7 @@ var taskMine = {
         }
 
         if (creep.harvest(source) == ERR_NOT_IN_RANGE) {
-            if (C.DEBUG >= 2) { console.log('DEBUG - miner ' + creep.name + ' not in range of ' + source.id); }
+            if (C.DEBUG >= 2) { console.log('DEBUG - harvester ' + creep.name + ' not in range of ' + source.id); }
             return false;
         }
 

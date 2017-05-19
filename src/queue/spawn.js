@@ -71,7 +71,7 @@ SpawnQueue.prototype.doSpawn = function(room) {
     if (records.length <= 0) { return true; }
     records = _.sortBy(_.sortBy(
         records, record => record.tick
-    ), record => record.priority);
+        ), record => record.priority);
 
     let spawns = room.getSpawns();
     if (spawns.length <= 0) { return true; }
@@ -90,6 +90,10 @@ SpawnQueue.prototype.doSpawn = function(room) {
             }
             minSize += C.ENERGY_CREEP_SPAWN_MIN;
             if (minSize > spawnEnergy) { continue; }
+
+            if (records[r].maxSize && spawnEnergy > records[r].maxSize) {
+                spawnEnergy = records[r].maxSize;
+            }
 
             let args = {};
             args.spawnRoom = room.name;

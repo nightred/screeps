@@ -25,10 +25,17 @@ var taskUpgrade = {
             return true;
         }
 
-        if (creep.upgradeController(creep.room.controller) == ERR_NOT_IN_RANGE) {
-            creep.goto(creep.room.controller, { range: 3, reusePath: 20, maxRooms: 1, });
+        if (!creep.pos.inRangeTo(creep.room.controller, 3)) {
+            let args = {
+                range: 3,
+                reusePath: 30,
+                maxRooms: 1,
+            };
+            creep.goto(creep.room.controller, args);
+            return true;
         }
 
+        creep.upgradeController(creep.room.controller)
         return true;
     },
 
@@ -90,6 +97,7 @@ var taskUpgrade = {
             }
         } else if (room.controller.level == 8 ) {
             task.creepLimit = task.creepLimit != 1 ? 1 : task.creepLimit;
+            task.rcl8 = task.rcl8 ? task.rcl8 : 1;
         } else {
             task.creepLimit = task.creepLimit < 2 ? 2 : task.creepLimit;
         }
@@ -101,17 +109,18 @@ var taskUpgrade = {
             creep.memory.despawn != true
             ).length;
         if (count < task.creepLimit) {
-            if (!Game.Queue.spawn.isQueued({ role: C.UPGRADER, workId: task.id, })) {
+            if (!Game.Queue.spawn.isQueued({ role: C.UPGRADER, workId: task.workId, })) {
                 let record = {
                     rooms: [ task.spawnRoom, ],
                     role: C.UPGRADER,
                     priority: 60,
                     creepArgs: {
                         workRooms: task.workRooms,
-                        workId: task.id,
+                        workId: task.workId,
                     },
                 };
                 if (task.minSize) { record.minSize = task.minSize; }
+                if (task.rcl8) { record.style = 'rcl8'; }
                 Game.Queue.spawn.addRecord(record);
             }
         }

@@ -44,31 +44,27 @@ var taskDirectorResupply = {
         switch (room.controller.level) {
             case 1:
             case 2:
-                if (task.minSize > 200) {
-                    task.minSize = 200;
-                }
+                task.minSize = task.minSize != 200 ? 200 : task.minSize;
+                task.maxSize = task.maxSize != 300 ? 300 : task.maxSize;
                 break;
             case 3:
-                if (task.minSize < 300) {
-                    task.minSize = 300;
-                }
+                task.minSize = task.minSize != 300 ? 300 : task.minSize;
+                task.maxSize = task.maxSize != 400 ? 400 : task.maxSize;
                 break;
             case 4:
             case 5:
-                if (task.minSize < 400) {
-                    task.minSize = 400;
-                }
-                break;
             case 6:
+                task.minSize = task.minSize != 400 ? 400 : task.minSize;
+                task.maxSize = task.maxSize != 500 ? 500 : task.maxSize;
+                break;
             case 7:
             case 8:
-                if (task.minSize < 600) {
-                    task.minSize = 600;
-                }
+                task.minSize = task.minSize != 600 ? 600 : task.minSize;
+                task.maxSize = task.maxSize < 9999 ? 9999 : task.maxSize;
         }
 
         if (room.storage) {
-            task.creepLimit = task.creepLimit < 2 ? 2 : task.creepLimit;
+            task.creepLimit = task.creepLimit != 2 ? 2 : task.creepLimit;
 
             // spawn new creeps if needed
             count = _.filter(Game.creeps, creep =>
@@ -77,17 +73,18 @@ var taskDirectorResupply = {
                 creep.memory.despawn != true
                 ).length;
             if (count < task.creepLimit) {
-                if (!Game.Queue.spawn.isQueued({ role: C.RESUPPLY, workId: task.id, })) {
+                if (!Game.Queue.spawn.isQueued({ role: C.RESUPPLY, directorId: task.id, })) {
                     let record = {
                         rooms: [ task.spawnRoom, ],
                         role: C.RESUPPLY,
                         priority: 10,
                         creepArgs: {
                             workRooms: task.workRooms,
-                            workId: task.id,
+                            directorId: task.id,
                         },
                     };
                     if (task.minSize) { record.minSize = task.minSize; }
+                    if (task.maxSize) { record.maxSize = task.maxSize; }
                     Game.Queue.spawn.addRecord(record);
                 }
             }

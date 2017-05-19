@@ -97,7 +97,7 @@ WorkQueue.prototype.getWork = function(tasks, name, args) {
                 record.creeps.length < record.creepLimit
             ), record => record.tick
         ), record => record.priority
-    );
+    )
 };
 
 WorkQueue.prototype.addCreep = function(name, id) {

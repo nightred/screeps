@@ -32,10 +32,18 @@ var taskRepair = {
             return creep.removeWork();
         }
 
-        if (creep.repair(target) == ERR_NOT_IN_RANGE) {
-            creep.goto(target, { range: 3, reusePath: 50, ignoreCreeps: true, maxRooms: 1, });
+        if (!creep.pos.inRangeTo(target, 3)) {
+            let args = {
+                range: 3,
+                reusePath: 50,
+                maxRooms: 1,
+                ignoreCreeps: true,
+            };
+            creep.goto(target, args);
+            return true;
         }
 
+        creep.repair(target)
         return true;
     },
 

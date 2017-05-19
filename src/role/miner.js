@@ -45,20 +45,21 @@ var roleMiner = {
             }
         }
 
+        let energyTargets = [
+            'linkIn',
+            'containerIn',
+            'spawn',
+            'extention',
+            'container',
+            'containerOut',
+            'storage',
+        ];
+
         if (!creep.memory.working || creep.memory.style == 'drop') {
             if (!creep.doWork()) {
                 if (C.DEBUG >= 2) { console.log('DEBUG - do work failed for role: ' + creep.memory.role + ', name: ' + creep.name); }
             }
         } else {
-            let energyTargets = [
-                'linkIn',
-                'containerIn',
-                'spawn',
-                'extention',
-                'container',
-                'containerOut',
-                'storage',
-            ];
             let source = Game.getObjectById(creep.memory.harvestTarget);
             if (!creep.memory.goingTo && source) {
                 creep.memory.goingTo = source.getLocalContainer();
