@@ -12,7 +12,7 @@ var SpawnQueue = function() {
     this.memory = Memory.queues;
     this.queue = Memory.queues.queue;
 
-    this.roles = Game.Manage.creep.roles;
+    this.roles = Game.Manage.role.roles;
 };
 
 SpawnQueue.prototype.cleanQueue = function() {

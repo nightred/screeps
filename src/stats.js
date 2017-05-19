@@ -297,11 +297,11 @@ Stats.prototype.graphCPU = function() {
 };
 
 Stats.prototype.getCpuGraphColor = function(num) {
-    let color = "#7fff00";
-    color = num > (Game.cpu.limit * 0.4) ? '#6a6aff' : color;
-    color = num > (Game.cpu.limit * 0.7) ? '#ffff00' : color;
-    color = num > (Game.cpu.limit * 0.9) ? '#ff7f00' : color;
-    color = num > (Game.cpu.limit * 0.98) ? '#ff0000' : color;
+    let color = "#6a6aff";
+    color = num > (Game.cpu.limit * 0.35) ? '#7fff00' : color;
+    color = num > (Game.cpu.limit * 0.6) ? '#ffff00' : color;
+    color = num > (Game.cpu.limit * 0.8) ? '#ff7f00' : color;
+    color = num > (Game.cpu.limit * 0.95) ? '#ff0000' : color;
     return color;
 };
 

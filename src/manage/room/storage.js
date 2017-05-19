@@ -61,7 +61,7 @@ Storage.prototype.getStore = function(creep, amount, types) {
 **/
 Storage.prototype.getWithdraw = function(creep, amount, types) {
     if (!creep) { return -1; }
-    if (isNaN(energy)) { return -1; }
+    if (isNaN(amount)) { return -1; }
     if(!Array.isArray(types)) { return -1; }
     if (!this.rooms[creep.room.name]) {
         if (!this.buildRoom(creep.room)) { return false; }

@@ -52,7 +52,11 @@ var taskTowerFill = {
     doTaskFind: function(room) {
         if (!room) { return -1; }
 
-        if (Game.Manage.task.cooldown(task)) { return true; }
+        room.memory.findTickFillTower = room.memory.findTickFillTower || 0;
+        if ((room.memory.findTickFillTower + C.FIND_WAIT_TICKS) > Game.time) {
+            return true;
+        }
+        room.memory.findTickFillTower = Game.time;
 
         let targets = _.filter(room.getTowers(), structure =>
                 structure.energy < (structure.energyCapacity * C.REFILL_TOWER_MIN)

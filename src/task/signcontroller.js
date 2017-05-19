@@ -98,13 +98,13 @@ var taskMine = {
         if (!task) { return -1; }
 
         let output = ""
-        output += task.name + " task config, id " + task.id + "\n";
+        output += task.task + " task config, id " + task.id + "\n";
 
         output += "Game.Queue.queue[" + task.id + "].message = " + task.message + "\n";
 
         output += "Update the records for operation.";
 
-        Console.log(output);
+        console.log(output);
         return true;
     },
 

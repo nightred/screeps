@@ -62,7 +62,11 @@ var taskRepair = {
     doTaskFind: function(room) {
         if (!room) { return -1; }
 
-        if (Game.Manage.task.cooldown(task)) { return true; }
+        room.memory.findTickRepair = room.memory.findTickRepair || 0;
+        if ((room.memory.findTickRepair + C.FIND_WAIT_TICKS) > Game.time) {
+            return true;
+        }
+        room.memory.findTickRepair = Game.time;
 
         let targets = _.sortBy(_.filter(room.find(FIND_MY_STRUCTURES), structure =>
             structure.hits < (structure.hitsMax * C.REPAIR_HIT_WORK_MIN) &&

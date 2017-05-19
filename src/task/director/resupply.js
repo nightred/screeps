@@ -123,8 +123,8 @@ var taskDirectorResupply = {
     **/
     printConfig: function(task) {
         if (!task) { return -1; }
-        let output = task.name + " task created, room: " + task.spawnRoom + ", id: " + task.id;
-        Console.log(output);
+        let output = task.task + " task created, room: " + task.spawnRoom + ", id: " + task.id;
+        console.log(output);
         return true;
     },
 

@@ -103,14 +103,14 @@ var taskDirectorMine = {
         if (!task) { return -1; }
 
         let output = ""
-        output += task.name + " task config, id " + task.id + "\n";
+        output += task.task + " task config, id " + task.id + "\n";
 
         output += "Game.Queue.queue[" + task.id + "].spawnRoom = '" + task.spawnRoom + "'\n";
         output += "Game.Queue.queue[" + task.id + "].creepLimit = " + task.creepLimit + "\n";
 
         output += "Update the records for operation.";
 
-        Console.log(output);
+        console.log(output);
         return true;
     },
 

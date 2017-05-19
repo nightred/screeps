@@ -58,7 +58,11 @@ var taskConstruction = {
     doTaskFind: function(room) {
         if (!room) { return -1; }
 
-        if (Game.Manage.task.cooldown(task)) { return true; }
+        room.memory.findTickConstruction = room.memory.findTickConstruction || 0;
+        if ((room.memory.findTickConstruction + C.FIND_WAIT_TICKS) > Game.time) {
+            return true;
+        }
+        room.memory.findTickConstruction = Game.time;
 
         let targets = room.getConstructionSites();
 

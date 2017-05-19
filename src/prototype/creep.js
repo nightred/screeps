@@ -155,7 +155,7 @@ Creep.prototype.doTransfer = function(target, resourceType) {
     if (resourceType) {
         this.transfer(target, resourceType);
     } else {
-        for (var resource in target.) {
+        for (var resource in target.carry) {
             this.transfer(target, resource);
         }
     }
@@ -233,7 +233,7 @@ Creep.prototype.doEmpty = function(types, resourceType) {
 
 Creep.prototype.getEmptyTarget = function(types, resourceSum) {
     if (!Array.isArray(types)) { return -1; }
-    if (isNan(resourceSum)) { return -1; }
+    if (isNaN(resourceSum)) { return -1; }
 
     let targetId = Game.Manage.room.storage.getStore(this, resourceSum, types);
     if (targetId) {
@@ -274,9 +274,9 @@ Creep.prototype.doFill = function(types, resourceType) {
 Creep.prototype.getFillTarget = function(types) {
     if (!Array.isArray(types)) { return -1; }
 
-    let targetId = Game.Manage.room.energyGrid.getWithdraw(this, (this.carryCapacity - _.sum(this.carry)), types);
+    let targetId = Game.Manage.room.storage.getWithdraw(this, (this.carryCapacity - _.sum(this.carry)), types);
     if (targetId) {
-        this.setGoingTo(target);
+        this.setGoingTo(targetId);
         return true;
     }
 

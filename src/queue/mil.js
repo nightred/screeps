@@ -25,7 +25,7 @@ MilQueue.prototype.getSquad = function(squad) {
     );
 };
 
-WorkQueue.prototype.isQueued = function(args) {
+MilQueue.prototype.isQueued = function(args) {
     if (!args) { return -1; }
 
     return _.filter(this.getQueue(), record =>

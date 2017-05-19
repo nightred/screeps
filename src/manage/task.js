@@ -35,12 +35,32 @@ manageTask.prototype.doTask = function(creep) {
 };
 
 /**
-* @param {Task} task The name of the task to be created
-* @param {Room} room The room object
+* @param {Task} task the task object
+**/
+manageTask.prototype.doManagedTask = function(task) {
+    if (!task) { return -1; }
+
+    return this.tasks[task.task].doTaskManaged(task);
+};
+
+/**
+* @param {Task} task the task to run
+* @param {Room} room the room object
+**/
+manageTask.prototype.doFindTask = function(task, room) {
+    if (!task) { return -1; }
+    if (!room) { return -1; }
+
+    return this.tasks[task].doTaskFind(room);
+};
+
+/**
+* @param {Task} task the name of the task to be created
+* @param {Room} room the room object
 **/
 manageTask.prototype.createTask = function(task, room) {
     if (!creep) { return -1; }
-    if (C.WORK_TASKS.indexOf(task) < 0) {
+    if (C.WORK_TASKS.indexOf(task) < 0) { return -1; }
 
     return this.tasks[task].createTask(task, room);
 };

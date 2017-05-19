@@ -21,7 +21,7 @@ WorkQueue.prototype.doManageTasks = function() {
     if (!taskList || taskList.length < 0) { return false; }
 
     for (let i =0; i < taskList.length; i++) {
-        this.tasks[taskList[i].task].doTaskManaged(taskList[i]);
+        Game.Manage.task.doManagedTask(taskList[i]);
     }
 
     return true;
@@ -33,7 +33,7 @@ WorkQueue.prototype.doTaskFind = function(room, tasks) {
     if (!Array.isArray(tasks)) { return -1; }
 
     for (let i = 0; i < tasks.length; i++) {
-        this.tasks[tasks[i]].doTaskFind(room);
+        Game.Manage.task.doFindTask(tasks[i], room);
     }
 
     return true;
