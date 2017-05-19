@@ -11,7 +11,6 @@ var WorkQueue = function() {
 
     this.memory = Memory.queues;
     this.queue = Memory.queues.queue;
-    this.tasks = Game.Manage.creep.tasks;
 };
 
 WorkQueue.prototype.doManageTasks = function() {
@@ -42,7 +41,7 @@ WorkQueue.prototype.doTaskFind = function(room, tasks) {
 WorkQueue.prototype.doFlag = function(flag) {
     if (!flag) { return -1; }
     if (C.WORK_TASKS.indexOf(flag.name) < 0) { return false; }
-    return Game.Manage.task.createTask(taskName, flag.room);
+    return Game.Manage.task.createTask(flag.name, flag.room);
 };
 
 WorkQueue.prototype.printConfig = function(id) {
@@ -116,7 +115,7 @@ WorkQueue.prototype.addRecord = function(args) {
     if (!Array.isArray(args.workRooms)) { return -1; }
     if (C.WORK_TASKS.indexOf(args.task) < 0) { return -1; }
     args.priority = args.priority || 100;
-    args.creepLimit = args.creepLimit || 1;
+    args.creepLimit = args.creepLimit || 0;
 
     let record = {
         queue: C.QUEUE_WORK,

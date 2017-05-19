@@ -33,7 +33,7 @@ Flags.prototype.doManage = function() {
         }
 
         if (flag.color != COLOR_RED) {
-            flag.name += result ? ':' + result : ':error';
+            flag.memory.result = result ? result : 'error';
             flag.memory.init = 1;
         }
 

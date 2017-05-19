@@ -120,9 +120,8 @@ var taskUpgrade = {
                         workId: task.id,
                     },
                 };
-                if (task.rcl8) { record.style = 'rcl8'; }
                 if (task.minSize) { record.minSize = task.minSize; }
-                if (task.rcl8) { record.style = 'rcl8'; }
+                if (task.rcl8) { record.creepArgs.style = 'rcl8'; }
                 Game.Queue.spawn.addRecord(record);
             }
         }

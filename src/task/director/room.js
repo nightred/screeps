@@ -41,6 +41,7 @@ var taskDirectorRoom = {
             return true;
         }
 
+        task.taskDirectorMine = task.taskDirectorMine || 0;
         if (!Game.Queue.getRecord(task.taskDirectorMine)) {
             let record = {
                 workRooms: [ task.workRooms[0], ],
@@ -53,6 +54,7 @@ var taskDirectorRoom = {
             task.taskDirectorMine = Game.Queue.work.addRecord(record);
         }
 
+        task.taskDirectorResupply = task.taskDirectorResupply || 0;
         if (!Game.Queue.getRecord(task.taskDirectorResupply)) {
             let record = {
                 workRooms: [ task.workRooms[0], ],
@@ -65,6 +67,7 @@ var taskDirectorRoom = {
             task.taskDirectorResupply = Game.Queue.work.addRecord(record);
         }
 
+        task.taskDirectorLinker = task.taskDirectorLinker || 0;
         if (!Game.Queue.getRecord(task.taskDirectorLinker)) {
             let record = {
                 workRooms: [ task.workRooms[0], ],
@@ -77,6 +80,7 @@ var taskDirectorRoom = {
             task.taskDirectorLinker = Game.Queue.work.addRecord(record);
         }
 
+        task.taskDirectorHaul = task.taskDirectorHaul || 0;
         if (!Game.Queue.getRecord(task.taskDirectorHaul)) {
             let record = {
                 workRooms: [ task.workRooms[0], ],
@@ -89,6 +93,7 @@ var taskDirectorRoom = {
             task.taskDirectorHaul = Game.Queue.work.addRecord(record);
         }
 
+        task.taskDirectorTech = task.taskDirectorTech || 0;
         if (!Game.Queue.getRecord(task.taskDirectorTech)) {
             let record = {
                 workRooms: [ task.workRooms[0], ],
@@ -101,6 +106,7 @@ var taskDirectorRoom = {
             task.taskDirectorTech = Game.Queue.work.addRecord(record);
         }
 
+        task.taskDirectorUpgrade = task.taskDirectorUpgrade || 0;
         if (!Game.Queue.getRecord(task.taskDirectorUpgrade)) {
             let record = {
                 workRooms: [ task.workRooms[0], ],

@@ -11,8 +11,6 @@ var SpawnQueue = function() {
 
     this.memory = Memory.queues;
     this.queue = Memory.queues.queue;
-
-    this.roles = Game.Manage.role.roles;
 };
 
 SpawnQueue.prototype.cleanQueue = function() {
@@ -84,9 +82,9 @@ SpawnQueue.prototype.doSpawn = function(room) {
                 };
             }
 
-            let body = this.roles[records[r].role].getBody(spawnEnergy, args);
+            let body = Game.Manage.role.getBody(records[r].role, spawnEnergy, args);
             if (this.getBodyCost(body) > energy) { continue; }
-            let name = this.roles[records[r].role].doSpawn(spawns[s], body, args);
+            let name = Game.Manage.role.doSpawn(records[r].role, spawns[s], body, args);
             if (name != undefined && !(name < 0)) {
                 energy -= this.getBodyCost(body);
                 records[r].spawned = true;

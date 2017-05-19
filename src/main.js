@@ -24,14 +24,12 @@ var Stats           = require('stats');
 var Queue           = require('queue');
 var Manage          = require('manage');
 var Mil             = require('mil');
-var Flags           = require('flags');
 
 module.exports.loop = function () {
     Game.Stats          = new Stats;
     Game.Queue          = new Queue;
     Game.Manage         = new Manage;
     Game.Mil            = new Mil;
-    Game.Flags          = new Flags;
 
     Game.Queue.run();
     Game.Manage.run();

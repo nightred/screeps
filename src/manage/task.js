@@ -17,7 +17,7 @@ var manageTask = function() {
 manageTask.prototype.doTask = function(creep) {
     if (!creep) { return -1; }
 
-    let task = Game.Queue.getRecord[creep.memory.workId];
+    let task = Game.Queue.getRecord(creep.memory.workId);
     if (!task) { return false; }
 
     if (task.creeps.length >= task.creepLimit && task.creeps.indexOf(creep.name) < 0) {
@@ -59,10 +59,10 @@ manageTask.prototype.doFindTask = function(task, room) {
 * @param {Room} room the room object
 **/
 manageTask.prototype.createTask = function(task, room) {
-    if (!creep) { return -1; }
+    if (!room) { return -1; }
     if (C.WORK_TASKS.indexOf(task) < 0) { return -1; }
 
-    return this.tasks[task].createTask(task, room);
+    return this.tasks[task].createTask(room);
 };
 
 manageTask.prototype.getTask = function(name) {
