@@ -155,11 +155,11 @@ WorkQueue.prototype.addRecord = function(args) {
         creeps: [],
         creepLimit: args.creepLimit,
     };
+
     if (args.targetId) { record.targetId = args.targetId; }
     if (args.message) { record.message = args.message; }
     if (args.spawnRoom) { record.spawnRoom = args.spawnRoom; }
     if (args.managed) { record.managed = args.managed; }
-    if (Array.isArray(args.resupplyRooms)) { record.resupplyRooms = args.resupplyRooms; }
 
     if (C.DEBUG >= 3) { console.log('VERBOSE - work queue adding record, task: ' + record.task + ', priority: ' + record.priority); }
     return Game.Queue.addRecord(record);
@@ -167,6 +167,23 @@ WorkQueue.prototype.addRecord = function(args) {
 
 WorkQueue.prototype.delRecord = function(id) {
     return Game.Queue.delRecord(id);
+};
+
+WorkQueue.prototype.cleanRoomQueue = function(roomName) {
+    if (!roomName) { return -1 };
+
+    let records = _.filter(this.getQueue(), record =>
+        record.workRooms.indexOf(roomName) >= 0
+    );
+    
+    if (records.length <= 0) { return true; }
+
+    for(let i = 0; i < records.length; i++) {
+        if (C.DEBUG >= 3) { console.log('VERBOSE - work queue removing record, id: ' + records[i].id + ', task: ' + records[i].task); }
+        this.delRecord(records[i].id);
+    }
+
+    return true;
 };
 
 WorkQueue.prototype.getRoomReport = function(room) {

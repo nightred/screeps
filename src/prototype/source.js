@@ -31,18 +31,18 @@ Source.prototype.getDropContainer = function() {
 }
 
 Source.prototype.getLocalContainer = function() {
-    if (this.memory.containerId == undefined) {
-        this.memory.containerId = false;
+    if (Game.getObjectById(this.memory.containerId)) {
+        return this.memory.containerId;
     }
 
-    if (!this.memory.containerId || !Game.getObjectById(this.memory.containerId)) {
-        let target = false;
-        target = this.getLinkAtRange(2);
-        if (!target) {
-            target = this.getContainerAtRange(2);
-        }
-        this.memory.containerId = target;
+    let target = false;
+    target = this.getLinkAtRange(2);
+
+    if (!target) {
+        target = this.getContainerAtRange(2);
     }
+
+    this.memory.containerId = target;
 
     return this.memory.containerId;
 }

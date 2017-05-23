@@ -23,13 +23,13 @@ var roleMiner = {
     doRole: function(creep) {
         if (!creep) { return false; }
 
-        if (creep.manageState()) {
-            if (!creep.memory.working) {
-                creep.say('⛏️');
-            } else {
-                creep.say('⚡');
-            }
-        }
+        // if (creep.manageState()) {
+        //     if (!creep.memory.working) {
+        //         creep.say('⛏️');
+        //     } else {
+        //         creep.say('⚡');
+        //     }
+        // }
 
         if ((creep.memory.idleStart + C.CREEP_IDLE_TIME) > Game.time) {
             creep.moveToIdlePosition();
@@ -55,11 +55,11 @@ var roleMiner = {
             'storage',
         ];
 
-        if (!creep.memory.working || creep.memory.style == 'drop') {
-            if (!creep.doWork()) {
-                if (C.DEBUG >= 2) { console.log('DEBUG - do work failed for role: ' + creep.memory.role + ', name: ' + creep.name); }
-            }
-        } else {
+        if (!creep.doWork()) {
+            if (C.DEBUG >= 2) { console.log('DEBUG - do work failed for role: ' + creep.memory.role + ', name: ' + creep.name); }
+        }
+
+        if (!creep.isEnergyEmpty()) {
             let source = Game.getObjectById(creep.memory.harvestTarget);
             if (!creep.memory.goingTo && source) {
                 creep.memory.goingTo = source.getLocalContainer();

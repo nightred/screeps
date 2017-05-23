@@ -114,7 +114,6 @@ Creep.prototype.getWork = function(tasks, args) {
     if (!list || list.length <= 0) { return false; }
     let workId = list[0].id;
 
-
     //if (!Game.Queue.work.addCreep(this.name, workId)) { return false; }
     this.memory.workId = workId;
     return true;
