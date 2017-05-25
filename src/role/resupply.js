@@ -78,12 +78,12 @@ var roleResupply = {
         args = args || {};
 
         let carryUnits = Math.floor(energy / 75);
-        let moveUnits = Math.ceil(carryUnits / 2);
-        let body = [];
-
         carryUnits = carryUnits < 1 ? 1 : carryUnits;
         carryUnits = carryUnits > 8 ? 8 : carryUnits;
 
+        let moveUnits = Math.ceil(carryUnits / 2);
+
+        let body = [];
         for (let i = 0; i < carryUnits; i++) {
             body.push(CARRY);
         }

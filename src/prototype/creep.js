@@ -140,22 +140,24 @@ Creep.prototype.transferEnergy = function(target) {
         return false;
     }
 
-    if (this.transfer(target, RESOURCE_ENERGY) == ERR_NOT_IN_RANGE) {
+    if (!this.pos.inRangeTo(target, 1)) {
         let args = {
             range: 1,
             reusePath: 20,
             maxRooms: 1,
             ignoreCreeps: true,
         };
+
         if (this.memory.role == C.RESUPPLY) {
             args.ignoreCreeps = false;
         }
+
         this.goto(target, args);
         return false;
-    } else {
-        this.memory.goingTo = false;
     }
 
+    this.transfer(target, RESOURCE_ENERGY);
+    this.memory.goingTo = false;
     return true;
 }
 
@@ -165,22 +167,24 @@ Creep.prototype.withdrawEnergy = function(target) {
         return false;
     }
 
-    if (this.withdraw(target, RESOURCE_ENERGY) == ERR_NOT_IN_RANGE) {
+    if (!this.pos.inRangeTo(target, 1)) {
         let args = {
             range: 1,
             reusePath: 20,
             maxRooms: 1,
             ignoreCreeps: true,
         };
+
         if (this.memory.role == C.RESUPPLY) {
             args.ignoreCreeps = false;
         }
+        
         this.goto(target, args);
         return false;
-    } else {
-        this.memory.goingTo = false;
     }
 
+    this.withdraw(target, RESOURCE_ENERGY)
+    this.memory.goingTo = false;
     return true;
 }
 
