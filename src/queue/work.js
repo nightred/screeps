@@ -88,16 +88,16 @@ WorkQueue.prototype.getWork = function(tasks, name, args) {
     if (!Array.isArray(tasks)) { return -1; }
     args = args || {};
 
-    return _.sortBy(
-        _.sortBy(
-            _.filter(this.getQueue(), record =>
-                tasks.indexOf(record.task) >= 0 &&
-                (!args.room || record.workRooms.indexOf(args.room) >= 0) &&
-                record.creeps.indexOf(name) == -1 &&
-                record.creeps.length < record.creepLimit
-            ), record => record.tick
-        ), record => record.priority
-    )
+    let queue = _.filter(this.getQueue(), record =>
+        tasks.indexOf(record.task) >= 0 &&
+        (!args.room || record.workRooms.indexOf(args.room) >= 0) &&
+        record.creeps.indexOf(name) == -1 &&
+        record.creeps.length < record.creepLimit);
+    let maxAge = Game.time - Math.min.apply(null, queue.tick);
+
+    return _.sortBy(queue, record =>
+        100 - (100 * ((Game.time - record.tick) / maxAge)) + record.priority
+    );
 };
 
 WorkQueue.prototype.addCreep = function(name, id) {
@@ -175,7 +175,7 @@ WorkQueue.prototype.cleanRoomQueue = function(roomName) {
     let records = _.filter(this.getQueue(), record =>
         record.workRooms.indexOf(roomName) >= 0
     );
-    
+
     if (records.length <= 0) { return true; }
 
     for(let i = 0; i < records.length; i++) {

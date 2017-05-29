@@ -72,8 +72,12 @@ Tower.prototype.repair = function(tower) {
     let roomCache = this.rooms[tower.room.name];
     if (roomCache.length == 0) { return false; }
 
+    let maxHits = Math.max.apply(null, roomCache.hits);
+
     let targets = _.sortBy(roomCache, structure =>
-        (tower.pos.getRangeTo(structure) + 1) * (structure.hits / 300000000));
+        1 + tower.pos.getRangeTo(structure) +
+        (100 * (structure.hits / maxHits))
+    );
 
     tower.repair(targets[0]);
 
