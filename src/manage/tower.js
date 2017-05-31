@@ -75,7 +75,7 @@ Tower.prototype.repair = function(tower) {
     let maxHits = Math.max.apply(null, roomCache.hits);
 
     let targets = _.sortBy(roomCache, structure =>
-        1 + tower.pos.getRangeTo(structure) +
+        Math.max(0, 10 - tower.pos.getRangeTo(structure)) +
         (100 * (structure.hits / maxHits))
     );
 

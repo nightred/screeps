@@ -53,8 +53,8 @@ Constant.REPAIR_HIT_WORK_MAX            = 0.98;
 Constant.RAMPART_HIT_MAX                = 100000;
 Constant.WALL_HIT_MAX                   = 100000;
 
-Constant.REFILL_TOWER_MAX               = 0.94;
-Constant.REFILL_TOWER_MIN               = 0.70;
+Constant.REFILL_TOWER_MAX               = 0.92;
+Constant.REFILL_TOWER_MIN               = 0.40;
 
 Constant.CREEP_DESPAWN_TICKS            = 1;
 Constant.CREEP_IDLE_TIME                = 4;
