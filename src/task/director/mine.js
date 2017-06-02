@@ -79,7 +79,7 @@ var taskDirectorMine = {
     createTask: function(room) {
         if (!room) { return -1; }
         let record = {
-            workRooms: [ room.name, ],
+            workRooms: [ room, ],
             task: C.DIRECTOR_MINE,
             priority: 21,
             creepLimit: 0,

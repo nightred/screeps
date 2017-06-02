@@ -41,7 +41,7 @@ WorkQueue.prototype.doTaskFind = function(room, tasks) {
 WorkQueue.prototype.doFlag = function(flag) {
     if (!flag) { return -1; }
     if (C.WORK_TASKS.indexOf(flag.name) < 0) { return false; }
-    return Game.Manage.task.createTask(flag.name, flag.room);
+    return Game.Manage.task.createTask(flag.name, flag.pos.roomName);
 };
 
 WorkQueue.prototype.printConfig = function(id) {

@@ -89,7 +89,7 @@ var taskScouting = {
     createTask: function(room) {
         if (!room) { return -1; }
         let record = {
-            workRooms: [ room.name, ],
+            workRooms: [ room, ],
             task: C.SCOUTING,
             priority: 90,
             creepLimit: 1,

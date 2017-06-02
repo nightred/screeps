@@ -66,7 +66,7 @@ var taskClaim = {
     createTask: function(room) {
         if (!room) { return -1; }
         let record = {
-            workRooms: [ room.name, ],
+            workRooms: [ room, ],
             task: C.CLAIM,
             priority: 40,
             creepLimit: 1,

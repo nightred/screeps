@@ -87,7 +87,7 @@ var taskDirectorMine = {
     createTask: function(room) {
         if (!room) { return -1; }
         let record = {
-            workRooms: [ room.name, ],
+            workRooms: [ room, ],
             task: C.DIRECTOR_CRASHTECH,
             priority: 58,
             creepLimit: 0,

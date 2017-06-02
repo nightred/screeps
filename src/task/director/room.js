@@ -136,8 +136,8 @@ var taskDirectorRoom = {
     createTask: function(room) {
         if (!room) { return -1; }
         let record = {
-            workRooms: [ room.name, ],
-            spawnRoom: room.name,
+            workRooms: [ room, ],
+            spawnRoom: room,
             task: C.DIRECTOR_ROOM,
             priority: 20,
             creepLimit: 0,

@@ -116,7 +116,7 @@ var taskDirectorTech = {
     createTask: function(room) {
         if (!room) { return -1; }
         let record = {
-            workRooms: [ room.name, ],
+            workRooms: [ room, ],
             task: C.DIRECTOR_TECH,
             priority: 26,
             creepLimit: 0,

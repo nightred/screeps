@@ -110,8 +110,8 @@ var taskDirectorHaul = {
     createTask: function(room) {
         if (!room) { return -1; }
         let record = {
-            workRooms: [ room.name, ],
-            spawnRoom: room.name,
+            workRooms: [ room, ],
+            spawnRoom: room,
             task: C.DIRECTOR_HAUL,
             priority: 24,
             creepLimit: 0,

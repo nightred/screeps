@@ -9,7 +9,7 @@ var manageCreep = function() {
     this.memory = Memory.world;
 };
 
-manageCreep.prototype.cleanCreeps = function() {
+manageCreep.prototype.gc = function() {
     this.memory.creepCleanUp = this.memory.creepCleanUp || Game.time;
 
     if ((this.memory.creepCleanUp + C.MANAGE_WAIT_TICKS) > Game.time) {
@@ -31,7 +31,7 @@ manageCreep.prototype.cleanCreeps = function() {
 };
 
 manageCreep.prototype.doManage = function() {
-    this.cleanCreeps();
+    this.gc();
 
     for(let name in Game.creeps) {
         let creep = Game.creeps[name];

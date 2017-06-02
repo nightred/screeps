@@ -126,7 +126,7 @@ var taskReserve = {
     createTask: function(room) {
         if (!room) { return -1; }
         let record = {
-            workRooms: [ room.name, ],
+            workRooms: [ room, ],
             task: C.RESERVE,
             priority: 70,
             creepLimit: 0,

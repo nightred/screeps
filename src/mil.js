@@ -33,7 +33,7 @@ Mil.prototype.doFlag = function(flag) {
     if (!squad) {
         let record = {
             squad: flag.name,
-            opRoom: flag.room.name,
+            opRoom: flag.pos.roomName,
         };
 
         if (!Game.Queue.mil.addRecord(record)) {
@@ -43,7 +43,7 @@ Mil.prototype.doFlag = function(flag) {
         squad = Game.Queue.mil.getSquad(flag.name);
     }
 
-    squad.opRoom = flag.room.name != squad.opRoom ? flag.room.name : squad.opRoom;
+    squad.opRoom = flag.pos.roomName != squad.opRoom ? flag.pos.roomName : squad.opRoom;
     squad.opRoomRallyX = flag.pos.x != squad.opRoomRallyX ? flag.pos.x : squad.opRoomRallyX;
     squad.opRoomRallyY = flag.pos.y != squad.opRoomRallyY ? flag.pos.y : squad.opRoomRallyY;
 

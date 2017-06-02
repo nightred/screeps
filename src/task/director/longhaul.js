@@ -105,7 +105,7 @@ var taskDirectorLongHaul = {
     createTask: function(room) {
         if (!room) { return -1; }
         let record = {
-            workRooms: [ room.name, ],
+            workRooms: [ room, ],
             task: C.DIRECTOR_LONGHAUL,
             priority: 40,
             creepLimit: 0,

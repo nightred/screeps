@@ -146,8 +146,8 @@ var taskUpgrade = {
     createTask: function(room) {
         if (!room) { return -1; }
         let record = {
-            workRooms: [ room.name, ],
-            spawnRoom: room.name,
+            workRooms: [ room, ],
+            spawnRoom: room,
             task: C.UPGRADE,
             priority: 28,
             creepLimit: 0,

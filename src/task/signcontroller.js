@@ -82,7 +82,7 @@ var taskMine = {
     createTask: function(room) {
         if (!room) { return -1; }
         let record = {
-            workRooms: [ room.name, ],
+            workRooms: [ room, ],
             task: C.SIGNCONTROLLER,
             priority: 99,
             creepLimit: 0,
