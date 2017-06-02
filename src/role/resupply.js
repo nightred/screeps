@@ -12,22 +12,6 @@ var roleResupply = {
     **/
     role: C.RESUPPLY,
 
-    /**
-    * The locations that energy can be withdrawn
-    **/
-    energyInTargets: [
-        'storage',
-        'linkStorage',
-    ],
-    /**
-    * The locations that energy can be stored
-    **/
-    energyOutTargets: [
-        'extention',
-        'spawn',
-        'containerOut',
-    ],
-
     /** @param {Creep} creep **/
     doRole: function(creep) {
         if (!creep) { return -1; }
@@ -53,11 +37,30 @@ var roleResupply = {
 
         // working has energy, else need energy
         if (creep.memory.working) {
-            if (!creep.doEmpty(this.energyOutTargets, RESOURCE_ENERGY)) {
+
+            /**
+            * The locations that energy can be stored
+            **/
+            let storeTargets = [
+                'extention',
+                'spawn',
+                'containerOut',
+            ];
+
+            if (!creep.doEmpty(storeTargets, RESOURCE_ENERGY)) {
                 if (C.DEBUG >= 2) { console.log('DEBUG - do empty energy failed for role: ' + creep.memory.role + ', name: ' + creep.name); }
             }
         } else {
-            if (!creep.doFill(this.energyInTargets, RESOURCE_ENERGY)) {
+
+            /**
+            * The locations that energy can be withdrawn
+            **/
+            let storeTargets = [
+                'storage',
+                'linkStorage',
+            ];
+
+            if (!creep.doFill(storeTargets, RESOURCE_ENERGY)) {
                 if (C.DEBUG >= 2) { console.log('DEBUG - do fill energy failed for role: ' + creep.memory.role + ', name: ' + creep.name); }
             }
         }
@@ -74,21 +77,18 @@ var roleResupply = {
         if (isNaN(energy)) { return -1; }
         args = args || {};
 
-        let carryUnits = Math.floor((energy / 2) / 50);
-        let moveUnits = Math.floor((energy / 2) / 50);
-        let body = [];
-
-        moveUnits = moveUnits < 1 ? 1 : moveUnits;
-        moveUnits = moveUnits > 4 ? 4 : moveUnits;
+        let carryUnits = Math.floor(energy / 75);
         carryUnits = carryUnits < 1 ? 1 : carryUnits;
         carryUnits = carryUnits > 8 ? 8 : carryUnits;
 
-        for (let i = 0; i < moveUnits; i++) {
-            body.push(MOVE);
-        }
+        let moveUnits = Math.ceil(carryUnits / 2);
 
+        let body = [];
         for (let i = 0; i < carryUnits; i++) {
             body.push(CARRY);
+        }
+        for (let i = 0; i < moveUnits; i++) {
+            body.push(MOVE);
         }
 
         return body;

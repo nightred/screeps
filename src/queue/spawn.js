@@ -36,6 +36,23 @@ SpawnQueue.prototype.cleanQueue = function() {
     }
 };
 
+SpawnQueue.prototype.cleanRoomQueue = function(roomName) {
+    if (!roomName) { return -1 };
+
+    let records = _.filter(this.getQueue(), record =>
+        record.rooms.indexOf(roomName) >= 0
+    );
+
+    if (records.length <= 0) { return true; }
+
+    for(let i = 0; i < records.length; i++) {
+        if (C.DEBUG >= 3) { console.log('VERBOSE - spawn queue removing record, id: ' + records[i].id + ', role: ' + records[i].role + ', name: ' + records[i].name + ', spawned'); }
+        this.delRecord(records[i].id);
+    }
+
+    return true;
+};
+
 SpawnQueue.prototype.doSpawn = function(room) {
     if (!room) { return -1; }
 

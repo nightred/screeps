@@ -64,22 +64,19 @@ var roleHauler = {
             case 'longhauler':
                 energy -= 100;
                 work = 1;
-                move = Math.floor((energy * 0.4) / 50);
-                move = move < 6 ? 6 : move;
-                move = move > 13 ? 13 : move;
-                energy -= move * 50
-                carry = Math.floor(energy / 50);
+                carry = Math.floor(energy / 75);
                 carry = carry < 10 ? 10 : carry;
                 carry = carry > 24 ? 24 : carry;
+                move = Math.ceil(carry / 2);
+                if (move == Math.floor(carry / 2)) {
+                    move += 1;
+                }
                 break;
             default:
-                move = Math.floor((energy / 2) / 50);
-                move = move < 1 ? 1 : move;
-                move = move > 7 ? 7 : move;
-                energy -= move * 50;
-                carry = Math.floor(energy / 50);
+                carry = Math.floor(energy / 75);
                 carry = carry < 1 ? 1 : carry;
                 carry = carry > 14 ? 14 : carry;
+                move = Math.ceil(carry / 2);
         }
 
         let body = [];

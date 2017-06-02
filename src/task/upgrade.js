@@ -87,20 +87,23 @@ var taskUpgrade = {
         if (room.storage && room.controller.level < 8) {
             if (room.storage.store[RESOURCE_ENERGY] < 100000 ) {
                 task.creepLimit = task.creepLimit != 1 ? 1 : task.creepLimit;
-            } else if (room.storage.store[RESOURCE_ENERGY] < 300000 ) {
+            } else if (room.storage.store[RESOURCE_ENERGY] > 120000 &&
+                room.storage.store[RESOURCE_ENERGY] < 300000 ) {
                 task.creepLimit = task.creepLimit != 2 ? 2 : task.creepLimit;
-            } else if (room.storage.store[RESOURCE_ENERGY] < 500000 ) {
+            } else if (room.storage.store[RESOURCE_ENERGY] > 320000 &&
+                room.storage.store[RESOURCE_ENERGY] < 500000 ) {
                 task.creepLimit = task.creepLimit != 3 ? 3 : task.creepLimit;
-            } else if (room.storage.store[RESOURCE_ENERGY] < 800000 ) {
+            } else if (room.storage.store[RESOURCE_ENERGY] > 520000 &&
+                room.storage.store[RESOURCE_ENERGY] < 800000 ) {
                 task.creepLimit = task.creepLimit != 4 ? 4 : task.creepLimit;
-            } else {
+            } else if (room.storage.store[RESOURCE_ENERGY] > 820000 ) {
                 task.creepLimit = task.creepLimit != 5 ? 5 : task.creepLimit;
             }
         } else if (room.controller.level == 8 ) {
             task.creepLimit = task.creepLimit != 1 ? 1 : task.creepLimit;
             task.rcl8 = task.rcl8 ? task.rcl8 : 1;
         } else {
-            task.creepLimit = task.creepLimit < 2 ? 2 : task.creepLimit;
+            task.creepLimit = task.creepLimit != 2 ? 2 : task.creepLimit;
         }
         if (C.SIM) { task.creepLimit = 1 };
 

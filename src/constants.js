@@ -39,7 +39,7 @@ Constant.CONTROLLER_RESERVE_MIN         = 1000;
 Constant.FIND_WAIT_TICKS                = 8;
 Constant.MANAGE_WAIT_TICKS              = 10;
 Constant.MANAGE_MEMORY_TICKS            = 20;
-Constant.TOWER_REPAIR_TICKS             = 3;
+Constant.TOWER_REPAIR_TICKS             = 5;
 Constant.REPORT_TICKS                   = 500;
 Constant.DEFENSE_COOLDOWN               = 80;
 Constant.DEFENSE_LIMIT_INCREASE_DELAY   = 100;
@@ -53,8 +53,8 @@ Constant.REPAIR_HIT_WORK_MAX            = 0.98;
 Constant.RAMPART_HIT_MAX                = 100000;
 Constant.WALL_HIT_MAX                   = 100000;
 
-Constant.REFILL_TOWER_MAX               = 0.98;
-Constant.REFILL_TOWER_MIN               = 0.70;
+Constant.REFILL_TOWER_MAX               = 0.92;
+Constant.REFILL_TOWER_MIN               = 0.40;
 
 Constant.CREEP_DESPAWN_TICKS            = 1;
 Constant.CREEP_IDLE_TIME                = 4;

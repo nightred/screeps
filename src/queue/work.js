@@ -58,15 +58,15 @@ WorkQueue.prototype.getWork = function(tasks, name, args) {
     if (!Array.isArray(tasks)) { return -1; }
     args = args || {};
 
-    return _.sortBy(
-        _.sortBy(
-            _.filter(this.getQueue(), record =>
-                tasks.indexOf(record.task) >= 0 &&
-                (!args.room || record.workRooms.indexOf(args.room) >= 0) &&
-                record.creeps.indexOf(name) == -1 &&
-                record.creeps.length < record.creepLimit
-            ), record => record.tick
-        ), record => record.priority
+    let queue = _.filter(this.getQueue(), record =>
+        tasks.indexOf(record.task) >= 0 &&
+        (!args.room || record.workRooms.indexOf(args.room) >= 0) &&
+        record.creeps.indexOf(name) == -1 &&
+        record.creeps.length < record.creepLimit);
+    let maxAge = Game.time - Math.min.apply(null, queue.tick);
+
+    return _.sortBy(queue, record =>
+        100 - (100 * ((Game.time - record.tick) / maxAge)) + record.priority
     );
 };
 
@@ -125,11 +125,11 @@ WorkQueue.prototype.addRecord = function(args) {
         creeps: [],
         creepLimit: args.creepLimit,
     };
+
     if (args.targetId) { record.targetId = args.targetId; }
     if (args.message) { record.message = args.message; }
     if (args.spawnRoom) { record.spawnRoom = args.spawnRoom; }
     if (args.managed) { record.managed = args.managed; }
-    if (Array.isArray(args.resupplyRooms)) { record.resupplyRooms = args.resupplyRooms; }
 
     if (C.DEBUG >= 3) { console.log('VERBOSE - work queue adding record, task: ' + record.task + ', priority: ' + record.priority); }
     return Game.Queue.addRecord(record);
@@ -137,6 +137,23 @@ WorkQueue.prototype.addRecord = function(args) {
 
 WorkQueue.prototype.delRecord = function(id) {
     return Game.Queue.delRecord(id);
+};
+
+WorkQueue.prototype.cleanRoomQueue = function(roomName) {
+    if (!roomName) { return -1 };
+
+    let records = _.filter(this.getQueue(), record =>
+        record.workRooms.indexOf(roomName) >= 0
+    );
+
+    if (records.length <= 0) { return true; }
+
+    for(let i = 0; i < records.length; i++) {
+        if (C.DEBUG >= 3) { console.log('VERBOSE - work queue removing record, id: ' + records[i].id + ', task: ' + records[i].task); }
+        this.delRecord(records[i].id);
+    }
+
+    return true;
 };
 
 WorkQueue.prototype.getRoomReport = function(room) {

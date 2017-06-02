@@ -3,7 +3,7 @@
  *
  */
 
-var Stats =  function() {
+var Stats = function() {
     Memory.stats = Memory.stats || {};
     this.memory = Memory.stats;
     this.memory.cpugraphdata = this.memory.cpugraphdata || [];
@@ -11,7 +11,7 @@ var Stats =  function() {
 };
 
 Stats.prototype.run = function() {
-    this.logEnergy();
+    //this.logEnergy();
     this.logCPU();
 
     this.visuals();
@@ -316,4 +316,4 @@ Stats.prototype.getEnergyGraphColor = function(num) {
     return color;
 };
 
-module.exports = Stats
+module.exports = Stats;

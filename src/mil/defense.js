@@ -40,6 +40,9 @@ Defense.prototype.doDefenseMode = function(room) {
     room.memory.findTickDefense = Game.time;
 
     let targets = room.getHostiles();
+    targets = _.filter(targets, creep =>
+        creep.owner &&
+        !Game.Mil.isAlly(creep.owner.username));
     if (targets.length <= 0) { return true; }
     for (let i = 0; i < targets.length; i++) {
         // allies test here

@@ -23,13 +23,13 @@ var roleMiner = {
     doRole: function(creep) {
         if (!creep) { return false; }
 
-        if (creep.manageState()) {
-            if (!creep.memory.working) {
-                creep.say('⛏️');
-            } else {
-                creep.say('⚡');
-            }
-        }
+        // if (creep.manageState()) {
+        //     if (!creep.memory.working) {
+        //         creep.say('⛏️');
+        //     } else {
+        //         creep.say('⚡');
+        //     }
+        // }
 
         if ((creep.memory.idleStart + C.CREEP_IDLE_TIME) > Game.time) {
             creep.moveToIdlePosition();
@@ -45,20 +45,21 @@ var roleMiner = {
             }
         }
 
-        if (!creep.memory.working || creep.memory.style == 'drop') {
-            if (!creep.doWork()) {
-                if (C.DEBUG >= 2) { console.log('DEBUG - do work failed for role: ' + creep.memory.role + ', name: ' + creep.name); }
-            }
-        } else {
-            let energyTargets = [
-                'linkIn',
-                'containerIn',
-                'spawn',
-                'extention',
-                'container',
-                'containerOut',
-                'storage',
-            ];
+        let energyTargets = [
+            'linkIn',
+            'containerIn',
+            'spawn',
+            'extention',
+            'container',
+            'containerOut',
+            'storage',
+        ];
+
+        if (!creep.doWork()) {
+            if (C.DEBUG >= 2) { console.log('DEBUG - do work failed for role: ' + creep.memory.role + ', name: ' + creep.name); }
+        }
+
+        if (!creep.isEnergyEmpty()) {
             let source = Game.getObjectById(creep.memory.harvestTarget);
             if (!creep.memory.goingTo && source) {
                 creep.memory.goingTo = source.getLocalContainer();
@@ -83,9 +84,9 @@ var roleMiner = {
         args.style = args.style || 'default';
 
         let body = [];
-        let workUnits = 0;
-        let moveUnits = 0;
-        let carryUnits = 0;
+        let workUnits = 1;
+        let moveUnits = 1;
+        let carryUnits = 1;
         let extrasCost = 0;
         switch (args.style) {
             case 'drop':

@@ -52,6 +52,8 @@ var taskDirectorLongHaul = {
                 task.maxSize = task.maxSize != 300 ? 300 : task.maxSize;
                 break;
             case 4:
+                task.maxSize = task.maxSize != 400 ? 400 : task.maxSize;
+                break;
             case 5:
             case 6:
                 task.minSize = task.minSize != 400 ? 400 : task.minSize;

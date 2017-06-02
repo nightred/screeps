@@ -27,6 +27,7 @@ Creep.prototype.manageState = function() {
         this.memory.working = true;
         return true;
     }
+
     return false;
 }
 
@@ -36,6 +37,7 @@ Creep.prototype.toggleState = function() {
     } else {
         this.memory.working = true;
     }
+
     return true;
 }
 
@@ -57,6 +59,7 @@ Creep.prototype.isDespawnWarning = function() {
         this.memory.role == C.SCOUT) {
         return false;
     }
+
     return this.ticksToLive <= C.CREEP_DESPAWN_TICKS;
 }
 
@@ -143,9 +146,11 @@ Creep.prototype.doTransfer = function(target, resourceType) {
             maxRooms: 1,
             ignoreCreeps: true,
         };
+
         if (this.memory.role == C.RESUPPLY) {
             args.ignoreCreeps = false;
         }
+
         this.goto(target, args);
         return false;
     } else {
@@ -180,13 +185,13 @@ Creep.prototype.doWithdraw = function(target, resourceType) {
             maxRooms: 1,
             ignoreCreeps: true,
         };
+
         if (this.memory.role == C.RESUPPLY) {
             args.ignoreCreeps = false;
         }
+        
         this.goto(target, args);
         return false;
-    } else {
-        this.memory.goingTo = false;
     }
 
     if (resourceType) {

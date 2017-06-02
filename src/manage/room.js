@@ -6,24 +6,30 @@
  */
 
 // managment modules
-var manageTower     = require('manage.room.tower');
+var Tower           = require('manage.room.tower');
 var Storage         = require('manage.room.storage');
 var Link            = require('manage.room.link');
 
 var manageRoom = function() {
     this.storage        = new Storage;
     this.link           = new Link;
-    this.tower          = manageTower;
+    this.tower          = new Tower;
 };
 
 
 manageRoom.prototype.doManage = function() {
     for (let name in Game.rooms) {
         let room = Game.rooms[name];
+
+        // clean memory
         this.doContainers(room);
         this.doTowers(room);
         this.doLinks(room);
+
+        // defense routine
         Game.Mil.defense.doRoom(room);
+
+        // controller room processes
         if (room.controller && room.controller.my) {
             this.link.doRoom(room);
             Game.Mil.doRoom(room);
