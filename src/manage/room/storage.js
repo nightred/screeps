@@ -10,7 +10,12 @@
  * create the object for room storage objects
  **/
 var Storage = function() {
-    this.rooms = {};
+    this.tick = this.tick || 0;
+
+    if (this.tick < Game.time) {
+        this.rooms = {};
+        this.tick = Game.time;
+    }
 };
 
 /**
@@ -109,8 +114,9 @@ Storage.prototype.buildRoom = function(room) {
         let storage = room.storage;
         records.storage[storage.id] = {
             id: storage.id,
-            store: storage.store[RESOURCE_ENERGY],
+            store: _.sum(storage.store),
             storeMax: storage.storeCapacity,
+            pos: storage.pos,
         };
     }
 
@@ -123,9 +129,10 @@ Storage.prototype.buildRoom = function(room) {
         for (let i = 0; i < containers.length; i++) {
             let record = {
                 id: containers[i].id,
-                store: containers[i].store[RESOURCE_ENERGY],
+                store: _.sum(containers[i].store),
                 storeMax: containers[i].storeCapacity,
-                type: links[i].memory.type,
+                type: containers[i].memory.type,
+                pos: containers[i].pos,
             };
             switch (containers[i].memory.type) {
                 case 'in':
@@ -152,6 +159,7 @@ Storage.prototype.buildRoom = function(room) {
                 store: links[i].energy,
                 storeMax: links[i].energyCapacity,
                 type: links[i].memory.type,
+                pos: links[i].pos,
             };
             switch (links[i].memory.type) {
                 case 'in':
@@ -175,6 +183,7 @@ Storage.prototype.buildRoom = function(room) {
                 id: spawns[i].id,
                 store: spawns[i].energy,
                 storeMax: spawns[i].energyCapacity,
+                pos: spawns[i].pos,
             };
         }
     }
@@ -188,6 +197,7 @@ Storage.prototype.buildRoom = function(room) {
                 id: extentions[i].id,
                 store: extentions[i].energy,
                 storeMax: extentions[i].energyCapacity,
+                pos: extentions[i].pos,
             };
         }
     }
