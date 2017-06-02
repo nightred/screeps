@@ -55,12 +55,12 @@ var roleResupply = {
             /**
             * The locations that energy can be withdrawn
             **/
-            let storeTargets = [
+            let fillTargets = [
                 'storage',
                 'linkStorage',
             ];
 
-            if (!creep.doFill(storeTargets, RESOURCE_ENERGY)) {
+            if (!creep.doFill(fillTargets, RESOURCE_ENERGY)) {
                 if (C.DEBUG >= 2) { console.log('DEBUG - do fill energy failed for role: ' + creep.memory.role + ', name: ' + creep.name); }
             }
         }

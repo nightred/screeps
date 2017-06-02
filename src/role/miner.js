@@ -59,7 +59,7 @@ var roleMiner = {
             if (C.DEBUG >= 2) { console.log('DEBUG - do work failed for role: ' + creep.memory.role + ', name: ' + creep.name); }
         }
 
-        if (!creep.isEnergyEmpty()) {
+        if (!creep.isEmpty()) {
             let source = Game.getObjectById(creep.memory.harvestTarget);
             if (!creep.memory.goingTo && source) {
                 creep.memory.goingTo = source.getLocalContainer();

@@ -165,6 +165,8 @@ Creep.prototype.doTransfer = function(target, resourceType) {
         }
     }
 
+    this.memory.goingTo = false;
+
     return true;
 }
 
@@ -189,7 +191,7 @@ Creep.prototype.doWithdraw = function(target, resourceType) {
         if (this.memory.role == C.RESUPPLY) {
             args.ignoreCreeps = false;
         }
-        
+
         this.goto(target, args);
         return false;
     }
@@ -205,6 +207,8 @@ Creep.prototype.doWithdraw = function(target, resourceType) {
             }
         }
     }
+    
+    this.memory.goingTo = false;
 
     return true;
 }

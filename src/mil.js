@@ -28,17 +28,19 @@ Mil.prototype.doRoom = function(room) {
 Mil.prototype.doFlag = function(flag) {
     if (!flag) { return -1; }
 
-    if (!Game.Queue.mil.getSquad(flag.name)) {
+    let squad = Game.Queue.mil.getSquad(flag.name);
+
+    if (!squad) {
         let record = {
             squad: flag.name,
-            opRoon: flag.room.name,
+            opRoom: flag.room.name,
         };
-        Game.Queue.mil.addRecord(record);
-    }
 
-    let squad = Game.Queue.mil.getSquad(flag.name);
-    if (!squad) {
-        return false;
+        if (!Game.Queue.mil.addRecord(record)) {
+            return false;
+        }
+
+        squad = Game.Queue.mil.getSquad(flag.name);
     }
 
     squad.opRoom = flag.room.name != squad.opRoom ? flag.room.name : squad.opRoom;
