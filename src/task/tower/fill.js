@@ -32,7 +32,7 @@ var taskTowerFill = {
             return creep.removeWork();
         }
 
-        creep.transferEnergy(target);
+        creep.doTransfer(target);
 
         return true;
     },
