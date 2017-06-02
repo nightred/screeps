@@ -6,7 +6,11 @@
  */
 
 var Tower = function() {
-    this.rooms = {};
+    this.tick = this.tick || 0;
+    if (this.tick < Game.time) {
+        this.rooms = {};
+        this.tick = Game.time;
+    }
 };
 
 Tower.prototype.run = function(room)  {
@@ -38,6 +42,10 @@ Tower.prototype.doTower = function(tower) {
 
 Tower.prototype.defence = function(tower) {
     let targets = tower.room.getHostiles();
+
+    targets = _.filter(targets, creep =>
+        creep.owner &&
+        !Game.Mil.isAlly(creep.owner.username));
     if (!targets || targets.length == 0) { return false; }
     targets = _.sortBy(targets, hostile => hostile.hits);
 
@@ -72,10 +80,10 @@ Tower.prototype.repair = function(tower) {
     let roomCache = this.rooms[tower.room.name];
     if (roomCache.length == 0) { return false; }
 
-    let maxHits = Math.max.apply(null, roomCache.hits);
+    let maxHits = Math.max.apply(null, roomCache.map(function(o) { return o.hits; }));
 
     let targets = _.sortBy(roomCache, structure =>
-        Math.max(0, 10 - tower.pos.getRangeTo(structure)) +
+        Math.abs(4 - tower.pos.getRangeTo(structure)) +
         (100 * (structure.hits / maxHits))
     );
 

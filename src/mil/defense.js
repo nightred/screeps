@@ -27,6 +27,9 @@ Defense.prototype.manage = function(room) {
     room.memory.findTickDefense = Game.time;
 
     let targets = room.getHostiles();
+    targets = _.filter(targets, creep =>
+        creep.owner &&
+        !Game.Mil.isAlly(creep.owner.username));
     if (targets.length <= 0) { return true; }
     if (Game.Queue.work.isQueued({ task: C.DEFENSE, room: room.name, })) {
         return true;

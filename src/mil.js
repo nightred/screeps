@@ -10,6 +10,7 @@ var Defense = require('mil.defense');
 var Mil = function() {
     this.defense = new Defense;
 
+    Memory.world = Memory.world || {};
 };
 
 Mil.prototype.spawnMilitia = function(room) {
@@ -52,6 +53,60 @@ Mil.prototype.spawnMilitia = function(room) {
             Game.Queue.spawn.addRecord(record);
         }
     }
+};
+
+Mil.prototype.isAlly = function(name) {
+    if (!name) { return -1; }
+
+    Memory.world.allies = Memory.world.allies || [];
+    let allies = Memory.world.allies;
+
+    if (allies.indexOf(name.toLowerCase()) >= 0) {
+        return true;
+    }
+
+    return false;
+};
+
+Mil.prototype.isEnemy = function(name) {
+    if (!name) { return -1; }
+
+    Memory.world.enemys = Memory.world.enemys || [];
+    let enemies = Memory.world.enemys;
+
+    if (enemys.indexOf(name.toLowerCase()) >= 0) {
+        return true;
+    }
+
+    return false;
+};
+
+Mil.prototype.addAlly = function(name) {
+    if (!name) { return -1; }
+
+    Memory.world.allies = Memory.world.allies || [];
+    let allies = Memory.world.allies;
+
+    if (allies.indexOf(name.toLowerCase()) >= 0) {
+        return true;
+    }
+
+    allies.push(name.toLowerCase());
+    return true;
+};
+
+Mil.prototype.addEnemy = function(name) {
+    if (!name) { return -1; }
+
+    Memory.world.enemys = Memory.world.enemys || [];
+    let enemys = Memory.world.enemys;
+
+    if (enemys.indexOf(name.toLowerCase()) >= 0) {
+        return true;
+    }
+
+    enemys.push(name.toLowerCase());
+    return true;
 };
 
 module.exports = Mil;
