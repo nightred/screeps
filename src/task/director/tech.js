@@ -49,6 +49,8 @@ var taskDirectorTech = {
             ];
             Game.Queue.work.doTaskFind(room, remoteTasks);
 
+            task.creepLimit = task.creepLimit < 1 ? 1 : task.creepLimit;
+
             if (!room.controller || !room.controller.my) { continue; }
 
             switch (room.controller.level) {
@@ -56,7 +58,6 @@ var taskDirectorTech = {
                 case 2:
                     task.minSize = task.minSize != 200 ? 200 : task.minSize;
                     task.maxSize = task.maxSize != 300 ? 300 : task.maxSize;
-                    task.creepLimit = task.creepLimit < 1 ? 1 : task.creepLimit;
                     break;
                 case 3:
                     task.minSize = task.minSize != 300 ? 300 : task.minSize;
@@ -74,6 +75,7 @@ var taskDirectorTech = {
                 case 8:
                     task.minSize = task.minSize != 400 ? 400 : task.minSize;
                     task.maxSize = task.maxSize < 9999 ? 9999 : task.maxSize;
+                    task.creepLimit = task.creepLimit < 3 ? 3 : task.creepLimit;
             }
         }
 
