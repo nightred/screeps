@@ -15,6 +15,18 @@ var Mil = function() {
     this.memory = Memory.world.mil;
 };
 
+Mil.prototype.run = function() {
+    let queue = Game.Queue.mil.getQueue();
+
+    if (records.length <= 0) { return false; }
+
+    for (let s = 0; s < queue.length; s++) {
+        this.doSquad(queue[s]);
+    }
+
+    return true;
+};
+
 Mil.prototype.doRoom = function(room) {
     if (!room) { return -1; }
 
@@ -50,6 +62,10 @@ Mil.prototype.doFlag = function(flag) {
     return true;
 }
 
+Mil.prototype.doSquad = function(squad) {
+
+};
+
 Mil.prototype.spawnMilitia = function(room) {
     if (!room) { return -1; }
 
@@ -77,6 +93,7 @@ Mil.prototype.spawnMilitia = function(room) {
         creep.memory.combatGroup == 'militia' &&
         creep.memory.despawn != true
         ).length;
+
     if (count < brawlerCount) {
         if (!Game.Queue.spawn.isQueued({ room: room.name, role: C.COMBAT_BRAWLER, })) {
             let record = {
@@ -87,6 +104,7 @@ Mil.prototype.spawnMilitia = function(room) {
                     combatGroup: 'militia',
                 },
             };
+            
             Game.Queue.spawn.addRecord(record);
         }
     }

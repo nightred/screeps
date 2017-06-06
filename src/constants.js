@@ -12,6 +12,7 @@
 
 var Constant = {};
 
+// User
 Constant.USERNAME                       = 'nightred';
 
 // debug = 0 off, 1 info, 2 debug, 3 verbose

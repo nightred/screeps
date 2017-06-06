@@ -33,5 +33,6 @@ module.exports.loop = function () {
 
     Game.Queue.run();
     Game.Manage.run();
+    Game.Mil.run();
     Game.Stats.run();
 }

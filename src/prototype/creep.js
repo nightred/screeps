@@ -207,7 +207,7 @@ Creep.prototype.doWithdraw = function(target, resourceType) {
             }
         }
     }
-    
+
     this.memory.goingTo = false;
 
     return true;
@@ -334,7 +334,7 @@ Creep.prototype.goto = function(target, args) {
         args.reusePath = C.CREEP_STUCK_TICK;
     }
 
-    if (this.memory.x != this.pos.x || this.memory.y != this.pos.y) {
+    if (!this.memory._move || this.memory.x != this.pos.x || this.memory.y != this.pos.y) {
         this.memory.moveTick = Game.time;
         this.memory.x = this.pos.x;
         this.memory.y = this.pos.y;

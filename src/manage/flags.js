@@ -36,12 +36,12 @@ Flags.prototype.doManage = function() {
         }
 
         if (flag.color != COLOR_RED) {
-            flag.memory.result = result ? result : 'error';
+            flag.memory.result = result;
             flag.memory.init = 1;
         }
-
-        return true;
     }
+
+    return true;
 };
 
 Flags.prototype.gc = function() {
