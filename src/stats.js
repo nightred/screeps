@@ -77,7 +77,7 @@ Stats.prototype.visuals = function() {
     this.graphCPU();
     //this.graphEnergyChange();
     //this.reportEnergy();
-    this.reportWork();
+    //this.reportWork();
 };
 
 Stats.prototype.reportEnergy = function() {
