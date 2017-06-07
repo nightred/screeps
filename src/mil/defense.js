@@ -24,11 +24,10 @@ Defense.prototype.doRoom = function(room) {
 
     if (room.controller && room.controller.my) {
         this.doSafeMode(room);
+        this.spawnMilitia(room);
     }
 
-    this.doDefenseMode(room);
-
-    this.spawnMilitia(room);
+    this.doDefenseMode(room);    
 
     return true;
 };
