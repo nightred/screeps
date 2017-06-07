@@ -8,6 +8,7 @@
 Creep.prototype.moveToRoom = function(name) {
     if (!name) { return -1; }
     if (this.room.name == name) { return true; }
+
     if (Game.cpu.bucket < 1000) { return true; }
 
     let target = new RoomPosition(25, 25, name);
@@ -321,26 +322,65 @@ Creep.prototype.hasGoingTo = function(target) {
 }
 
 Creep.prototype.goto = function(target, args) {
-    if (!target) { return -1; }
+    if (!target) { return ERR_INVALID_ARGS; }
     args = args || {};
-    this.memory.moveTick = this.memory.moveTick || 0;
-    this.memory.x = this.memory.x || 0;
-    this.memory.y = this.memory.y || 0;
 
-    if (this.memory._move && (this.memory.moveTick + C.CREEP_STUCK_TICK) < Game.time) {
+    if (this.fatigue > 0) {
+        new RoomVisual(this.pos.roomName).circle(this.pos, {
+            radius: 0.5,
+            fill: 'transparent',
+            stroke: 'aqua',
+            strokeWidth: 0.2,
+            opacity: 0.25,
+        });
+        return ERR_BUSY;
+    }
+
+    if (!this.memory._goto) {
+        this.memory._goto = {};
+    }
+    let gotoData = this.memory._goto;
+
+    if (this.isStuck(gotoData)) {
+        gotoData.stuckCount ++;
+        new RoomVisual(this.pos.roomName).circle(this.pos, {
+            radius: 0.5,
+            fill: 'transparent',
+            stroke: 'magenta',
+            strokeWidth: 0.2,
+            opacity: (gotoData.stuckCount * 0.1),
+        });
+    } else {
+        gotoData.stuckCount = 0;
+    }
+
+    if (this.memory._move && gotoData.stuckCount >= C.CREEP_STUCK_TICK) {
         delete this.memory._move;
         this.memory.moveTick = Game.time;
         args.ignoreCreeps = false;
         args.reusePath = C.CREEP_STUCK_TICK;
     }
 
-    if (!this.memory._move || this.memory.x != this.pos.x || this.memory.y != this.pos.y) {
-        this.memory.moveTick = Game.time;
-        this.memory.x = this.pos.x;
-        this.memory.y = this.pos.y;
+    if (!this.memory._move) {
+        gotoData.stuckCount = 0;
     }
 
-    this.moveTo(target, args);
+    gotoData.lastX = this.pos.x;
+    gotoData.lastY = this.pos.y;
+
+    return this.moveTo(target, args);
+};
+
+Creep.prototype.isStuck = function(gotoData) {
+    let stuck = false;
+
+    if (gotoData.lastX !== undefined && gotoData.lastY !== undefined) {
+        if (gotoData.lastX == this.pos.x && gotoData.lastY == this.pos.y) {
+            stuck = true;
+        }
+    }
+
+    return stuck;
 };
 
 Creep.prototype.collectDroppedEnergy = function () {

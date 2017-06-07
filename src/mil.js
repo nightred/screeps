@@ -18,7 +18,7 @@ var Mil = function() {
 Mil.prototype.run = function() {
     let queue = Game.Queue.mil.getQueue();
 
-    if (records.length <= 0) { return false; }
+    if (queue.length <= 0) { return false; }
 
     for (let s = 0; s < queue.length; s++) {
         this.doSquad(queue[s]);
