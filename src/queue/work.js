@@ -160,8 +160,11 @@ WorkQueue.prototype.getRoomReport = function(room) {
     let output = '';
     let queue = this.getQueue();
 
+    if (!queue) { return }
+
     let filteredQueue = _.filter(queue, record =>
-        record.workRooms.indexOf(room) >= 0 ||
+        (record.workRooms &&
+        record.workRooms.indexOf(room) >= 0) ||
         record.spawnRoom == room);
     output += '  Total Work Queue: ' + queue.length + '\n';
     output += '  Room Work Queue: ' + filteredQueue.length + '\n';
