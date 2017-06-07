@@ -16,32 +16,6 @@ var roleCombatBrawler = {
     * @param {Creep} creep
     **/
     doRole: function(creep) {
-        if (!creep) { return false; }
-
-        if (creep.getOffExit()) { return true; }
-        if ((creep.memory.idleStart + C.CREEP_IDLE_TIME) > Game.time) {
-            creep.moveToIdlePosition();
-            return true;
-        }
-
-        let workTasks = [ C.DEFENSE, ];
-        if (!creep.memory.combatGroup) {
-            workTasks.push(C.ATTACK);
-        }
-
-        if (!creep.memory.workId) {
-            if (!creep.getWork(workTasks, {ignoreRoom: true})) {
-                creep.memory.idleStart = Game.time;
-                creep.say('💤');
-                return true;
-            } else {
-                creep.say('👊');
-            }
-        }
-
-        if (!creep.doWork()) {
-            if (C.DEBUG >= 2) { console.log('DEBUG - do work failed for role: ' + creep.memory.role + ', name: ' + creep.name); }
-        }
 
         return true;
     },

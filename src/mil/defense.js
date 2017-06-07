@@ -25,9 +25,56 @@ Defense.prototype.doRoom = function(room) {
     if (room.controller && room.controller.my) {
         this.doSafeMode(room);
     }
+
     this.doDefenseMode(room);
 
+    this.spawnMilitia(room);
+
     return true;
+};
+
+Defense.prototype.spawnMilitia = function(room) {
+    if (!room) { return -1; }
+
+    let brawlerCount = 0;
+    switch (room.controller.level) {
+        case 1:
+            break;
+        case 2:
+        case 3:
+        case 4:
+        case 5:
+            brawlerCount = 1;
+            break;
+        case 6:
+        case 7:
+        case 8:
+            brawlerCount = 2;
+            break;
+    }
+
+    // spawn brawlers for the militia
+    let count = _.filter(Game.creeps, creep =>
+        creep.memory.spawnRoom == room.name &&
+        creep.memory.role == C.COMBAT_BRAWLER &&
+        creep.memory.combatGroup == 'militia' &&
+        creep.memory.despawn != true
+        ).length;
+
+    if (count < brawlerCount) {
+        if (!Game.Queue.spawn.isQueued({ room: room.name, role: C.COMBAT_BRAWLER, })) {
+            let record = {
+                rooms: [ room.name, ],
+                role: C.COMBAT_BRAWLER,
+                priority: 38,
+                creepArgs: {
+                    combatGroup: 'militia',
+                },
+            };
+
+            Game.Queue.spawn.addRecord(record);
+        }
+    }
 };
 
 Defense.prototype.doDefenseMode = function(room) {
@@ -43,23 +90,28 @@ Defense.prototype.doDefenseMode = function(room) {
     targets = _.filter(targets, creep =>
         creep.owner &&
         !Game.Mil.isAlly(creep.owner.username));
-    if (targets.length <= 0) { return true; }
-    for (let i = 0; i < targets.length; i++) {
-        // allies test here
-    }
-    if (Game.Queue.work.isQueued({ task: C.DEFENSE, room: room.name, })) {
+
+    if (targets.length <= 0) {
+        if (room.memory.defense) {
+            room.memory.defense.cooldown = room.memory.defense.cooldown || Game.time;
+            if (room.memory.defense.cooldown + C.DEFENSE_COOLDOWN) < Game.time) {
+                delete room.memory.defense
+        }
         return true;
     }
 
-    let record = {
-        workRooms: [ room.name, ],
-        task: C.DEFENSE,
-        managed: true,
-        priority: 10,
-        creepLimit: 1,
-    };
-    Game.Queue.work.addRecord(record);
-    if (C.DEBUG >= 1) { console.log('INFO - defense mode activated in room: <p style=\"display:inline; color: #ed4543\"><a href=\"#!/room/' + room.name + '\">' + room.name + '</a></p>'); }
+    if (!room.memory.defense) {
+        room.memory.defense = {
+            tick: Game.time,
+            creepLimit: 1,
+        };
+
+        if (C.DEBUG >= 1) { console.log('INFO - defense mode activated in room: <p style=\"display:inline; color: #ed4543\"><a href=\"#!/room/' + room.name + '\">' + room.name + '</a></p>'); }
+    } else {
+        let creepLimit = Math.ceil((Game.time - room.memory.defense.tick) / C.DEFENSE_LIMIT_INCREASE_DELAY);
+        task.creepLimit = room.memory.defense.creepLimit >= creepLimit ? room.memory.defense.creepLimit : creepLimit;
+    }
+
 
     return true;
 };
