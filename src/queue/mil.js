@@ -21,7 +21,7 @@ MilQueue.prototype.getSquad = function(squad) {
     if (!squad) { return -1; }
 
     let queue = _.filter(this.getQueue(), record =>
-        record.squad == args.squad);
+        record.squad == squad);
 
     if (queue.length <= 0) { return false; }
 
@@ -42,7 +42,7 @@ MilQueue.prototype.addRecord = function(args) {
     args.priority = args.priority || 100;
 
     let record = {
-        queue: C.QUEUE_WORK,
+        queue: C.QUEUE_MIL,
         squad: args.squad,
         opRoom: args.opRoom,
         priority: args.priority,

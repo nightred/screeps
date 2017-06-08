@@ -61,6 +61,7 @@ Constant.CREEP_DESPAWN_TICKS            = 1;
 Constant.CREEP_IDLE_TIME                = 4;
 Constant.CREEP_STUCK_TICK               = 4;
 Constant.CREEP_FILL_TICKS               = 6;
+Constant.CREEP_TRAVEL_RANGE             = 4;
 
 Constant.QUEUE_WORK                     = 'work';
 Constant.QUEUE_SPAWN                    = 'spawn';
