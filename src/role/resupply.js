@@ -45,6 +45,9 @@ var roleResupply = {
                 'extention',
                 'spawn',
                 'containerOut',
+                'terminal',
+                'nuker',
+                'powerspawn',
             ];
 
             if (!creep.doEmpty(storeTargets, RESOURCE_ENERGY)) {

@@ -38,9 +38,12 @@ Storage.prototype.getStore = function(creep, amount, types) {
 
         let mod = 1;
         if (types[i] == 'containerOut' ||
-            types[i] == 'container'||
-            types[i] == 'storage') {
-            mod = 0.8;
+            types[i] == 'container' ) {
+            mod = C.ENERGY_CONTAINER_MAX;
+        } else if (types[i] == 'terminal') {
+            mod = C.ENERGY_TERMINAL_MAX;
+        }  else if (types[i] == 'storage') {
+            mod = C.ENERGY_STORAGE_MAX;
         }
 
         let targets = _.filter(this.rooms[creep.room.name][types[i]], target =>
@@ -117,6 +120,18 @@ Storage.prototype.buildRoom = function(room) {
             store: _.sum(storage.store),
             storeMax: storage.storeCapacity,
             pos: storage.pos,
+        };
+    }
+
+    // terminal
+    records.terminal = {};
+    if (room.terminal) {
+        let terminal = room.terminal;
+        records.terminal[terminal.id] = {
+            id: terminal.id,
+            store: _.sum(terminal.store),
+            storeMax: terminal.storeCapacity,
+            pos: terminal.pos,
         };
     }
 
@@ -200,6 +215,30 @@ Storage.prototype.buildRoom = function(room) {
                 pos: extentions[i].pos,
             };
         }
+    }
+
+    // nuker
+    records.nuker = {};
+    let nuker = room.getNuker();
+    if (nuker) {
+        records.nuker[nuker.id] = {
+            id: nuker.id,
+            store: nuker.energy,
+            storeMax: nuker.energyCapacity,
+            pos: nuker.pos,
+        };
+    }
+
+    // powerspawn
+    records.powerspawn = {};
+    let powerspawn = room.getPowerSpawn();
+    if (powerspawn) {
+        records.powerspawn[powerspawn.id] = {
+            id: powerspawn.id,
+            store: powerspawn.energy,
+            storeMax: powerspawn.energyCapacity,
+            pos: powerspawn.pos,
+        };
     }
 
     return true;

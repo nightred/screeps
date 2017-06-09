@@ -55,6 +55,16 @@ Room.prototype.getHostileSpawns = function() {
 };
 
 // find exact structures using native cache
+Room.prototype.getNuker = function() {
+    return _.filter(this.getMyStructures(), structure =>
+        structure.structureType == STRUCTURE_NUKER)[0];
+};
+
+Room.prototype.getPowerSpawn = function() {
+    return _.filter(this.getMyStructures(), structure =>
+        structure.structureType == STRUCTURE_POWER_SPAWN)[0];
+};
+
 Room.prototype.getLinks = function() {
     return _.filter(this.getMyStructures(), structure =>
         structure.structureType == STRUCTURE_LINK);

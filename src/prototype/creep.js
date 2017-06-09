@@ -325,6 +325,10 @@ Creep.prototype.goto = function(target, args) {
     if (!target) { return ERR_INVALID_ARGS; }
     args = args || {};
 
+    if (!(target instanceof RoomPosition)) {
+        target = target.pos;
+    }
+
     if (this.fatigue > 0) {
         new RoomVisual(this.pos.roomName).circle(this.pos, {
             radius: 0.3,
@@ -367,6 +371,9 @@ Creep.prototype.goto = function(target, args) {
 
     gotoData.lastX = this.pos.x;
     gotoData.lastY = this.pos.y;
+    gotoData.destX = target.x;
+    gotoData.destY = target.y;
+    gotoData.destRoom = target.roomName;
 
     return this.moveTo(target, args);
 };

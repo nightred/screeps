@@ -32,6 +32,9 @@ Constant.ENERGY_LINK_OUT_MAX            = 0.8;
 Constant.LINK_STORAGE_TRANSFER_MIN      = 0.34;
 Constant.ENERGY_LINK_STORAGE_MIN        = 0.38;
 Constant.ENERGY_LINK_STORAGE_MAX        = 0.8;
+Constant.ENERGY_TERMINAL_MAX            = 0.5;
+Constant.ENERGY_STORAGE_MAX             = 0.6;
+Constant.ENERGY_CONTAINER_MAX           = 0.9;
 
 Constant.CONTROLLER_WITHDRAW_LEVEL      = 2;
 Constant.CONTROLLER_RESERVE_MAX         = 4000;
