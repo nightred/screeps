@@ -27,7 +27,7 @@ Defense.prototype.doRoom = function(room) {
         this.spawnMilitia(room);
     }
 
-    this.doDefenseMode(room);    
+    this.doDefenseMode(room);
 
     return true;
 };
@@ -56,7 +56,7 @@ Defense.prototype.spawnMilitia = function(room) {
     let count = _.filter(Game.creeps, creep =>
         creep.memory.spawnRoom == room.name &&
         creep.memory.role == C.COMBAT_BRAWLER &&
-        creep.memory.combatGroup == 'militia' &&
+        creep.memory.squad == 'militia' &&
         creep.memory.despawn != true
         ).length;
 
@@ -67,7 +67,7 @@ Defense.prototype.spawnMilitia = function(room) {
                 role: C.COMBAT_BRAWLER,
                 priority: 38,
                 creepArgs: {
-                    combatGroup: 'militia',
+                    squad: 'militia',
                 },
             };
 

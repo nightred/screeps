@@ -6,9 +6,11 @@
  */
 
 var Defense = require('mil.defense');
+var Squad = require('mil.squad');
 
 var Mil = function() {
     this.defense = new Defense;
+    this.squad = new Squad;
 
     Memory.world = Memory.world || {};
     Memory.world.mil = Memory.world.mil || {}
@@ -28,42 +30,45 @@ Mil.prototype.run = function() {
 };
 
 Mil.prototype.doRoom = function(room) {
-    if (!room) { return -1; }
+    if (!room) { return ERR_INVALID_ARGS; }
 
     return true;
 };
 
 Mil.prototype.doFlag = function(flag) {
-    if (!flag) { return -1; }
+    if (!flag) { return ERR_INVALID_ARGS; }
 
-    let squad = Game.Queue.mil.getSquad(flag.name);
+    let flagName = flag.name;
+    let args = flagName.split(':');
 
-    if (!squad) {
+    if (!Game.Queue.mil.isQueued({ squad:args[0] })) {
         let record = {
-            squad: flag.name,
-            opRoom: flag.pos.roomName,
+            squad: args[0],
         };
 
         if (!Game.Queue.mil.addRecord(record)) {
             return false;
         }
-
-        squad = Game.Queue.mil.getSquad(flag.name);
     }
 
-    squad.opRoom = flag.pos.roomName != squad.opRoom ? flag.pos.roomName : squad.opRoom;
-    squad.opRoomRallyX = flag.pos.x != squad.opRoomRallyX ? flag.pos.x : squad.opRoomRallyX;
-    squad.opRoomRallyY = flag.pos.y != squad.opRoomRallyY ? flag.pos.y : squad.opRoomRallyY;
+    switch (flag.secondaryColor) {
+        case COLOR_RED:
+            this.squad.updateRally(flag);
+            break;
+        case COLOR_PURPLE:
+            this.squad.doSpawn(flag, {
+                squad: args[0],
+                role: args[1],
+                count: args[2],
+            });
+            break;
+    }
 
     return true;
 }
 
-Mil.prototype.doSquad = function(squad) {
-
-};
-
 Mil.prototype.isAlly = function(name) {
-    if (!name) { return -1; }
+    if (!name) { return ERR_INVALID_ARGS; }
 
     Memory.world.allies = Memory.world.allies || [];
     let allies = Memory.world.allies;
@@ -76,7 +81,7 @@ Mil.prototype.isAlly = function(name) {
 };
 
 Mil.prototype.isEnemy = function(name) {
-    if (!name) { return -1; }
+    if (!name) { return ERR_INVALID_ARGS; }
 
     Memory.world.enemys = Memory.world.enemys || [];
     let enemies = Memory.world.enemys;
@@ -89,7 +94,7 @@ Mil.prototype.isEnemy = function(name) {
 };
 
 Mil.prototype.addAlly = function(name) {
-    if (!name) { return -1; }
+    if (!name) { return ERR_INVALID_ARGS; }
 
     Memory.world.allies = Memory.world.allies || [];
     let allies = Memory.world.allies;
@@ -103,7 +108,7 @@ Mil.prototype.addAlly = function(name) {
 };
 
 Mil.prototype.addEnemy = function(name) {
-    if (!name) { return -1; }
+    if (!name) { return ERR_INVALID_ARGS; }
 
     Memory.world.enemys = Memory.world.enemys || [];
     let enemys = Memory.world.enemys;

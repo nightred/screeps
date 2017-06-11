@@ -42,11 +42,10 @@ MilQueue.prototype.addRecord = function(args) {
     args.priority = args.priority || 100;
 
     let record = {
-        queue: C.QUEUE_WORK,
+        queue: C.QUEUE_MIL,
         squad: args.squad,
-        opRoom: args.opRoom,
         priority: args.priority,
-        units: {},
+        creep: [],
     };
 
     if (C.DEBUG >= 3) { console.log('VERBOSE - mil queue adding record, task: ' + record.task + ', priority: ' + record.priority); }

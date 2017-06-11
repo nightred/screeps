@@ -16,7 +16,7 @@ var Constant = {};
 Constant.USERNAME                       = 'nightred';
 
 // debug = 0 off, 1 info, 2 debug, 3 verbose
-Constant.DEBUG                          = 2;
+Constant.DEBUG                          = 3;
 Constant.SIM                            = false;
 Constant.VISUALS                        = true;
 
@@ -44,6 +44,8 @@ Constant.TOWER_REPAIR_TICKS             = 5;
 Constant.REPORT_TICKS                   = 500;
 Constant.DEFENSE_COOLDOWN               = 80;
 Constant.DEFENSE_LIMIT_INCREASE_DELAY   = 100;
+
+Constant.MIL_SQUAD_SPAWN_COOLDOWN       = 8;
 
 Constant.SPAWN_COST_DECAY               = 200;
 Constant.SPAWN_QUEUE_DELAY              = 2;
