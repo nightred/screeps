@@ -24,6 +24,10 @@ Stats.prototype.visuals = function() {
     if (!C.VISUALS) { return true; }
 
     this.graphCPU();
+
+    if (Game.cpu.bucket > 2000) {
+        this.reportWork();
+    }
 };
 
 Stats.prototype.reportWork = function() {

@@ -45,10 +45,16 @@ var roleResupply = {
                 'extention',
                 'spawn',
                 'containerOut',
-                'terminal',
-                'nuker',
-                'powerspawn',
+                'container',
             ];
+
+            let storage = creep.room.storage;
+            if (storage &&
+                storage.store[RESOURCE_ENERGY] > (storage.storeCapacity * C.ENERGY_STORAGE_SECONDARY_MIN)) {
+                storeTargets.push('terminal');
+                storeTargets.push('nuker');
+                storeTargets.push('powerspawn');
+            }
 
             if (!creep.doEmpty(storeTargets, RESOURCE_ENERGY)) {
                 if (C.DEBUG >= 2) { console.log('DEBUG - do empty energy failed for role: ' + creep.memory.role + ', name: ' + creep.name); }
