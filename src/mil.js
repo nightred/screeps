@@ -5,12 +5,14 @@
  *
  */
 
-var Defense = require('mil.defense');
-var Squad = require('mil.squad');
+var Defense     = require('mil.defense');
+var Squad       = require('mil.squad');
+var milCreep    = require('mil.creep');
 
 var Mil = function() {
-    this.defense = new Defense;
-    this.squad = new Squad;
+    this.defense    = new Defense;
+    this.squad      = new Squad;
+    this.creep      = new milCreep;
 
     Memory.world = Memory.world || {};
     Memory.world.mil = Memory.world.mil || {}
@@ -18,6 +20,16 @@ var Mil = function() {
 };
 
 Mil.prototype.run = function() {
+
+    if (Game.cpu.bucket < C.CPU_MIN_BUCKET_MIL) { return true; }
+
+    return true;
+};
+
+Mil.prototype.doSquads = function() {
+
+    if (Game.cpu.bucket < C.CPU_MIN_BUCKET_SQUAD) { return true; }
+
     let queue = Game.Queue.mil.getQueue();
 
     if (queue.length <= 0) { return false; }
@@ -27,7 +39,7 @@ Mil.prototype.run = function() {
     }
 
     return true;
-};
+}
 
 Mil.prototype.doRoom = function(room) {
     if (!room) { return ERR_INVALID_ARGS; }

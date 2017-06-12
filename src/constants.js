@@ -46,6 +46,7 @@ Constant.DEFENSE_COOLDOWN               = 80;
 Constant.DEFENSE_LIMIT_INCREASE_DELAY   = 100;
 
 Constant.MIL_SQUAD_SPAWN_COOLDOWN       = 8;
+Constant.MIL_SQUAD_CREEP_COOLDOWN       = 6;
 
 Constant.SPAWN_COST_DECAY               = 200;
 Constant.SPAWN_QUEUE_DELAY              = 2;
@@ -63,6 +64,10 @@ Constant.CREEP_DESPAWN_TICKS            = 1;
 Constant.CREEP_IDLE_TIME                = 4;
 Constant.CREEP_STUCK_TICK               = 4;
 Constant.CREEP_FILL_TICKS               = 6;
+
+Constant.CPU_MIN_BUCKET_MIL             = 2000;
+Constant.CPU_MIN_BUCKET_SQUAD           = 4000;
+Constant.CPU_MIN_BUCKET_FLAGS           = 1000;
 
 Constant.QUEUE_WORK                     = 'work';
 Constant.QUEUE_SPAWN                    = 'spawn';

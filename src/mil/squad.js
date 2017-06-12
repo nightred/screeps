@@ -11,8 +11,27 @@ var Squad = function() {
 };
 
 Squad.prototype.doSquad = function(squad) {
+    if (!squad) { return ERR_INVALID_ARGS; }
+
+    squad.cooldownCreep = squad.cooldownCreep || 0;
+    if (squad.cooldownCreep < Game.time) {
+        squad.cooldownCreep = Game.time + C.MIL_SQUAD_CREEP_COOLDOWN;
+        squad.creeps = this.getSquadCreep(squad.squad);
+    }
+
+    for (let i = 0; i < squad.creeps.length; i++) {
+        let creep = Game.creeps[squad.creeps[i]];
+        Game.Mil.creep.doCreep(creep. squad);
+    }
 
 };
+
+Squad.prototype.getSquadCreep = function(squadName) {
+    if (!squadName) { return ERR_INVALID_ARGS; }
+
+    return _.filter(Game.creeps, c => c.memory.squad == squadName)
+    .map(c => c.name);
+}
 
 Squad.prototype.doSpawn = function(flag, args) {
     if (!flag) { return ERR_INVALID_ARGS; }
@@ -21,11 +40,11 @@ Squad.prototype.doSpawn = function(flag, args) {
     if (isNaN(args.count)) { return ERR_INVALID_ARGS; }
 
     // cooldown on spawn checks
-    task.cooldown = task.cooldown || 0;
-    if (task.cooldown > Game.time) {
+    flag.cooldown = flag.cooldown || 0;
+    if (flag.cooldown > Game.time) {
         return true;
     }
-    task.cooldown = Game.time + C.MIL_SQUAD_SPAWN_COOLDOWN;
+    flag.cooldown = Game.time + C.MIL_SQUAD_SPAWN_COOLDOWN;
 
     let roomName = flag.pos.roomName;
 
