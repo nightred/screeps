@@ -21,7 +21,7 @@ MilQueue.prototype.getSquad = function(squad) {
     if (!squad) { return -1; }
 
     let queue = _.filter(this.getQueue(), record =>
-        record.squad == args.squad);
+        record.squad == squad);
 
     if (queue.length <= 0) { return false; }
 

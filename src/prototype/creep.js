@@ -325,9 +325,13 @@ Creep.prototype.goto = function(target, args) {
     if (!target) { return ERR_INVALID_ARGS; }
     args = args || {};
 
+    if (!(target instanceof RoomPosition)) {
+        target = target.pos;
+    }
+
     if (this.fatigue > 0) {
         new RoomVisual(this.pos.roomName).circle(this.pos, {
-            radius: 0.5,
+            radius: 0.3,
             fill: 'transparent',
             stroke: 'aqua',
             strokeWidth: 0.2,
@@ -341,7 +345,7 @@ Creep.prototype.goto = function(target, args) {
     }
     let gotoData = this.memory._goto;
 
-    if (this.isStuck(gotoData)) {
+    if (this.isStuck(gotoData.lastX, gotoData.lastY)) {
         gotoData.stuckCount ++;
         new RoomVisual(this.pos.roomName).circle(this.pos, {
             radius: 0.5,
@@ -367,15 +371,18 @@ Creep.prototype.goto = function(target, args) {
 
     gotoData.lastX = this.pos.x;
     gotoData.lastY = this.pos.y;
+    gotoData.destX = target.x;
+    gotoData.destY = target.y;
+    gotoData.destRoom = target.roomName;
 
     return this.moveTo(target, args);
 };
 
-Creep.prototype.isStuck = function(gotoData) {
+Creep.prototype.isStuck = function(lastX, lastY) {
     let stuck = false;
 
-    if (gotoData.lastX !== undefined && gotoData.lastY !== undefined) {
-        if (gotoData.lastX == this.pos.x && gotoData.lastY == this.pos.y) {
+    if (lastX !== undefined && lastY !== undefined) {
+        if (lastX == this.pos.x && lastY == this.pos.y) {
             stuck = true;
         }
     }

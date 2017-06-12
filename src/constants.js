@@ -32,6 +32,10 @@ Constant.ENERGY_LINK_OUT_MAX            = 0.8;
 Constant.LINK_STORAGE_TRANSFER_MIN      = 0.34;
 Constant.ENERGY_LINK_STORAGE_MIN        = 0.38;
 Constant.ENERGY_LINK_STORAGE_MAX        = 0.8;
+Constant.ENERGY_TERMINAL_MAX            = 0.5;
+Constant.ENERGY_STORAGE_MAX             = 0.6;
+Constant.ENERGY_CONTAINER_MAX           = 0.9;
+Constant.ENERGY_STORAGE_SECONDARY_MIN   = 0.14;
 
 Constant.CONTROLLER_WITHDRAW_LEVEL      = 2;
 Constant.CONTROLLER_RESERVE_MAX         = 4000;
@@ -64,6 +68,7 @@ Constant.CREEP_DESPAWN_TICKS            = 1;
 Constant.CREEP_IDLE_TIME                = 4;
 Constant.CREEP_STUCK_TICK               = 4;
 Constant.CREEP_FILL_TICKS               = 6;
+Constant.CREEP_TRAVEL_RANGE             = 4;
 
 Constant.CPU_MIN_BUCKET_MIL             = 2000;
 Constant.CPU_MIN_BUCKET_SQUAD           = 4000;
