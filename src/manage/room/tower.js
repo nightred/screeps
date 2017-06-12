@@ -73,6 +73,10 @@ Tower.prototype.repair = function(tower) {
     }
     tower.memory.repairTick = Game.time;
 
+    if (tower.energy < C.ENERGY_TOWER_REPAIR_MIN) {
+        return true;
+    }
+
     if (!this.rooms[tower.room.name]) {
         if (!this.buildCache(tower.room.name)) { return false; }
     }

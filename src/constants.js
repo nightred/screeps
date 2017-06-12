@@ -22,7 +22,8 @@ Constant.VISUALS                        = true;
 
 Constant.ENERGY_ROOM_WITHDRAW_MIN       = 250;
 Constant.ENERGY_CREEP_SPAWN_MIN         = 200;
-Constant.ENERGY_TOWER_MIN               = 300;
+Constant.ENERGY_TOWER_REPAIR_MIN        = 301;
+Constant.ENERGY_STORAGE_MIN_FILL_TOWER  = 0.05;
 Constant.ENERGY_CONTAINER_MAX_PERCENT   = 0.9;
 Constant.ENERGY_CONTAINER_MIN_PERCENT   = 0.1 ;
 Constant.ENERGY_CONTAINER_MIN_WITHDRAW  = 100;
