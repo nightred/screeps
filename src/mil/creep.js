@@ -11,7 +11,7 @@ var milCreep = function() {
     this.memory = Memory.world.mil;
 };
 
-milCreep.prototype.doCreep(creep, squad) {
+milCreep.prototype.doCreep = function(creep, squad) {
     if (!creep) { return ERR_INVALID_ARGS; }
     if (!squad) { return ERR_INVALID_ARGS; }
 

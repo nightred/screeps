@@ -54,7 +54,7 @@ Queue.prototype.delRecord = function(id) {
     if (isNaN(id)) { return -1; }
     if (!this.queue[id]) { return true; }
 
-    if (C.DEBUG >= 3) { console.log('VERBOSE - queue record removed:\n' + this.getRecord(id)); }
+    if (C.DEBUG >= 3) { console.log('VERBOSE - queue record removed:\n' + this.print(id)); }
     delete this.queue[id];
 
     return true;
@@ -73,7 +73,7 @@ Queue.prototype.addRecord = function(args) {
     };
 
     this.queue[id] = record;
-    if (C.DEBUG >= 3) { console.log('VERBOSE - queue record added:\n' + this.getRecord(id)); }
+    if (C.DEBUG >= 3) { console.log('VERBOSE - queue record added:\n' + this.print(id)); }
 
     return id;
 };

@@ -79,38 +79,69 @@ Defense.prototype.spawnMilitia = function(room) {
 Defense.prototype.doDefenseMode = function(room) {
     if (!room) { return -1; }
 
-    room.memory.findTickDefense = room.memory.findTickDefense || 0;
-    if ((room.memory.findTickDefense + C.FIND_WAIT_TICKS) > Game.time) {
+    room.memory.defense = room.memory.defense || {}
+    let defense = room.memory.defense;
+
+    defense.findTick = defense.findTick || 0;
+    if ((defense.findTick + C.FIND_WAIT_TICKS) > Game.time) {
         return true;
     }
-    room.memory.findTickDefense = Game.time;
+    defense.findTick = Game.time;
 
     let targets = room.getHostiles();
     targets = _.filter(targets, creep =>
         creep.owner &&
-        !Game.Mil.isAlly(creep.owner.username));
+        !Game.Mil.isAlly(creep.owner.username)
+    );
 
     if (targets.length <= 0) {
-        if (room.memory.defense) {
-            room.memory.defense.cooldown = room.memory.defense.cooldown || Game.time;
-            if (room.memory.defense.cooldown + C.DEFENSE_COOLDOWN) < Game.time) {
-                delete room.memory.defense
+        if (defense.active == 1) {
+            defense.cooldown = defense.cooldown || Game.time;
+
+            if ((defense.cooldown + C.DEFENSE_COOLDOWN) < Game.time) {
+                defense.active = 0;
+                Game.Queue.work.delRecord(defense.jobId);
+                defense.jobId = undefined;
+            }
         }
+
         return true;
     }
 
-    if (!room.memory.defense) {
-        room.memory.defense = {
-            tick: Game.time,
-            creepLimit: 1,
-        };
+    defense.cooldown = defense.cooldown != undefined ? undefined : defense.cooldown;
+
+    if (defense.active == 0) {
+        defense.tick = Game.time;
+        defense.active = 1;
+        defense.creepLimit = 1;
 
         if (C.DEBUG >= 1) { console.log('INFO - defense mode activated in room: <p style=\"display:inline; color: #ed4543\"><a href=\"#!/room/' + room.name + '\">' + room.name + '</a></p>'); }
-    } else {
-        let creepLimit = Math.ceil((Game.time - room.memory.defense.tick) / C.DEFENSE_LIMIT_INCREASE_DELAY);
-        task.creepLimit = room.memory.defense.creepLimit >= creepLimit ? room.memory.defense.creepLimit : creepLimit;
     }
 
+    let creepLimit = Math.ceil((Game.time - defense.tick) / C.DEFENSE_LIMIT_INCREASE_DELAY);
+    defense.creepLimit = defense.creepLimit >= creepLimit ? defense.creepLimit : creepLimit;
+
+    if (!defense.jobId) {
+        let record = {
+            workRooms: [ room.name, ],
+            task: C.DEFENSE,
+            priority: 10,
+            creepLimit: 0,
+        };
+
+        defense.jobId = Game.Queue.work.addRecord(record);
+    }
+
+    let task = Game.Queue.getRecord(defense.jobId);
+
+    if (!task) {
+        defense.jobId = undefined;
+        return true;
+    }
+
+    if (defense.creepLimit > task.creepLimit) {
+        task.creepLimit = defense.creepLimit;
+    }
 
     return true;
 };
