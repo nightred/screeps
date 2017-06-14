@@ -15,7 +15,7 @@ var manageTask = function() {
 * @param {Creep} creep The creep object
 **/
 manageTask.prototype.doTask = function(creep) {
-    if (!creep) { return -1; }
+    if (!creep) { return ERR_INVALID_ARGS; }
 
     let task = Game.Queue.getRecord(creep.memory.workId);
     if (!task) { return false; }
@@ -38,7 +38,7 @@ manageTask.prototype.doTask = function(creep) {
 * @param {Task} task the task object
 **/
 manageTask.prototype.doManagedTask = function(task) {
-    if (!task) { return -1; }
+    if (!task) { return ERR_INVALID_ARGS; }
 
     return this.tasks[task.task].doTaskManaged(task);
 };
@@ -48,8 +48,8 @@ manageTask.prototype.doManagedTask = function(task) {
 * @param {Room} room the room object
 **/
 manageTask.prototype.doFindTask = function(task, room) {
-    if (!task) { return -1; }
-    if (!room) { return -1; }
+    if (!task) { return ERR_INVALID_ARGS; }
+    if (!room) { return ERR_INVALID_ARGS; }
 
     return this.tasks[task].doTaskFind(room);
 };
@@ -59,8 +59,8 @@ manageTask.prototype.doFindTask = function(task, room) {
 * @param {Room} room the room object
 **/
 manageTask.prototype.createTask = function(task, room) {
-    if (!room) { return -1; }
-    if (C.WORK_TASKS.indexOf(task) < 0) { return -1; }
+    if (!room) { return ERR_INVALID_ARGS; }
+    if (C.WORK_TASKS.indexOf(task) < 0) { return ERR_INVALID_ARGS; }
 
     return this.tasks[task].createTask(room);
 };
@@ -68,7 +68,7 @@ manageTask.prototype.createTask = function(task, room) {
 manageTask.prototype.getTask = function(name) {
     if (C.WORK_TASKS.indexOf(name) < 0) {
         if (C.DEBUG >= 2) { console.log('DEBUG - unknown task: ' + name); }
-        return -1;
+        return ERR_INVALID_ARGS;
     }
 
     let task = false;
@@ -81,7 +81,7 @@ manageTask.prototype.getTask = function(name) {
 };
 
 manageTask.prototype.cooldown = function(task) {
-    if (!task) { return -1; }
+    if (!task) { return ERR_INVALID_ARGS; }
 
     task.manageTick = task.manageTick || 0;
     if ((task.manageTick + C.MANAGE_WAIT_TICKS) > Game.time) {

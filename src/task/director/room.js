@@ -12,8 +12,8 @@ var taskDirectorRoom = {
     * @param {Task} task The work task passed from the work Queue
     **/
     doTask: function(creep, task) {
-        if (!creep) { return -1; }
-        if (!task) { return -1; }
+        if (!creep) { return ERR_INVALID_ARGS; }
+        if (!task) { return ERR_INVALID_ARGS; }
         // run creep task
     },
 
@@ -21,7 +21,7 @@ var taskDirectorRoom = {
     * @param {Task} task The work task passed from the work Queue
     **/
     doTaskManaged: function(task) {
-        if (!task) { return -1; }
+        if (!task) { return ERR_INVALID_ARGS; }
 
         if (!task.init) {
             this.printConfig(task);
@@ -126,7 +126,7 @@ var taskDirectorRoom = {
     * @param {Room} room The room object
     **/
     doTaskFind: function(room) {
-        if (!room) { return -1; }
+        if (!room) { return ERR_INVALID_ARGS; }
         // task creation for the room
     },
 
@@ -134,7 +134,7 @@ var taskDirectorRoom = {
     * @param {Room} room The room object
     **/
     createTask: function(room) {
-        if (!room) { return -1; }
+        if (!room) { return ERR_INVALID_ARGS; }
         let record = {
             workRooms: [ room, ],
             spawnRoom: room,
@@ -150,7 +150,7 @@ var taskDirectorRoom = {
     * @param {Task} task The work task passed from the work Queue
     **/
     printConfig: function(task) {
-        if (!task) { return -1; }
+        if (!task) { return ERR_INVALID_ARGS; }
         let output = task.task + " task created, room: " + task.spawnRoom + ", id: " + task.id;
         console.log(output);
         return true;

@@ -12,8 +12,8 @@ var taskAttack = {
     * @param {Task} task The work task passed from the work Queue
     **/
     doTask: function(creep, task) {
-        if (!creep) { return -1; }
-        if (!task) { return -1; }
+        if (!creep) { return ERR_INVALID_ARGS; }
+        if (!task) { return ERR_INVALID_ARGS; }
 
         if (Game.cpu.bucket < 1000) { return true; }
 
@@ -42,7 +42,7 @@ var taskAttack = {
     * @param {Task} task The work task passed from the work Queue
     **/
     doTaskManaged: function(task) {
-        if (!task) { return -1; }
+        if (!task) { return ERR_INVALID_ARGS; }
         task.rally = task.rally || {}
 
         let flag = Game.flags[task.id + '_target'];
@@ -62,13 +62,13 @@ var taskAttack = {
     * @param {Room} room The room object
     **/
     doTaskFind: function(room) {
-        if (!room) { return -1; }
+        if (!room) { return ERR_INVALID_ARGS; }
         // task creation for the room
     },
 
     doRally: function(creep, task) {
-        if (!creep) { return -1; }
-        if (!task) { return -1; }
+        if (!creep) { return ERR_INVALID_ARGS; }
+        if (!task) { return ERR_INVALID_ARGS; }
 
         if (task.rally) {
             let rallyPos = new RoomPosition(task.rally.x, task.rally.y, task.rally.room);
@@ -81,8 +81,8 @@ var taskAttack = {
     },
 
     doHeal: function(creep, task) {
-        if (!creep) { return -1; }
-        if (!task) { return -1; }
+        if (!creep) { return ERR_INVALID_ARGS; }
+        if (!task) { return ERR_INVALID_ARGS; }
 
         let targets = _.sortBy(_.filter(creep.room.find(FIND_MY_CREEPS), creep =>
             creep.hits < creep.hitsMax
@@ -102,8 +102,8 @@ var taskAttack = {
     },
 
     doAttack: function(creep, task) {
-        if (!creep) { return -1; }
-        if (!task) { return -1; }
+        if (!creep) { return ERR_INVALID_ARGS; }
+        if (!task) { return ERR_INVALID_ARGS; }
         creep.memory.targetId = creep.memory.targetId || false;
 
         let flag = Game.flags[task.id + '_target'];
@@ -164,7 +164,7 @@ var taskAttack = {
     },
 
     getTarget: function(creep) {
-        if (!creep) { return -1; }
+        if (!creep) { return ERR_INVALID_ARGS; }
 
         let targets = creep.room.getHostileStructures()
         targets = _.filter(targets, target =>

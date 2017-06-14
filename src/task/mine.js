@@ -12,8 +12,8 @@ var taskMine = {
     * @param {Task} task The work task passed from the work Queue
     **/
     doTask: function(creep, task) {
-        if (!creep) { return -1; }
-        if (!task) { return -1; }
+        if (!creep) { return ERR_INVALID_ARGS; }
+        if (!task) { return ERR_INVALID_ARGS; }
 
         if (!creep.memory.harvestTarget) {
             if (C.DEBUG >= 2) { console.log('DEBUG - miner name:' + creep.name + ' has no harvest target'); }
@@ -44,7 +44,7 @@ var taskMine = {
     * @param {Task} task The work task passed from the work Queue
     **/
     doTaskManaged: function(task) {
-        if (!task) { return -1; }
+        if (!task) { return ERR_INVALID_ARGS; }
 
         if (Game.Manage.task.cooldown(task)) { return true; }
 
@@ -81,7 +81,7 @@ var taskMine = {
     * @param {Room} room The room object
     **/
     doTaskFind: function(room) {
-        if (!room) { return -1; }
+        if (!room) { return ERR_INVALID_ARGS; }
         // task creation for the room
     },
 
@@ -89,12 +89,12 @@ var taskMine = {
     * @param {Room} room The room object
     **/
     createTask: function(room) {
-        if (!room) { return -1; }
+        if (!room) { return ERR_INVALID_ARGS; }
         return false;
     },
 
     doHarvest: function(creep) {
-        if (!creep) { return -1; }
+        if (!creep) { return ERR_INVALID_ARGS; }
         let source = Game.getObjectById(creep.memory.harvestTarget);
         if (creep.harvest(source) == ERR_NOT_IN_RANGE) {
             creep.goto(source, { range: 1, maxRooms:1, reUsePath: 80, maxOps: 4000, ignoreCreeps: true, });
@@ -104,7 +104,7 @@ var taskMine = {
     },
 
     doDropHarvest: function(creep) {
-        if (!creep) { return -1; }
+        if (!creep) { return ERR_INVALID_ARGS; }
         let source = Game.getObjectById(creep.memory.harvestTarget);
         let target = Game.getObjectById(source.getDropContainer());
 

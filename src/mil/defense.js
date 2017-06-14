@@ -13,7 +13,7 @@ var Defense = function() {
 };
 
 Defense.prototype.doRoom = function(room) {
-    if (!room) { return -1; }
+    if (!room) { return ERR_INVALID_ARGS; }
 
     if (!room.controller || (room.controller &&
         ((!room.controller.my && room.controller.owner) ||
@@ -33,7 +33,7 @@ Defense.prototype.doRoom = function(room) {
 };
 
 Defense.prototype.spawnMilitia = function(room) {
-    if (!room) { return -1; }
+    if (!room) { return ERR_INVALID_ARGS; }
 
     let brawlerCount = 0;
     switch (room.controller.level) {
@@ -77,7 +77,7 @@ Defense.prototype.spawnMilitia = function(room) {
 };
 
 Defense.prototype.doDefenseMode = function(room) {
-    if (!room) { return -1; }
+    if (!room) { return ERR_INVALID_ARGS; }
 
     room.memory.defense = room.memory.defense || {}
     let defense = room.memory.defense;
@@ -147,7 +147,7 @@ Defense.prototype.doDefenseMode = function(room) {
 };
 
 Defense.prototype.doSafeMode = function(room) {
-    if (!room) { return -1; }
+    if (!room) { return ERR_INVALID_ARGS; }
 
     let spawns = room.getSpawns();
     if (spawns.length <= 0) { return false; }

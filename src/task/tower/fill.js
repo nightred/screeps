@@ -12,8 +12,8 @@ var taskTowerFill = {
     * @param {Task} task The work task passed from the work Queue
     **/
     doTask: function(creep, task) {
-        if (!creep) { return -1; }
-        if (!task) { return -1; }
+        if (!creep) { return ERR_INVALID_ARGS; }
+        if (!task) { return ERR_INVALID_ARGS; }
 
         if (task.workRooms.length <= 0) {
             if (C.DEBUG >= 2) { console.log('DEBUG - missing work rooms on task: ' + task.task + ', id: ' + task.id); }
@@ -41,7 +41,7 @@ var taskTowerFill = {
     * @param {Task} task The work task passed from the work Queue
     **/
     doTaskManaged: function(task) {
-        if (!task) { return -1; }
+        if (!task) { return ERR_INVALID_ARGS; }
         // managed tasks
         return true;
     },
@@ -50,7 +50,7 @@ var taskTowerFill = {
     * @param {Room} room The room object
     **/
     doTaskFind: function(room) {
-        if (!room) { return -1; }
+        if (!room) { return ERR_INVALID_ARGS; }
 
         room.memory.findTickFillTower = room.memory.findTickFillTower || 0;
         if ((room.memory.findTickFillTower + C.FIND_WAIT_TICKS) > Game.time) {
@@ -87,7 +87,7 @@ var taskTowerFill = {
     * @param {Room} room The room object
     **/
     createTask: function(room) {
-        if (!room) { return -1; }
+        if (!room) { return ERR_INVALID_ARGS; }
         return false;
     },
 

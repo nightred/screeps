@@ -92,7 +92,7 @@ Room.prototype.getExtractors = function() {
 
 // room distances
 Room.prototype.getRoomLinearDistance = function(roomName) {
-    if (!room) { return -1; }
+    if (!room) { return ERR_INVALID_ARGS; }
     let posStart = this.name.split(/([N,E,S,W])/);
     let posEnd = roomName.split(/([N,E,S,W])/);
 

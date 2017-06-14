@@ -27,9 +27,9 @@ WorkQueue.prototype.doManageTasks = function() {
 };
 
 WorkQueue.prototype.doTaskFind = function(room, tasks) {
-    if (!room) { return -1; }
+    if (!room) { return ERR_INVALID_ARGS; }
     tasks = tasks || C.WORK_TASKS;
-    if (!Array.isArray(tasks)) { return -1; }
+    if (!Array.isArray(tasks)) { return ERR_INVALID_ARGS; }
 
     for (let i = 0; i < tasks.length; i++) {
         Game.Manage.task.doFindTask(tasks[i], room);
@@ -39,14 +39,14 @@ WorkQueue.prototype.doTaskFind = function(room, tasks) {
 };
 
 WorkQueue.prototype.doFlag = function(flag) {
-    if (!flag) { return -1; }
+    if (!flag) { return ERR_INVALID_ARGS; }
     if (C.WORK_TASKS.indexOf(flag.name) < 0) { return false; }
     return Game.Manage.task.createTask(flag.name, flag.pos.roomName);
 };
 
 WorkQueue.prototype.printConfig = function(id) {
-    if (isNaN(id)) { return -1; }
-    if (!this.queue[id]) { return -1; }
+    if (isNaN(id)) { return ERR_INVALID_ARGS; }
+    if (!this.queue[id]) { return ERR_INVALID_ARGS; }
     return Game.Manage.task.printConfig(this.queue[id]);
 };
 
@@ -55,7 +55,7 @@ WorkQueue.prototype.getQueue = function() {
 };
 
 WorkQueue.prototype.getWork = function(tasks, name, args) {
-    if (!Array.isArray(tasks)) { return -1; }
+    if (!Array.isArray(tasks)) { return ERR_INVALID_ARGS; }
     args = args || {};
 
     let queue = _.filter(this.getQueue(), record =>
@@ -71,10 +71,10 @@ WorkQueue.prototype.getWork = function(tasks, name, args) {
 };
 
 WorkQueue.prototype.addCreep = function(name, id) {
-    if (!name) { return -1; }
-    if (isNaN(id)) { return -1; }
-    if (!this.queue[id]) { return -1; }
-    if (!this.queue[id].creeps) { return -1; }
+    if (!name) { return ERR_INVALID_ARGS; }
+    if (isNaN(id)) { return ERR_INVALID_ARGS; }
+    if (!this.queue[id]) { return ERR_INVALID_ARGS; }
+    if (!this.queue[id].creeps) { return ERR_INVALID_ARGS; }
     if (this.queue[id].creeps.indexOf(name) >= 0) { return true; }
 
     this.queue[id].creeps.push(name);
@@ -83,10 +83,10 @@ WorkQueue.prototype.addCreep = function(name, id) {
 };
 
 WorkQueue.prototype.removeCreep = function(name, id) {
-    if (!name) { return -1; }
-    if (isNaN(id)) { return -1; }
-    if (!this.queue[id]) { return -1; }
-    if (!this.queue[id].creeps) { return -1; }
+    if (!name) { return ERR_INVALID_ARGS; }
+    if (isNaN(id)) { return ERR_INVALID_ARGS; }
+    if (!this.queue[id]) { return ERR_INVALID_ARGS; }
+    if (!this.queue[id].creeps) { return ERR_INVALID_ARGS; }
     if (this.queue[id].creeps.indexOf(name) == -1) { return true; }
 
     let record = this.queue[id];
@@ -101,7 +101,7 @@ WorkQueue.prototype.removeCreep = function(name, id) {
 };
 
 WorkQueue.prototype.isQueued = function(args) {
-    if (!args) { return -1; }
+    if (!args) { return ERR_INVALID_ARGS; }
 
     return _.filter(this.getQueue(), record =>
         (!args.targetId || record.targetId == args.targetId) &&
@@ -111,9 +111,9 @@ WorkQueue.prototype.isQueued = function(args) {
 };
 
 WorkQueue.prototype.addRecord = function(args) {
-    if (!args) { return -1; }
-    if (!Array.isArray(args.workRooms)) { return -1; }
-    if (C.WORK_TASKS.indexOf(args.task) < 0) { return -1; }
+    if (!args) { return ERR_INVALID_ARGS; }
+    if (!Array.isArray(args.workRooms)) { return ERR_INVALID_ARGS; }
+    if (C.WORK_TASKS.indexOf(args.task) < 0) { return ERR_INVALID_ARGS; }
     args.priority = args.priority || 100;
     args.creepLimit = args.creepLimit || 0;
 

@@ -51,7 +51,7 @@ Queue.prototype.getId = function() {
 };
 
 Queue.prototype.delRecord = function(id) {
-    if (isNaN(id)) { return -1; }
+    if (isNaN(id)) { return ERR_INVALID_ARGS; }
     if (!this.queue[id]) { return true; }
 
     if (C.DEBUG >= 3) { console.log('VERBOSE - queue record removed:\n' + this.print(id)); }
@@ -79,13 +79,13 @@ Queue.prototype.addRecord = function(args) {
 };
 
 Queue.prototype.getRecord = function(id) {
-    if (isNaN(id)) { return -1; }
+    if (isNaN(id)) { return ERR_INVALID_ARGS; }
     if (!this.queue[id]) { return false; }
     return this.queue[id];
 }
 
 Queue.prototype.print = function(id) {
-    if (isNaN(id)) { return -1; }
+    if (isNaN(id)) { return ERR_INVALID_ARGS; }
     if (!this.queue[id]) {
         console.log('queue record id: ' + id + ', does not exist');
         return false;

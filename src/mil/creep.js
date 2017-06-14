@@ -32,8 +32,8 @@ milCreep.prototype.doCreep = function(creep, squad) {
 };
 
 milCreep.prototype.doAttack = function(creep, squad) {
-    if (!creep) { return -1; }
-    if (!squad) { return -1; }
+    if (!creep) { return ERR_INVALID_ARGS; }
+    if (!squad) { return ERR_INVALID_ARGS; }
 
     creep.memory.targetId = creep.memory.targetId || false;
 
@@ -77,8 +77,8 @@ milCreep.prototype.doAttack = function(creep, squad) {
 };
 
 milCreep.prototype.doHeal = function(creep, squad) {
-    if (!creep) { return -1; }
-    if (!squad) { return -1; }
+    if (!creep) { return ERR_INVALID_ARGS; }
+    if (!squad) { return ERR_INVALID_ARGS; }
 
     let targets = _.sortBy(_.filter(creep.room.find(FIND_MY_CREEPS), creep =>
         creep.hits < creep.hitsMax
@@ -98,7 +98,7 @@ milCreep.prototype.doHeal = function(creep, squad) {
 };
 
 milCreep.prototype.getTarget = function(creep) {
-    if (!creep) { return -1; }
+    if (!creep) { return ERR_INVALID_ARGS; }
 
     let targets = creep.room.getHostileStructures()
     targets = _.filter(targets, target =>
@@ -141,8 +141,8 @@ milCreep.prototype.getTarget = function(creep) {
 };
 
 milCreep.prototype.doRally = function(creep, squad) {
-    if (!creep) { return -1; }
-    if (!task) { return -1; }
+    if (!creep) { return ERR_INVALID_ARGS; }
+    if (!task) { return ERR_INVALID_ARGS; }
 
     if (squad.op) {
         let rallyPos = new RoomPosition(squad.op.x, squad.op.y, squad.op.room);

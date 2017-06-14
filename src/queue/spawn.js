@@ -54,7 +54,7 @@ SpawnQueue.prototype.cleanRoomQueue = function(roomName) {
 };
 
 SpawnQueue.prototype.doSpawn = function(room) {
-    if (!room) { return -1; }
+    if (!room) { return ERR_INVALID_ARGS; }
 
     let energy = room.energyAvailable;
     let maxEnergy = room.energyCapacityAvailable * C.SPAWN_ENERGY_MAX;
@@ -121,7 +121,7 @@ SpawnQueue.prototype.doSpawn = function(room) {
 };
 
 SpawnQueue.prototype.getBodyCost = function(body) {
-    if (!Array.isArray(body)) { return -1; }
+    if (!Array.isArray(body)) { return ERR_INVALID_ARGS; }
 
     let cost = 0;
     for (let i = 0; i < body.length; i++) {
@@ -144,7 +144,7 @@ SpawnQueue.prototype.getQueue = function() {
 };
 
 SpawnQueue.prototype.isQueued = function(args) {
-    if (!args) { return -1; }
+    if (!args) { return ERR_INVALID_ARGS; }
 
     return _.filter(this.getQueue(), record =>
         (!args.role || record.role == args.role) &&
@@ -155,8 +155,8 @@ SpawnQueue.prototype.isQueued = function(args) {
 };
 
 SpawnQueue.prototype.addRecord = function(args) {
-    if (!args) { return -1; }
-    if (C.ROLE_TYPES.indexOf(args.role) < 0) { return -1; }
+    if (!args) { return ERR_INVALID_ARGS; }
+    if (C.ROLE_TYPES.indexOf(args.role) < 0) { return ERR_INVALID_ARGS; }
     args.priority = args.priority || 100;
     args.rooms = args.rooms || [];
 

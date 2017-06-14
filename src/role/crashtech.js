@@ -106,8 +106,8 @@ var roleCrashTech = {
     * @param {Object} args Extra arguments
     **/
     doSpawn: function(spawn, body, args) {
-        if (!spawn) { return -1; }
-        if (!Array.isArray(body) || body.length < 1) { return -1; }
+        if (!spawn) { return ERR_INVALID_ARGS; }
+        if (!Array.isArray(body) || body.length < 1) { return ERR_INVALID_ARGS; }
         args = args || {};
         args.role = args.role || this.role;
         let name = Game.Queue.spawn.getCreepName(this.role);
@@ -116,7 +116,7 @@ var roleCrashTech = {
     },
 
     doMine: function(creep) {
-        if (!creep) { return -1; }
+        if (!creep) { return ERR_INVALID_ARGS; }
 
         if (!creep.memory.harvestTarget) {
             let sources = creep.room.getSources();

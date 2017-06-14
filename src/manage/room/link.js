@@ -10,7 +10,7 @@ var Link = function() {
 };
 
 Link.prototype.doRoom = function(room) {
-    if (!room) { return -1; }
+    if (!room) { return ERR_INVALID_ARGS; }
     if (!room.storage) { return true; }
 
     let links = room.getLinks();
@@ -55,8 +55,8 @@ Link.prototype.doRoom = function(room) {
 };
 
 Link.prototype.setType = function(id, type) {
-    if (!id) { return -1; }
-    if (!type) { return -1; }
+    if (!id) { return ERR_INVALID_ARGS; }
+    if (!type) { return ERR_INVALID_ARGS; }
 
     let link = Game.getObjectById(id);
     if (!link) { return false; }

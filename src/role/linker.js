@@ -14,7 +14,7 @@ var roleLinker = {
 
     /** @param {Creep} creep **/
     doRole: function(creep) {
-        if (!creep) { return -1; }
+        if (!creep) { return ERR_INVALID_ARGS; }
 
         if (creep.manageState()) {
             if (creep.memory.working) {
@@ -71,7 +71,7 @@ var roleLinker = {
     * @param {Object} args Extra arguments
     **/
     getBody: function(energy, args) {
-        if (isNaN(energy)) { return -1; }
+        if (isNaN(energy)) { return ERR_INVALID_ARGS; }
         args = args || {};
 
         let move = Math.floor((energy / 2) / 50);
@@ -101,8 +101,8 @@ var roleLinker = {
     * @param {Object} args Extra arguments
     **/
     doSpawn: function(spawn, body, args) {
-        if (!spawn) { return -1; }
-        if (!Array.isArray(body) || body.length < 1) { return -1; }
+        if (!spawn) { return ERR_INVALID_ARGS; }
+        if (!Array.isArray(body) || body.length < 1) { return ERR_INVALID_ARGS; }
         args = args || {};
         args.role = args.role || this.role;
         let name = Game.Queue.spawn.getCreepName(this.role);
@@ -111,7 +111,7 @@ var roleLinker = {
     },
 
     getTask: function(creep) {
-        if (!creep) { return -1; }
+        if (!creep) { return ERR_INVALID_ARGS; }
         let room = creep.room;
 
         if (!room.storage) { return false }

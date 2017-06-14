@@ -12,7 +12,7 @@ var Flags = function() {
 };
 
 Flags.prototype.doRoom = function(room) {
-    if (!room) { return -1; }
+    if (!room) { return ERR_INVALID_ARGS; }
 
     return true;
 };

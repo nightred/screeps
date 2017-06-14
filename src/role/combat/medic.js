@@ -49,7 +49,7 @@ var roleCombatMedic = {
     * @param {Object} args Extra arguments
     **/
     getBody: function(energy, args) {
-        if (isNaN(energy)) { return -1; }
+        if (isNaN(energy)) { return ERR_INVALID_ARGS; }
         args = args || {};
 
         let healUnits = Math.floor((energy * 0.6) / 80);
@@ -88,8 +88,8 @@ var roleCombatMedic = {
     * @param {Object} args Extra arguments
     **/
     doSpawn: function(spawn, body, args) {
-        if (!spawn) { return -1; }
-        if (!Array.isArray(body) || body.length < 1) { return -1; }
+        if (!spawn) { return ERR_INVALID_ARGS; }
+        if (!Array.isArray(body) || body.length < 1) { return ERR_INVALID_ARGS; }
         args = args || {};
         args.role = args.role || this.role;
         let name = Game.Queue.spawn.getCreepName(this.role);
