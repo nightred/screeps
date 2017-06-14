@@ -53,16 +53,28 @@ Mil.prototype.doFlag = function(flag) {
     let flagName = flag.name;
     let args = flagName.split(':');
 
-    if (!Game.Queue.mil.isQueued({ squad:args[0] })) {
-        let record = {
-            squad: args[0],
-        };
+    if (flag.memory.squadId && !Game.Queue.getRecord(flag.memory.squadId)) {
+        flag.memory.squadId = undefined;
+    }
 
-        if (!Game.Queue.mil.addRecord(record)) {
+    if (!flag.memory.squadId) {
+        let squadId = undefined;
+
+        if (!Game.Queue.mil.isQueued({ squad:args[0] })) {
+            squadId = Game.Queue.mil.addRecord({
+                squad: args[0],
+            });
+        } else {
+            squadId = Game.Queue.mil.getSquad(flag.name).id
+        }
+
+        if (squadId) {
+            flag.memory.squadId = squadId;
+        } else {
             return false;
         }
     }
-
+    
     switch (flag.secondaryColor) {
         case COLOR_RED:
             this.squad.doTarget(flag);

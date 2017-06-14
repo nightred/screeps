@@ -67,7 +67,7 @@ Defense.prototype.spawnMilitia = function(room) {
         if (defense.spawnJob && !Game.Queue.getRecord(defense.spawnJob)) {
             defense.spawnJob = undefined;
         }
-        
+
         if (!defense.spawnJob) {
             let record = {
                 rooms: [ room.name, ],
@@ -78,7 +78,7 @@ Defense.prototype.spawnMilitia = function(room) {
                 },
             };
 
-            Game.Queue.spawn.addRecord(record);
+            defense.spawnJob = Game.Queue.spawn.addRecord(record);
         }
     }
 
@@ -119,7 +119,7 @@ Defense.prototype.doDefenseMode = function(room) {
 
     defense.cooldown = defense.cooldown != undefined ? undefined : defense.cooldown;
 
-    if (defense.active == 0) {
+    if (defense.active != 1) {
         defense.tick = Game.time;
         defense.active = 1;
         defense.creepLimit = 1;

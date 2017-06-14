@@ -54,25 +54,25 @@ var roleCombatMilitia = {
         args = args || {};
 
         let moveUnits = 0;
-        let attackUnits = Math.floor(energy / 105);
+        let attackUnits = Math.floor(energy / 130);
         attackUnits = attackUnits < 1 ? 1 : attackUnits;
-        attackUnits = attackUnits > 10 ? 10 : attackUnits;
+        attackUnits = attackUnits > 12 ? 12 : attackUnits;
 
-        energy -= (attackUnits * 105);
-        moveUnits += math.ceil(attackUnits / 2);
+        energy -= (attackUnits * 130);
+        moveUnits += Math.ceil(attackUnits);
 
-        let healUnits = Math.floor(energy / 275);
+        let healUnits = Math.floor(energy / 300);
         healUnits = healUnits < 0 ? 0 : healUnits;
-        healUnits = healUnits > 2 ? 2 : healUnits;
+        healUnits = healUnits > 3 ? 3 : healUnits;
 
-        energy -= (healUnits * 275);
-        moveUnits += math.ceil(healUnits / 2);
+        energy -= (healUnits * 300);
+        moveUnits += Math.ceil(healUnits);
 
-        let toughUnits = Math.floor(energy / 35);
+        let toughUnits = Math.floor(energy / 60);
         toughUnits = toughUnits < 1 ? 1 : toughUnits;
-        toughUnits = toughUnits > 16 ? 16 : toughUnits;
+        toughUnits = toughUnits > 10 ? 10 : toughUnits;
 
-        moveUnits += math.ceil(toughUnits / 2);
+        moveUnits += Math.ceil(toughUnits);
 
         let body = [];
         for (let i = 0; i < toughUnits; i++) {
