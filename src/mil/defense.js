@@ -55,16 +55,16 @@ Defense.prototype.spawnMilitia = function(room) {
     // spawn brawlers for the militia
     let count = _.filter(Game.creeps, creep =>
         creep.memory.spawnRoom == room.name &&
-        creep.memory.role == C.COMBAT_BRAWLER &&
+        creep.memory.role == C.COMBAT_MILITIA &&
         creep.memory.squad == 'militia' &&
         creep.memory.despawn != true
         ).length;
 
     if (count < brawlerCount) {
-        if (!Game.Queue.spawn.isQueued({ room: room.name, role: C.COMBAT_BRAWLER, })) {
+        if (!Game.Queue.spawn.isQueued({ room: room.name, role: C.COMBAT_MILITIA, })) {
             let record = {
                 rooms: [ room.name, ],
-                role: C.COMBAT_BRAWLER,
+                role: C.COMBAT_MILITIA,
                 priority: 38,
                 creepArgs: {
                     squad: 'militia',
@@ -74,6 +74,8 @@ Defense.prototype.spawnMilitia = function(room) {
             Game.Queue.spawn.addRecord(record);
         }
     }
+
+    return true;
 };
 
 Defense.prototype.doDefenseMode = function(room) {

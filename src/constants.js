@@ -91,6 +91,7 @@ Constant.CONTROLLER                     = 'controller';
 Constant.COMBAT_BRAWLER                 = 'combat.brawler';
 Constant.COMBAT_SWARMER                 = 'combat.swarmer';
 Constant.COMBAT_MEDIC                   = 'combat.medic';
+Constant.COMBAT_MILITIA                 = 'combat.militia';
 
 Constant.ROLE_TYPES = [
     Constant.MINER,
@@ -105,7 +106,8 @@ Constant.ROLE_TYPES = [
     Constant.COMBAT_BRAWLER,
     Constant.COMBAT_SWARMER,
     Constant.COMBAT_MEDIC,
-    ];
+    Constant.COMBAT_MILITIA,
+];
 
 Constant.DIRECTOR_ROOM                  = 'director.room';
 Constant.DIRECTOR_MINE                  = 'director.mine';
@@ -148,7 +150,7 @@ Constant.WORK_TASKS = [
     Constant.DEFENSE,
     Constant.ATTACK,
     Constant.CLAIM,
-    ];
+];
 
 Constant.DIRECTIONS = {
     1: [0, -1],

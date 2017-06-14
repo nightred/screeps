@@ -25,13 +25,32 @@ var taskDefense = {
             return true;
         }
 
-        let targets = creep.room.getHostiles();
-        if (!targets || targets.length <= 0) { return creep.removeWork(); }
-        targets = _.sortBy(targets, target => creep.pos.getRangeTo(target));
-
-        if (creep.attack(targets[0]) == ERR_NOT_IN_RANGE) {
-            creep.moveTo(targets[0], { reusePath: 0, });
+        if (creep.getActiveBodyparts(HEAL)) {
+            if (creep.hits < creep.hitsMax) {
+                creep.heal(creep);
+            }
         }
+
+        let targets = creep.room.getHostiles();
+
+        if (!targets || targets.length <= 0) {
+            return creep.removeWork();
+        }
+
+        targets = _.sortBy(targets, target => creep.pos.getRangeTo(target));
+        let target = targets[0];
+
+        if (!creep.pos.inRangeTo(target, 1)) {
+            let reuseLimit = Math.floor(creep.pos.getRangeTo(target) / 2);
+
+            creep.goto(targets[0], {
+                reusePath: reuseLimit,
+                maxRooms: 1,
+                range: 1,
+            });
+        }
+
+        creep.attack(target);
 
         return true;
     },
