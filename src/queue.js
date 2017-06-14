@@ -80,7 +80,11 @@ Queue.prototype.addRecord = function(args) {
 
 Queue.prototype.getRecord = function(id) {
     if (isNaN(id)) { return ERR_INVALID_ARGS; }
-    if (!this.queue[id]) { return false; }
+
+    if (!this.queue[id]) {
+        return false;
+    }
+
     return this.queue[id];
 }
 

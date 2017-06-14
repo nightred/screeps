@@ -35,7 +35,10 @@ Defense.prototype.doRoom = function(room) {
 Defense.prototype.spawnMilitia = function(room) {
     if (!room) { return ERR_INVALID_ARGS; }
 
-    let brawlerCount = 0;
+    room.memory.defense = room.memory.defense || {}
+    let defense = room.memory.defense;
+
+    let maxCreep = 0;
     switch (room.controller.level) {
         case 1:
             break;
@@ -43,12 +46,12 @@ Defense.prototype.spawnMilitia = function(room) {
         case 3:
         case 4:
         case 5:
-            brawlerCount = 1;
+            maxCreep = 1;
             break;
         case 6:
         case 7:
         case 8:
-            brawlerCount = 2;
+            maxCreep = 2;
             break;
     }
 
@@ -60,8 +63,12 @@ Defense.prototype.spawnMilitia = function(room) {
         creep.memory.despawn != true
         ).length;
 
-    if (count < brawlerCount) {
-        if (!Game.Queue.spawn.isQueued({ room: room.name, role: C.COMBAT_MILITIA, })) {
+    if (count < maxCreep) {
+        if (defense.spawnJob && !Game.Queue.getRecord(defense.spawnJob)) {
+            defense.spawnJob = undefined;
+        }
+        
+        if (!defense.spawnJob) {
             let record = {
                 rooms: [ room.name, ],
                 role: C.COMBAT_MILITIA,
