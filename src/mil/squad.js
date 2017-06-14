@@ -82,12 +82,20 @@ Squad.prototype.doSpawn = function(flag, args) {
     return true;
 };
 
-Squad.prototype.updateRally = function(flag) {
+Squad.prototype.doTarget = function(flag) {
+
     let squad = Game.Queue.mil.getSquad(flag.name);
     if (!squad) {
         return false;
     }
 
+    // get target flag is on
+    let target = flag.pos.getStructure();
+    if (target.structureType) {
+        squad.targetId = target.id;
+    }
+
+    // update rally pos
     squad.op.room = squad.op.room = flag.pos.roomName ? flag.pos.roomName : squad.op.room;
     squad.op.x = squad.op.x != flag.pos.x ? flag.pos.x : squad.op.x;
     squad.op.y = squad.op.y != flag.pos.y ? flag.pos.y : squad.op.y;

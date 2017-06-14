@@ -65,7 +65,7 @@ Mil.prototype.doFlag = function(flag) {
 
     switch (flag.secondaryColor) {
         case COLOR_RED:
-            this.squad.updateRally(flag);
+            this.squad.doTarget(flag);
             break;
         case COLOR_PURPLE:
             this.squad.doSpawn(flag, {

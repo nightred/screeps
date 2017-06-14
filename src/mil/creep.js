@@ -37,6 +37,10 @@ milCreep.prototype.doAttack = function(creep, squad) {
 
     creep.memory.targetId = creep.memory.targetId || false;
 
+    if (squad.targetId) {
+        creep.memory.targetId = squad.targetId;
+    }
+
     if (!creep.memory.targetId) {
         creep.memory.targetId = this.getTarget(creep);
     }
