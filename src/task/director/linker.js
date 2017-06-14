@@ -54,7 +54,11 @@ var taskDirectorLinker = {
                 creep.memory.despawn != true
                 ).length;
             if (count < task.creepLimit) {
-                if (!Game.Queue.spawn.isQueued({ role: C.LINKER, directorId: task.id, })) {
+                if (task.spawnJob && !Game.Queue.getRecord(task.spawnJob)) {
+                    task.spawnJob = undefined;
+                }
+
+                if (!task.spawnJob) {
                     let record = {
                         rooms: [ task.spawnRoom, ],
                         role: C.LINKER,
@@ -64,7 +68,8 @@ var taskDirectorLinker = {
                             directorId: task.id,
                         },
                     };
-                    Game.Queue.spawn.addRecord(record);
+
+                    task.spawnJob = Game.Queue.spawn.addRecord(record);
                 }
             }
         }

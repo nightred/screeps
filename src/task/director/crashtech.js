@@ -56,7 +56,11 @@ var taskDirectorMine = {
             creep.memory.despawn != true
             ).length;
         if (count < task.creepLimit) {
-            if (!Game.Queue.spawn.isQueued({ role: C.CRASHTECH, directorId: task.id, })) {
+            if (task.spawnJob && !Game.Queue.getRecord(task.spawnJob)) {
+                task.spawnJob = undefined;
+            }
+
+            if (!task.spawnJob) {
                 let record = {
                     rooms: [ task.spawnRoom, ],
                     role: C.CRASHTECH,
@@ -66,7 +70,8 @@ var taskDirectorMine = {
                         directorId: task.id,
                     },
                 };
-                Game.Queue.spawn.addRecord(record);
+
+                task.spawnJob = Game.Queue.spawn.addRecord(record);
             }
         }
 

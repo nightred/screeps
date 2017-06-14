@@ -95,7 +95,11 @@ var taskReserve = {
             return true;
         }
 
-        if (!Game.Queue.spawn.isQueued({ role: C.CONTROLLER, workId: task.id, })) {
+        if (task.spawnJob && !Game.Queue.getRecord(task.spawnJob)) {
+            task.spawnJob = undefined;
+        }
+
+        if (!task.spawnJob) {
             let record = {
                 rooms: [ task.spawnRoom, ],
                 role: C.CONTROLLER,
@@ -106,7 +110,8 @@ var taskReserve = {
                     style: 'reserve',
                 },
             };
-            Game.Queue.spawn.addRecord(record);
+
+            task.spawnJob = Game.Queue.spawn.addRecord(record);
         }
 
         return true;

@@ -72,7 +72,11 @@ var taskDirectorResupply = {
                 creep.memory.despawn != true
                 ).length;
             if (count < task.creepLimit) {
-                if (!Game.Queue.spawn.isQueued({ role: C.RESUPPLY, workId: task.id, })) {
+                if (task.spawnJob && !Game.Queue.getRecord(task.spawnJob)) {
+                    task.spawnJob = undefined;
+                }
+
+                if (!task.spawnJob) {
                     let record = {
                         rooms: [ task.spawnRoom, ],
                         role: C.RESUPPLY,
@@ -82,9 +86,11 @@ var taskDirectorResupply = {
                             workId: task.id,
                         },
                     };
+                    
                     if (task.minSize) { record.minSize = task.minSize; }
                     if (task.maxSize) { record.maxSize = task.maxSize; }
-                    Game.Queue.spawn.addRecord(record);
+
+                    task.spawnJob = Game.Queue.spawn.addRecord(record);
                 }
             }
         }

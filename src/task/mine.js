@@ -53,7 +53,11 @@ var taskMine = {
             creep.memory.despawn != true
             ).length;
         if (count < task.creepLimit) {
-            if (!Game.Queue.spawn.isQueued({ role: C.MINER, workId: task.id, })) {
+            if (task.spawnJob && !Game.Queue.getRecord(task.spawnJob)) {
+                task.spawnJob = undefined;
+            }
+
+            if (!task.spawnJob) {
                 let record = {
                     rooms: [ task.spawnRoom, ],
                     role: C.MINER,
@@ -64,13 +68,16 @@ var taskMine = {
                         workId: task.id,
                     },
                 };
+
                 let source = Game.getObjectById(task.targetId);
+
                 if (source && source.getDropContainer()) {
                     record.creepArgs.style = 'drop';
                 } else if (task.spawnRoom != task.workRooms[0]) {
                     record.creepArgs.style = 'ranged';
                 }
-                Game.Queue.spawn.addRecord(record);
+
+                task.spawnJob = Game.Queue.spawn.addRecord(record);
             }
         }
 
