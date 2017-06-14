@@ -27,6 +27,12 @@ var taskDefense = {
 
         let targets = creep.room.getHostiles();
         if (!targets || targets.length <= 0) { return creep.removeWork(); }
+
+        targets = _.filter(targets, creep =>
+            creep.owner &&
+            !Game.Mil.isAlly(creep.owner.username)
+        );
+
         targets = _.sortBy(targets, target => creep.pos.getRangeTo(target));
 
         if (creep.attack(targets[0]) == ERR_NOT_IN_RANGE) {
