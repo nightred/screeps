@@ -75,6 +75,7 @@ Spawn.prototype.doRoom = function(room) {
             let args = {};
 
             args.spawnRoom = room.name;
+            args.role = records[r].role;
 
             if (records[r].creepArgs) {
                 for (let item in records[r].creepArgs) {
@@ -88,7 +89,7 @@ Spawn.prototype.doRoom = function(room) {
                 continue;
             }
 
-            let name = this.doSpawn(spawns[s], body, records[r].role, args);
+            let name = this.doSpawn(spawns[s], body, args);
 
             if (name != undefined && !(name < 0)) {
                 energy -= this.getBodyCost(body);
@@ -119,11 +120,11 @@ Spawn.prototype.doRoom = function(room) {
 * @param {array} body The creep body
 * @param {Object} args Extra arguments
 **/
-Spawn.prototype.doSpawn = function(spawn, body, role, args) {
+Spawn.prototype.doSpawn = function(spawn, body, args) {
     if (!spawn) { return ERR_INVALID_ARGS; }
     if (!Array.isArray(body) || body.length < 1) { return ERR_INVALID_ARGS; }
 
-    let name = this.getName(role);
+    let name = this.getName(args.role);
 
     return spawn.createCreep(body, name, args);
 };
