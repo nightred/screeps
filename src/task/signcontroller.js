@@ -79,8 +79,9 @@ var taskMine = {
     /**
     * @param {Room} room The room object
     **/
-    createTask: function(room) {
-        if (!room) { return -1; }
+    createTask: function(args, room) {
+        if (!room) { return ERR_INVALID_ARGS; }
+
         let record = {
             workRooms: [ room, ],
             task: C.SIGNCONTROLLER,
@@ -88,6 +89,7 @@ var taskMine = {
             creepLimit: 0,
             managed: true,
         };
+        
         return Game.Queue.work.addRecord(record);
     },
 
@@ -100,7 +102,7 @@ var taskMine = {
         let output = ""
         output += task.task + " task config, id " + task.id + "\n";
 
-        output += "Game.Queue.queue[" + task.id + "].message = " + task.message + "\n";
+        output += "Game.Queue.queue[" + task.id + "].message = '" + task.message + "'\n";
 
         output += "Update the records for operation.";
 

@@ -130,7 +130,7 @@ var taskUpgrade = {
 
                 if (task.minSize) { record.minSize = task.minSize; }
                 if (task.rcl8) { record.creepArgs.style = 'rcl8'; }
-                
+
                 task.spawnJob = Game.Queue.spawn.addRecord(record);
             }
         }
@@ -149,8 +149,9 @@ var taskUpgrade = {
     /**
     * @param {Room} room The room object
     **/
-    createTask: function(room) {
-        if (!room) { return -1; }
+    createTask: function(args, room) {
+        if (!room) { return ERR_INVALID_ARGS; }
+
         let record = {
             workRooms: [ room, ],
             spawnRoom: room,
@@ -159,6 +160,7 @@ var taskUpgrade = {
             creepLimit: 0,
             managed: true,
         };
+        
         return Game.Queue.work.addRecord(record);
     },
 

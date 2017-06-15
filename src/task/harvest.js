@@ -125,7 +125,7 @@ var taskUpgrade = {
                         mineralId: task.mineralId,
                     },
                 };
-                
+
                 task.spawnJob = Game.Queue.spawn.addRecord(record);
             }
         }
@@ -144,10 +144,9 @@ var taskUpgrade = {
     /**
     * @param {Room} room The room object
     **/
-    createTask: function(room) {
-        if (!room) { return -1; }
+    createTask: function(args, room) {
         return false;
-    },
+    },,
 
 };
 

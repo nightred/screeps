@@ -39,9 +39,16 @@ WorkQueue.prototype.doTaskFind = function(room, tasks) {
 };
 
 WorkQueue.prototype.doFlag = function(flag) {
-    if (!flag) { return -1; }
-    if (C.WORK_TASKS.indexOf(flag.name) < 0) { return false; }
-    return Game.Manage.task.createTask(flag.name, flag.pos.roomName);
+    if (!flag) { return ERR_INVALID_ARGS; }
+
+    let flagName = flag.name;
+    let args = flagName.split(':');
+
+    if (C.WORK_TASKS.indexOf(args[1]) < 0) {
+        return false;
+    }
+
+    return Game.Manage.task.createTask(args, flag.pos.roomName);
 };
 
 WorkQueue.prototype.printConfig = function(id) {

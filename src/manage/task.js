@@ -58,11 +58,11 @@ manageTask.prototype.doFindTask = function(task, room) {
 * @param {Task} task the name of the task to be created
 * @param {Room} room the room object
 **/
-manageTask.prototype.createTask = function(task, room) {
-    if (!room) { return -1; }
-    if (C.WORK_TASKS.indexOf(task) < 0) { return -1; }
+manageTask.prototype.createTask = function(args, room) {
+    if (!room) { return ERR_INVALID_ARGS; }
+    if (Array.isArray(args)) { return ERR_INVALID_ARGS; }
 
-    return this.tasks[task].createTask(room);
+    return this.tasks[args[1]].createTask(args, room);
 };
 
 manageTask.prototype.getTask = function(name) {

@@ -128,15 +128,18 @@ var taskReserve = {
     /**
     * @param {Room} room The room object
     **/
-    createTask: function(room) {
-        if (!room) { return -1; }
+    createTask: function(args, room) {
+        if (!room) { return ERR_INVALID_ARGS; }
+
         let record = {
             workRooms: [ room, ],
             task: C.RESERVE,
             priority: 70,
             creepLimit: 0,
             managed: true,
+            spawnRoom: args[2],
         };
+
         return Game.Queue.work.addRecord(record);
     },
 

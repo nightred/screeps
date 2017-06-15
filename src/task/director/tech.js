@@ -99,7 +99,7 @@ var taskDirectorTech = {
                         directorId: task.id,
                     },
                 };
-                
+
                 if (task.minSize) { record.minSize = task.minSize; }
                 if (task.maxSize) { record.maxSize = task.maxSize; }
 
@@ -121,15 +121,18 @@ var taskDirectorTech = {
     /**
     * @param {Room} room The room object
     **/
-    createTask: function(room) {
-        if (!room) { return -1; }
+    createTask: function(args, room) {
+        if (!room) { return ERR_INVALID_ARGS; }
+
         let record = {
             workRooms: [ room, ],
             task: C.DIRECTOR_TECH,
             priority: 26,
-            creepLimit: 0,
+            creepLimit: args[3],
+            spawnRoom: args[2],
             managed: true,
         };
+
         return Game.Queue.work.addRecord(record);
     },
 

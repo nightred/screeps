@@ -103,8 +103,7 @@ var taskRepair = {
     /**
     * @param {Room} room The room object
     **/
-    createTask: function(room) {
-        if (!room) { return -1; }
+    createTask: function(args, room) {
         return false;
     },
 

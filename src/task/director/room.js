@@ -133,8 +133,9 @@ var taskDirectorRoom = {
     /**
     * @param {Room} room The room object
     **/
-    createTask: function(room) {
-        if (!room) { return -1; }
+    createTask: function(args, room) {
+        if (!room) { return ERR_INVALID_ARGS; }
+
         let record = {
             workRooms: [ room, ],
             spawnRoom: room,
@@ -143,6 +144,7 @@ var taskDirectorRoom = {
             creepLimit: 0,
             managed: true,
         };
+        
         return Game.Queue.work.addRecord(record);
     },
 
