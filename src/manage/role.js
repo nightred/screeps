@@ -26,15 +26,6 @@ manageRole.prototype.getBody = function(role, energy, args) {
     return this.roles[role].getBody(energy, args);
 };
 
-manageRole.prototype.doSpawn = function(role, spawn, body, args) {
-    if (C.ROLE_TYPES.indexOf(role) < 0) { return false; }
-    if (!spawn) { return -1; }
-    if (!body) { return -1; }
-    args = args || {};
-
-    return this.roles[role].doSpawn(spawn, body, args);
-};
-
 manageRole.prototype.getRole = function(name) {
     if (C.ROLE_TYPES.indexOf(name) < 0) {
         if (C.DEBUG >= 2) { console.log('DEBUG - failed to load role: ' + name); }

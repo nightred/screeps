@@ -81,22 +81,6 @@ var roleCombatMedic = {
         return body;
     },
 
-    /**
-    * Spawn the creep
-    * @param {Spawn} spawn The spawn to be used
-    * @param {array} body The creep body
-    * @param {Object} args Extra arguments
-    **/
-    doSpawn: function(spawn, body, args) {
-        if (!spawn) { return -1; }
-        if (!Array.isArray(body) || body.length < 1) { return -1; }
-        args = args || {};
-        args.role = args.role || this.role;
-        let name = Game.Queue.spawn.getCreepName(this.role);
-
-        return spawn.createCreep(body, name, args);
-    },
-
 };
 
 module.exports = roleCombatMedic;
