@@ -24,3 +24,31 @@ RoomPosition.prototype.getStructure = function() {
 
     return targets[0].structure;
 };
+
+RoomPosition.prototype.isOnConstruction = function() {
+    return this.getConstruction() != undefined;
+};
+
+RoomPosition.prototype.getConstruction = function() {
+    return this.lookFor(LOOK_CONSTRUCTION_SITES);
+};
+
+RoomPosition.prototype.isOnRoad = function() {
+    return this.getRoad() != undefined;
+};
+
+RoomPosition.prototype.getRoad = function() {
+    return _.find(this.lookFor(LOOK_STRUCTURES), o =>
+        o instanceof StructureRoad
+    );
+};
+
+RoomPosition.prototype.isOnContainer = function() {
+    return this.getContainer() != undefined;
+};
+
+RoomPosition.prototype.getContainer = function() {
+    return _.find(this.lookFor(LOOK_STRUCTURES), o =>
+        o instanceof StructureContainer
+    );
+};
