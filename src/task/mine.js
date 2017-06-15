@@ -111,7 +111,7 @@ var taskMine = {
                 reUsePath: 80,
                 maxOps: 4000,
                 ignoreCreeps: true,
-            });
+            });            
             return true;
         }
 
@@ -125,7 +125,6 @@ var taskMine = {
         }
 
         creep.harvest(source);
-
         return true;
     },
 
@@ -157,7 +156,6 @@ var taskMine = {
         }
 
         creep.harvest(source);
-
         return true;
     },
 
