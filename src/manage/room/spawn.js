@@ -30,7 +30,7 @@ Spawn.prototype.doRoom = function(room) {
     }
 
     let maxAge = Game.time - Math.min.apply(null, records.tick);
-    records = _.sortBy(
+    records = _.sortBy(records, record =>
         100 + record.priority -
         (100 * ((Game.time - record.tick) / maxAge))
     );
@@ -88,7 +88,7 @@ Spawn.prototype.doRoom = function(room) {
                 continue;
             }
 
-            let name = this.doSpawn(spawns[s], body, args);
+            let name = this.doSpawn(spawns[s], body, records[r].role, args);
 
             if (name != undefined && !(name < 0)) {
                 energy -= this.getBodyCost(body);
@@ -119,11 +119,11 @@ Spawn.prototype.doRoom = function(room) {
 * @param {array} body The creep body
 * @param {Object} args Extra arguments
 **/
-Spawn.prototype.doSpawn = function(spawn, body, args) {
+Spawn.prototype.doSpawn = function(spawn, body, role, args) {
     if (!spawn) { return ERR_INVALID_ARGS; }
     if (!Array.isArray(body) || body.length < 1) { return ERR_INVALID_ARGS; }
 
-    let name = Game.Queue.spawn.getCreepName(this.role);
+    let name = this.getName(role);
 
     return spawn.createCreep(body, name, args);
 };
@@ -143,7 +143,7 @@ Spawn.prototype.getBodyCost = function(body) {
     return cost;
 };
 
-Spawn.prototype.getCreepName = function(role) {
+Spawn.prototype.getName = function(role) {
     let name = role.replace(/\./g, '_');
 
     name += '_' + Math.random().toString(36).substr(2, 1);
