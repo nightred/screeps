@@ -101,16 +101,37 @@ var taskMine = {
 
     doHarvest: function(creep) {
         if (!creep) { return -1; }
+
         let source = Game.getObjectById(creep.memory.harvestTarget);
-        if (creep.harvest(source) == ERR_NOT_IN_RANGE) {
-            creep.goto(source, { range: 1, maxRooms:1, reUsePath: 80, maxOps: 4000, ignoreCreeps: true, });
+
+        if (!creep.pos.inRangeTo(source, 1)) {
+            creep.goto(source, {
+                range: 1,
+                maxRooms:1,
+                reUsePath: 80,
+                maxOps: 4000,
+                ignoreCreeps: true,
+            });
+            return true;
         }
+
+        if (creep.carry[RESOURCE_ENERGY] > 0 && !source.getLocalContainer()) {
+            let construction = creep.room.getConstructionAtArea(source.pos, 1);
+
+            if (construction) {
+                creep.build(construction);
+                return true;
+            }
+        }
+
+        creep.harvest(source);
 
         return true;
     },
 
     doDropHarvest: function(creep) {
         if (!creep) { return -1; }
+
         let source = Game.getObjectById(creep.memory.harvestTarget);
         let target = Game.getObjectById(source.getDropContainer());
 
@@ -121,23 +142,21 @@ var taskMine = {
             return false;
         }
 
-        if (!creep.memory.atSource) {
-            if (creep.pos.x == target.pos.x && creep.pos.y == target.pos.y) {
-                creep.memory.atSource = true;
-            } else {
-                creep.moveTo(target.pos.x, target.pos.y, { range: 0, maxRooms:1, reUsePath: 80, maxOps: 4000, });
-                return true;
-            }
+        if (!creep.pos.isEqualTo(target)) {
+            creep.goto(target, {
+                range: 0,
+                maxRooms:1,
+                reUsePath: 80,
+                maxOps: 4000,
+            });
+            return true;
         }
 
         if (_.sum(target.store) >= (target.storeCapacity * C.ENERGY_CONTAINER_MAX_PERCENT)) {
             return true;
         }
 
-        if (creep.harvest(source) == ERR_NOT_IN_RANGE) {
-            if (C.DEBUG >= 2) { console.log('DEBUG - miner ' + creep.name + ' not in range of ' + source.id); }
-            return false;
-        }
+        creep.harvest(source);
 
         return true;
     },

@@ -30,7 +30,9 @@ RoomPosition.prototype.isOnConstruction = function() {
 };
 
 RoomPosition.prototype.getConstruction = function() {
-    return this.lookFor(LOOK_CONSTRUCTION_SITES);
+    return _.find(this.lookFor(LOOK_CONSTRUCTION_SITES), o =>
+        o instanceof ConstructionSite
+    );
 };
 
 RoomPosition.prototype.isOnRoad = function() {

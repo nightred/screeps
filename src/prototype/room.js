@@ -174,3 +174,20 @@ Room.prototype.findSpawn = function() {
         this.memory.spawnId = false;
     }
 };
+
+Room.prototype.getConstructionAtArea = function(pos, range) {
+        let objects = this.lookForAtArea(
+            LOOK_CONSTRUCTION_SITES,
+            pos.y - range,
+            pos.x - range,
+            pos.y + range,
+            pos.x + range,
+            true
+        );
+
+        if (objects.length == 0) {
+            return false;
+        }
+
+        return objects[0].constructionSite;
+};
