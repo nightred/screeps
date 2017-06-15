@@ -95,7 +95,11 @@ var taskReserve = {
             return true;
         }
 
-        if (!Game.Queue.spawn.isQueued({ role: C.CONTROLLER, workId: task.id, })) {
+        if (task.spawnJob && !Game.Queue.getRecord(task.spawnJob)) {
+            task.spawnJob = undefined;
+        }
+
+        if (!task.spawnJob) {
             let record = {
                 rooms: [ task.spawnRoom, ],
                 role: C.CONTROLLER,
@@ -106,7 +110,8 @@ var taskReserve = {
                     style: 'reserve',
                 },
             };
-            Game.Queue.spawn.addRecord(record);
+
+            task.spawnJob = Game.Queue.spawn.addRecord(record);
         }
 
         return true;
@@ -123,15 +128,18 @@ var taskReserve = {
     /**
     * @param {Room} room The room object
     **/
-    createTask: function(room) {
+    createTask: function(args, room) {
         if (!room) { return ERR_INVALID_ARGS; }
+
         let record = {
             workRooms: [ room, ],
             task: C.RESERVE,
             priority: 70,
             creepLimit: 0,
             managed: true,
+            spawnRoom: args[2],
         };
+
         return Game.Queue.work.addRecord(record);
     },
 

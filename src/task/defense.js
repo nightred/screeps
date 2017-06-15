@@ -32,10 +32,12 @@ var taskDefense = {
         }
 
         let targets = creep.room.getHostiles();
+        if (!targets || targets.length <= 0) { return creep.removeWork(); }
 
-        if (!targets || targets.length <= 0) {
-            return creep.removeWork();
-        }
+        targets = _.filter(targets, creep =>
+            creep.owner &&
+            !Game.Mil.isAlly(creep.owner.username)
+        );
 
         targets = _.sortBy(targets, target => creep.pos.getRangeTo(target));
         let target = targets[0];
@@ -77,8 +79,7 @@ var taskDefense = {
     /**
     * @param {Room} room The room object
     **/
-    createTask: function(room) {
-        if (!room) { return ERR_INVALID_ARGS; }
+    createTask: function(args, room) {
         return false;
     },
 

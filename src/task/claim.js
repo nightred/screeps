@@ -63,14 +63,17 @@ var taskClaim = {
     /**
     * @param {Room} room The room object
     **/
-    createTask: function(room) {
+    createTask: function(args, room) {
         if (!room) { return ERR_INVALID_ARGS; }
+
         let record = {
             workRooms: [ room, ],
             task: C.CLAIM,
             priority: 40,
             creepLimit: 1,
+            spawnRoom: args[2],
         };
+        
         return Game.Queue.work.addRecord(record);
     },
 

@@ -128,11 +128,13 @@ var roleHauler = {
         }
 
         if (creep.memory.working) {
-            if (creep.isOnRoad()) {
-                let road = creep.getOnRoad();
+            if (creep.pos.isOnRoad()) {
+                let road = creep.pos.getRoad();
                 if (road.hits < road.hitsMax) {
                     creep.repair(road);
                 }
+            } else if (creep.pos.isOnConstruction()) {
+                creep.build(creep.pos.getConstruction());
             }
 
             if (creep.room.name != creep.memory.spawnRoom) {

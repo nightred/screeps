@@ -109,7 +109,11 @@ var taskUpgrade = {
             creep.memory.despawn != true
             ).length;
         if (count < task.creepLimit) {
-            if (!Game.Queue.spawn.isQueued({ workId: task.id, role: C.HARVESTER, })) {
+            if (task.spawnJob && !Game.Queue.getRecord(task.spawnJob)) {
+                task.spawnJob = undefined;
+            }
+
+            if (!task.spawnJob) {
                 let record = {
                     rooms: [ task.spawnRoom, ],
                     role: C.HARVESTER,
@@ -121,7 +125,8 @@ var taskUpgrade = {
                         mineralId: task.mineralId,
                     },
                 };
-                Game.Queue.spawn.addRecord(record);
+
+                task.spawnJob = Game.Queue.spawn.addRecord(record);
             }
         }
 
@@ -139,10 +144,9 @@ var taskUpgrade = {
     /**
     * @param {Room} room The room object
     **/
-    createTask: function(room) {
-        if (!room) { return ERR_INVALID_ARGS; }
+    createTask: function(args, room) {
         return false;
-    },
+    },,
 
 };
 

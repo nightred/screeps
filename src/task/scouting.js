@@ -86,14 +86,16 @@ var taskScouting = {
     /**
     * @param {Room} room The room object
     **/
-    createTask: function(room) {
+    createTask: function(args, room) {
         if (!room) { return ERR_INVALID_ARGS; }
+
         let record = {
             workRooms: [ room, ],
             task: C.SCOUTING,
             priority: 90,
             creepLimit: 1,
         };
+        
         return Game.Queue.work.addRecord(record);
     },
 

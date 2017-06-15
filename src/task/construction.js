@@ -89,8 +89,7 @@ var taskConstruction = {
     /**
     * @param {Room} room The room object
     **/
-    createTask: function(room) {
-        if (!room) { return ERR_INVALID_ARGS; }
+    createTask: function(args, room) {
         return false;
     },
 
