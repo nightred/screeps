@@ -60,7 +60,7 @@ manageTask.prototype.doFindTask = function(task, room) {
 **/
 manageTask.prototype.createTask = function(args, room) {
     if (!room) { return ERR_INVALID_ARGS; }
-    if (Array.isArray(args)) { return ERR_INVALID_ARGS; }
+    if (!Array.isArray(args)) { return ERR_INVALID_ARGS; }
 
     return this.tasks[args[1]].createTask(args, room);
 };

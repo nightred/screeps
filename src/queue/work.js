@@ -41,12 +41,18 @@ WorkQueue.prototype.doTaskFind = function(room, tasks) {
 WorkQueue.prototype.doFlag = function(flag) {
     if (!flag) { return ERR_INVALID_ARGS; }
 
+    if (flag.memory.init) {
+        continue;
+    }
+
     let flagName = flag.name;
     let args = flagName.split(':');
 
     if (C.WORK_TASKS.indexOf(args[1]) < 0) {
         return false;
     }
+
+    flag.memory.init = 1;
 
     return Game.Manage.task.createTask(args, flag.pos.roomName);
 };
