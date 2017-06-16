@@ -88,17 +88,22 @@ var roleTech = {
     * @param {Object} args Extra arguments
     **/
     getBody: function(energy, args) {
-        let workUnits = Math.floor((energy * 0.5) / 100);
+        if (isNaN(energy)) { return ERR_INVALID_ARGS; }
+        args = args || {};
+
+        let workUnits = Math.floor((energy * 0.6) / 150);
         workUnits = workUnits < 1 ? 1 : workUnits;
         workUnits = workUnits > 6 ? 6 : workUnits;
-        energy -= 100 * workUnits;
-        let moveUnits = Math.floor((energy * 0.5) / 50);
-        moveUnits = moveUnits < 1 ? 1 : moveUnits;
-        moveUnits = moveUnits > 8 ? 8 : moveUnits;
-        energy -= 50 * moveUnits;
-        let carryUnits = Math.floor(energy / 50);
+
+        let moveUnits = workUnits;
+        energy -= 150 * workUnits;
+
+        let carryUnits = Math.floor(energy / 100);
         carryUnits = carryUnits < 1 ? 1 : carryUnits;
         carryUnits = carryUnits > 10 ? 10 : carryUnits;
+
+        moveUnits += carryUnits;
+        energy -= 100 * carryUnits;
 
         let body = [];
         for (let i = 0; i < workUnits; i++) {
