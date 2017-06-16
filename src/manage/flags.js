@@ -29,7 +29,7 @@ Flags.prototype.doManage = function() {
                 Game.Mil.doFlag(flag);
                 break;
             case COLOR_GREEN:
-                flag.memory.result = Game.Queue.work.doFlag(flag);
+                Game.Queue.work.doFlag(flag);
                 break;
         }
     }
