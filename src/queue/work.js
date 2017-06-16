@@ -13,52 +13,6 @@ var WorkQueue = function() {
     this.queue = Memory.queues.queue;
 };
 
-WorkQueue.prototype.doManageTasks = function() {
-    let taskList = _.sortBy(_.filter(this.getQueue(), task =>
-        task.managed
-    ), task => task.priority);
-    if (!taskList || taskList.length < 0) { return false; }
-
-    for (let i =0; i < taskList.length; i++) {
-        Game.Manage.task.doManagedTask(taskList[i]);
-    }
-
-    return true;
-};
-
-WorkQueue.prototype.doTaskFind = function(room, tasks) {
-    if (!room) { return -1; }
-    tasks = tasks || C.WORK_TASKS;
-    if (!Array.isArray(tasks)) { return -1; }
-
-    for (let i = 0; i < tasks.length; i++) {
-        Game.Manage.task.doFindTask(tasks[i], room);
-    }
-
-    return true;
-};
-
-WorkQueue.prototype.doFlag = function(flag) {
-    if (!flag) { return ERR_INVALID_ARGS; }
-
-    if (flag.memory.init) {
-        return true;
-    }
-
-    let flagName = flag.name;
-    let args = flagName.split(':');
-
-    if (C.WORK_TASKS.indexOf(args[1]) < 0) {
-        flag.memory.result = 'invalid task';
-        return false;
-    }
-
-    flag.memory.result = Game.Manage.task.createTask(args, flag.pos.roomName);
-    flag.memory.init = 1;
-
-    return true;
-};
-
 WorkQueue.prototype.printConfig = function(id) {
     if (isNaN(id)) { return -1; }
     if (!this.queue[id]) { return -1; }

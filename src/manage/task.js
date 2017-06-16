@@ -11,6 +11,10 @@ var manageTask = function() {
     }
 };
 
+manageTask.prototype.doManage = function() {
+    this.doManagedTasks();
+};
+
 /**
 * @param {Creep} creep The creep object
 **/
@@ -37,21 +41,35 @@ manageTask.prototype.doTask = function(creep) {
 /**
 * @param {Task} task the task object
 **/
-manageTask.prototype.doManagedTask = function(task) {
-    if (!task) { return -1; }
+manageTask.prototype.doManagedTasks = function() {
+    let taskList = _.sortBy(_.filter(Game.Queue.work.getQueue(), task =>
+        task.managed
+    ), task => task.priority);
 
-    return this.tasks[task.task].doTaskManaged(task);
+    if (!taskList || taskList.length < 0) { return false; }
+
+    for (let i =0; i < taskList.length; i++) {
+        this.tasks[taskList[i].task].doTaskManaged(taskList[i])
+    }
+
+    return true;
 };
 
 /**
-* @param {Task} task the task to run
 * @param {Room} room the room object
+* @param {Tasks} tasks the tasks to run
 **/
-manageTask.prototype.doFindTask = function(task, room) {
-    if (!task) { return -1; }
-    if (!room) { return -1; }
+manageTask.prototype.doTaskFind = function(room, tasks) {
+    if (!room) { return ERR_INVALID_ARGS; }
+    if (!Array.isArray(tasks)) { return ERR_INVALID_ARGS; }
 
-    return this.tasks[task].doTaskFind(room);
+    tasks = tasks || C.WORK_TASKS;
+
+    for (let i = 0; i < tasks.length; i++) {
+        this.tasks[tasks[i]].doTaskFind(room)
+    }
+
+    return true;
 };
 
 /**
@@ -89,6 +107,36 @@ manageTask.prototype.cooldown = function(task) {
     }
     task.manageTick = Game.time;
     return false;
+};
+
+manageTask.prototype.doFlag = function(flag) {
+    if (!flag) { return ERR_INVALID_ARGS; }
+
+    let flagName = flag.name;
+    let args = flagName.split(':');
+
+    if (C.WORK_TASKS.indexOf(args[1]) < 0) {
+        flag.memory.result = 'invalid task';
+        return false;
+    }
+
+    if (!flag.memory.init) {
+        flag.memory.jobId = this.createTask(args, flag.pos.roomName);
+        flag.memory.init = 1;
+    }
+
+    switch (flag.secondaryColor) {
+    case COLOR_RED:
+        // update flag data
+
+        if (!flag.memory.withFlag) {
+            flag.memory.withFlag = 1;
+        }
+
+        break;
+    }
+
+    return true;
 };
 
 module.exports = manageTask;

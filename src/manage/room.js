@@ -35,7 +35,7 @@ manageRoom.prototype.doManage = function() {
         if (room.controller && room.controller.my) {
             this.link.doRoom(room);
             Game.Mil.doRoom(room);
-            Game.Queue.work.doTaskFind(room);
+            Game.Manage.task.doTaskFind(room);
             this.spawn.doRoom(room);
             this.tower.doRoom(room);
         }

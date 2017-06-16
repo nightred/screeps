@@ -24,8 +24,7 @@ var Queue = function() {
 };
 
 Queue.prototype.run = function() {
-    this.spawn.cleanQueue();
-    this.work.doManageTasks();
+    this.spawn.gc();
 };
 
 Queue.prototype.getQueue = function(args) {

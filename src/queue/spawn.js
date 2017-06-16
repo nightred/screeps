@@ -13,7 +13,7 @@ var SpawnQueue = function() {
     this.queue = Memory.queues.queue;
 };
 
-SpawnQueue.prototype.cleanQueue = function() {
+SpawnQueue.prototype.gc = function() {
     let records = _.filter(this.getQueue(), record =>
         record.spawned
     );
@@ -93,7 +93,7 @@ SpawnQueue.prototype.addRecord = function(args) {
     if (args.creepArgs) { record.creepArgs = args.creepArgs; }
 
     if (C.DEBUG >= 3) { console.log('VERBOSE - spawn queue adding record, role: ' + record.role + ', rooms: [' + record.rooms + '], priority: ' + record.priority); }
-    
+
     return Game.Queue.addRecord(record);
 };
 
