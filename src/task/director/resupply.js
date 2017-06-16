@@ -67,8 +67,7 @@ var taskDirectorResupply = {
 
             // spawn new creeps if needed
             count = _.filter(Game.creeps, creep =>
-                creep.memory.role == C.RESUPPLY &&
-                creep.room.name == room.name &&
+                creep.memory.workId == task.id &&
                 creep.memory.despawn != true
                 ).length;
             if (count < task.creepLimit) {
@@ -120,7 +119,7 @@ var taskDirectorResupply = {
             creepLimit: 0,
             managed: true,
         };
-        
+
         return Game.Queue.work.addRecord(record);
     },
 
