@@ -61,7 +61,6 @@ manageTask.prototype.doManagedTasks = function() {
 **/
 manageTask.prototype.doTaskFind = function(room, tasks) {
     if (!room) { return ERR_INVALID_ARGS; }
-    if (!Array.isArray(tasks)) { return ERR_INVALID_ARGS; }
 
     tasks = tasks || C.WORK_TASKS;
 

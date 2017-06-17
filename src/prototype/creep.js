@@ -5,14 +5,18 @@
  *
  */
 
-Creep.prototype.moveToRoom = function(name) {
-    if (!name) { return -1; }
-    if (this.room.name == name) { return true; }
+Creep.prototype.moveToRoom = function(roomName) {
+    if (!roomName) { return -1; }
+    if (this.room.name == roomName) { return true; }
 
     if (Game.cpu.bucket < 1000) { return true; }
 
-    let target = new RoomPosition(25, 25, name);
-    return this.goto(target, { range: 10,  reusePath: 50, ignoreCreeps: true, })
+    let target = new RoomPosition(25, 25, roomName);
+    return this.goto(target, {
+        range: 24,
+        reusePath: 50,
+        ignoreCreeps: true,
+    });
 }
 
 Creep.prototype.manageState = function() {
@@ -81,18 +85,18 @@ Creep.prototype.leaveWork = function() {
 }
 
 Creep.prototype.getWork = function(tasks, args) {
-    if (!Array.isArray(tasks)) { return false; }
+    if (!Array.isArray(tasks)) { return ERR_INVALID_ARGS; }
     args = args || {};
 
     let list = false;
     if (args.ignoreRoom) {
-        list = Game.Queue.work.getWork(tasks, this.name);
+        list = Game.Queue.work.getWork(tasks, this, args);
     } else if (args.room) {
-        list = Work.getWork(tasks, this.name, args);
+        list = Work.getWork(tasks, this, args);
     } else if (this.memory.workRooms) {
         if (this.memory.workRooms.indexOf(this.room.name) >= 0) {
             args.room = this.room.name;
-            list = Game.Queue.work.getWork(tasks, this.name, args);
+            list = Game.Queue.work.getWork(tasks, this, args);
         }
         if (!list || list.length <= 0) {
             for (let i = 0; i < this.memory.workRooms.length; i++) {
@@ -100,13 +104,13 @@ Creep.prototype.getWork = function(tasks, args) {
                     continue;
                 }
                 args.room = this.memory.workRooms[i];
-                list = Game.Queue.work.getWork(tasks, this.name, args);
+                list = Game.Queue.work.getWork(tasks, this, args);
                 if (list.length > 0) { break; }
             }
         }
     } else {
         args.room = this.room.name;
-        list = Game.Queue.work.getWork(tasks, this.name, args);
+        list = Game.Queue.work.getWork(tasks, this, args);
     }
 
     if (!list || list.length <= 0) { return false; }
