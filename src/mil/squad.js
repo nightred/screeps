@@ -69,7 +69,7 @@ Squad.prototype.doSpawn = function(flag, args) {
     }
 
     let record = {
-        rooms: [ room.name, ],
+        rooms: [ roomName, ],
         role: args.role,
         priority: 42,
         creepArgs: {
@@ -83,11 +83,12 @@ Squad.prototype.doSpawn = function(flag, args) {
 };
 
 Squad.prototype.doTarget = function(flag) {
-
     let squad = Game.Queue.mil.getSquad(flag.name);
     if (!squad) {
         return false;
     }
+
+    squad.op = squad.op || {};
 
     // get target flag is on
     let target = flag.pos.getStructure();
@@ -101,10 +102,6 @@ Squad.prototype.doTarget = function(flag) {
     squad.op.y = squad.op.y != flag.pos.y ? flag.pos.y : squad.op.y;
 
     return true;
-};
-
-Squad.prototype.doSpawn = function(flag, args) {
-
 };
 
 module.exports = Squad;

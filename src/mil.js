@@ -60,21 +60,19 @@ Mil.prototype.doFlag = function(flag) {
     if (!flag.memory.squadId) {
         let squadId = undefined;
 
-        if (!Game.Queue.mil.isQueued({ squad:args[0] })) {
+        if (Game.Queue.mil.getSquad(args[0])) {
+            squadId = Game.Queue.mil.getSquad(args[0]).id;
+        }
+
+        if (!squadId) {
             squadId = Game.Queue.mil.addRecord({
                 squad: args[0],
             });
-        } else {
-            squadId = Game.Queue.mil.getSquad(flag.name).id
         }
 
-        if (squadId) {
-            flag.memory.squadId = squadId;
-        } else {
-            return false;
-        }
+        flag.memory.squadId = squadId;
     }
-    
+
     switch (flag.secondaryColor) {
         case COLOR_RED:
             this.squad.doTarget(flag);
@@ -82,7 +80,7 @@ Mil.prototype.doFlag = function(flag) {
         case COLOR_PURPLE:
             this.squad.doSpawn(flag, {
                 squad: args[0],
-                role: args[1],
+                role: 'combat.' + args[1],
                 count: args[2],
             });
             break;
