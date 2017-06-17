@@ -30,7 +30,7 @@ var taskConstruction = {
 
         if (!creep.pos.inRangeTo(target, 3)) {
             let args = {
-                range: 3,
+                range: 1,
                 reusePath: 50,
                 maxRooms: 1,
                 ignoreCreeps: true,

@@ -27,7 +27,7 @@ var taskUpgrade = {
 
         if (!creep.pos.inRangeTo(creep.room.controller, 3)) {
             let args = {
-                range: 3,
+                range: 1,
                 reusePath: 30,
                 maxRooms: 1,
             };
@@ -93,7 +93,7 @@ var taskUpgrade = {
                 creepLimit = 3;
             } else if (room.storage.store[RESOURCE_ENERGY] < 200000 ) {
                 creepLimit = 4;
-            } else if (room.storage.store[RESOURCE_ENERGY] > 300000 ) {
+            } else if (room.storage.store[RESOURCE_ENERGY] >= 200000 ) {
                 creepLimit = 5;
             }
         } else if (room.controller.level == 8 ) {
