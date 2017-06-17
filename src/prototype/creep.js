@@ -88,35 +88,7 @@ Creep.prototype.getWork = function(tasks, args) {
     if (!Array.isArray(tasks)) { return ERR_INVALID_ARGS; }
     args = args || {};
 
-    let list = false;
-    if (args.ignoreRoom) {
-        list = Game.Queue.work.getWork(tasks, this, args);
-    } else if (args.room) {
-        list = Work.getWork(tasks, this, args);
-    } else if (this.memory.workRooms) {
-        if (this.memory.workRooms.indexOf(this.room.name) >= 0) {
-            args.room = this.room.name;
-            list = Game.Queue.work.getWork(tasks, this, args);
-        }
-        if (!list || list.length <= 0) {
-            for (let i = 0; i < this.memory.workRooms.length; i++) {
-                if (this.memory.workRooms[i] == this.room.name) {
-                    continue;
-                }
-                args.room = this.memory.workRooms[i];
-                list = Game.Queue.work.getWork(tasks, this, args);
-                if (list.length > 0) { break; }
-            }
-        }
-    } else {
-        args.room = this.room.name;
-        list = Game.Queue.work.getWork(tasks, this, args);
-    }
-
-    if (!list || list.length <= 0) { return false; }
-    let workId = list[0].id;
-    this.memory.workId = workId;
-    return true;
+    return Game.Manage.task.getTask(tasks, this, args);
 }
 
 Creep.prototype.doWork = function() {

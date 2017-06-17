@@ -7,7 +7,7 @@
 var manageTask = function() {
     this.tasks = {};
     for (let i = 0; i < C.WORK_TASKS.length; i++) {
-        this.tasks[C.WORK_TASKS[i]] = this.getTask(C.WORK_TASKS[i]);
+        this.tasks[C.WORK_TASKS[i]] = this.loadTask(C.WORK_TASKS[i]);
     }
 };
 
@@ -36,6 +36,72 @@ manageTask.prototype.doTask = function(creep) {
     }
 
     return this.tasks[task.task].doTask(creep, task);
+};
+
+manageTask.prototype.getTask = function(tasks, creep, args) {
+    if (!Array.isArray(tasks)) { return ERR_INVALID_ARGS; }
+    args = args || {};
+
+    let list = false;
+
+    if (args.ignoreRoom) {
+        list = this.findTask(tasks, creep, args);
+    } else if (args.room) {
+        list = this.findTask(tasks, creep, args);
+    } else if (creep.memory.workRooms) {
+        if (creep.memory.workRooms.indexOf(creep.room.name) >= 0) {
+            args.room = creep.room.name;
+            list = this.findTask(tasks, creep, args);
+        }
+
+        if (!list || list.length <= 0) {
+            for (let i = 0; i < creep.memory.workRooms.length; i++) {
+                if (creep.memory.workRooms[i] == creep.room.name) {
+                    continue;
+                }
+
+                args.room = creep.memory.workRooms[i];
+                list = this.findTask(tasks, creep, args);
+
+                if (list.length > 0) {
+                    break;
+                }
+            }
+        }
+    } else {
+        args.room = creep.room.name;
+        list = this.findTask(tasks, creep, args);
+    }
+
+    if (!list || list.length <= 0) {
+        return false;
+    }
+
+    let workId = list[0].id;
+    creep.memory.workId = workId;
+
+    return true;
+}
+
+manageTask.prototype.findTask = function(tasks, creep, args) {
+    if (!Array.isArray(tasks)) { return ERR_INVALID_ARGS; }
+    args = args || {};
+
+    let queue = Game.Queue.work.getQueue();
+
+    queue = _.filter(queue, record =>
+        tasks.indexOf(record.task) >= 0 &&
+        (!args.room || record.workRooms.indexOf(args.room) >= 0) &&
+        record.creeps.indexOf(creep.name) == -1 &&
+        record.creeps.length < record.creepLimit
+    );
+
+    let maxAge = Game.time - Math.min.apply(null, queue.tick);
+
+    return _.sortBy(queue, record =>
+        100 + record.priority -
+        (100 * ((Game.time - record.tick) / maxAge))
+    );
 };
 
 /**
@@ -82,7 +148,7 @@ manageTask.prototype.createTask = function(args, room) {
     return this.tasks[args[1]].createTask(args, room);
 };
 
-manageTask.prototype.getTask = function(name) {
+manageTask.prototype.loadTask = function(name) {
     if (C.WORK_TASKS.indexOf(name) < 0) {
         if (C.DEBUG >= 2) { console.log('DEBUG - unknown task: ' + name); }
         return -1;

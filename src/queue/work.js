@@ -23,25 +23,6 @@ WorkQueue.prototype.getQueue = function() {
     return Game.Queue.getQueue({queue: C.QUEUE_WORK, });
 };
 
-WorkQueue.prototype.getWork = function(tasks, creep, args) {
-    if (!Array.isArray(tasks)) { return ERR_INVALID_ARGS; }
-    args = args || {};
-
-    let queue = _.filter(this.getQueue(), record =>
-        tasks.indexOf(record.task) >= 0 &&
-        (!args.room || record.workRooms.indexOf(args.room) >= 0) &&
-        record.creeps.indexOf(creep.name) == -1 &&
-        record.creeps.length < record.creepLimit
-    );
-
-    let maxAge = Game.time - Math.min.apply(null, queue.tick);
-
-    return _.sortBy(queue, record =>
-        100 + record.priority -
-        (100 * ((Game.time - record.tick) / maxAge))
-    );
-};
-
 WorkQueue.prototype.addCreep = function(name, id) {
     if (!name) { return -1; }
     if (isNaN(id)) { return -1; }
