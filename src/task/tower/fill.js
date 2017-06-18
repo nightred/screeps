@@ -12,27 +12,75 @@ var taskTowerFill = {
     * @param {Task} task The work task passed from the work Queue
     **/
     doTask: function(creep, task) {
-        if (!creep) { return -1; }
-        if (!task) { return -1; }
+        if (!creep) { return ERR_INVALID_ARGS; }
+        if (!task) { return ERR_INVALID_ARGS; }
 
-        if (task.workRooms.length <= 0) {
-            if (C.DEBUG >= 2) { console.log('DEBUG - missing work rooms on task: ' + task.task + ', id: ' + task.id); }
-            return false;
+        if (creep.manageState()) {
+            if (creep.isWorking()) {
+                creep.say('⚙');
+            } else {
+                creep.say('🔋');
+            }
         }
 
+        if (creep.isWorking()) {
+            this.doFillTower(creep, task);
+        } else {
+            this.getEnergy(creep, task);
+        }
+
+        return true;
+    },
+
+    /**
+    * @param {Task} task The work task passed from the work Queue
+    **/
+    doFillTower: function(creep, task) {
         if (creep.room.name != task.workRooms[0]) {
             creep.moveToRoom(task.workRooms[0]);
             return true;
         }
 
         let target = Game.getObjectById(task.targetId);
-        if (!target) { return creep.removeWork(); }
+
+        if (!target) {
+            return creep.removeWork();
+        }
 
         if (target.energy >= Math.floor(target.energyCapacity * C.REFILL_TOWER_MAX)) {
             return creep.removeWork();
         }
 
         creep.doTransfer(target, RESOURCE_ENERGY);
+
+        return true;
+    },
+
+    /**
+    * @param {Task} task The work task passed from the work Queue
+    **/
+    getEnergy: function(creep, task) {
+        if (creep.memory.spawnRoom != creep.room.name) {
+            creep.moveToRoom(creep.memory.spawnRoom);
+            return true;
+        }
+
+        let energyTargets = [
+            'linkOut',
+            'storage',
+            'containerOut',
+            'container',
+            'containerIn',
+        ];
+
+        if (!creep.room.storage) {
+            energyTargets.push('extention');
+            energyTargets.push('spawn');
+        }
+
+        if (!creep.doFill(energyTargets, RESOURCE_ENERGY)) {
+            if (C.DEBUG >= 2) { console.log('DEBUG - do fill energy failed for role: ' + creep.memory.role + ', name: ' + creep.name); }
+        }
 
         return true;
     },

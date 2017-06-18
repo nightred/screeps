@@ -12,8 +12,8 @@ var taskMine = {
     * @param {Task} task The work task passed from the work Queue
     **/
     doTask: function(creep, task) {
-        if (!creep) { return -1; }
-        if (!task) { return -1; }
+        if (!creep) { return ERR_INVALID_ARGS; }
+        if (!task) { return ERR_INVALID_ARGS; }
 
         if (task.workRooms.length <= 0) {
             if (C.DEBUG >= 2) { console.log('DEBUG - missing work rooms on task: ' + task.task + ', id: ' + task.id); }
@@ -28,11 +28,6 @@ var taskMine = {
         if (!creep.room.controller) {
             return creep.removeWork();
         }
-        if (creep.room.controller.sign) {
-            if (creep.room.controller.sign.text == task.message) {
-                return creep.removeWork();
-            }
-        }
 
         if (!creep.pos.inRangeTo(creep.room.controller, 1)) {
             let args = {
@@ -40,11 +35,14 @@ var taskMine = {
                 reusePath: 30,
                 maxRooms: 1,
             };
+
             creep.goto(creep.room.controller, args);
             return true;
         }
 
         creep.signController(creep.room.controller, task.message)
+        creep.removeWork();
+
         return true;
     },
 
@@ -52,7 +50,7 @@ var taskMine = {
     * @param {Task} task The work task passed from the work Queue
     **/
     doTaskManaged: function(task) {
-        if (!task) { return -1; }
+        if (!task) { return ERR_INVALID_ARGS; }
 
         if (!task.init) {
             this.printConfig(task);
@@ -73,7 +71,7 @@ var taskMine = {
     **/
     doTaskFind: function(room) {
         if (!room) { return -1; }
-        // task creation for the room
+        // task creation
     },
 
     /**
@@ -89,7 +87,7 @@ var taskMine = {
             creepLimit: 0,
             managed: true,
         };
-        
+
         return Game.Queue.work.addRecord(record);
     },
 
@@ -97,13 +95,11 @@ var taskMine = {
     * @param {Task} task The work task passed from the work Queue
     **/
     printConfig: function(task) {
-        if (!task) { return -1; }
+        if (!task) { return ERR_INVALID_ARGS; }
 
         let output = ""
         output += task.task + " task config, id " + task.id + "\n";
-
         output += "Game.Queue.queue[" + task.id + "].message = '" + task.message + "'\n";
-
         output += "Update the records for operation.";
 
         console.log(output);

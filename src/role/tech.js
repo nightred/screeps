@@ -18,20 +18,15 @@ var roleTech = {
     doRole: function(creep) {
         if (!creep) { return false; }
 
-        if (creep.manageState()) {
-            if (creep.memory.working) {
-                creep.say('⚙');
-            } else {
-                creep.say('🔋');
-                creep.leaveWork();
-            }
+        if (creep.getOffExit()) {
+            return true;
         }
 
-        if (creep.getOffExit()) { return true; }
-        if ((creep.memory.idleStart + C.CREEP_IDLE_TIME) > Game.time) {
+        if (creep.isSleep()) {
             if (!creep.isFull() && creep.collectDroppedEnergy()) {
                 return true;;
             }
+
             creep.moveToIdlePosition();
             return true;
         }
@@ -41,42 +36,20 @@ var roleTech = {
             C.TOWER_REFILL,
             C.CONSTRUCTION,
             C.SIGNCONTROLLER,
+            C.TERMINAL_EMPTY,
         ];
 
-        let energyTargets = [
-            'linkOut',
-            'storage',
-            'containerOut',
-            'container',
-            'containerIn',
-        ];
+        if (!creep.memory.workId) {
+            if (!creep.getWork(workTasks)) {
+                creep.sleep();
+                creep.say('💤');
 
-        if (!creep.room.storage) {
-            energyTargets.push('extention');
-            energyTargets.push('spawn');
-        }
-
-        if (creep.memory.working) {
-            if (!creep.memory.workId) {
-                if (!creep.getWork(workTasks)) {
-                    creep.memory.idleStart = Game.time;
-                    creep.say('💤');
-
-                    return true;
-                }
-            }
-
-            if (!creep.doWork()) {
-                if (C.DEBUG >= 2) { console.log('DEBUG - do work failed for role: ' + creep.memory.role + ', name: ' + creep.name); }
-            }
-        } else {
-            if (creep.memory.spawnRoom != creep.room.name) {
-                creep.moveToRoom(creep.memory.spawnRoom);
                 return true;
             }
-            if (!creep.doFill(energyTargets, RESOURCE_ENERGY)) {
-                if (C.DEBUG >= 2) { console.log('DEBUG - do fill energy failed for role: ' + creep.memory.role + ', name: ' + creep.name); }
-            }
+        }
+
+        if (!creep.doWork()) {
+            if (C.DEBUG >= 2) { console.log('DEBUG - do work failed for role: ' + creep.memory.role + ', name: ' + creep.name); }
         }
 
         return true;

@@ -33,10 +33,11 @@ Constant.ENERGY_LINK_OUT_MAX            = 0.8;
 Constant.LINK_STORAGE_TRANSFER_MIN      = 0.34;
 Constant.ENERGY_LINK_STORAGE_MIN        = 0.38;
 Constant.ENERGY_LINK_STORAGE_MAX        = 0.8;
-Constant.ENERGY_TERMINAL_MAX            = 0.5;
 Constant.ENERGY_STORAGE_MAX             = 0.6;
 Constant.ENERGY_CONTAINER_MAX           = 0.9;
 Constant.ENERGY_STORAGE_SECONDARY_MIN   = 0.14;
+
+Constant.TERMINAL_ENERGY_MAX            = 0.5;
 
 Constant.CONTROLLER_WITHDRAW_LEVEL      = 2;
 Constant.CONTROLLER_RESERVE_MAX         = 4000;
@@ -110,6 +111,7 @@ Constant.DIRECTOR_LONGHAUL              = 'director.longhaul';
 Constant.DIRECTOR_RESUPPLY              = 'director.resupply';
 Constant.DIRECTOR_LINKER                = 'director.linker';
 Constant.TOWER_REFILL                   = 'tower.fill';
+Constant.TERMINAL_EMPTY                 = 'terminal.empty';
 Constant.MINE                           = 'mine';
 Constant.HARVEST                        = 'harvest';
 Constant.UPGRADE                        = 'upgrade';
@@ -132,6 +134,7 @@ Constant.WORK_TASKS = [
     Constant.DIRECTOR_LINKER,
     Constant.DIRECTOR_RESUPPLY,
     Constant.TOWER_REFILL,
+    Constant.TERMINAL_EMPTY,
     Constant.MINE,
     Constant.UPGRADE,
     Constant.RESERVE,

@@ -46,6 +46,10 @@ Creep.prototype.toggleState = function() {
     return true;
 }
 
+Creep.prototype.isWorking = function() {
+    return this.memory.working;
+}
+
 Creep.prototype.isEmpty = function() {
     return _.sum(this.carry) == 0;
 }
@@ -57,6 +61,14 @@ Creep.prototype.isFull = function() {
 Creep.prototype.isCarryingEnergy = function() {
     return this.carry.energy > 0;
 }
+
+Creep.prototype.isSleep = function() {
+    return this.memory.sleep > Game.time;
+};
+
+Creep.prototype.sleep = function() {
+    this.memory.sleep = C.CREEP_IDLE_TIME + Game.time;
+};
 
 Creep.prototype.isDespawnWarning = function() {
     if (this.memory.despawn) { return true; }
