@@ -37,7 +37,7 @@ Constant.ENERGY_STORAGE_MAX             = 0.6;
 Constant.ENERGY_CONTAINER_MAX           = 0.9;
 Constant.ENERGY_STORAGE_SECONDARY_MIN   = 0.14;
 
-Constant.TERMINAL_ENERGY_MAX            = 0.5;
+Constant.TERMINAL_ENERGY_MAX            = 0.2;
 
 Constant.CONTROLLER_WITHDRAW_LEVEL      = 2;
 Constant.CONTROLLER_RESERVE_MAX         = 4000;
