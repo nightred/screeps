@@ -30,45 +30,35 @@ manageCreep.prototype.gc = function() {
     return true;
 };
 
-manageCreep.prototype.doManage = function() {
+manageCreep.prototype.run = function() {
     this.gc();
 
     for(let name in Game.creeps) {
         let creep = Game.creeps[name];
-        if (!creep.memory.role || creep.spawning) { continue; }
+
+        if (creep.spawning || !creep.memory.task) {
+            continue;
+        }
+
         if (creep.isDespawnWarning()) {
             this.doDespawn(creep);
             continue;
         }
 
-        Game.Manage.role.doRole(creep);
+        Game.Task.runTask(creep);
     }
 
 };
 
 manageCreep.prototype.doDespawn = function(creep) {
-    if (!creep) { return false; }
+    if (!creep) { return ERR_INVALID_ARGS; }
 
     if (!creep.memory.despawn || creep.memory.despawn == undefined) {
         creep.setDespawn();
     }
 
-    if (creep.getOffExit()) { return true; }
-    if (creep.memory.spawnRoom && creep.room.name != creep.memory.spawnRoom) {
-        creep.moveToRoom(creep.memory.spawnRoom);
+    if (creep.getOffExit()) {
         return true;
-    }
-
-	if (!creep.room.getSpawn()) { return false; }
-
-    if (creep.room.getDespawnContainer()) {
-        creep.memory.goingTo = creep.room.getDespawnContainer();
-    }
-
-    if (!creep.memory.goingTo) {
-        this.getDespawnContainer(creep);
-    } else {
-        this.doDespawnOnContainer(creep);
     }
 
     return true;

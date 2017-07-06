@@ -17,7 +17,6 @@ var roleController = {
     **/
     workTasks: [
         C.WORK_CLAIM,
-        C.WORK_RESERVE,
     ],
 
     /**

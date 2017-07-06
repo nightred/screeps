@@ -20,7 +20,7 @@ var Manage = function() {
 Manage.prototype.run = function() {
     this.room.doManage();
     this.flags.run();
-    this.creep.doManage();
+    this.creep.run();
 };
 
 module.exports = Manage;
