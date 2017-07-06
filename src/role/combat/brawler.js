@@ -24,9 +24,9 @@ var roleCombatBrawler = {
             return true;
         }
 
-        let workTasks = [ C.DEFENSE, ];
+        let workTasks = [ C.WORK_DEFENSE, ];
         if (!creep.memory.combatGroup) {
-            workTasks.push(C.ATTACK);
+            workTasks.push(C.WORK_ATTACK);
         }
 
         if (!creep.memory.workId) {

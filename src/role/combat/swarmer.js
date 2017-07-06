@@ -25,7 +25,7 @@ var roleCombatSwarmer = {
             return true;
         }
 
-        let workTasks = [ C.ATTACK, ];
+        let workTasks = [ C.WORK_ATTACK, ];
 
         if (!creep.memory.workId) {
             if (!creep.getWork(workTasks, {ignoreRoom: true})) {

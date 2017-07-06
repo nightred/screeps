@@ -1,17 +1,17 @@
 /*
- * task Construction
+ * task Repair
  *
- * construction task handles building structures
+ * repair task handles repairing structures
  *
  */
 
-var taskConstruction = {
+var taskRepair = {
 
     /**
     * @param {Creep} creep The creep object
     * @param {Task} task The work task passed from the work Queue
     **/
-    doTask: function(creep, task) {
+    run: function(creep, task) {
         if (!creep) { return ERR_INVALID_ARGS; }
         if (!task) { return ERR_INVALID_ARGS; }
 
@@ -24,7 +24,7 @@ var taskConstruction = {
         }
 
         if (creep.isWorking()) {
-            this.doConstuction(creep, task);
+            this.doRepair(creep, task);
         } else {
             this.getEnergy(creep, task);
         }
@@ -33,16 +33,24 @@ var taskConstruction = {
     },
 
     /**
+    * @param {Creep} creep The creep object
     * @param {Task} task The work task passed from the work Queue
     **/
-    doConstuction: function(creep, task) {
+    doRepair: function(creep, task) {
         if (creep.room.name != task.workRooms[0]) {
             creep.moveToRoom(task.workRooms[0]);
             return true;
         }
 
         let target = Game.getObjectById(task.targetId);
-        if (!target) { return creep.removeWork(); }
+
+        if (!target) {
+            return creep.removeWork();
+        }
+
+        if (target.hits >= Math.floor(target.hitsMax * C.REPAIR_HIT_WORK_MAX)) {
+            return creep.removeWork();
+        }
 
         if (!creep.pos.inRangeTo(target, 3)) {
             let args = {
@@ -51,16 +59,18 @@ var taskConstruction = {
                 maxRooms: 1,
                 ignoreCreeps: true,
             };
+
             creep.goto(target, args);
             return true;
         }
 
-        creep.build(target)
+        creep.repair(target)
 
         return true;
     },
 
     /**
+    * @param {Creep} creep The creep object
     * @param {Task} task The work task passed from the work Queue
     **/
     getEnergy: function(creep, task) {
@@ -85,32 +95,35 @@ var taskConstruction = {
         if (!creep.doFill(energyTargets, RESOURCE_ENERGY)) {
             if (C.DEBUG >= 2) { console.log('DEBUG - do fill energy failed for role: ' + creep.memory.role + ', name: ' + creep.name); }
         }
-
-        return true;
-    },
-
-    /**
-    * @param {Task} task The work task passed from the work Queue
-    **/
-    doTaskManaged: function(task) {
-        if (!task) { return -1; }
-        // managed tasks
-        return true;
     },
 
     /**
     * @param {Room} room The room object
     **/
-    doTaskFind: function(room) {
+    find: function(room) {
         if (!room) { return -1; }
 
-        room.memory.findTickConstruction = room.memory.findTickConstruction || 0;
-        if ((room.memory.findTickConstruction + C.FIND_WAIT_TICKS) > Game.time) {
+        room.memory.work = room.memory.work || {};
+
+        let memory = room.memory.work;
+
+        if (memory.sleepRepair && memory.sleepRepair > Game.time) {
             return true;
         }
-        room.memory.findTickConstruction = Game.time;
+        memory.sleepRepair = Game.time + C.WORK_FIND_SLEEP;
 
-        let targets = room.getConstructionSites();
+        let targets = _.sortBy(_.filter(room.find(FIND_MY_STRUCTURES), structure =>
+            structure.hits < (structure.hitsMax * C.REPAIR_HIT_WORK_MIN) &&
+            structure.structureType != STRUCTURE_RAMPART
+            ), structure => structure.hits / structure.hitsMax);
+
+        _.filter(room.find(FIND_STRUCTURES), structure =>
+            (structure.structureType == STRUCTURE_CONTAINER ||
+            structure.structureType == STRUCTURE_ROAD) &&
+            (structure.structureType != STRUCTURE_WALL &&
+            structure.structureType != STRUCTURE_RAMPART) &&
+            structure.hits < (structure.hitsMax * C.REPAIR_HIT_WORK_MIN)
+            ).forEach(structure => targets.push(structure));
 
         if (targets.length <= 0) { return true; }
 
@@ -119,26 +132,33 @@ var taskConstruction = {
                 continue;
             }
 
-            let record = {
-                workRooms: [ room.name, ],
-                task: C.CONSTRUCTION,
-                priority: 70,
-                creepLimit: 4,
+            let args = {
+                roomName: room.name,
                 targetId: targets[i].id,
             };
-            Game.Queue.work.addRecord(record);
+
+            this.create(args);
         }
 
         return true;
     },
 
     /**
-    * @param {Room} room The room object
+    * @param {Args} Args object with values for creation
     **/
-    createTask: function(args, room) {
-        return false;
+    create: function(args) {
+        let record = {
+            workRooms: [ args.roomName, ],
+            spawnRoom: args.roomName,
+            task: C.WORK_REPAIR,
+            priority: 40,
+            creepLimit: 1,
+            targetId: args.targetId,
+        };
+
+        return Game.Queue.work.addRecord(record);
     },
 
 };
 
-module.exports = taskConstruction;
+module.exports = taskRepair;

@@ -1,59 +1,11 @@
 /*
  * role Tech
  *
- * tech role defines the general server creep
+ * gerneralist creep that runs all extra jobs
  *
  */
 
 var roleTech = {
-
-    /**
-    * The role name
-    **/
-    role: C.TECH,
-
-    /**
-    * @param {Creep} creep
-    **/
-    doRole: function(creep) {
-        if (!creep) { return false; }
-
-        if (creep.getOffExit()) {
-            return true;
-        }
-
-        if (creep.isSleep()) {
-            if (!creep.isFull() && creep.collectDroppedEnergy()) {
-                return true;;
-            }
-
-            creep.moveToIdlePosition();
-            return true;
-        }
-
-        let workTasks = [
-            C.REPAIR,
-            C.TOWER_REFILL,
-            C.CONSTRUCTION,
-            C.SIGNCONTROLLER,
-            C.TERMINAL_EMPTY,
-        ];
-
-        if (!creep.memory.workId) {
-            if (!creep.getWork(workTasks)) {
-                creep.sleep();
-                creep.say('💤');
-
-                return true;
-            }
-        }
-
-        if (!creep.doWork()) {
-            if (C.DEBUG >= 2) { console.log('DEBUG - do work failed for role: ' + creep.memory.role + ', name: ' + creep.name); }
-        }
-
-        return true;
-    },
 
     /**
     * Create the body of the creep for the role
@@ -62,6 +14,7 @@ var roleTech = {
     **/
     getBody: function(energy, args) {
         if (isNaN(energy)) { return ERR_INVALID_ARGS; }
+
         args = args || {};
 
         let workUnits = Math.floor((energy * 0.6) / 150);
@@ -79,12 +32,15 @@ var roleTech = {
         energy -= 100 * carryUnits;
 
         let body = [];
+
         for (let i = 0; i < workUnits; i++) {
             body.push(WORK);
         }
+
         for (let i = 0; i < moveUnits; i++) {
             body.push(MOVE);
         }
+        
         for (let i = 0; i < carryUnits; i++) {
             body.push(CARRY);
         }

@@ -1,17 +1,17 @@
 /*
- * task Repair
+ * task Tower Fill
  *
- * repair task handles repairing structures
+ * tower fill task handles filling toweres with energy
  *
  */
 
-var taskRepair = {
+var taskTowerFill = {
 
     /**
     * @param {Creep} creep The creep object
     * @param {Task} task The work task passed from the work Queue
     **/
-    doTask: function(creep, task) {
+    run: function(creep, task) {
         if (!creep) { return ERR_INVALID_ARGS; }
         if (!task) { return ERR_INVALID_ARGS; }
 
@@ -24,7 +24,7 @@ var taskRepair = {
         }
 
         if (creep.isWorking()) {
-            this.doRepair(creep, task);
+            this.doFillTower(creep, task);
         } else {
             this.getEnergy(creep, task);
         }
@@ -33,9 +33,10 @@ var taskRepair = {
     },
 
     /**
+    * @param {Creep} creep The creep object
     * @param {Task} task The work task passed from the work Queue
     **/
-    doRepair: function(creep, task) {
+    doFillTower: function(creep, task) {
         if (creep.room.name != task.workRooms[0]) {
             creep.moveToRoom(task.workRooms[0]);
             return true;
@@ -47,28 +48,17 @@ var taskRepair = {
             return creep.removeWork();
         }
 
-        if (target.hits >= Math.floor(target.hitsMax * C.REPAIR_HIT_WORK_MAX)) {
+        if (target.energy >= Math.floor(target.energyCapacity * C.REFILL_TOWER_MAX)) {
             return creep.removeWork();
         }
 
-        if (!creep.pos.inRangeTo(target, 3)) {
-            let args = {
-                range: 1,
-                reusePath: 50,
-                maxRooms: 1,
-                ignoreCreeps: true,
-            };
-
-            creep.goto(target, args);
-            return true;
-        }
-
-        creep.repair(target)
+        creep.doTransfer(target, RESOURCE_ENERGY);
 
         return true;
     },
 
     /**
+    * @param {Creep} creep The creep object
     * @param {Task} task The work task passed from the work Queue
     **/
     getEnergy: function(creep, task) {
@@ -93,68 +83,75 @@ var taskRepair = {
         if (!creep.doFill(energyTargets, RESOURCE_ENERGY)) {
             if (C.DEBUG >= 2) { console.log('DEBUG - do fill energy failed for role: ' + creep.memory.role + ', name: ' + creep.name); }
         }
-    },
 
-    /**
-    * @param {Task} task The work task passed from the work Queue
-    **/
-    doTaskManaged: function(task) {
-        if (!task) { return -1; }
-        // managed tasks
         return true;
     },
 
     /**
     * @param {Room} room The room object
     **/
-    doTaskFind: function(room) {
-        if (!room) { return -1; }
+    find: function(room) {
+        if (!room) { return ERR_INVALID_ARGS; }
 
-        room.memory.findTickRepair = room.memory.findTickRepair || 0;
-        if ((room.memory.findTickRepair + C.FIND_WAIT_TICKS) > Game.time) {
+        room.memory.work = room.memory.work || {};
+
+        let memory = room.memory.work;
+
+        if (memory.sleepTowerFill && memory.sleepTowerFill > Game.time) {
             return true;
         }
-        room.memory.findTickRepair = Game.time;
+        memory.sleepTowerFill = Game.time + C.WORK_FIND_SLEEP;
 
-        let targets = _.sortBy(_.filter(room.find(FIND_MY_STRUCTURES), structure =>
-            structure.hits < (structure.hitsMax * C.REPAIR_HIT_WORK_MIN) &&
-            structure.structureType != STRUCTURE_RAMPART
-            ), structure => structure.hits / structure.hitsMax);
-        _.filter(room.find(FIND_STRUCTURES), structure =>
-            (structure.structureType == STRUCTURE_CONTAINER ||
-            structure.structureType == STRUCTURE_ROAD) &&
-            (structure.structureType != STRUCTURE_WALL &&
-            structure.structureType != STRUCTURE_RAMPART) &&
-            structure.hits < (structure.hitsMax * C.REPAIR_HIT_WORK_MIN)
-            ).forEach(structure => targets.push(structure));
+        let storage = room.storage;
 
-        if (targets.length <= 0) { return true; }
+        if (storage) {
+            let minEnergy = storage.storeCapacity * C.ENERGY_STORAGE_MIN_FILL_TOWER;
+
+            if (storage.store[RESOURCE_ENERGY] < minEnergy) {
+                return true;
+            }
+        }
+
+        let targets = _.filter(room.getTowers(), structure =>
+                structure.energy < (structure.energyCapacity * C.REFILL_TOWER_MIN)
+                );
+
+        if (targets.length <= 0) {
+            return true;
+        }
 
         for (let i = 0; i < targets.length; i++) {
             if (Game.Queue.work.isQueued({ targetId: targets[i].id, })) {
                 continue;
             }
 
-            let record = {
-                workRooms: [ room.name, ],
-                task: C.REPAIR,
-                priority: 40,
-                creepLimit: 1,
+            let args = {
+                roomName: room.name,
                 targetId: targets[i].id,
             };
-            Game.Queue.work.addRecord(record);
+
+            this.create(args);
         }
 
         return true;
     },
 
     /**
-    * @param {Room} room The room object
+    * @param {Args} Args object with values for creation
     **/
-    createTask: function(args, room) {
-        return false;
+    create: function(args) {
+        let record = {
+            workRooms: [ args.roomName, ],
+            spawnRoom: args.roomName,
+            task: C.WORK_TOWER_REFILL,
+            priority: 30,
+            creepLimit: 1,
+            targetId: args.targetId,
+        };
+
+        return Game.Queue.work.addRecord(record);
     },
 
 };
 
-module.exports = taskRepair;
+module.exports = taskTowerFill;

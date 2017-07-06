@@ -1,17 +1,17 @@
 /*
- * task Tower Fill
+ * task Construction
  *
- * tower fill task handles filling toweres with energy
+ * construction task handles building structures
  *
  */
 
-var taskTowerFill = {
+var taskConstruction = {
 
     /**
     * @param {Creep} creep The creep object
     * @param {Task} task The work task passed from the work Queue
     **/
-    doTask: function(creep, task) {
+    run: function(creep, task) {
         if (!creep) { return ERR_INVALID_ARGS; }
         if (!task) { return ERR_INVALID_ARGS; }
 
@@ -24,7 +24,7 @@ var taskTowerFill = {
         }
 
         if (creep.isWorking()) {
-            this.doFillTower(creep, task);
+            this.doConstuction(creep, task);
         } else {
             this.getEnergy(creep, task);
         }
@@ -33,9 +33,10 @@ var taskTowerFill = {
     },
 
     /**
+    * @param {Creep} creep The creep object
     * @param {Task} task The work task passed from the work Queue
     **/
-    doFillTower: function(creep, task) {
+    doConstuction: function(creep, task) {
         if (creep.room.name != task.workRooms[0]) {
             creep.moveToRoom(task.workRooms[0]);
             return true;
@@ -43,20 +44,28 @@ var taskTowerFill = {
 
         let target = Game.getObjectById(task.targetId);
 
-        if (!target) {
-            return creep.removeWork();
+        if (!target) { return creep.removeWork(); }
+
+        if (!creep.pos.inRangeTo(target, 3)) {
+            let args = {
+                range: 1,
+                reusePath: 50,
+                maxRooms: 1,
+                ignoreCreeps: true,
+            };
+            
+            creep.goto(target, args);
+
+            return true;
         }
 
-        if (target.energy >= Math.floor(target.energyCapacity * C.REFILL_TOWER_MAX)) {
-            return creep.removeWork();
-        }
-
-        creep.doTransfer(target, RESOURCE_ENERGY);
+        creep.build(target)
 
         return true;
     },
 
     /**
+    * @param {Creep} creep The creep object
     * @param {Task} task The work task passed from the work Queue
     **/
     getEnergy: function(creep, task) {
@@ -86,37 +95,21 @@ var taskTowerFill = {
     },
 
     /**
-    * @param {Task} task The work task passed from the work Queue
-    **/
-    doTaskManaged: function(task) {
-        if (!task) { return -1; }
-        // managed tasks
-        return true;
-    },
-
-    /**
     * @param {Room} room The room object
     **/
-    doTaskFind: function(room) {
-        if (!room) { return -1; }
+    find: function(room) {
+        if (!room) { return ERR_INVALID_ARGS; }
 
-        room.memory.findTickFillTower = room.memory.findTickFillTower || 0;
-        if ((room.memory.findTickFillTower + C.FIND_WAIT_TICKS) > Game.time) {
+        room.memory.work = room.memory.work || {};
+
+        let memory = room.memory.work;
+
+        if (memory.sleepConstruction && memory.sleepConstruction > Game.time) {
             return true;
         }
-        room.memory.findTickFillTower = Game.time;
+        memory.sleepConstruction = Game.time + C.WORK_FIND_SLEEP;
 
-        let storage = room.storage;
-        if (storage) {
-            let minEnergy = storage.storeCapacity * C.ENERGY_STORAGE_MIN_FILL_TOWER;
-            if (storage.store[RESOURCE_ENERGY] < minEnergy) {
-                return true;
-            }
-        }
-
-        let targets = _.filter(room.getTowers(), structure =>
-                structure.energy < (structure.energyCapacity * C.REFILL_TOWER_MIN)
-                );
+        let targets = room.getConstructionSites();
 
         if (targets.length <= 0) { return true; }
 
@@ -125,27 +118,33 @@ var taskTowerFill = {
                 continue;
             }
 
-            let record = {
-                workRooms: [ room.name, ],
-                spawnRoom: room.name,
-                task: C.TOWER_REFILL,
-                priority: 30,
-                creepLimit: 1,
+            let args = {
+                roomName: room.name,
                 targetId: targets[i].id,
             };
-            Game.Queue.work.addRecord(record);
+
+            this.create(args);
         }
 
         return true;
     },
 
     /**
-    * @param {Room} room The room object
+    * @param {Args} Args object with values for creation
     **/
-    createTask: function(args, room) {
-        return false;
+    create: function(args) {
+        let record = {
+            workRooms: [ args.roomName, ],
+            spawnRoom: args.roomName,
+            task: C.WORK_CONSTRUCTION,
+            priority: 70,
+            creepLimit: 4,
+            targetId: args.targetId,
+        };
+
+        return Game.Queue.work.addRecord(record);
     },
 
 };
 
-module.exports = taskTowerFill;
+module.exports = taskConstruction;

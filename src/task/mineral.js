@@ -1,11 +1,11 @@
 /*
- * task Harvest
+ * task Mineral
  *
- * harvest task harvestest the minerals from the extractor in the room
+ * harvest mineral from the extractor
  *
  */
 
-var taskUpgrade = {
+var taskMineral = {
 
     /**
     * @param {Creep} creep The creep object
@@ -62,8 +62,6 @@ var taskUpgrade = {
     **/
     doTaskManaged: function(task) {
         if (!task) { return -1; }
-
-        if (Game.Manage.task.cooldown(task)) { return true; }
 
         if (task.workRooms.length <= 0) {
             if (C.DEBUG >= 2) { console.log('DEBUG - missing work rooms on task: ' + task.task + ', id: ' + task.id); }
@@ -133,21 +131,6 @@ var taskUpgrade = {
         return true;
     },
 
-    /**
-    * @param {Room} room The room object
-    **/
-    doTaskFind: function(room) {
-        if (!room) { return -1; }
-        // task creation for the room
-    },
-
-    /**
-    * @param {Room} room The room object
-    **/
-    createTask: function(args, room) {
-        return false;
-    },,
-
 };
 
-module.exports = taskUpgrade;
+module.exports = taskMineral;

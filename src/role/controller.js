@@ -16,8 +16,8 @@ var roleController = {
     * The work tasks that the role is created for
     **/
     workTasks: [
-        C.CLAIM,
-        C.RESERVE,
+        C.WORK_CLAIM,
+        C.WORK_RESERVE,
     ],
 
     /**

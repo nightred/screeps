@@ -11,7 +11,7 @@ var taskTerminalEmpty = {
     * @param {Creep} creep The creep object
     * @param {Task} task The work task passed from the work Queue
     **/
-    doTask: function(creep, task) {
+    run: function(creep, task) {
         if (!creep) { return ERR_INVALID_ARGS; }
         if (!task) { return ERR_INVALID_ARGS; }
 
@@ -41,6 +41,7 @@ var taskTerminalEmpty = {
     },
 
     /**
+    * @param {Creep} creep The creep object
     * @param {Task} task The work task passed from the work Queue
     **/
     doEmptyTerminal: function(creep, task) {
@@ -61,6 +62,7 @@ var taskTerminalEmpty = {
     },
 
     /**
+    * @param {Creep} creep The creep object
     * @param {Task} task The work task passed from the work Queue
     **/
     doStore: function(creep, task) {
@@ -80,13 +82,6 @@ var taskTerminalEmpty = {
         return true;
     },
 
-    /**
-    * @param {Task} task The work task passed from the work Queue
-    **/
-    doTaskManaged: function(task) {
-        if (!task) { return ERR_INVALID_ARGS; }
-    },
-
     isComplete: function(room) {
         let terminal = room.terminal;
         let maxEnergy = C.TERMINAL_ENERGY_MAX * terminal.storeCapacity;
@@ -97,14 +92,17 @@ var taskTerminalEmpty = {
     /**
     * @param {Room} room The room object
     **/
-    doTaskFind: function(room) {
+    find: function(room) {
         if (!room) { return ERR_INVALID_ARGS; }
 
-        room.memory.findTerminalEmpty = room.memory.findTerminalEmpty || 0;
-        if ((room.memory.findTerminalEmpty + C.FIND_WAIT_TICKS) > Game.time) {
+        room.memory.work = room.memory.work || {};
+
+        let memory = room.memory.work;
+
+        if (memory.sleepTerminalEmpty && memory.sleepTerminalEmpty > Game.time) {
             return true;
         }
-        room.memory.findTerminalEmpty = Game.time;
+        memory.sleepTerminalEmpty = Game.time + C.WORK_FIND_SLEEP;
 
         if (!room.storage) {
             return true;
@@ -133,27 +131,31 @@ var taskTerminalEmpty = {
             return true;
         }
 
-        let record = {
-            workRooms: [ room.name, ],
-            spawnRoom: room.name,
-            task: C.TERMINAL_EMPTY,
-            priority: 80,
-            creepLimit: 1,
+        let args = {
+            roomName: room.name,
             targetId: terminal.id,
         };
 
-        jobId = Game.Queue.work.addRecord(record);
-
-        room.memory.terminal.jobEmptyId = jobId;
+        room.memory.terminal.jobEmptyId = this.create(args);;
 
         return true;
     },
 
     /**
-    * @param {Room} room The room object
+    * @param {Args} Args object with values for creation
     **/
-    createTask: function(args, room) {
-        return false;
+    create: function(args) {
+
+        let record = {
+            workRooms: [ args.roomName, ],
+            spawnRoom: args.roomName,
+            task: C.WORK_TERMINAL_EMPTY,
+            priority: 80,
+            creepLimit: 1,
+            targetId: args.targetId,
+        };
+
+        return Game.Queue.work.addRecord(record);
     },
 
 };

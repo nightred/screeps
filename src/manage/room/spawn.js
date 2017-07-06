@@ -96,6 +96,10 @@ Spawn.prototype.doRoom = function(room) {
                 records[r].spawned = true;
                 records[r].name = name;
 
+                if (records[r].directorId) {
+                    Game.Director.setCreep(records[r].directorId, name)
+                }
+
                 if (C.DEBUG >= 1) { console.log('INFO - spawning' +
                 ' room: <p style=\"display:inline; color: #ed4543\"><a href=\"#!/room/' + room.name + '\">' + room.name + '</a></p>' +
                 ', role: ' + records[r].role +

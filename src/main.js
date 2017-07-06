@@ -17,22 +17,29 @@ require('prototype.roomPosition');
 
 // global methods
 global.C            = require('constants');
-global.cli          = require('cli');
+global.cli          = require('util.cli');
 
-// load the queue systems
-var Stats           = require('stats');
+var Stats           = require('util.stats');
+
+var Director        = require('director');
 var Queue           = require('queue');
 var Manage          = require('manage');
+var Task            = require('task');
+var Work            = require('work');
 var Mil             = require('mil');
 
 module.exports.loop = function () {
-    Game.Stats          = new Stats;
+    Game.Director       = new Director;
     Game.Queue          = new Queue;
+    Game.Task           = new Task;
+    Game.Work           = new Work;
     Game.Manage         = new Manage;
     Game.Mil            = new Mil;
 
+    Game.Director.run();
     Game.Queue.run();
     Game.Manage.run();
     //Game.Mil.run();
-    Game.Stats.run();
+
+    Stats.run();
 }

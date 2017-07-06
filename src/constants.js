@@ -73,6 +73,10 @@ Constant.QUEUE_WORK                     = 'work';
 Constant.QUEUE_SPAWN                    = 'spawn';
 Constant.QUEUE_MIL                      = 'mil';
 
+Constant.DB_DIRECTOR                    = 1;
+
+Constant.WORK_FIND_SLEEP                = 12;
+
 Constant.MINER                          = 'miner';
 Constant.HARVESTER                      = 'harvester';
 Constant.UPGRADER                       = 'upgrader';
@@ -81,6 +85,7 @@ Constant.CRASHTECH                      = 'crashtech';
 Constant.HAULER                         = 'hauler';
 Constant.RESUPPLY                       = 'resupply';
 Constant.LINKER                         = 'linker';
+Constant.STOCKER                        = 'stocker';
 Constant.SCOUT                          = 'scout';
 Constant.CONTROLLER                     = 'controller';
 Constant.COMBAT_BRAWLER                 = 'combat.brawler';
@@ -95,57 +100,97 @@ Constant.ROLE_TYPES = [
     Constant.HAULER,
     Constant.RESUPPLY,
     Constant.LINKER,
+    Constant.STOCKER,
     Constant.SCOUT,
     Constant.CONTROLLER,
     Constant.COMBAT_BRAWLER,
     Constant.COMBAT_SWARMER,
     Constant.COMBAT_MEDIC,
-    ];
+];
 
-Constant.DIRECTOR_ROOM                  = 'director.room';
-Constant.DIRECTOR_MINE                  = 'director.mine';
-Constant.DIRECTOR_TECH                  = 'director.tech';
-Constant.DIRECTOR_CRASHTECH             = 'director.crashtech';
-Constant.DIRECTOR_HAUL                  = 'director.haul';
-Constant.DIRECTOR_LONGHAUL              = 'director.longhaul';
-Constant.DIRECTOR_RESUPPLY              = 'director.resupply';
-Constant.DIRECTOR_LINKER                = 'director.linker';
-Constant.TOWER_REFILL                   = 'tower.fill';
-Constant.TERMINAL_EMPTY                 = 'terminal.empty';
-Constant.MINE                           = 'mine';
-Constant.HARVEST                        = 'harvest';
-Constant.UPGRADE                        = 'upgrade';
-Constant.RESERVE                        = 'reserve';
-Constant.REPAIR                         = 'repair';
-Constant.CONSTRUCTION                   = 'construction';
-Constant.SIGNCONTROLLER                 = 'signcontroller';
-Constant.SCOUTING                       = 'scouting';
-Constant.DEFENSE                        = 'defense';
-Constant.ATTACK                         = 'attack';
-Constant.CLAIM                          = 'claim';
+Constant.DIRECTOR_ROOM                  = 'room';
+Constant.DIRECTOR_MINING                = 'mining';
+Constant.DIRECTOR_SOURCE                = 'source';
+Constant.DIRECTOR_RESUPPLY              = 'resupply';
+Constant.DIRECTOR_CONTROLLER            = 'controller';
+Constant.DIRECTOR_HAULING               = 'hauling';
+Constant.DIRECTOR_INTERHAULING          = 'interhauling';
+Constant.DIRECTOR_STOCKING              = 'stocking';
+Constant.DIRECTOR_TECH                  = 'tech';
+Constant.DIRECTOR_RESERVE               = 'reserve';
 
-Constant.WORK_TASKS = [
+Constant.DIRECTOR_TYPES = [
     Constant.DIRECTOR_ROOM,
-    Constant.DIRECTOR_MINE,
-    Constant.DIRECTOR_TECH,
-    Constant.DIRECTOR_CRASHTECH,
-    Constant.DIRECTOR_HAUL,
-    Constant.DIRECTOR_LONGHAUL,
-    Constant.DIRECTOR_LINKER,
+    Constant.DIRECTOR_MINING,
+    Constant.DIRECTOR_SOURCE,
     Constant.DIRECTOR_RESUPPLY,
-    Constant.TOWER_REFILL,
-    Constant.TERMINAL_EMPTY,
-    Constant.MINE,
-    Constant.UPGRADE,
-    Constant.RESERVE,
-    Constant.REPAIR,
-    Constant.CONSTRUCTION,
-    Constant.SIGNCONTROLLER,
-    Constant.SCOUTING,
-    Constant.DEFENSE,
-    Constant.ATTACK,
-    Constant.CLAIM,
-    ];
+    Constant.DIRECTOR_CONTROLLER,
+    Constant.DIRECTOR_HAULING,
+    Constant.DIRECTOR_INTERHAULING,
+    Constant.DIRECTOR_STOCKING,
+    Constant.DIRECTOR_TECH,
+    Constant.DIRECTOR_RESERVE,
+];
+
+Constant.DIRECTOR_FLAG_TYPES = [
+    Constant.DIRECTOR_ROOM,
+    Constant.DIRECTOR_MINING,
+    Constant.DIRECTOR_INTERHAULING,
+    Constant.DIRECTOR_TECH,
+    Constant.DIRECTOR_RESERVE,
+];
+
+Constant.TASK_SOURCE                    = 'source';
+Constant.TASK_RESUPPLY                  = 'resupply';
+Constant.TASK_UPGRADE                   = 'upgrade';
+Constant.TASK_HAUL                      = 'haul';
+Constant.TASK_STOCK                     = 'stock';
+Constant.TASK_TECH                      = 'tech';
+Constant.TASK_RESERVE                   = 'reserve';
+
+Constant.TASK_TYPES = [
+    Constant.TASK_SOURCE,
+    Constant.TASK_RESUPPLY,
+    Constant.TASK_UPGRADE,
+    Constant.TASK_HAUL,
+    Constant.TASK_STOCK,
+    Constant.TASK_TECH,
+    Constant.TASK_RESERVE,
+];
+
+Constant.WORK_TOWER_REFILL              = 'tower.fill';
+Constant.WORK_TERMINAL_EMPTY            = 'terminal.empty';
+Constant.WORK_REPAIR                    = 'repair';
+Constant.WORK_CONSTRUCTION              = 'construction';
+Constant.WORK_SIGNCONTROLLER            = 'signcontroller';
+Constant.WORK_SCOUTING                  = 'scouting';
+Constant.WORK_DEFENSE                   = 'defense';
+Constant.WORK_ATTACK                    = 'attack';
+Constant.WORK_CLAIM                     = 'claim';
+
+Constant.WORK_TYPES = [
+    Constant.WORK_TOWER_REFILL,
+    Constant.WORK_TERMINAL_EMPTY,
+    Constant.WORK_REPAIR,
+    Constant.WORK_CONSTRUCTION,
+    Constant.WORK_SIGNCONTROLLER,
+    Constant.WORK_SCOUTING,
+    Constant.WORK_DEFENSE,
+    Constant.WORK_ATTACK,
+    Constant.WORK_CLAIM,
+];
+
+Constant.WORK_FIND = [
+    Constant.WORK_TOWER_REFILL,
+    Constant.WORK_REPAIR,
+    Constant.WORK_CONSTRUCTION,
+];
+
+Constant.WORK_FLAG_TYPES = [
+    Constant.WORK_SIGNCONTROLLER,
+    Constant.WORK_SCOUTING,
+    Constant.WORK_CLAIM,
+];
 
 Constant.DIRECTIONS = {
     1: [0, -1],

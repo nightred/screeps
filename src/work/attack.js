@@ -11,16 +11,11 @@ var taskAttack = {
     * @param {Creep} creep The creep object
     * @param {Task} task The work task passed from the work Queue
     **/
-    doTask: function(creep, task) {
-        if (!creep) { return -1; }
-        if (!task) { return -1; }
+    run: function(creep, task) {
+        if (!creep) { return ERR_INVALID_ARGS; }
+        if (!task) { return ERR_INVALID_ARGS; }
 
         if (Game.cpu.bucket < 1000) { return true; }
-
-        if (task.workRooms.length <= 0) {
-            if (C.DEBUG >= 2) { console.log('DEBUG - missing work rooms on task: ' + task.task + ', id: ' + task.id); }
-            return false;
-        }
 
         if (creep.room.name != task.workRooms[0]) {
             creep.moveToRoom(task.workRooms[0]);
@@ -36,34 +31,6 @@ var taskAttack = {
         }
 
         return true;
-    },
-
-    /**
-    * @param {Task} task The work task passed from the work Queue
-    **/
-    doTaskManaged: function(task) {
-        if (!task) { return -1; }
-        task.rally = task.rally || {}
-
-        let flag = Game.flags[task.id + '_target'];
-        if (flag) {
-            if (task.workRooms[0] != flag.pos.roomName) {
-                task.workRooms[0] = flag.pos.roomName;
-            }
-            task.rally.x = flag.pos.x;
-            task.rally.y = flag.pos.y;
-            task.rally.room = flag.pos.roomName;
-        }
-
-        return true;
-    },
-
-    /**
-    * @param {Room} room The room object
-    **/
-    doTaskFind: function(room) {
-        if (!room) { return -1; }
-        // task creation for the room
     },
 
     doRally: function(creep, task) {

@@ -5,6 +5,14 @@
  *
  */
 
+Room.prototype.getSourceCount = function() {
+    if (!this.memory.sourceCount) {
+        this.memory.sourceCount = this.find(FIND_SOURCES).length;
+    }
+
+    return this.memory.sourceCount;
+};
+
 // Find wrappers
 Room.prototype.getHostileConstructionSites = function() {
     return this.find(FIND_HOSTILE_CONSTRUCTION_SITES);

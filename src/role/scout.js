@@ -16,7 +16,7 @@ var roleScout = {
     * The work tasks that the role is created for
     **/
     workTasks: [
-        C.SCOUTING
+        C.WORK_SCOUTING
     ],
 
     /**

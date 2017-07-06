@@ -147,7 +147,7 @@ var Cli = {
             let record = {
                 workRooms: [ room, ],
                 spawnRoom: spawn,
-                task: C.RESERVE,
+                task: C.WORK_RESERVE,
                 managed: true,
                 priority: 70,
                 creepLimit: 0,
@@ -163,7 +163,7 @@ var Cli = {
             }
             let record = {
                 workRooms: [ room, ],
-                task: C.CLAIM,
+                task: C.WORK_CLAIM,
                 priority: 20,
                 creepLimit: 1,
             };
@@ -178,7 +178,7 @@ var Cli = {
             }
             let record = {
                 workRooms: [ room, ],
-                task: C.SCOUTING,
+                task: C.WORK_SCOUTING,
                 priority: 90,
                 creepLimit: 1,
             };
@@ -193,7 +193,7 @@ var Cli = {
             }
             let record = {
                 workRooms: [ room, ],
-                task: C.ATTACK,
+                task: C.WORK_ATTACK,
                 priority: 40,
                 managed: true,
                 creepLimit: limit,
@@ -209,7 +209,7 @@ var Cli = {
             }
             let record = {
                 workRooms: [ roomName, ],
-                task: C.SIGNCONTROLLER,
+                task: C.WORK_SIGNCONTROLLER,
                 priority: 40,
                 creepLimit: 1,
                 message: message,

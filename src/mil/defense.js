@@ -13,7 +13,7 @@ var Defense = function() {
 };
 
 Defense.prototype.doRoom = function(room) {
-    if (!room) { return -1; }
+    if (!room) { return ERR_INVALID_ARGS; }
 
     if (!room.controller || (room.controller &&
         ((!room.controller.my && room.controller.owner) ||
@@ -25,6 +25,7 @@ Defense.prototype.doRoom = function(room) {
     if (room.controller && room.controller.my) {
         this.doSafeMode(room);
     }
+
     this.doDefenseMode(room);
 
     return true;
@@ -47,13 +48,13 @@ Defense.prototype.doDefenseMode = function(room) {
     for (let i = 0; i < targets.length; i++) {
         // allies test here
     }
-    if (Game.Queue.work.isQueued({ task: C.DEFENSE, room: room.name, })) {
+    if (Game.Queue.work.isQueued({ task: C.WORK_DEFENSE, room: room.name, })) {
         return true;
     }
 
     let record = {
         workRooms: [ room.name, ],
-        task: C.DEFENSE,
+        task: C.WORK_DEFENSE,
         managed: true,
         priority: 10,
         creepLimit: 1,

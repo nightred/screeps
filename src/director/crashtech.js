@@ -32,22 +32,9 @@ var taskDirectorMine = {
             return true;
         }
 
-        if (Game.Manage.task.cooldown(task)) { return true; }
-
         if (task.workRooms.length <= 0) {
             if (C.DEBUG >= 2) { console.log('DEBUG - missing work rooms on task: ' + task.task + ', id: ' + task.id); }
             return false;
-        }
-
-        for (let i = 0; i < task.workRooms.length; i++ ) {
-            if (!Game.rooms[task.workRooms[i]]) { continue; }
-            let room = Game.rooms[task.workRooms[i]];
-
-            let remoteTasks = [
-                C.REPAIR,
-                C.CONSTRUCTION,
-            ];
-            Game.Manage.task.doTaskFind(room, remoteTasks);
         }
 
         // spawn new creeps if needed

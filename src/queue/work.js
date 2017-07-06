@@ -13,44 +13,8 @@ var WorkQueue = function() {
     this.queue = Memory.queues.queue;
 };
 
-WorkQueue.prototype.printConfig = function(id) {
-    if (isNaN(id)) { return -1; }
-    if (!this.queue[id]) { return -1; }
-    return Game.Manage.task.printConfig(this.queue[id]);
-};
-
 WorkQueue.prototype.getQueue = function() {
     return Game.Queue.getQueue({queue: C.QUEUE_WORK, });
-};
-
-WorkQueue.prototype.addCreep = function(name, id) {
-    if (!name) { return -1; }
-    if (isNaN(id)) { return -1; }
-    if (!this.queue[id]) { return -1; }
-    if (!this.queue[id].creeps) { return -1; }
-    if (this.queue[id].creeps.indexOf(name) >= 0) { return true; }
-
-    this.queue[id].creeps.push(name);
-
-    return true;
-};
-
-WorkQueue.prototype.removeCreep = function(name, id) {
-    if (!name) { return -1; }
-    if (isNaN(id)) { return -1; }
-    if (!this.queue[id]) { return -1; }
-    if (!this.queue[id].creeps) { return -1; }
-    if (this.queue[id].creeps.indexOf(name) == -1) { return true; }
-
-    let record = this.queue[id];
-    for (let i = 0; i < record.creeps.length; i++) {
-        if (record.creeps[i] == name) {
-            record.creeps.splice(i, 1);
-            break;
-        }
-    }
-
-    return true;
 };
 
 WorkQueue.prototype.isQueued = function(args) {
@@ -66,7 +30,8 @@ WorkQueue.prototype.isQueued = function(args) {
 WorkQueue.prototype.addRecord = function(args) {
     if (!args) { return -1; }
     if (!Array.isArray(args.workRooms)) { return -1; }
-    if (C.WORK_TASKS.indexOf(args.task) < 0) { return -1; }
+    if (C.WORK_TYPES.indexOf(args.task) < 0) { return -1; }
+
     args.priority = args.priority || 100;
     args.creepLimit = args.creepLimit || 0;
 
@@ -86,10 +51,6 @@ WorkQueue.prototype.addRecord = function(args) {
 
     if (C.DEBUG >= 3) { console.log('VERBOSE - work queue adding record, task: ' + record.task + ', priority: ' + record.priority); }
     return Game.Queue.addRecord(record);
-};
-
-WorkQueue.prototype.delRecord = function(id) {
-    return Game.Queue.delRecord(id);
 };
 
 WorkQueue.prototype.cleanRoomQueue = function(roomName) {
@@ -120,10 +81,10 @@ WorkQueue.prototype.getRoomReport = function(room) {
     output += '  Total Work Queue: ' + queue.length + '\n';
     output += '  Room Work Queue: ' + filteredQueue.length + '\n';
 
-    for (let t = 0; t < C.WORK_TASKS.length; t++) {
-        let records = _.filter(filteredQueue, record => record.task == C.WORK_TASKS[t]);
+    for (let t = 0; t < C.WORK_TYPES.length; t++) {
+        let records = _.filter(filteredQueue, record => record.task == C.WORK_TYPES[t]);
         if (records.length > 0) {
-            output += '    ' + C.WORK_TASKS[t] + ': ' + records.length + '\n';
+            output += '    ' + C.WORK_TYPES[t] + ': ' + records.length + '\n';
             output += '      [ ';
             for (let i = 0; i < records.length; i++) {
                 output += records[i].id;

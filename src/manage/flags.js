@@ -11,13 +11,7 @@ var Flags = function() {
     this.memory = Memory.flags;
 };
 
-Flags.prototype.doRoom = function(room) {
-    if (!room) { return -1; }
-
-    return true;
-};
-
-Flags.prototype.doManage = function() {
+Flags.prototype.run = function() {
 
     this.gc();
 
@@ -25,12 +19,15 @@ Flags.prototype.doManage = function() {
         let flag = Game.flags[name];
 
         switch (flag.color) {
-            case COLOR_RED:
-                Game.Mil.doFlag(flag);
-                break;
-            case COLOR_GREEN:
-                Game.Manage.task.doFlag(flag);
-                break;
+        case COLOR_RED:
+            Game.Mil.doFlag(flag);
+            break;
+        case COLOR_GREEN:
+            Game.Work.doFlag(flag);
+            break;
+        case COLOR_YELLOW:
+            Game.Director.doFlag(flag);
+            break;
         }
     }
 
@@ -40,7 +37,7 @@ Flags.prototype.doManage = function() {
 Flags.prototype.gc = function() {
     for(let name in Memory.flags) {
         if(!Game.flags[name]) {
-            if (Memory.flags[name].withFlag && Memory.flags[name].jobId) {
+            if (Memory.flags[name].workId) {
                 Game.Queue.delRecord(Memory.flags[name].jobId);
             }
 

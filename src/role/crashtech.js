@@ -43,8 +43,8 @@ var roleCrashTech = {
         }
 
         let workTasks = [
-            C.CONSTRUCTION,
-            C.SIGNCONTROLLER,
+            C.WORK_CONSTRUCTION,
+            C.WORK_SIGNCONTROLLER,
         ];
 
         if (creep.memory.working) {

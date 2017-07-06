@@ -11,9 +11,9 @@ var taskScouting = {
     * @param {Creep} creep The creep object
     * @param {Task} task The work task passed from the work Queue
     **/
-    doTask: function(creep, task) {
-        if (!creep) { return -1; }
-        if (!task) { return -1; }
+    run: function(creep, task) {
+        if (!creep) { return ERR_INVALID_ARGS; }
+        if (!task) { return ERR_INVALID_ARGS; }
 
         if (task.workRooms.length <= 0) {
             if (C.DEBUG >= 2) { console.log('DEBUG - missing work rooms on task: ' + task.task + ', id: ' + task.id); }
@@ -67,36 +67,33 @@ var taskScouting = {
     },
 
     /**
-    * @param {Task} task The work task passed from the work Queue
+    * @param {Args} Args object with values for creation
     **/
-    doTaskManaged: function(task) {
-        if (!task) { return -1; }
-
-        return true;
-    },
-
-    /**
-    * @param {Room} room The room object
-    **/
-    doTaskFind: function(room) {
-        if (!room) { return -1; }
-        // task creation for the room
-    },
-
-    /**
-    * @param {Room} room The room object
-    **/
-    createTask: function(args, room) {
-        if (!room) { return ERR_INVALID_ARGS; }
-
+    create: function(args) {
         let record = {
-            workRooms: [ room, ],
-            task: C.SCOUTING,
+            workRooms: [ args.roomName, ],
+            task: C.WORK_SCOUTING,
             priority: 90,
             creepLimit: 1,
         };
-        
+
         return Game.Queue.work.addRecord(record);
+    },
+
+
+
+    /**
+    * @param {roomName} roomName the room name
+    * @param {Args} Args Array of values from flag
+    **/
+    flag: function(roomName, args) {
+        if (!roomName) { return ERR_INVALID_ARGS; }
+
+        let record = {
+            roomName: roomName,
+        }
+
+        return this.create(record);
     },
 
 };

@@ -83,38 +83,64 @@ Creep.prototype.isDespawnWarning = function() {
 Creep.prototype.setDespawn = function() {
     this.memory.despawn = true;
     this.memory.goingTo = false;
-    this.memory.harvestTarget = false;
+
     this.leaveWork();
+
     if (C.DEBUG >= 3) { console.log('VERBOSE - ' + this.memory.role + ' ' + this.name + ' end of life'); }
+
     return true;
+}
+
+Creep.prototype.hasWork = function() {
+    return this.memory.workId > 0;
 }
 
 Creep.prototype.leaveWork = function() {
-    if (!this.memory.workId) { return true; }
-    Game.Queue.work.removeCreep(this.name, this.memory.workId);
-    this.memory.workId = false;
+    if (this.memory.workId) {
+        Game.Work.removeCreep(this.name, this.memory.workId);
+        this.memory.workId = undefined;
+    }
+
     return true;
 }
 
-Creep.prototype.getWork = function(tasks, args) {
-    if (!Array.isArray(tasks)) { return ERR_INVALID_ARGS; }
+Creep.prototype.getWork = function(workTasks, args) {
+    if (!Array.isArray(workTasks)) { return ERR_INVALID_ARGS; }
+
     args = args || {};
 
-    return Game.Manage.task.getTask(tasks, this, args);
+    let workId = undefined;
+
+    if (args.ignoreRoom || args.room) {
+        workId = Game.Work.getWork(workTasks, this, args);
+    } else {
+        args.room = creep.memory.workRoom;
+        workId = Game.Work.getWork(workTasks, this, args);
+    }
+
+    if (!workId) {
+        return false;
+    }
+
+    creep.memory.workId = workId;
+
+    return true;
 }
 
 Creep.prototype.doWork = function() {
-    if (!this.memory.workId) { return false; }
-    if (!Game.Manage.task.doTask(this)) {
+    if (!Game.Work.runWork(this)) {
         this.leaveWork();
     }
+
     return true;
 }
 
 Creep.prototype.removeWork = function() {
-    if (!this.memory.workId) { return false; }
-    Game.Queue.work.delRecord(this.memory.workId);
-    this.memory.workId = false;
+    if (this.memory.workId) {
+        Game.Queue.delRecord(this.memory.workId);
+        this.memory.workId = undefined;
+    }
+
     return true;
 }
 
