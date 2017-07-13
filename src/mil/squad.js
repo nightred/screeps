@@ -13,8 +13,7 @@ var Squad = function() {
 Squad.prototype.doSquad = function(squad) {
     if (!squad) { return ERR_INVALID_ARGS; }
 
-    squad.cooldownCreep = squad.cooldownCreep || 0;
-    if (squad.cooldownCreep < Game.time) {
+    if (!squad.cooldownCreep || squad.cooldownCreep < Game.time) {
         squad.cooldownCreep = Game.time + C.MIL_SQUAD_CREEP_COOLDOWN;
         squad.creeps = this.getSquadCreep(squad.squad);
     }

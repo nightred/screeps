@@ -23,6 +23,8 @@ Mil.prototype.run = function() {
 
     if (Game.cpu.bucket < C.CPU_MIN_BUCKET_MIL) { return true; }
 
+    this.doSquads();
+
     return true;
 };
 
@@ -35,7 +37,7 @@ Mil.prototype.doSquads = function() {
     if (queue.length <= 0) { return false; }
 
     for (let s = 0; s < queue.length; s++) {
-        this.doSquad(queue[s]);
+        this.squad.doSquad(queue[s]);
     }
 
     return true;
