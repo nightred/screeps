@@ -28,11 +28,6 @@ var taskMine = {
         if (!creep.room.controller) {
             return creep.removeWork();
         }
-        if (creep.room.controller.sign) {
-            if (creep.room.controller.sign.text == task.message) {
-                return creep.removeWork();
-            }
-        }
 
         if (!creep.pos.inRangeTo(creep.room.controller, 1)) {
             let args = {
@@ -40,11 +35,14 @@ var taskMine = {
                 reusePath: 30,
                 maxRooms: 1,
             };
+
             creep.goto(creep.room.controller, args);
             return true;
         }
 
         creep.signController(creep.room.controller, task.message)
+        creep.removeWork();
+
         return true;
     },
 
@@ -89,7 +87,7 @@ var taskMine = {
             creepLimit: 0,
             managed: true,
         };
-        
+
         return Game.Queue.work.addRecord(record);
     },
 
@@ -101,9 +99,7 @@ var taskMine = {
 
         let output = ""
         output += task.task + " task config, id " + task.id + "\n";
-
         output += "Game.Queue.queue[" + task.id + "].message = '" + task.message + "'\n";
-
         output += "Update the records for operation.";
 
         console.log(output);

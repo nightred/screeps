@@ -9,11 +9,13 @@
 var Tower           = require('manage.room.tower');
 var Storage         = require('manage.room.storage');
 var Link            = require('manage.room.link');
+var Spawn           = require('manage.room.spawn');
 
 var manageRoom = function() {
     this.storage        = new Storage;
     this.link           = new Link;
     this.tower          = new Tower;
+    this.spawn          = new Spawn;
 };
 
 
@@ -22,9 +24,9 @@ manageRoom.prototype.doManage = function() {
         let room = Game.rooms[name];
 
         // clean memory
-        this.doContainers(room);
-        this.doTowers(room);
-        this.doLinks(room);
+        this.gcContainers(room);
+        this.gcTowers(room);
+        this.gcLinks(room);
 
         // defense routine
         Game.Mil.defense.doRoom(room);
@@ -33,8 +35,8 @@ manageRoom.prototype.doManage = function() {
         if (room.controller && room.controller.my) {
             this.link.doRoom(room);
             Game.Mil.doRoom(room);
-            Game.Queue.work.doTaskFind(room);
-            Game.Queue.spawn.doSpawn(room);
+            Game.Manage.task.doTaskFind(room);
+            this.spawn.doRoom(room);
             this.tower.doRoom(room);
         }
     }
@@ -42,7 +44,7 @@ manageRoom.prototype.doManage = function() {
     return true;
 };
 
-manageRoom.prototype.doContainers = function(room) {
+manageRoom.prototype.gcContainers = function(room) {
     if (!room) {return false; }
 
     room.memory.containersMemory = room.memory.containersMemory || 0;
@@ -73,7 +75,7 @@ manageRoom.prototype.doContainers = function(room) {
     return true;
 };
 
-manageRoom.prototype.doTowers = function(room) {
+manageRoom.prototype.gcTowers = function(room) {
     if (!room) {return false; }
 
     room.memory.towersMemory = room.memory.towersMemory || 0;
@@ -92,7 +94,7 @@ manageRoom.prototype.doTowers = function(room) {
     return true;
 };
 
-manageRoom.prototype.doLinks = function(room) {
+manageRoom.prototype.gcLinks = function(room) {
     if (!room) {return false; }
 
     room.memory.linksMemory = room.memory.linksMemory || 0;

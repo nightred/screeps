@@ -27,7 +27,7 @@ var taskUpgrade = {
 
         if (!creep.pos.inRangeTo(creep.room.controller, 3)) {
             let args = {
-                range: 3,
+                range: 1,
                 reusePath: 30,
                 maxRooms: 1,
             };
@@ -83,29 +83,28 @@ var taskUpgrade = {
         }
 
         // set spawn limits
-        task.creepLimit = task.creepLimit < 1 ? 1 : task.creepLimit;
+        let creepLimit = 1;
         if (room.storage && room.controller.level < 8) {
-            if (room.storage.store[RESOURCE_ENERGY] < 100000 ) {
-                task.creepLimit = task.creepLimit != 1 ? 1 : task.creepLimit;
-            } else if (room.storage.store[RESOURCE_ENERGY] > 120000 &&
-                room.storage.store[RESOURCE_ENERGY] < 300000 ) {
-                task.creepLimit = task.creepLimit != 2 ? 2 : task.creepLimit;
-            } else if (room.storage.store[RESOURCE_ENERGY] > 320000 &&
-                room.storage.store[RESOURCE_ENERGY] < 500000 ) {
-                task.creepLimit = task.creepLimit != 3 ? 3 : task.creepLimit;
-            } else if (room.storage.store[RESOURCE_ENERGY] > 520000 &&
-                room.storage.store[RESOURCE_ENERGY] < 800000 ) {
-                task.creepLimit = task.creepLimit != 4 ? 4 : task.creepLimit;
-            } else if (room.storage.store[RESOURCE_ENERGY] > 820000 ) {
-                task.creepLimit = task.creepLimit != 5 ? 5 : task.creepLimit;
+            if (room.storage.store[RESOURCE_ENERGY] < 50000 ) {
+                creepLimit = 1;
+            } else if (room.storage.store[RESOURCE_ENERGY] < 80000 ) {
+                creepLimit = 2;
+            } else if (room.storage.store[RESOURCE_ENERGY] < 150000 ) {
+                creepLimit = 3;
+            } else if (room.storage.store[RESOURCE_ENERGY] < 200000 ) {
+                creepLimit = 4;
+            } else if (room.storage.store[RESOURCE_ENERGY] >= 200000 ) {
+                creepLimit = 5;
             }
         } else if (room.controller.level == 8 ) {
-            task.creepLimit = task.creepLimit != 1 ? 1 : task.creepLimit;
+            creepLimit = 1;
             task.rcl8 = task.rcl8 ? task.rcl8 : 1;
         } else {
-            task.creepLimit = task.creepLimit != 2 ? 2 : task.creepLimit;
+            creepLimit = 2;
         }
-        if (C.SIM) { task.creepLimit = 1 };
+        if (C.SIM) { creepLimit = 1; };
+
+        task.creepLimit = task.creepLimit != creepLimit ? creepLimit : task.creepLimit;
 
         // spawn new creeps if needed
         let count = _.filter(Game.creeps, creep =>
@@ -160,7 +159,7 @@ var taskUpgrade = {
             creepLimit: 0,
             managed: true,
         };
-        
+
         return Game.Queue.work.addRecord(record);
     },
 

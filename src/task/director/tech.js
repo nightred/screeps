@@ -47,7 +47,7 @@ var taskDirectorTech = {
                 C.REPAIR,
                 C.CONSTRUCTION,
             ];
-            Game.Queue.work.doTaskFind(room, remoteTasks);
+            Game.Manage.task.doTaskFind(room, remoteTasks);
 
             task.creepLimit = task.creepLimit < 1 ? 1 : task.creepLimit;
 

@@ -5,14 +5,18 @@
  *
  */
 
-Creep.prototype.moveToRoom = function(name) {
-    if (!name) { return ERR_INVALID_ARGS; }
-    if (this.room.name == name) { return true; }
+Creep.prototype.moveToRoom = function(roomName) {
+    if (!roomName) { return ERR_INVALID_ARGS; }
+    if (this.room.name == roomName) { return true; }
 
     if (Game.cpu.bucket < 1000) { return true; }
 
-    let target = new RoomPosition(25, 25, name);
-    return this.goto(target, { range: 10,  reusePath: 50, ignoreCreeps: true, })
+    let target = new RoomPosition(25, 25, roomName);
+    return this.goto(target, {
+        range: 24,
+        reusePath: 50,
+        ignoreCreeps: true,
+    });
 }
 
 Creep.prototype.manageState = function() {
@@ -42,6 +46,10 @@ Creep.prototype.toggleState = function() {
     return true;
 }
 
+Creep.prototype.isWorking = function() {
+    return this.memory.working;
+}
+
 Creep.prototype.isEmpty = function() {
     return _.sum(this.carry) == 0;
 }
@@ -53,6 +61,14 @@ Creep.prototype.isFull = function() {
 Creep.prototype.isCarryingEnergy = function() {
     return this.carry.energy > 0;
 }
+
+Creep.prototype.isSleep = function() {
+    return this.memory.sleep > Game.time;
+};
+
+Creep.prototype.sleep = function() {
+    this.memory.sleep = C.CREEP_IDLE_TIME + Game.time;
+};
 
 Creep.prototype.isDespawnWarning = function() {
     if (this.memory.despawn) { return true; }
@@ -81,38 +97,10 @@ Creep.prototype.leaveWork = function() {
 }
 
 Creep.prototype.getWork = function(tasks, args) {
-    if (!Array.isArray(tasks)) { return false; }
+    if (!Array.isArray(tasks)) { return ERR_INVALID_ARGS; }
     args = args || {};
 
-    let list = false;
-    if (args.ignoreRoom) {
-        list = Game.Queue.work.getWork(tasks, this.name);
-    } else if (args.room) {
-        list = Work.getWork(tasks, this.name, args);
-    } else if (this.memory.workRooms) {
-        if (this.memory.workRooms.indexOf(this.room.name) >= 0) {
-            args.room = this.room.name;
-            list = Game.Queue.work.getWork(tasks, this.name, args);
-        }
-        if (!list || list.length <= 0) {
-            for (let i = 0; i < this.memory.workRooms.length; i++) {
-                if (this.memory.workRooms[i] == this.room.name) {
-                    continue;
-                }
-                args.room = this.memory.workRooms[i];
-                list = Game.Queue.work.getWork(tasks, this.name, args);
-                if (list.length > 0) { break; }
-            }
-        }
-    } else {
-        args.room = this.room.name;
-        list = Game.Queue.work.getWork(tasks, this.name, args);
-    }
-
-    if (!list || list.length <= 0) { return false; }
-    let workId = list[0].id;
-    this.memory.workId = workId;
-    return true;
+    return Game.Manage.task.getTask(tasks, this, args);
 }
 
 Creep.prototype.doWork = function() {

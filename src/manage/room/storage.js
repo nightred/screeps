@@ -41,7 +41,7 @@ Storage.prototype.getStore = function(creep, amount, types) {
             types[i] == 'container' ) {
             mod = C.ENERGY_CONTAINER_MAX;
         } else if (types[i] == 'terminal') {
-            mod = C.ENERGY_TERMINAL_MAX;
+            mod = C.TERMINAL_ENERGY_MAX;
         }  else if (types[i] == 'storage') {
             mod = C.ENERGY_STORAGE_MAX;
         }

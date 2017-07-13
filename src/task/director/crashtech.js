@@ -47,7 +47,7 @@ var taskDirectorMine = {
                 C.REPAIR,
                 C.CONSTRUCTION,
             ];
-            Game.Queue.work.doTaskFind(room, remoteTasks);
+            Game.Manage.task.doTaskFind(room, remoteTasks);
         }
 
         // spawn new creeps if needed

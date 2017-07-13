@@ -23,6 +23,7 @@ Manage.prototype.run = function() {
     this.room.doManage();
     this.flags.doManage();
     this.creep.doManage();
+    this.task.doManage();
 };
 
 module.exports = Manage;

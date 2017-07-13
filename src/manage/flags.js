@@ -25,21 +25,14 @@ Flags.prototype.doManage = function() {
 
     for (let name in Game.flags) {
         let flag = Game.flags[name];
-        if (flag.memory.init && flag.color != COLOR_RED) { continue; }
 
-        let result = false;
         switch (flag.color) {
             case COLOR_RED:
                 Game.Mil.doFlag(flag);
                 break;
             case COLOR_GREEN:
-                result = Game.Queue.work.doFlag(flag);
+                Game.Manage.task.doFlag(flag);
                 break;
-        }
-
-        if (flag.color != COLOR_RED) {
-            flag.memory.result = result;
-            flag.memory.init = 1;
         }
     }
 
@@ -49,7 +42,12 @@ Flags.prototype.doManage = function() {
 Flags.prototype.gc = function() {
     for(let name in Memory.flags) {
         if(!Game.flags[name]) {
+            if (Memory.flags[name].withFlag && Memory.flags[name].jobId) {
+                Game.Queue.delRecord(Memory.flags[name].jobId);
+            }
+
             if (C.DEBUG >= 2) { console.log('DEBUG - clearing non-existant flag memory name: ' + name); }
+
             delete Memory.flags[name];
         }
     }

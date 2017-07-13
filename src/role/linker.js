@@ -94,22 +94,6 @@ var roleLinker = {
         return body;
     },
 
-    /**
-    * Spawn the creep
-    * @param {Spawn} spawn The spawn to be used
-    * @param {array} body The creep body
-    * @param {Object} args Extra arguments
-    **/
-    doSpawn: function(spawn, body, args) {
-        if (!spawn) { return ERR_INVALID_ARGS; }
-        if (!Array.isArray(body) || body.length < 1) { return ERR_INVALID_ARGS; }
-        args = args || {};
-        args.role = args.role || this.role;
-        let name = Game.Queue.spawn.getCreepName(this.role);
-
-        return spawn.createCreep(body, name, args);
-    },
-
     getTask: function(creep) {
         if (!creep) { return ERR_INVALID_ARGS; }
         let room = creep.room;

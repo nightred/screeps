@@ -13,44 +13,6 @@ var WorkQueue = function() {
     this.queue = Memory.queues.queue;
 };
 
-WorkQueue.prototype.doManageTasks = function() {
-    let taskList = _.sortBy(_.filter(this.getQueue(), task =>
-        task.managed
-    ), task => task.priority);
-    if (!taskList || taskList.length < 0) { return false; }
-
-    for (let i =0; i < taskList.length; i++) {
-        Game.Manage.task.doManagedTask(taskList[i]);
-    }
-
-    return true;
-};
-
-WorkQueue.prototype.doTaskFind = function(room, tasks) {
-    if (!room) { return ERR_INVALID_ARGS; }
-    tasks = tasks || C.WORK_TASKS;
-    if (!Array.isArray(tasks)) { return ERR_INVALID_ARGS; }
-
-    for (let i = 0; i < tasks.length; i++) {
-        Game.Manage.task.doFindTask(tasks[i], room);
-    }
-
-    return true;
-};
-
-WorkQueue.prototype.doFlag = function(flag) {
-    if (!flag) { return ERR_INVALID_ARGS; }
-
-    let flagName = flag.name;
-    let args = flagName.split(':');
-
-    if (C.WORK_TASKS.indexOf(args[1]) < 0) {
-        return false;
-    }
-
-    return Game.Manage.task.createTask(args, flag.pos.roomName);
-};
-
 WorkQueue.prototype.printConfig = function(id) {
     if (isNaN(id)) { return ERR_INVALID_ARGS; }
     if (!this.queue[id]) { return ERR_INVALID_ARGS; }
@@ -59,22 +21,6 @@ WorkQueue.prototype.printConfig = function(id) {
 
 WorkQueue.prototype.getQueue = function() {
     return Game.Queue.getQueue({queue: C.QUEUE_WORK, });
-};
-
-WorkQueue.prototype.getWork = function(tasks, name, args) {
-    if (!Array.isArray(tasks)) { return ERR_INVALID_ARGS; }
-    args = args || {};
-
-    let queue = _.filter(this.getQueue(), record =>
-        tasks.indexOf(record.task) >= 0 &&
-        (!args.room || record.workRooms.indexOf(args.room) >= 0) &&
-        record.creeps.indexOf(name) == -1 &&
-        record.creeps.length < record.creepLimit);
-    let maxAge = Game.time - Math.min.apply(null, queue.tick);
-
-    return _.sortBy(queue, record =>
-        100 - (100 * ((Game.time - record.tick) / maxAge)) + record.priority
-    );
 };
 
 WorkQueue.prototype.addCreep = function(name, id) {
