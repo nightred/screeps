@@ -39,19 +39,21 @@ Work.prototype.runWork = function(creep) {
         return false;
     }
 
-    if (work.creeps.indexOf(creep.name) == -1 &&
-        work.creeps.length >= work.creepLimit) {
-        return false;
+    if (work.creeps.indexOf(creep.name) == -1) {
+        if (work.creeps.length >= work.creepLimit) {
+            return false;
+        } else if (creep.room.name == work.workRooms[0]) {
+            Game.Queue.work.addCreep(creep.name, creep.memory.workId);
+        }
+    } else {
+        return this.work[work.task].run(creep, work);
     }
 
     if (creep.room.name != work.workRooms[0]) {
         creep.moveToRoom(work.workRooms[0]);
-        return true;
-    } else if (task.creeps.indexOf(creep.name) < 0) {
-        Game.Queue.work.addCreep(creep.name, creep.memory.workId);
     }
 
-    return this.work[work.task].run(creep, work);
+    return true
 }
 
 Work.prototype.getWork = function(workTasks, creep, args) {

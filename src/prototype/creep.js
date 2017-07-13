@@ -20,14 +20,18 @@ Creep.prototype.moveToRoom = function(roomName) {
 }
 
 Creep.prototype.manageState = function() {
+    this.memory.working = this.memory.working || false;
+
     if (this.carryCapacity == 0) {
         this.memory.working = this.memory.working != true ? true : this.memory.working;
         return false;
     }
+
     if (this.memory.working && this.isEmpty()) {
         this.memory.working = false;
         return true;
     }
+    
     if (!this.memory.working && this.isFull()) {
         this.memory.working = true;
         return true;

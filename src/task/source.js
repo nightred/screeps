@@ -18,7 +18,7 @@ var taskSource = {
             return false;
         }
 
-        if (creep.isEmpty()) {
+        if ((creep.carryCapacity * 0.8) > _.sum(creep.carry)) {
             this.doWork(creep);
         } else {
             this.doEmpty(creep);

@@ -30,9 +30,16 @@ var taskDefense = {
 
         targets = _.sortBy(targets, target => creep.pos.getRangeTo(target));
 
-        if (creep.attack(targets[0]) == ERR_NOT_IN_RANGE) {
-            creep.moveTo(targets[0], { reusePath: 0, });
+        if (!creep.pos.inRangeTo(targets[0], 1)) {
+            creep.moveTo(targets[0], {
+                reusePath: 0,
+                maxRooms: 1,
+            });
+
+            return true;
         }
+
+        creep.attack(targets[0]);   
 
         return true;
     },
