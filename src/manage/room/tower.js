@@ -24,7 +24,7 @@ Tower.prototype.doRoom = function(room)  {
 };
 
 Tower.prototype.doTower = function(tower) {
-    if (!tower) { return -1; }
+    if (!tower) { return ERR_INVALID_ARGS; }
 
     if (this.defence(tower)) {
         return true;
@@ -97,7 +97,7 @@ Tower.prototype.repair = function(tower) {
 };
 
 Tower.prototype.buildCache = function(roomName) {
-    if (!Game.rooms[roomName]) { return -1; }
+    if (!Game.rooms[roomName]) { return ERR_INVALID_ARGS; }
 
     this.rooms[roomName] = [];
 

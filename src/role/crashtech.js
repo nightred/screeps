@@ -100,7 +100,7 @@ var roleCrashTech = {
     },
 
     doMine: function(creep) {
-        if (!creep) { return -1; }
+        if (!creep) { return ERR_INVALID_ARGS; }
 
         if (!creep.memory.harvestTarget) {
             let sources = creep.room.getSources();

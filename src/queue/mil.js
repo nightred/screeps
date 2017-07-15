@@ -18,7 +18,7 @@ MilQueue.prototype.getQueue = function() {
 };
 
 MilQueue.prototype.getSquad = function(squad) {
-    if (!squad) { return -1; }
+    if (!squad) { return ERR_INVALID_ARGS; }
 
     let queue = _.filter(this.getQueue(), record =>
         record.squad == squad);
@@ -29,7 +29,7 @@ MilQueue.prototype.getSquad = function(squad) {
 };
 
 MilQueue.prototype.isQueued = function(args) {
-    if (!args) { return -1; }
+    if (!args) { return ERR_INVALID_ARGS; }
 
     return _.filter(this.getQueue(), record =>
         (!args.squad || record.squad == args.squad)
@@ -37,16 +37,15 @@ MilQueue.prototype.isQueued = function(args) {
 };
 
 MilQueue.prototype.addRecord = function(args) {
-    if (!args) { return -1; }
-    if (!args.squad) { return -1; }
+    if (!args) { return ERR_INVALID_ARGS; }
+    if (!args.squad) { return ERR_INVALID_ARGS; }
     args.priority = args.priority || 100;
 
     let record = {
         queue: C.QUEUE_MIL,
         squad: args.squad,
-        opRoom: args.opRoom,
         priority: args.priority,
-        units: {},
+        creeps: [],
     };
 
     if (C.DEBUG >= 3) { console.log('VERBOSE - mil queue adding record, task: ' + record.task + ', priority: ' + record.priority); }

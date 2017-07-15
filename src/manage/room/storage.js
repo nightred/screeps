@@ -25,9 +25,9 @@ var Storage = function() {
 * @param {Array} types The storage types
 **/
 Storage.prototype.getStore = function(creep, amount, types) {
-    if (!creep) { return -1; }
-    if (isNaN(amount)) { return -1; }
-    if(!Array.isArray(types)) { return -1; }
+    if (!creep) { return ERR_INVALID_ARGS; }
+    if (isNaN(amount)) { return ERR_INVALID_ARGS; }
+    if(!Array.isArray(types)) { return ERR_INVALID_ARGS; }
     if (!this.rooms[creep.room.name]) {
         if (!this.buildRoom(creep.room)) { return false; }
     }
@@ -68,9 +68,9 @@ Storage.prototype.getStore = function(creep, amount, types) {
 * @param {Array} types The storage types
 **/
 Storage.prototype.getWithdraw = function(creep, amount, types) {
-    if (!creep) { return -1; }
-    if (isNaN(amount)) { return -1; }
-    if(!Array.isArray(types)) { return -1; }
+    if (!creep) { return ERR_INVALID_ARGS; }
+    if (isNaN(amount)) { return ERR_INVALID_ARGS; }
+    if(!Array.isArray(types)) { return ERR_INVALID_ARGS; }
     if (!this.rooms[creep.room.name]) {
         if (!this.buildRoom(creep.room)) { return false; }
     }

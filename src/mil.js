@@ -5,10 +5,14 @@
  *
  */
 
-var Defense = require('mil.defense');
+var Defense     = require('mil.defense');
+var Squad       = require('mil.squad');
+var milCreep    = require('mil.creep');
 
 var Mil = function() {
-    this.defense = new Defense;
+    this.defense    = new Defense;
+    this.squad      = new Squad;
+    this.creep      = new milCreep;
 
     Memory.world = Memory.world || {};
     Memory.world.mil = Memory.world.mil || {}
@@ -16,102 +20,79 @@ var Mil = function() {
 };
 
 Mil.prototype.run = function() {
+
+    if (Game.cpu.bucket < C.CPU_MIN_BUCKET_MIL) { return true; }
+
+    this.doSquads();
+
+    return true;
+};
+
+Mil.prototype.doSquads = function() {
+
+    if (Game.cpu.bucket < C.CPU_MIN_BUCKET_SQUAD) { return true; }
+
     let queue = Game.Queue.mil.getQueue();
 
     if (queue.length <= 0) { return false; }
 
     for (let s = 0; s < queue.length; s++) {
-        this.doSquad(queue[s]);
+        this.squad.doSquad(queue[s]);
     }
 
     return true;
-};
+}
 
 Mil.prototype.doRoom = function(room) {
-    if (!room) { return -1; }
-
-    if (Game.cpu.bucket < 1000) { return true; }
-
-    this.spawnMilitia(room);
+    if (!room) { return ERR_INVALID_ARGS; }
 
     return true;
 };
 
 Mil.prototype.doFlag = function(flag) {
-    if (!flag) { return -1; }
+    if (!flag) { return ERR_INVALID_ARGS; }
 
-    let squad = Game.Queue.mil.getSquad(flag.name);
+    let flagName = flag.name;
+    let args = flagName.split(':');
 
-    if (!squad) {
-        let record = {
-            squad: flag.name,
-            opRoom: flag.pos.roomName,
-        };
-
-        if (!Game.Queue.mil.addRecord(record)) {
-            return false;
-        }
-
-        squad = Game.Queue.mil.getSquad(flag.name);
+    if (flag.memory.squadId && !Game.Queue.getRecord(flag.memory.squadId)) {
+        flag.memory.squadId = undefined;
     }
 
-    squad.opRoom = flag.pos.roomName != squad.opRoom ? flag.pos.roomName : squad.opRoom;
-    squad.opRoomRallyX = flag.pos.x != squad.opRoomRallyX ? flag.pos.x : squad.opRoomRallyX;
-    squad.opRoomRallyY = flag.pos.y != squad.opRoomRallyY ? flag.pos.y : squad.opRoomRallyY;
+    if (!flag.memory.squadId) {
+        let squadId = undefined;
+
+        if (Game.Queue.mil.getSquad(args[0])) {
+            squadId = Game.Queue.mil.getSquad(args[0]).id;
+        }
+
+        if (!squadId) {
+            squadId = Game.Queue.mil.addRecord({
+                squad: args[0],
+            });
+        }
+
+        flag.memory.squadId = squadId;
+    }
+
+    switch (flag.secondaryColor) {
+        case COLOR_RED:
+            this.squad.doTarget(flag);
+            break;
+        case COLOR_PURPLE:
+            this.squad.doSpawn(flag, {
+                squad: args[0],
+                role: 'combat.' + args[1],
+                count: args[2],
+            });
+            break;
+    }
 
     return true;
 }
 
-Mil.prototype.doSquad = function(squad) {
-
-};
-
-Mil.prototype.spawnMilitia = function(room) {
-    if (!room) { return -1; }
-
-    let brawlerCount = 0;
-    switch (room.controller.level) {
-        case 1:
-            break;
-        case 2:
-        case 3:
-        case 4:
-        case 5:
-            brawlerCount = 1;
-            break;
-        case 6:
-        case 7:
-        case 8:
-            brawlerCount = 2;
-            break;
-    }
-
-    // spawn brawlers for the militia
-    let count = _.filter(Game.creeps, creep =>
-        creep.memory.spawnRoom == room.name &&
-        creep.memory.role == C.COMBAT_BRAWLER &&
-        creep.memory.combatGroup == 'militia' &&
-        creep.memory.despawn != true
-        ).length;
-
-    if (count < brawlerCount) {
-        if (!Game.Queue.spawn.isQueued({ room: room.name, role: C.COMBAT_BRAWLER, })) {
-            let record = {
-                rooms: [ room.name, ],
-                role: C.COMBAT_BRAWLER,
-                priority: 38,
-                creepArgs: {
-                    combatGroup: 'militia',
-                },
-            };
-
-            Game.Queue.spawn.addRecord(record);
-        }
-    }
-};
-
 Mil.prototype.isAlly = function(name) {
-    if (!name) { return -1; }
+    if (!name) { return ERR_INVALID_ARGS; }
 
     Memory.world.allies = Memory.world.allies || [];
     let allies = Memory.world.allies;
@@ -124,7 +105,7 @@ Mil.prototype.isAlly = function(name) {
 };
 
 Mil.prototype.isEnemy = function(name) {
-    if (!name) { return -1; }
+    if (!name) { return ERR_INVALID_ARGS; }
 
     Memory.world.enemys = Memory.world.enemys || [];
     let enemies = Memory.world.enemys;
@@ -137,7 +118,7 @@ Mil.prototype.isEnemy = function(name) {
 };
 
 Mil.prototype.addAlly = function(name) {
-    if (!name) { return -1; }
+    if (!name) { return ERR_INVALID_ARGS; }
 
     Memory.world.allies = Memory.world.allies || [];
     let allies = Memory.world.allies;
@@ -151,7 +132,7 @@ Mil.prototype.addAlly = function(name) {
 };
 
 Mil.prototype.addEnemy = function(name) {
-    if (!name) { return -1; }
+    if (!name) { return ERR_INVALID_ARGS; }
 
     Memory.world.enemys = Memory.world.enemys || [];
     let enemys = Memory.world.enemys;

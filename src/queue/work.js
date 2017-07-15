@@ -18,7 +18,7 @@ WorkQueue.prototype.getQueue = function() {
 };
 
 WorkQueue.prototype.isQueued = function(args) {
-    if (!args) { return -1; }
+    if (!args) { return ERR_INVALID_ARGS; }
 
     return _.filter(this.getQueue(), record =>
         (!args.targetId || record.targetId == args.targetId) &&
@@ -28,9 +28,9 @@ WorkQueue.prototype.isQueued = function(args) {
 };
 
 WorkQueue.prototype.addRecord = function(args) {
-    if (!args) { return -1; }
-    if (!Array.isArray(args.workRooms)) { return -1; }
-    if (C.WORK_TYPES.indexOf(args.task) < 0) { return -1; }
+    if (!args) { return ERR_INVALID_ARGS; }
+    if (!Array.isArray(args.workRooms)) { return ERR_INVALID_ARGS; }
+    if (C.WORK_TYPES.indexOf(args.task) < 0) { return ERR_INVALID_ARGS; }
 
     args.priority = args.priority || 100;
     args.creepLimit = args.creepLimit || 0;

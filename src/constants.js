@@ -16,7 +16,7 @@ var Constant = {};
 Constant.USERNAME                       = 'nightred';
 
 // debug = 0 off, 1 info, 2 debug, 3 verbose
-Constant.DEBUG                          = 2;
+Constant.DEBUG                          = 3;
 Constant.SIM                            = false;
 Constant.VISUALS                        = true;
 
@@ -51,6 +51,9 @@ Constant.REPORT_TICKS                   = 500;
 Constant.DEFENSE_COOLDOWN               = 80;
 Constant.DEFENSE_LIMIT_INCREASE_DELAY   = 100;
 
+Constant.MIL_SQUAD_SPAWN_COOLDOWN       = 8;
+Constant.MIL_SQUAD_CREEP_COOLDOWN       = 6;
+
 Constant.SPAWN_COST_DECAY               = 200;
 Constant.SPAWN_QUEUE_DELAY              = 2;
 Constant.SPAWN_ENERGY_MAX               = 0.8;
@@ -68,6 +71,10 @@ Constant.CREEP_IDLE_TIME                = 4;
 Constant.CREEP_STUCK_TICK               = 4;
 Constant.CREEP_FILL_TICKS               = 6;
 Constant.CREEP_TRAVEL_RANGE             = 4;
+
+Constant.CPU_MIN_BUCKET_MIL             = 2000;
+Constant.CPU_MIN_BUCKET_SQUAD           = 4000;
+Constant.CPU_MIN_BUCKET_FLAGS           = 1000;
 
 Constant.QUEUE_WORK                     = 'work';
 Constant.QUEUE_SPAWN                    = 'spawn';
@@ -91,6 +98,7 @@ Constant.CONTROLLER                     = 'controller';
 Constant.COMBAT_BRAWLER                 = 'combat.brawler';
 Constant.COMBAT_SWARMER                 = 'combat.swarmer';
 Constant.COMBAT_MEDIC                   = 'combat.medic';
+Constant.COMBAT_MILITIA                 = 'combat.militia';
 
 Constant.ROLE_TYPES = [
     Constant.MINER,
@@ -106,6 +114,7 @@ Constant.ROLE_TYPES = [
     Constant.COMBAT_BRAWLER,
     Constant.COMBAT_SWARMER,
     Constant.COMBAT_MEDIC,
+    Constant.COMBAT_MILITIA,
 ];
 
 Constant.DIRECTOR_ROOM                  = 'room';

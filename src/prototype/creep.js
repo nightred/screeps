@@ -6,7 +6,7 @@
  */
 
 Creep.prototype.moveToRoom = function(roomName) {
-    if (!roomName) { return -1; }
+    if (!roomName) { return ERR_INVALID_ARGS; }
     if (this.room.name == roomName) { return true; }
 
     if (Game.cpu.bucket < 1000) { return true; }
@@ -151,11 +151,11 @@ Creep.prototype.removeWork = function() {
 Creep.prototype.doTransfer = function(target, resourceType) {
     if (!target) {
         this.memory.goingTo = false;
-        return -1;
+        return ERR_INVALID_ARGS;
     }
     if (resourceType && RESOURCES_ALL.indexOf(resourceType) < 0) {
         this.memory.goingTo = false;
-        return -1;
+        return ERR_INVALID_ARGS;
     }
 
     if (!this.pos.inRangeTo(target, 1)) {
@@ -192,11 +192,11 @@ Creep.prototype.doTransfer = function(target, resourceType) {
 Creep.prototype.doWithdraw = function(target, resourceType) {
     if (!target) {
         this.memory.goingTo = false;
-        return -1;
+        return ERR_INVALID_ARGS;
     }
     if (resourceType && RESOURCES_ALL.indexOf(resourceType) < 0) {
         this.memory.goingTo = false;
-        return -1;
+        return ERR_INVALID_ARGS;
     }
 
     if (!this.pos.inRangeTo(target, 1)) {
@@ -233,9 +233,9 @@ Creep.prototype.doWithdraw = function(target, resourceType) {
 }
 
 Creep.prototype.doEmpty = function(types, resourceType) {
-    if (!Array.isArray(types)) { return -1; }
+    if (!Array.isArray(types)) { return ERR_INVALID_ARGS; }
     if (resourceType && RESOURCES_ALL.indexOf(resourceType) < 0) {
-        return -1;
+        return ERR_INVALID_ARGS;
     }
 
     if (!this.memory.goingTo) {
@@ -260,8 +260,8 @@ Creep.prototype.doEmpty = function(types, resourceType) {
 };
 
 Creep.prototype.getEmptyTarget = function(types, resourceSum) {
-    if (!Array.isArray(types)) { return -1; }
-    if (isNaN(resourceSum)) { return -1; }
+    if (!Array.isArray(types)) { return ERR_INVALID_ARGS; }
+    if (isNaN(resourceSum)) { return ERR_INVALID_ARGS; }
 
     let targetId = Game.Manage.room.storage.getStore(this, resourceSum, types);
     if (targetId) {
@@ -278,7 +278,7 @@ Creep.prototype.getEmptyTarget = function(types, resourceSum) {
 };
 
 Creep.prototype.doFill = function(types, resourceType) {
-    if (!Array.isArray(types)) { return -1; }
+    if (!Array.isArray(types)) { return ERR_INVALID_ARGS; }
 
     this.memory.fillTick = this.memory.fillTick || 0;
     if ((this.memory.fillTick + C.CREEP_FILL_TICKS) < Game.time) {
@@ -300,7 +300,7 @@ Creep.prototype.doFill = function(types, resourceType) {
 };
 
 Creep.prototype.getFillTarget = function(types) {
-    if (!Array.isArray(types)) { return -1; }
+    if (!Array.isArray(types)) { return ERR_INVALID_ARGS; }
 
     let targetId = Game.Manage.room.storage.getWithdraw(this, (this.carryCapacity - _.sum(this.carry)), types);
     if (targetId) {
@@ -422,7 +422,7 @@ Creep.prototype.collectDroppedEnergy = function () {
 }
 
 Creep.prototype.getDestructibleStructures = function(path) {
-    if (!path || !path.length) { return -1; }
+    if (!path || !path.length) { return ERR_INVALID_ARGS; }
 
     for (let i = 0; i < path.length; i++) {
         let target = new RoomPosition(path[i].x, path[i].y, this.room.name).look();

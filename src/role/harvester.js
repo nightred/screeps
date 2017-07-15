@@ -73,7 +73,7 @@ var roleHarvester = {
     * @param {Object} args Extra arguments
     **/
     getBody: function(energy, args) {
-        if (isNaN(energy)) { return -1; }
+        if (isNaN(energy)) { return ERR_INVALID_ARGS; }
         args = args || {};
         if (!args.style) { args.style = 'default'; }
 

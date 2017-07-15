@@ -1,11 +1,11 @@
 /*
- * Linker Role
+ * Stocker Role
  *
- * miner role that handles moving energy in a room
+ * handles moving resources
  *
  */
 
-var roleLinker = {
+var roleStocker = {
 
     /**
     * Create the body of the creep for the role
@@ -42,4 +42,4 @@ var roleLinker = {
 
 };
 
-module.exports = roleLinker;
+module.exports = roleStocker;

@@ -20,6 +20,12 @@ var taskDefense = {
             return true;
         }
 
+        if (creep.getActiveBodyparts(HEAL)) {
+            if (creep.hits < creep.hitsMax) {
+                creep.heal(creep);
+            }
+        }
+
         let targets = creep.room.getHostiles();
         if (!targets || targets.length <= 0) { return creep.removeWork(); }
 
@@ -29,6 +35,7 @@ var taskDefense = {
         );
 
         targets = _.sortBy(targets, target => creep.pos.getRangeTo(target));
+        let target = targets[0];
 
         if (!creep.pos.inRangeTo(targets[0], 1)) {
             creep.moveTo(targets[0], {
@@ -40,26 +47,6 @@ var taskDefense = {
         }
 
         creep.attack(targets[0]);   
-
-        return true;
-    },
-
-    /**
-    * @param {Task} task The work task passed from the work Queue
-    **/
-    doTaskManaged: function(task) {
-        if (!task) { return -1; }
-
-        if (Game.rooms[task.workRooms[0]].getHostiles().length <= 0) {
-            task.cooldown = task.cooldown || Game.time;
-            if ((task.cooldown + C.DEFENSE_COOLDOWN) < Game.time) {
-                Game.Queue.work.delRecord(task.id);
-                return true;
-            }
-        }
-
-        let creepLimit = Math.ceil((Game.time - task.tick) / C.DEFENSE_LIMIT_INCREASE_DELAY);
-        task.creepLimit = task.creepLimit >= creepLimit ? task.creepLimit : creepLimit;
 
         return true;
     },

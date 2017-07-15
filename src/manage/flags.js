@@ -13,6 +13,8 @@ var Flags = function() {
 
 Flags.prototype.run = function() {
 
+	if (Game.cpu.bucket < C.CPU_MIN_BUCKET_FLAGS) { return true; }
+
     this.gc();
 
     for (let name in Game.flags) {

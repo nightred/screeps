@@ -20,7 +20,7 @@ manageRole.prototype.doRole = function(creep) {
 
 manageRole.prototype.getBody = function(role, energy, args) {
     if (C.ROLE_TYPES.indexOf(role) < 0) { return false; }
-    if (isNaN(energy)) { return -1; }
+    if (isNaN(energy)) { return ERR_INVALID_ARGS; }
     args = args || {};
 
     return this.roles[role].getBody(energy, args);
@@ -29,7 +29,7 @@ manageRole.prototype.getBody = function(role, energy, args) {
 manageRole.prototype.getRole = function(name) {
     if (C.ROLE_TYPES.indexOf(name) < 0) {
         if (C.DEBUG >= 2) { console.log('DEBUG - failed to load role: ' + name); }
-        return -1;
+        return ERR_INVALID_ARGS;
     }
 
     let role = false;
