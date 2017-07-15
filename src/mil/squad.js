@@ -20,7 +20,7 @@ Squad.prototype.doSquad = function(squad) {
 
     for (let i = 0; i < squad.creeps.length; i++) {
         let creep = Game.creeps[squad.creeps[i]];
-        Game.Mil.creep.doCreep(creep. squad);
+        Game.Mil.creep.doCreep(creep, squad);
     }
 
 };

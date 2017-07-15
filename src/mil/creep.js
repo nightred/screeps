@@ -142,7 +142,7 @@ milCreep.prototype.getTarget = function(creep) {
 
 milCreep.prototype.doRally = function(creep, squad) {
     if (!creep) { return ERR_INVALID_ARGS; }
-    if (!task) { return ERR_INVALID_ARGS; }
+    if (!squad) { return ERR_INVALID_ARGS; }
 
     if (squad.op) {
         let rallyPos = new RoomPosition(squad.op.x, squad.op.y, squad.op.room);
