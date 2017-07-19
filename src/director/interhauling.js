@@ -86,6 +86,8 @@ directorInterHauling.prototype.run = function(task) {
         task.spawnId = Game.Queue.spawn.addRecord(record);
     }
 
+    task.sleep = Game.time + C.DIRECTOR_SLEEP;
+
     return true;
 };
 
@@ -97,6 +99,7 @@ directorInterHauling.prototype.create = function(args) {
         director: C.DIRECTOR_INTERHAULING,
         workRoom: arg.roomName,
         spawnRoom: arg.spawnRoom,
+        creepLimit: args.creepLimit,
         priority: 34,
     };
 
@@ -113,6 +116,7 @@ directorInterHauling.prototype.flag = function(roomName, args) {
     let record = {
         workRoom: roomName,
         spawnRoom: args[2],
+        creepLimit: args[3],
     }
 
     return this.create(record);

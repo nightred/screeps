@@ -65,6 +65,8 @@ directorStocking.prototype.run = function(task) {
         task.spawnId = Game.Queue.spawn.addRecord(record);
     }
 
+    task.sleep = Game.time + C.DIRECTOR_SLEEP;
+
     return true;
 };
 

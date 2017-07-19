@@ -93,6 +93,8 @@ directorRoom.prototype.run = function(task) {
         task.directorTech = Game.Director.addRecord(record);
     }
 
+    task.sleep = Game.time + C.DIRECTOR_SLEEP;
+
     return true;
 };
 

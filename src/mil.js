@@ -43,12 +43,6 @@ Mil.prototype.doSquads = function() {
     return true;
 }
 
-Mil.prototype.doRoom = function(room) {
-    if (!room) { return ERR_INVALID_ARGS; }
-
-    return true;
-};
-
 Mil.prototype.doFlag = function(flag) {
     if (!flag) { return ERR_INVALID_ARGS; }
 

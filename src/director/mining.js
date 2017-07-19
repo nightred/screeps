@@ -42,6 +42,8 @@ directorMining.prototype.run = function(task) {
         }
     }
 
+    task.sleep = Game.time + C.DIRECTOR_SLEEP;
+
     return true;
 };
 

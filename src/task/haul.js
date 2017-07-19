@@ -65,7 +65,7 @@ var taskHaul = {
                 'extention',
             ];
 
-            if (!creep.room.storage) {
+            if (!creep.room.storage || creep.room.controller || creep.room.controller.level >= 4) {
                 energyOutTargets.push('containerOut');
                 energyOutTargets.push('container');
             }
@@ -102,7 +102,7 @@ var taskHaul = {
                 'storage',
             ];
 
-            if (!creep.room.storage) {
+            if (!creep.room.storage || creep.room.controller || creep.room.controller.level >= 4) {
                 energyOutTargets = [
                     'extention',
                     'spawn',
@@ -116,7 +116,7 @@ var taskHaul = {
             let energyInTargets =  [
                 'containerIn',
             ];
-            
+
             creep.doFill(energyInTargets, RESOURCE_ENERGY);
         }
 

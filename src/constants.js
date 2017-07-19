@@ -84,6 +84,8 @@ Constant.DB_DIRECTOR                    = 1;
 
 Constant.WORK_FIND_SLEEP                = 12;
 
+Constant.DIRECTOR_SLEEP                 = 12;
+
 Constant.MINER                          = 'miner';
 Constant.HARVESTER                      = 'harvester';
 Constant.UPGRADER                       = 'upgrader';

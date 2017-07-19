@@ -18,7 +18,7 @@ var Manage = function() {
 };
 
 Manage.prototype.run = function() {
-    this.room.doManage();
+    this.room.run();
     this.flags.run();
     this.creep.run();
 };

@@ -18,6 +18,7 @@ require('prototype.roomPosition');
 // global methods
 global.C            = require('constants');
 global.cli          = require('util.cli');
+global.utils        = require('util.utils');
 
 var Stats           = require('util.stats');
 

@@ -19,7 +19,7 @@ var manageRoom = function() {
 };
 
 
-manageRoom.prototype.doManage = function() {
+manageRoom.prototype.run = function() {
     for (let name in Game.rooms) {
         let room = Game.rooms[name];
 
