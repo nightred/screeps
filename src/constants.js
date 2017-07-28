@@ -96,7 +96,6 @@ Constant.TECH                           = 'tech';
 Constant.CRASHTECH                      = 'crashtech';
 Constant.HAULER                         = 'hauler';
 Constant.RESUPPLY                       = 'resupply';
-Constant.LINKER                         = 'linker';
 Constant.STOCKER                        = 'stocker';
 Constant.SCOUT                          = 'scout';
 Constant.CONTROLLER                     = 'controller';
@@ -112,7 +111,6 @@ Constant.ROLE_TYPES = [
     Constant.CRASHTECH,
     Constant.HAULER,
     Constant.RESUPPLY,
-    Constant.LINKER,
     Constant.STOCKER,
     Constant.SCOUT,
     Constant.CONTROLLER,

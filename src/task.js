@@ -46,6 +46,10 @@ Task.prototype.runTask = function(creep) {
         return true;
     }
 
+    if (C.TASK_TYPES.indexOf(creep.memory.task) == -1) {
+        return false;
+    }
+
     return this.tasks[creep.memory.task].run(creep);
 }
 

@@ -113,6 +113,10 @@ Work.prototype.removeCreep = function(creepName, id) {
         return true;
     }
 
+    if (!work.creeps) {
+        return true;
+    }
+
     let index = work.creeps.indexOf(creepName);
 
     if (index == -1) {
