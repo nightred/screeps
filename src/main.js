@@ -1,26 +1,17 @@
 /*
  * Main Loop
  *
- * the main loop of the ai
- *
  */
 
 // prototypes
-require('prototype.memory');
-require('prototype.creep');
-require('prototype.source');
-require('prototype.mineral');
-require('prototype.room');
-require('prototype.structureContainer');
-require('prototype.structureStorage');
-require('prototype.roomPosition');
+require('prototype');
 
 // global methods
 global.C            = require('constants');
 global.cli          = require('util.cli');
 global.utils        = require('util.utils');
 
-var Stats           = require('util.stats');
+var Visuals         = new (require('util.visuals'));
 
 var Director        = require('director');
 var Queue           = require('queue');
@@ -42,5 +33,5 @@ module.exports.loop = function () {
     Game.Manage.run();
     Game.Mil.run();
 
-    Stats.run();
+    Visuals.run();
 }

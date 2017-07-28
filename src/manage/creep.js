@@ -19,7 +19,7 @@ manageCreep.prototype.gc = function() {
     for(let name in Memory.creeps) {
         if(!Game.creeps[name]) {
             if (Memory.creeps[name].workId) {
-                Game.Queue.work.removeCreep(name, Memory.creeps[name].workId);
+                Game.Work.removeCreep(name, Memory.creeps[name].workId);
             }
             if (C.DEBUG >= 2) { console.log('DEBUG - clearing non-existant creep memory name: ' + name + ' role: ' + Memory.creeps[name].role); }
             delete Memory.creeps[name];

@@ -70,35 +70,4 @@ WorkQueue.prototype.cleanRoomQueue = function(roomName) {
     return true;
 };
 
-WorkQueue.prototype.getRoomReport = function(room) {
-    let output = '';
-    let queue = this.getQueue();
-
-    let filteredQueue = _.filter(queue, record =>
-        (record.workRooms && record.workRooms.indexOf(room) >= 0) ||
-        record.spawnRoom == room);
-
-    output += '  Total Work Queue: ' + queue.length + '\n';
-    output += '  Room Work Queue: ' + filteredQueue.length + '\n';
-
-    for (let t = 0; t < C.WORK_TYPES.length; t++) {
-        let records = _.filter(filteredQueue, record => record.task == C.WORK_TYPES[t]);
-        if (records.length > 0) {
-            output += '    ' + C.WORK_TYPES[t] + ': ' + records.length + '\n';
-            output += '      [ ';
-            for (let i = 0; i < records.length; i++) {
-                output += records[i].id;
-                if ((i + 1) % 8 == 0 && i != records.length - 1) {
-                    output += ',\n        ';
-                } else if (i < records.length - 1) {
-                    output += ', ';
-                }
-            }
-            output += ' ]\n';
-        }
-    }
-
-    return output;
-};
-
 module.exports = WorkQueue;

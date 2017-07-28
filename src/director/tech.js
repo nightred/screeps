@@ -12,7 +12,7 @@ var directorTech = function() {
 directorTech.prototype.run = function(task) {
     if (!task) { return ERR_INVALID_ARGS; }
 
-    let workRoom = Game.rooms(task.workRoom);
+    let workRoom = Game.rooms[task.workRoom];
 
     let findWorkTasks = [
         C.WORK_TOWER_REFILL,
@@ -24,7 +24,7 @@ directorTech.prototype.run = function(task) {
         Game.Work.findWork(findWorkTasks[i], workRoom);
     }
 
-    let spawnRoom = Game.rooms(task.spawnRoom);
+    let spawnRoom = Game.rooms[task.spawnRoom];
 
     if (!spawnRoom || !spawnRoom.controller || !spawnRoom.controller.my) {
         return true;
@@ -39,22 +39,33 @@ directorTech.prototype.run = function(task) {
     case 2:
         maxSize = 300;
         break;
+
     case 3:
+        maxSize = 400;
+        break;
+
     case 4:
         minSize = 300;
         maxSize = 400;
         break;
+
     case 5:
     case 6:
         minSize = 400;
         maxSize = 500;
         break;
+
     case 7:
     case 8:
         minSize = 400;
         maxSize = 9999;
         break;
+
     };
+
+    if (spawnRoom.storage && spawnRoom.controller.level < 4) {
+        minSize = 200;
+    }
 
     // set spawn limits
     let creepLimit = 1;
@@ -125,8 +136,8 @@ directorTech.prototype.run = function(task) {
 directorTech.prototype.create = function(args) {
     let record = {
         director: C.DIRECTOR_TECH,
-        workRoom: arg.roomName,
-        spawnRoom: arg.spawnRoom,
+        workRoom: args.roomName,
+        spawnRoom: args.spawnRoom,
         priority: 36,
     };
 
@@ -153,4 +164,4 @@ directorTech.prototype.flag = function(roomName, args) {
     return this.create(record);
 };
 
-modules.exports = directorTech;
+module.exports = directorTech;

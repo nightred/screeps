@@ -15,7 +15,7 @@ var directorRoom = function() {
 directorRoom.prototype.run = function(task) {
     if (!task) { return ERR_INVALID_ARGS; }
 
-    let room = Game.rooms(task.workRoom);
+    let room = Game.rooms[task.workRoom];
 
     if (!room || !room.controller || !room.controller.my) {
         return false;
@@ -33,8 +33,8 @@ directorRoom.prototype.run = function(task) {
         task.directorMine = Game.Director.addRecord(record);
     }
 
-    if (!task.directorUpgrade ||
-        !Game.Director.getRecord(task.directorUpgrade)) {
+    if (!task.directorController ||
+        !Game.Director.getRecord(task.directorController)) {
         let record = {
             director: C.DIRECTOR_CONTROLLER,
             workRoom: task.workRoom,
@@ -42,7 +42,7 @@ directorRoom.prototype.run = function(task) {
             priority: 25,
         };
 
-        task.directorResupply = Game.Director.addRecord(record);
+        task.directorController = Game.Director.addRecord(record);
     }
 
     if (!task.directorResupply ||
@@ -104,8 +104,8 @@ directorRoom.prototype.run = function(task) {
 directorRoom.prototype.create = function(args) {
     let record = {
         director: C.DIRECTOR_ROOM,
-        workRoom: arg.roomName,
-        spawnRoom: arg.roomName,
+        workRoom: args.roomName,
+        spawnRoom: args.roomName,
         priority: 20,
     };
 
@@ -126,4 +126,4 @@ directorRoom.prototype.flag = function(roomName, args) {
     return this.create(record);
 };
 
-modules.exports = directorRoom;
+module.exports = directorRoom;

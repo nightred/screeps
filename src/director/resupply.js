@@ -12,7 +12,7 @@ var directorResupply = function() {
 directorResupply.prototype.run = function(task) {
     if (!task) { return ERR_INVALID_ARGS; }
 
-    let room = Game.rooms(task.workRoom);
+    let room = Game.rooms[task.workRoom];
 
     if (!room || !room.storage || !room.controller || !room.controller.my) {
         return false;
@@ -86,4 +86,4 @@ directorResupply.prototype.run = function(task) {
     return true;
 };
 
-modules.exports = directorResupply;
+module.exports = directorResupply;

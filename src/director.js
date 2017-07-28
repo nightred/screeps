@@ -6,8 +6,19 @@
  */
 
 var Director = function() {
-    if (!Memory.director) { Memory.director = {}; }
-    if (!Memory.director.db) { Memory.director.db = {}; }
+    if (!Memory.director) {
+        Memory.director = {};
+    }
+
+    if (!Memory.director.db) {
+        Memory.director.db = {};
+    }
+
+    if (!Memory.director.ver || Memory.director.ver != C.VERSION) {
+        Memory.director = {};
+        Memory.director.db = {};
+        Memory.director.ver = C.VERSION;
+    }
 
     this.memory = Memory.director;
     this.db = Memory.director.db;
@@ -15,7 +26,11 @@ var Director = function() {
     this.directors = {};
 
     for (let i = 0; i < C.DIRECTOR_TYPES.length; i++) {
-        this.directors[C.DIRECTOR_TYPES[i]] = this.loadDirector(C.DIRECTOR_TYPES[i]);
+        let director = this.loadDirector(C.DIRECTOR_TYPES[i]);
+
+        if (director != undefined) {
+            this.directors[C.DIRECTOR_TYPES[i]] = new director;
+        }
     }
 };
 
@@ -37,8 +52,8 @@ Director.prototype.loadDirector = function(name) {
 };
 
 Director.prototype.run = function() {
-    for (let i = 0; i < this.db.length; i++) {
-        let record = this.getRecord(i);
+    for (let id in this.db) {
+        let record = this.db[id];
 
         this.runDirector(record);
     }
@@ -56,7 +71,7 @@ Director.prototype.runDirector = function(task) {
 
 Director.prototype.addCreep = function(id, creepName) {
     if (isNaN(id)) { return ERR_INVALID_ARGS; }
-    if (!name) { return ERR_INVALID_ARGS; }
+    if (!creepName) { return ERR_INVALID_ARGS; }
 
     let director = this.db[id];
 
@@ -64,11 +79,13 @@ Director.prototype.addCreep = function(id, creepName) {
         return false;
     }
 
-    if (director.creep.indexOf(name) != -1) {
+    if (director.creep.indexOf(creepName) != -1) {
         return true;
     }
 
     director.creep.push(creepName);
+
+    if (C.DEBUG >= 3) { console.log('VERBOSE - director ' + director.director + ' adding creep: ' + creepName); }
 
     return true;
 };
@@ -90,6 +107,8 @@ Director.prototype.delCreep = function(id, creepName) {
     }
 
     director.creep.splice(index, 1);
+
+    if (C.DEBUG >= 3) { console.log('VERBOSE - director ' + director.director + ' removing creep: ' + creepName); }
 
     return true;
 };
@@ -139,7 +158,7 @@ Director.prototype.getRecord = function(id) {
 };
 
 Director.prototype.getId = function() {
-    this.memory.lastId || 0;
+    this.memory.lastId = this.memory.lastId || 0;
 
     if (this.memory.lastId >= 999999) {
         this.memory.lastId = 0;

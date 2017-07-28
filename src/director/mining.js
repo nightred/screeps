@@ -12,7 +12,7 @@ var directorMining = function() {
 directorMining.prototype.run = function(task) {
     if (!task) { return ERR_INVALID_ARGS; }
 
-    let room = Game.rooms(task.workRoom);
+    let room = Game.rooms[task.workRoom];
 
     if (!room) {
         return false;
@@ -30,11 +30,9 @@ directorMining.prototype.run = function(task) {
         if (!source.directorId || !Game.Director.getRecord(source.directorId)) {
             let record = {
                 director: C.DIRECTOR_SOURCE,
-                workRoom: task.roomName,
+                workRoom: task.workRoom,
                 spawnRoom: task.spawnRoom,
                 sourceId: source.id,
-                creep: undefined,
-                spawnId: undefined,
                 priority: 22,
             };
 
@@ -52,7 +50,7 @@ directorMining.prototype.getSources = function(task) {
 
     task.sources = task.sources || [];
 
-    let room = Game.rooms(task.workRoom);
+    let room = Game.rooms[task.workRoom];
 
     if (!room) {
         return false;
@@ -82,8 +80,8 @@ directorMining.prototype.getSources = function(task) {
 directorMining.prototype.create = function(args) {
     let record = {
         director: C.DIRECTOR_MINING,
-        workRoom: arg.roomName,
-        spawnRoom: arg.spawnRoom,
+        workRoom: args.roomName,
+        spawnRoom: args.spawnRoom,
         priority: 21,
     };
 
@@ -105,4 +103,4 @@ directorMining.prototype.flag = function(roomName, args) {
     return this.create(record);
 };
 
-modules.exports = directorMining;
+module.exports = directorMining;

@@ -43,7 +43,7 @@ Work.prototype.runWork = function(creep) {
         if (work.creeps.length >= work.creepLimit) {
             return false;
         } else if (creep.room.name == work.workRooms[0]) {
-            Game.Queue.work.addCreep(creep.name, creep.memory.workId);
+            Game.Work.addCreep(creep.name, creep.memory.workId);
         }
     } else {
         return this.work[work.task].run(creep, work);
@@ -57,14 +57,14 @@ Work.prototype.runWork = function(creep) {
 }
 
 Work.prototype.getWork = function(workTasks, creep, args) {
-    if (!Array.isArray(tasks)) { return ERR_INVALID_ARGS; }
+    if (!Array.isArray(workTasks)) { return ERR_INVALID_ARGS; }
 
     args = args || {};
 
     let queue = Game.Queue.work.getQueue();
 
     queue = _.filter(queue, record =>
-        tasks.indexOf(record.task) >= 0 &&
+        workTasks.indexOf(record.task) >= 0 &&
         (!args.room || record.workRooms.indexOf(args.room) >= 0) &&
         record.creeps.indexOf(creep.name) == -1 &&
         record.creeps.length < record.creepLimit
@@ -108,6 +108,10 @@ Work.prototype.removeCreep = function(creepName, id) {
     if (isNaN(id)) { return ERR_INVALID_ARGS; }
 
     let work = Game.Queue.getRecord(id);
+
+    if (!work) {
+        return true;
+    }
 
     let index = work.creeps.indexOf(creepName);
 

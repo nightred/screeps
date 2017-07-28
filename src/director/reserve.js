@@ -12,7 +12,7 @@ var directorReserve = function() {
 directorReserve.prototype.run = function(task) {
     if (!task) { return ERR_INVALID_ARGS; }
 
-    let room = Game.rooms(task.workRoom);
+    let room = Game.rooms[task.workRoom];
 
     if (!room || !room.controller) {
         return false;
@@ -78,8 +78,8 @@ directorReserve.prototype.run = function(task) {
 directorReserve.prototype.create = function(args) {
     let record = {
         director: C.DIRECTOR_RESERVE,
-        workRoom: arg.roomName,
-        spawnRoom: arg.spawnRoom,
+        workRoom: args.roomName,
+        spawnRoom: args.spawnRoom,
         priority: 34,
     };
 
@@ -101,4 +101,4 @@ directorReserve.prototype.flag = function(roomName, args) {
     return this.create(record);
 };
 
-modules.exports = directorReserve;
+module.exports = directorReserve;

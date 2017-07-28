@@ -31,7 +31,7 @@ Creep.prototype.manageState = function() {
         this.memory.working = false;
         return true;
     }
-    
+
     if (!this.memory.working && this.isFull()) {
         this.memory.working = true;
         return true;
@@ -113,20 +113,17 @@ Creep.prototype.getWork = function(workTasks, args) {
 
     args = args || {};
 
-    let workId = undefined;
-
-    if (args.ignoreRoom || args.room) {
-        workId = Game.Work.getWork(workTasks, this, args);
-    } else {
-        args.room = creep.memory.workRoom;
-        workId = Game.Work.getWork(workTasks, this, args);
+    if (!args.ignoreRoom || !args.room) {
+        args.room = this.memory.workRoom;
     }
+
+    let workId = Game.Work.getWork(workTasks, this, args);
 
     if (!workId) {
         return false;
     }
 
-    creep.memory.workId = workId;
+    this.memory.workId = workId;
 
     return true;
 }
@@ -170,6 +167,10 @@ Creep.prototype.doTransfer = function(target, resourceType) {
             args.ignoreCreeps = false;
         }
 
+        if (this.memory.role == C.STOCKER) {
+            args.ignoreRoads = true;
+        }
+
         this.goto(target, args);
         return false;
     } else {
@@ -209,6 +210,10 @@ Creep.prototype.doWithdraw = function(target, resourceType) {
 
         if (this.memory.role == C.RESUPPLY) {
             args.ignoreCreeps = false;
+        }
+
+        if (this.memory.role == C.STOCKER) {
+            args.ignoreRoads = true;
         }
 
         this.goto(target, args);

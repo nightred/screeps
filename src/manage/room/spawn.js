@@ -97,7 +97,7 @@ Spawn.prototype.doRoom = function(room) {
                 records[r].name = name;
 
                 if (records[r].directorId) {
-                    Game.Director.setCreep(records[r].directorId, name)
+                    Game.Director.addCreep(records[r].directorId, name)
                 }
 
                 if (C.DEBUG >= 1) { console.log('INFO - spawning' +

@@ -5,7 +5,7 @@
  *
  */
 
-var taskDirectorTech = {
+var taskTech = {
 
     /**
     * @param {Creep} creep The creep object
@@ -37,4 +37,4 @@ var taskDirectorTech = {
 
 };
 
-module.exports = taskDirectorTech;
+module.exports = taskTech;

@@ -107,8 +107,8 @@ Tower.prototype.buildCache = function(roomName) {
     let mod = 0;
     if (room.storage) {
         let energyStorage = room.storage.store[RESOURCE_ENERGY];
-        if (energyStorage < 50000) {
-            mod = 0;
+        if (energyStorage < 10000) {
+            mod = 0.1;
         } else if (energyStorage < 100000) {
             mod = 1;
         } else if (energyStorage < 200000) {

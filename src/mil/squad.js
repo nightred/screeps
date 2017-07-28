@@ -90,9 +90,12 @@ Squad.prototype.doTarget = function(flag) {
     squad.op = squad.op || {};
 
     // get target flag is on
-    let target = flag.pos.getStructure();
-    if (target.structureType) {
-        squad.targetId = target.id;
+    if (Game.rooms[flag.pos.roomName]) {
+        let target = flag.pos.getStructure();
+
+        if (target.structureType) {
+            squad.targetId = target.id;
+        }
     }
 
     // update rally pos

@@ -33,7 +33,7 @@ Task.prototype.loadTask = function(name) {
 Task.prototype.runTask = function(creep) {
     if (!creep) { return ERR_INVALID_ARGS; }
 
-    if (!creep.task) {
+    if (!creep.memory.task) {
         return false;
     }
 
@@ -46,7 +46,7 @@ Task.prototype.runTask = function(creep) {
         return true;
     }
 
-    return this.tasks[creep.task].run(creep);
+    return this.tasks[creep.memory.task].run(creep);
 }
 
 module.exports = Task;

@@ -75,6 +75,7 @@ Defense.prototype.spawnMilitia = function(room) {
                 priority: 38,
                 creepArgs: {
                     squad: 'militia',
+                    task: C.TASK_MILITIA,
                 },
             };
 

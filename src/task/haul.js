@@ -65,7 +65,9 @@ var taskHaul = {
                 'extention',
             ];
 
-            if (!creep.room.storage || creep.room.controller || creep.room.controller.level >= 4) {
+            if (!creep.room.storage ||
+                (creep.room.controller && creep.room.controller.my &&
+                creep.room.controller.level < 4)) {
                 energyOutTargets.push('containerOut');
                 energyOutTargets.push('container');
             }
@@ -102,7 +104,9 @@ var taskHaul = {
                 'storage',
             ];
 
-            if (!creep.room.storage || creep.room.controller || creep.room.controller.level >= 4) {
+            if (!creep.room.storage || 
+                (creep.room.controller && creep.room.controller.my &&
+                creep.room.controller.level < 4)) {
                 energyOutTargets = [
                     'extention',
                     'spawn',

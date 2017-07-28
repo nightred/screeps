@@ -12,7 +12,7 @@ var directorHauling = function() {
 directorHauling.prototype.run = function(task) {
     if (!task) { return ERR_INVALID_ARGS; }
 
-    let room = Game.rooms(task.workRoom);
+    let room = Game.rooms[task.workRoom];
 
     if (!room || !room.controller || !room.controller.my) {
         return false;
@@ -96,4 +96,4 @@ directorHauling.prototype.run = function(task) {
     return true;
 };
 
-modules.exports = directorHauling;
+module.exports = directorHauling;

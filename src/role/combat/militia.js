@@ -9,42 +9,6 @@
 var roleCombatMilitia = {
 
     /**
-    * The role name
-    **/
-    role: C.COMBAT_MILITIA,
-
-    /**
-    * @param {Creep} creep
-    **/
-    doRole: function(creep) {
-        if (!creep) { return ERR_INVALID_ARGS; }
-
-        if (creep.getOffExit()) { return true; }
-
-        if ((creep.memory.idleStart + C.CREEP_IDLE_TIME) > Game.time) {
-            creep.moveToIdlePosition();
-            return true;
-        }
-
-        let workTasks = [ C.DEFENSE, ];
-
-        if (!creep.memory.workId) {
-            if (!creep.getWork(workTasks, {ignoreRoom: true})) {
-                creep.memory.idleStart = Game.time;
-                creep.say('💤');
-                return true;
-            } else {
-                creep.say('👊');
-            }
-        }
-
-        if (!creep.doWork()) {
-            if (C.DEBUG >= 2) { console.log('DEBUG - do work failed for role: ' + creep.memory.role + ', name: ' + creep.name); }
-        }
-        return true;
-    },
-
-    /**
     * Create the body of the creep for the role
     * @param {number} energy The amount of energy avalible
     * @param {Object} args Extra arguments
@@ -89,24 +53,6 @@ var roleCombatMilitia = {
         }
 
         return body;
-    },
-
-    /**
-    * Spawn the creep
-    * @param {Spawn} spawn The spawn to be used
-    * @param {array} body The creep body
-    * @param {Object} args Extra arguments
-    **/
-    doSpawn: function(spawn, body, args) {
-        if (!spawn) { return ERR_INVALID_ARGS; }
-        if (!Array.isArray(body) || body.length < 1) { return ERR_INVALID_ARGS; }
-
-        args = args || {};
-        args.role = args.role || this.role;
-
-        let name = Game.Queue.spawn.getCreepName(this.role);
-
-        return spawn.createCreep(body, name, args);
     },
 
 };

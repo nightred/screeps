@@ -12,8 +12,19 @@
  var MilQueue       = require('queue.mil');
 
 var Queue = function() {
-    if (!Memory.queues) { Memory.queues = {}; }
-    if (!Memory.queues.queue) { Memory.queues.queue = {}; }
+    if (!Memory.queues) {
+        Memory.queues = {};
+    }
+    
+    if (!Memory.queues.queue) {
+        Memory.queues.queue = {};
+    }
+
+    if (!Memory.queues.ver || Memory.queues.ver != C.VERSION) {
+        Memory.queues = {};
+        Memory.queues.queue = {};
+        Memory.queues.ver = C.VERSION;
+    }
 
     this.memory = Memory.queues;
     this.queue = Memory.queues.queue;
@@ -106,15 +117,6 @@ Queue.prototype.print = function(id) {
         output += ', ';
     };
     output += '}';
-
-    return output;
-}
-
-Queue.prototype.getRoomReport = function(room) {
-    let output = '';
-
-    output += this.work.getRoomReport(room);
-    output += this.spawn.getRoomReport(room);
 
     return output;
 }

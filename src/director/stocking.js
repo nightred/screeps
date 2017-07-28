@@ -12,7 +12,7 @@ var directorStocking = function() {
 directorStocking.prototype.run = function(task) {
     if (!task) { return ERR_INVALID_ARGS; }
 
-    let room = Game.rooms(task.workRoom);
+    let room = Game.rooms[task.workRoom];
 
     if (!room || !room.storage || !room.controller || !room.controller.my) {
         return false;
@@ -70,4 +70,4 @@ directorStocking.prototype.run = function(task) {
     return true;
 };
 
-modules.exports = directorStocking;
+module.exports = directorStocking;

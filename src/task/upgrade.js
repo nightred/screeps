@@ -22,9 +22,9 @@ var taskUpgrade = {
         }
 
         if (creep.memory.working) {
-            this.doWork();
+            this.doWork(creep);
         } else {
-            this.withdrawEnergy(energyTargets, RESOURCE_ENERGY);
+            this.withdrawEnergy(creep);
         }
 
         return true;
@@ -59,7 +59,9 @@ var taskUpgrade = {
             'container',
         ];
 
-        if (!creep.room.storage) {
+        if (!creep.room.storage ||
+            (creep.room.controller && creep.room.controller.my &&
+            creep.room.controller.level < 4)) {
             targets.push('extention');
             targets.push('spawn');
         }

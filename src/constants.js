@@ -15,6 +15,9 @@ var Constant = {};
 // User
 Constant.USERNAME                       = 'nightred';
 
+// Versioning
+Constant.VERSION                        = 'v2.0'
+
 // debug = 0 off, 1 info, 2 debug, 3 verbose
 Constant.DEBUG                          = 3;
 Constant.SIM                            = false;
@@ -23,7 +26,7 @@ Constant.VISUALS                        = true;
 Constant.ENERGY_ROOM_WITHDRAW_MIN       = 250;
 Constant.ENERGY_CREEP_SPAWN_MIN         = 200;
 Constant.ENERGY_TOWER_REPAIR_MIN        = 301;
-Constant.ENERGY_STORAGE_MIN_FILL_TOWER  = 0.05;
+Constant.ENERGY_STORAGE_MIN_FILL_TOWER  = 0.02;
 Constant.ENERGY_CONTAINER_MAX_PERCENT   = 0.9;
 Constant.ENERGY_CONTAINER_MIN_PERCENT   = 0.1 ;
 Constant.ENERGY_CONTAINER_MIN_WITHDRAW  = 100;
@@ -120,6 +123,7 @@ Constant.ROLE_TYPES = [
 ];
 
 Constant.DIRECTOR_ROOM                  = 'room';
+Constant.DIRECTOR_REMOTE                = 'remote';
 Constant.DIRECTOR_MINING                = 'mining';
 Constant.DIRECTOR_SOURCE                = 'source';
 Constant.DIRECTOR_RESUPPLY              = 'resupply';
@@ -132,6 +136,7 @@ Constant.DIRECTOR_RESERVE               = 'reserve';
 
 Constant.DIRECTOR_TYPES = [
     Constant.DIRECTOR_ROOM,
+    Constant.DIRECTOR_REMOTE,
     Constant.DIRECTOR_MINING,
     Constant.DIRECTOR_SOURCE,
     Constant.DIRECTOR_RESUPPLY,
@@ -145,6 +150,7 @@ Constant.DIRECTOR_TYPES = [
 
 Constant.DIRECTOR_FLAG_TYPES = [
     Constant.DIRECTOR_ROOM,
+    Constant.DIRECTOR_REMOTE,
     Constant.DIRECTOR_MINING,
     Constant.DIRECTOR_INTERHAULING,
     Constant.DIRECTOR_TECH,
@@ -158,6 +164,7 @@ Constant.TASK_HAUL                      = 'haul';
 Constant.TASK_STOCK                     = 'stock';
 Constant.TASK_TECH                      = 'tech';
 Constant.TASK_RESERVE                   = 'reserve';
+Constant.TASK_MILITIA                   = 'militia';
 
 Constant.TASK_TYPES = [
     Constant.TASK_SOURCE,
@@ -167,6 +174,7 @@ Constant.TASK_TYPES = [
     Constant.TASK_STOCK,
     Constant.TASK_TECH,
     Constant.TASK_RESERVE,
+    Constant.TASK_MILITIA,
 ];
 
 Constant.WORK_TOWER_REFILL              = 'tower.fill';

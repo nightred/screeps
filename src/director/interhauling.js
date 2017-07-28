@@ -12,7 +12,7 @@ var directorInterHauling = function() {
 directorInterHauling.prototype.run = function(task) {
     if (!task) { return ERR_INVALID_ARGS; }
 
-    let room = Game.rooms(task.spawnRoom);
+    let room = Game.rooms[task.spawnRoom];
 
     if (!room || !room.controller || !room.controller.my) {
         return false;
@@ -42,7 +42,11 @@ directorInterHauling.prototype.run = function(task) {
     };
 
     // set spawn limits
-    let creepLimit = task.creepLimit;
+    let creepLimit = 2;
+
+    if (task.creepLimit) {
+        creepLimit = task.creepLimit;
+    }
 
     if (!task.creep) {
         task.creep = [];
@@ -97,8 +101,8 @@ directorInterHauling.prototype.run = function(task) {
 directorInterHauling.prototype.create = function(args) {
     let record = {
         director: C.DIRECTOR_INTERHAULING,
-        workRoom: arg.roomName,
-        spawnRoom: arg.spawnRoom,
+        workRoom: args.roomName,
+        spawnRoom: args.spawnRoom,
         creepLimit: args.creepLimit,
         priority: 34,
     };
@@ -122,4 +126,4 @@ directorInterHauling.prototype.flag = function(roomName, args) {
     return this.create(record);
 };
 
-modules.exports = directorInterHauling;
+module.exports = directorInterHauling;

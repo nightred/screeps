@@ -12,7 +12,7 @@ var directorSource = function() {
 directorSource.prototype.run = function(task) {
     if (!task) { return ERR_INVALID_ARGS; }
 
-    let room = Game.rooms(task.workRoom);
+    let room = Game.rooms[task.workRoom];
 
     if (!room) {
         return false;
@@ -74,4 +74,4 @@ directorSource.prototype.run = function(task) {
     return true;
 };
 
-modules.exports = directorSource;
+module.exports = directorSource;

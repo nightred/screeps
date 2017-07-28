@@ -34,7 +34,6 @@ manageRoom.prototype.run = function() {
         // controller room processes
         if (room.controller && room.controller.my) {
             this.link.doRoom(room);
-            Game.Mil.doRoom(room);
             this.spawn.doRoom(room);
             this.tower.doRoom(room);
         }

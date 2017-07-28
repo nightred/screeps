@@ -12,7 +12,7 @@ var directorUpgrade = function() {
 directorUpgrade.prototype.run = function(task) {
     if (!task) { return ERR_INVALID_ARGS; }
 
-    let room = Game.rooms(task.workRoom);
+    let room = Game.rooms[task.workRoom];
 
     if (!room || !room.controller || !room.controller.my) {
         return false;
@@ -42,7 +42,7 @@ directorUpgrade.prototype.run = function(task) {
 
     // set spawn limits
     let creepLimit = 2;
-    if (room.storage && room.controller.level < 8) {
+    if (room.storage && room.controller.level < 8 && room.controller.level >= 4) {
         if (room.storage.store[RESOURCE_ENERGY] < 50000 ) {
             creepLimit = 1;
         } else if (room.storage.store[RESOURCE_ENERGY] < 80000 ) {
@@ -111,4 +111,4 @@ directorUpgrade.prototype.run = function(task) {
     return true;
 };
 
-modules.exports = directorUpgrade;
+module.exports = directorUpgrade;
