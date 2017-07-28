@@ -91,14 +91,14 @@ var taskSource = {
             return true;
         }
 
-        // if (creep.carry[RESOURCE_ENERGY] > 0 && !source.getLocalContainer()) {
-        //     let construction = creep.room.getConstructionAtArea(source.pos, 1);
-        //
-        //     if (construction) {
-        //         creep.build(construction);
-        //         return true;
-        //     }
-        // }
+        if (creep.carry[RESOURCE_ENERGY] > 0 && !source.getLocalContainer()) {
+            let construction = creep.room.getConstructionAtArea(source.pos, 1);
+
+            if (construction) {
+                creep.build(construction);
+                return true;
+            }
+        }
 
         creep.harvest(source);
 

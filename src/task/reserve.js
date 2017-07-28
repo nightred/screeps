@@ -9,22 +9,15 @@ var taskReserve = {
 
     /**
     * @param {Creep} creep The creep object
-    * @param {Task} task The work task passed from the work Queue
     **/
-    run: function(creep, task) {
+    run: function(creep) {
         if (!creep) { return ERR_INVALID_ARGS; }
-        if (!task) { return ERR_INVALID_ARGS; }
 
-        if (Game.cpu.bucket < 500) { return true; }
+        if (Game.cpu.bucket < 2000) { return true; }
 
-        if (task.workRooms.length <= 0) {
-            if (C.DEBUG >= 2) { console.log('DEBUG - missing work rooms on task: ' + task.task + ', id: ' + task.id); }
-            return false;
-        }
+        if (creep.room.name != creep.memory.workRoom) {
+            creep.moveToRoom(creep.memory.workRoom);
 
-        if (creep.room.name != task.workRooms[0]) {
-            creep.moveToRoom(task.workRooms[0]);
-            
             return true;
         }
 

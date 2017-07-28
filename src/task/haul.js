@@ -40,7 +40,7 @@ var taskHaul = {
     * @param {Creep} creep The creep object
     **/
     doLongHaul: function(creep) {
-        if (Game.cpu.bucket < 500) {
+        if (Game.cpu.bucket < 1000) {
             return true;
         }
 
@@ -76,8 +76,8 @@ var taskHaul = {
                 if (C.DEBUG >= 2) { console.log('DEBUG - do empty energy failed for role: ' + creep.memory.role + ', name: ' + creep.name); }
             }
         } else {
-            if (creep.room.name != creep.memory.workRooms[0]) {
-                creep.moveToRoom(creep.memory.workRooms[0]);
+            if (creep.room.name != creep.memory.workRoom) {
+                creep.moveToRoom(creep.memory.workRoom);
                 return true;
             }
 
@@ -104,7 +104,7 @@ var taskHaul = {
                 'storage',
             ];
 
-            if (!creep.room.storage || 
+            if (!creep.room.storage ||
                 (creep.room.controller && creep.room.controller.my &&
                 creep.room.controller.level < 4)) {
                 energyOutTargets = [

@@ -16,10 +16,10 @@ var Constant = {};
 Constant.USERNAME                       = 'nightred';
 
 // Versioning
-Constant.VERSION                        = 'v2.0'
+Constant.VERSION                        = 'v2.01'
 
 // debug = 0 off, 1 info, 2 debug, 3 verbose
-Constant.DEBUG                          = 3;
+Constant.DEBUG                          = 2;
 Constant.SIM                            = false;
 Constant.VISUALS                        = true;
 

@@ -81,7 +81,7 @@ directorRemote.prototype.create = function(args) {
     let record = {
         director: C.DIRECTOR_REMOTE,
         workRoom: args.roomName,
-        spawnRoom: args.roomName,
+        spawnRoom: args.spawnRoom,
         priority: 40,
     };
 
@@ -97,6 +97,7 @@ directorRemote.prototype.flag = function(roomName, args) {
 
     let record = {
         roomName: roomName,
+        spawnRoom: args[2],
     }
 
     return this.create(record);
