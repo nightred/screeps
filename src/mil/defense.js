@@ -110,7 +110,7 @@ Defense.prototype.doDefenseMode = function(room) {
 
             if ((defense.cooldown + C.DEFENSE_COOLDOWN) < Game.time) {
                 defense.active = 0;
-                Game.Queue.work.delRecord(defense.jobId);
+                Game.Queue.delRecord(defense.jobId);
                 defense.jobId = undefined;
             }
         }
