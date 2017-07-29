@@ -127,30 +127,26 @@ Defense.prototype.doDefenseMode = function(room, parent) {
 
     let creepLimit = Math.ceil((Game.time - defense.tick) / C.DEFENSE_LIMIT_INCREASE_DELAY);
 
-    defense.creepLimit = defense.creepLimit >= creepLimit ? defense.creepLimit : creepLimit;
+    if (defense.creepLimit < creepLimit) {
+        defense.creepLimit = creepLimit;
+    }
 
     if (!parent) {
         parent = room;
     }
 
-    if (!defense.jobId) {
+    if (!defense.jobId || !Game.Queue.getRecord(defense.jobId)) {
         let record = {
             workRooms: [ room.name, ],
             spawnRoom: parent.name,
-            task: C.DEFENSE,
+            task: C.WORK_DEFENSE,
             priority: 10,
-            creepLimit: 0,
         };
 
         defense.jobId = Game.Queue.work.addRecord(record);
     }
 
     let task = Game.Queue.getRecord(defense.jobId);
-
-    if (!task) {
-        defense.jobId = undefined;
-        return true;
-    }
 
     if (defense.creepLimit > task.creepLimit) {
         task.creepLimit = defense.creepLimit;
