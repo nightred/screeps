@@ -51,6 +51,8 @@ Constant.MANAGE_WAIT_TICKS              = 10;
 Constant.MANAGE_MEMORY_TICKS            = 20;
 Constant.TOWER_REPAIR_TICKS             = 5;
 Constant.REPORT_TICKS                   = 500;
+
+Constant.DEFENSE_SLEEP                  = 8;
 Constant.DEFENSE_COOLDOWN               = 80;
 Constant.DEFENSE_LIMIT_INCREASE_DELAY   = 100;
 

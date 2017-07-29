@@ -15,12 +15,29 @@ var directorRemote = function() {
 directorRemote.prototype.run = function(task) {
     if (!task) { return ERR_INVALID_ARGS; }
 
-    let room = Game.rooms[task.spawnRoom];
+    let spawnRoom = Game.rooms[task.spawnRoom];
 
-    if (!room || !room.controller || !room.controller.my) {
+    if (!spawnRoom || !spawnRoom.controller || !spawnRoom.controller.my) {
         return false;
     }
 
+    this.doDirectors(task);
+
+    let workRoom = Game.rooms[task.workRoom];
+
+    if (workRoom) {
+        Game.Mil.defense.doRoom(workRoom, spawnRoom);
+    }
+
+    task.sleep = Game.time + C.DIRECTOR_SLEEP;
+
+    return true;
+};
+
+/**
+* @param {task} task the director task memory
+**/
+directorRemote.prototype.doDirectors = function(task) {
     if (!task.directorMine ||
         !Game.Director.getRecord(task.directorMine)) {
         let record = {
@@ -68,8 +85,6 @@ directorRemote.prototype.run = function(task) {
 
         task.directorTech = Game.Director.addRecord(record);
     }
-
-    task.sleep = Game.time + C.DIRECTOR_SLEEP;
 
     return true;
 };

@@ -19,7 +19,9 @@ var taskMilitia = {
                 C.DEFENSE,
             ];
 
-            if (!creep.getWork(workTasks)) {
+            if (!creep.getWork(workTasks, {
+                spawnRoom: creep.memory.spawnRoom
+            })) {
                 creep.sleep();
                 creep.say('💤');
 

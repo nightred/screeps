@@ -28,9 +28,6 @@ manageRoom.prototype.run = function() {
         this.gcTowers(room);
         this.gcLinks(room);
 
-        // defense routine
-        Game.Mil.defense.doRoom(room);
-
         // controller room processes
         if (room.controller && room.controller.my) {
             this.link.doRoom(room);

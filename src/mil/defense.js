@@ -12,13 +12,14 @@ var Defense = function() {
     this.memory = Memory.world.mil;
 };
 
-Defense.prototype.doRoom = function(room) {
+Defense.prototype.doRoom = function(room, parent) {
     if (!room) { return ERR_INVALID_ARGS; }
 
-    if (!room.controller || (room.controller &&
-        ((!room.controller.my && room.controller.owner) ||
-        (room.controller.reservation &&
-        !room.controller.reservation.username == C.USERNAME)))) {
+    room.memory.defense = room.memory.defense || {}
+
+    let defense = room.memory.defense;
+
+    if (defense.sleep && defense.sleep > Game.time) {
         return true;
     }
 
@@ -27,28 +28,30 @@ Defense.prototype.doRoom = function(room) {
         this.spawnMilitia(room);
     }
 
-    this.doDefenseMode(room);
+    this.doDefenseMode(room, parent);
+
+    defense.sleep = Game.time + C.DEFENSE_SLEEP;
 
     return true;
 };
 
 Defense.prototype.spawnMilitia = function(room) {
-    if (!room) { return ERR_INVALID_ARGS; }
-
-    room.memory.defense = room.memory.defense || {}
     let defense = room.memory.defense;
 
     let maxCreep = 0;
+
     switch (room.controller.level) {
         case 1:
-            break;
         case 2:
         case 3:
+            break;
+
         case 4:
         case 5:
+        case 6:
             maxCreep = 1;
             break;
-        case 6:
+
         case 7:
         case 8:
             maxCreep = 2;
@@ -86,19 +89,11 @@ Defense.prototype.spawnMilitia = function(room) {
     return true;
 };
 
-Defense.prototype.doDefenseMode = function(room) {
-    if (!room) { return ERR_INVALID_ARGS; }
-
-    room.memory.defense = room.memory.defense || {}
+Defense.prototype.doDefenseMode = function(room, parent) {
     let defense = room.memory.defense;
 
-    defense.findTick = defense.findTick || 0;
-    if ((defense.findTick + C.FIND_WAIT_TICKS) > Game.time) {
-        return true;
-    }
-    defense.findTick = Game.time;
-
     let targets = room.getHostiles();
+
     targets = _.filter(targets, creep =>
         creep.owner &&
         !Game.Mil.isAlly(creep.owner.username)
@@ -110,7 +105,9 @@ Defense.prototype.doDefenseMode = function(room) {
 
             if ((defense.cooldown + C.DEFENSE_COOLDOWN) < Game.time) {
                 defense.active = 0;
+
                 Game.Queue.delRecord(defense.jobId);
+
                 defense.jobId = undefined;
             }
         }
@@ -129,11 +126,17 @@ Defense.prototype.doDefenseMode = function(room) {
     }
 
     let creepLimit = Math.ceil((Game.time - defense.tick) / C.DEFENSE_LIMIT_INCREASE_DELAY);
+
     defense.creepLimit = defense.creepLimit >= creepLimit ? defense.creepLimit : creepLimit;
+
+    if (!parent) {
+        parent = room;
+    }
 
     if (!defense.jobId) {
         let record = {
             workRooms: [ room.name, ],
+            spawnRoom: parent.name,
             task: C.DEFENSE,
             priority: 10,
             creepLimit: 0,
@@ -157,23 +160,27 @@ Defense.prototype.doDefenseMode = function(room) {
 };
 
 Defense.prototype.doSafeMode = function(room) {
-    if (!room) { return ERR_INVALID_ARGS; }
-
     let spawns = room.getSpawns();
+
     if (spawns.length <= 0) { return false; }
 
     let alert = false;
+
     for (let i = 0; i < spawns.length; i++) {
         if (spawns[i].hits < (spawns[i].hitsMax / 2)) {
             alert = true;
+
             break;
         }
     }
 
     if (alert && !room.controller.safeMode &&
         !room.controller.safeModeCooldown &&
-        room.controller.safeModeAvailable > 1) {
+        room.controller.safeModeAvailable > 1
+    ) {
+
         room.controller.activateSafeMode();
+
         if (C.DEBUG >= 1) { console.log('INFO - safe mode activated in room: <p style=\"display:inline; color: #ed4543\"><a href=\"#!/room/' + room.name + '\">' + room.name + '</a></p>'); }
     }
 

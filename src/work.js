@@ -66,6 +66,7 @@ Work.prototype.getWork = function(workTasks, creep, args) {
     queue = _.filter(queue, record =>
         workTasks.indexOf(record.task) >= 0 &&
         (!args.room || record.workRooms.indexOf(args.room) >= 0) &&
+        (!args.spawnRoom || record.spawnRoom.indexOf(args.spawnRoom) >= 0) &&
         record.creeps.indexOf(creep.name) == -1 &&
         record.creeps.length < record.creepLimit
     );

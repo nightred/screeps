@@ -21,6 +21,16 @@ directorRoom.prototype.run = function(task) {
         return false;
     }
 
+    this.doDirectors(task);
+
+    Game.Mil.defense.doRoom(room);
+
+    task.sleep = Game.time + C.DIRECTOR_SLEEP;
+
+    return true;
+};
+
+directorRoom.prototype.doDirectors = function(task) {
     if (!task.directorMine ||
         !Game.Director.getRecord(task.directorMine)) {
         let record = {
@@ -92,8 +102,6 @@ directorRoom.prototype.run = function(task) {
 
         task.directorTech = Game.Director.addRecord(record);
     }
-
-    task.sleep = Game.time + C.DIRECTOR_SLEEP;
 
     return true;
 };
