@@ -16,7 +16,7 @@ var taskMilitia = {
 
         if (!creep.hasWork()) {
             let workTasks = [
-                C.DEFENSE,
+                C.WORK_DEFENSE,
             ];
 
             if (!creep.getWork(workTasks, {
