@@ -20,12 +20,6 @@ var taskDefense = {
             return true;
         }
 
-        if (creep.getActiveBodyparts(HEAL)) {
-            if (creep.hits < creep.hitsMax) {
-                creep.heal(creep);
-            }
-        }
-
         let targets = creep.room.getHostiles();
         if (!targets || targets.length <= 0) { return creep.removeWork(); }
 
@@ -42,11 +36,15 @@ var taskDefense = {
                 reusePath: 0,
                 maxRooms: 1,
             });
-
-            return true;
+        } else {
+            creep.attack(targets[0]);
         }
 
-        creep.attack(targets[0]);   
+        if (creep.getActiveBodyparts(HEAL)) {
+            if (creep.hits < creep.hitsMax) {
+                creep.heal(creep);
+            }
+        }
 
         return true;
     },

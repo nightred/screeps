@@ -255,7 +255,7 @@ Creep.prototype.doEmpty = function(types, resourceType) {
         if (!resourceSum) { return false; }
 
         if (!this.getEmptyTarget(types, resourceSum)) {
-            this.memory.idleStart = Game.time;
+            this.sleep();
             this.say('💤');
             return true;
         }
@@ -295,8 +295,10 @@ Creep.prototype.doFill = function(types, resourceType) {
         if (this.getFillTarget(types, resourceType)) {
             this.memory.fillTick = Game.time;
         } else {
-            this.memory.idleStart = Game.time;
+            this.sleep();
+
             this.say('💤');
+
             return true;
         }
     }
