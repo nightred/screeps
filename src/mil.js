@@ -20,16 +20,23 @@ var Mil = function() {
 };
 
 Mil.prototype.run = function() {
-
     if (Game.cpu.bucket < C.CPU_MIN_BUCKET_MIL) { return true; }
+
+    let cpuStart = Game.cpu.getUsed();
+
+    let log = {
+        command: 'military squads',
+    };
 
     this.doSquads();
 
-    return true;
+    log.status = 'OK';
+    log.cpu = Game.cpu.getUsed() - cpuStart;
+
+    Game.Visuals.addLog(undefined, log)
 };
 
 Mil.prototype.doSquads = function() {
-
     if (Game.cpu.bucket < C.CPU_MIN_BUCKET_SQUAD) { return true; }
 
     let queue = Game.Queue.mil.getQueue();

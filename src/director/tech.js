@@ -71,12 +71,9 @@ directorTech.prototype.run = function(task) {
     let creepLimit = 1;
 
     if (!task.creepLimit) {
-        if (spawnRoom.controller.level >= 4) {
+        if (workRoom && workRoom.controller && workRoom.controller.my &&
+            workRoom.controller.level >= 4) {
             creepLimit = 2;
-        }
-
-        if (spawnRoom.controller.level == 8) {
-            creepLimit = 3;
         }
     } else {
         creepLimit = task.creepLimit;

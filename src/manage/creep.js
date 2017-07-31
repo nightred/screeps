@@ -31,7 +31,15 @@ manageCreep.prototype.gc = function() {
 };
 
 manageCreep.prototype.run = function() {
+    let cpuStart = Game.cpu.getUsed();
+
+    let log = {
+        command: 'creep tasks and cleanup',
+    };
+
     this.gc();
+
+let creepCount = 0;
 
     for(let name in Game.creeps) {
         let creep = Game.creeps[name];
@@ -46,8 +54,15 @@ manageCreep.prototype.run = function() {
         }
 
         Game.Task.runTask(creep);
+
+        creepCount++;
     }
 
+    log.status = 'OK';
+    log.output = 'creep count: ' + creepCount;
+    log.cpu = Game.cpu.getUsed() - cpuStart;
+
+    Game.Visuals.addLog(undefined, log)
 };
 
 manageCreep.prototype.doDespawn = function(creep) {

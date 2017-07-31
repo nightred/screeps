@@ -19,18 +19,16 @@ Defense.prototype.doRoom = function(room, parent) {
 
     let defense = room.memory.defense;
 
-    if (defense.sleep && defense.sleep > Game.time) {
-        return true;
+    if (!defense.sleep || defense.sleep < Game.time) {
+        if (room.controller && room.controller.my) {
+            this.doSafeMode(room);
+            this.spawnMilitia(room);
+        }
+
+        this.doDefenseMode(room, parent);
+
+        defense.sleep = Game.time + C.DEFENSE_SLEEP;
     }
-
-    if (room.controller && room.controller.my) {
-        this.doSafeMode(room);
-        this.spawnMilitia(room);
-    }
-
-    this.doDefenseMode(room, parent);
-
-    defense.sleep = Game.time + C.DEFENSE_SLEEP;
 
     return true;
 };

@@ -28,15 +28,12 @@ module.exports.loop = function () {
     Game.Work           = new Work;
     Game.Manage         = new Manage;
     Game.Mil            = new Mil;
-
-    // Init Visuals
-    visuals             = new Visuals;
+    Game.Visuals        = new Visuals;
 
     // Run processes
-    Game.Director.run();
     Game.Queue.run();
     Game.Manage.run();
+    Game.Director.run();
     Game.Mil.run();
-
-    visuals.run();
+    Game.Visuals.run();
 }

@@ -12,8 +12,13 @@ var Flags = function() {
 };
 
 Flags.prototype.run = function() {
-
 	if (Game.cpu.bucket < C.CPU_MIN_BUCKET_FLAGS) { return true; }
+
+    let cpuStart = Game.cpu.getUsed();
+
+    let log = {
+        command: 'flag managment',
+    };
 
     this.gc();
 
@@ -33,7 +38,10 @@ Flags.prototype.run = function() {
         }
     }
 
-    return true;
+    log.status = 'OK';
+    log.cpu = Game.cpu.getUsed() - cpuStart;
+
+    Game.Visuals.addLog(undefined, log)
 };
 
 Flags.prototype.gc = function() {

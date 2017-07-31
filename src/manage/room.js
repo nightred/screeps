@@ -23,6 +23,12 @@ manageRoom.prototype.run = function() {
     for (let name in Game.rooms) {
         let room = Game.rooms[name];
 
+        let cpuStart = Game.cpu.getUsed();
+
+        let log = {
+            command: 'room managment',
+        };
+
         // clean memory
         this.gcContainers(room);
         this.gcTowers(room);
@@ -34,6 +40,25 @@ manageRoom.prototype.run = function() {
             this.spawn.doRoom(room);
             this.tower.doRoom(room);
         }
+
+        let defense = room.memory.defense;
+
+        if (defense.active) {
+            let args = {
+                ticks: Game.time - defense.tick,
+            };
+
+            if (defense.cooldown) {
+                args.cooldown = (defense.cooldown + C.DEFENSE_COOLDOWN) - Game.time;
+            }
+
+            Game.Visuals.addDefense(room.name, args);
+        }
+
+        log.status = 'OK';
+        log.cpu = Game.cpu.getUsed() - cpuStart;
+
+        Game.Visuals.addLog(name, log)
     }
 
     return true;

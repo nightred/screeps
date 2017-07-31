@@ -7,11 +7,114 @@ var Visuals = function() {
     Memory.stats = Memory.stats || {};
     this.memory = Memory.stats;
     this.memory.cpugraphdata = this.memory.cpugraphdata || [];
+
+    this.roomLogs = {};
+    this.globalLogs = [];
 };
 
 Visuals.prototype.run = function() {
     this.logCPU();
     this.visuals();
+};
+
+Visuals.prototype.addLog = function(roomName, result) {
+    if (roomName) {
+        if (!this.roomLogs[roomName]) {
+            this.roomLogs[roomName] = [];
+        }
+
+        this.roomLogs[roomName].push(result);
+    } else {
+        this.globalLogs.push(result);
+    }
+};
+
+Visuals.prototype.printLogs = function() {
+    let size = {t: 2, l: 1, };
+    let fontSize = 0.5;
+    let lineSpace = 0.1;
+    let textStyle = {
+        align: 'left',
+        color: '#51d181',
+        font: fontSize,
+        opacity: 0.6,
+        background: '#222222',
+        stroke : '#072812',
+        strokeWidth : 0.15,
+	};
+
+
+    var gOutput = 'Terminal Link JENOVA HEAVY INDUSTRIES\n\n' +
+        'Executing Global Processes\n';
+
+    for (let i = 0; i < this.globalLogs.length; i++) {
+        let logEntry = this.globalLogs[i];
+
+        gOutput += '* ' + logEntry.command +
+            ' [ CPU ' + logEntry.cpu.toFixed(2) + ' ]' +
+            '... ' + logEntry.status + '\n';
+
+        if (logEntry.output) {
+            gOutput += logEntry.output + '\n\n';
+        }
+    }
+
+    for (let roomName in this.roomLogs) {
+        let logs = this.roomLogs[roomName];
+
+        let rv = new RoomVisual(roomName);
+
+        let output = gOutput + '\nExecuting Room Processes\n';
+
+        for (let i = 0; i < logs.length; i++) {
+            let logEntry = logs[i];
+
+            output += '* ' + logEntry.command +
+                ' [ CPU ' + logEntry.cpu.toFixed(2) + ' ]' +
+                '... ' + logEntry.status + '\n';
+
+            if (logEntry.output) {
+                output += logEntry.output + '\n\n';
+            }
+        }
+
+        let lines = output.split('\n');
+
+        for (let l = 0; l < lines.length; l++) {
+            rv.text(lines[l], size.l, size.t + (l * (fontSize + lineSpace)), textStyle);
+        }
+    }
+
+};
+
+Visuals.prototype.addDefense = function(roomName, args) {
+    let rv = new RoomVisual(roomName);
+
+    let size = {t: 4, l: 25, };
+    let fontSize = 0.8;
+    let lineSpace = 0.2;
+    let textStyle = {
+        align: 'center',
+        color: '#51d181',
+        font: fontSize,
+        opacity: 0.6,
+        background: '#222222',
+        stroke : '#072812',
+        strokeWidth : 0.15,
+    };
+
+    let output = '** Defense Mode Active **\n' +
+        'Run Time: ' + args.ticks + ' ticks\n';
+
+    if (args.cooldown) {
+        output += 'On Cooldown: ' + args.cooldown;
+    }
+
+    let lines = output.split('\n');
+
+    for (let l = 0; l < lines.length; l++) {
+        rv.text(lines[l], size.l, size.t + (l * (fontSize + lineSpace)), textStyle);
+    }
 };
 
 Visuals.prototype.logCPU = function() {
@@ -28,6 +131,7 @@ Visuals.prototype.visuals = function() {
     }
 
     this.graphCPU();
+    this.printLogs();
 };
 
 Visuals.prototype.graphCPU = function() {
