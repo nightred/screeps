@@ -52,11 +52,27 @@ Director.prototype.loadDirector = function(name) {
 };
 
 Director.prototype.run = function() {
+    let cpuStart = Game.cpu.getUsed();
+
+    let log = {
+        command: 'executing directors',
+    };
+
+    let dCount = 0;
+
     for (let id in this.db) {
         let record = this.db[id];
 
         this.runDirector(record);
+
+        dCount++;
     }
+
+    log.status = 'OK';
+    log.output = 'director count: ' + dCount;
+    log.cpu = Game.cpu.getUsed() - cpuStart;
+
+    Game.Visuals.addLog(undefined, log)
 };
 
 Director.prototype.runDirector = function(task) {

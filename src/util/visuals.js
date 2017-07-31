@@ -50,12 +50,12 @@ Visuals.prototype.printLogs = function() {
     for (let i = 0; i < this.globalLogs.length; i++) {
         let logEntry = this.globalLogs[i];
 
-        gOutput += '* ' + logEntry.command +
+        gOutput += ' * ' + logEntry.command +
             ' [ CPU ' + logEntry.cpu.toFixed(2) + ' ]' +
             '... ' + logEntry.status + '\n';
 
         if (logEntry.output) {
-            gOutput += logEntry.output + '\n\n';
+            gOutput += '    - ' + logEntry.output + '\n';
         }
     }
 
@@ -69,12 +69,12 @@ Visuals.prototype.printLogs = function() {
         for (let i = 0; i < logs.length; i++) {
             let logEntry = logs[i];
 
-            output += '* ' + logEntry.command +
+            output += ' * ' + logEntry.command +
                 ' [ CPU ' + logEntry.cpu.toFixed(2) + ' ]' +
                 '... ' + logEntry.status + '\n';
 
             if (logEntry.output) {
-                output += logEntry.output + '\n\n';
+                output += '    - ' + logEntry.output + '\n';
             }
         }
 

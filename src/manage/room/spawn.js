@@ -83,7 +83,7 @@ Spawn.prototype.doRoom = function(room) {
                 };
             }
 
-            let body = Game.Manage.role.getBody(records[r].role, spawnEnergy, args);
+            let body = Game.Role.getBody(records[r].role, spawnEnergy, args);
 
             if (this.getBodyCost(body) > energy) {
                 continue;

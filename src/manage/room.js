@@ -20,48 +20,66 @@ var manageRoom = function() {
 
 
 manageRoom.prototype.run = function() {
+    let cpuStart = Game.cpu.getUsed();
+
+    let log = {
+        command: 'executing room managment',
+    };
+
+    let rCount = 0;
+
     for (let name in Game.rooms) {
         let room = Game.rooms[name];
 
-        let cpuStart = Game.cpu.getUsed();
+        this.runRoom(room);
 
-        let log = {
-            command: 'room managment',
-        };
-
-        // clean memory
-        this.gcContainers(room);
-        this.gcTowers(room);
-        this.gcLinks(room);
-
-        // controller room processes
-        if (room.controller && room.controller.my) {
-            this.link.doRoom(room);
-            this.spawn.doRoom(room);
-            this.tower.doRoom(room);
-        }
-
-        let defense = room.memory.defense;
-
-        if (defense.active) {
-            let args = {
-                ticks: Game.time - defense.tick,
-            };
-
-            if (defense.cooldown) {
-                args.cooldown = (defense.cooldown + C.DEFENSE_COOLDOWN) - Game.time;
-            }
-
-            Game.Visuals.addDefense(room.name, args);
-        }
-
-        log.status = 'OK';
-        log.cpu = Game.cpu.getUsed() - cpuStart;
-
-        Game.Visuals.addLog(name, log)
+        rCount++;
     }
 
-    return true;
+    log.status = 'OK';
+    log.output = 'room count: ' + rCount;
+    log.cpu = Game.cpu.getUsed() - cpuStart;
+
+    Game.Visuals.addLog(undefined, log)
+};
+
+manageRoom.prototype.runRoom = function(room) {
+    let cpuStart = Game.cpu.getUsed();
+
+    let log = {
+        command: 'room managment',
+    };
+
+    // clean memory
+    this.gcContainers(room);
+    this.gcTowers(room);
+    this.gcLinks(room);
+
+    // controller room processes
+    if (room.controller && room.controller.my) {
+        this.link.doRoom(room);
+        this.spawn.doRoom(room);
+        this.tower.doRoom(room);
+    }
+
+    let defense = room.memory.defense;
+
+    if (defense.active) {
+        let args = {
+            ticks: Game.time - defense.tick,
+        };
+
+        if (defense.cooldown) {
+            args.cooldown = (defense.cooldown + C.DEFENSE_COOLDOWN) - Game.time;
+        }
+
+        Game.Visuals.addDefense(room.name, args);
+    }
+
+    log.status = 'OK';
+    log.cpu = Game.cpu.getUsed() - cpuStart;
+
+    Game.Visuals.addLog(room.name, log)
 };
 
 manageRoom.prototype.gcContainers = function(room) {

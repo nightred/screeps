@@ -39,10 +39,10 @@ manageCreep.prototype.run = function() {
 
     this.gc();
 
-let creepCount = 0;
+    let creepCount = 0;
 
-    for(let name in Game.creeps) {
-        let creep = Game.creeps[name];
+    for(var name in Game.creeps) {
+        var creep = Game.creeps[name];
 
         if (creep.spawning || !creep.memory.task) {
             continue;
