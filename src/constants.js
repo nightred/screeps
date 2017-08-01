@@ -95,7 +95,7 @@ Constant.MINER                          = 'miner';
 Constant.HARVESTER                      = 'harvester';
 Constant.UPGRADER                       = 'upgrader';
 Constant.TECH                           = 'tech';
-Constant.CRASHTECH                      = 'crashtech';
+Constant.FIELDTECH                      = 'fieldtech';
 Constant.HAULER                         = 'hauler';
 Constant.RESUPPLY                       = 'resupply';
 Constant.STOCKER                        = 'stocker';
@@ -110,7 +110,7 @@ Constant.ROLE_TYPES = [
     Constant.MINER,
     Constant.UPGRADER,
     Constant.TECH,
-    Constant.CRASHTECH,
+    Constant.FIELDTECH,
     Constant.HAULER,
     Constant.RESUPPLY,
     Constant.STOCKER,
@@ -132,6 +132,7 @@ Constant.DIRECTOR_HAULING               = 'hauling';
 Constant.DIRECTOR_INTERHAULING          = 'interhauling';
 Constant.DIRECTOR_STOCKING              = 'stocking';
 Constant.DIRECTOR_TECH                  = 'tech';
+Constant.DIRECTOR_FIELDTECH             = 'fieldtech';
 Constant.DIRECTOR_RESERVE               = 'reserve';
 
 Constant.DIRECTOR_TYPES = [
@@ -145,12 +146,14 @@ Constant.DIRECTOR_TYPES = [
     Constant.DIRECTOR_INTERHAULING,
     Constant.DIRECTOR_STOCKING,
     Constant.DIRECTOR_TECH,
+    Constant.DIRECTOR_FIELDTECH,
     Constant.DIRECTOR_RESERVE,
 ];
 
 Constant.DIRECTOR_FLAG_TYPES = [
     Constant.DIRECTOR_ROOM,
     Constant.DIRECTOR_REMOTE,
+    Constant.DIRECTOR_FIELDTECH,
     Constant.DIRECTOR_MINING,
     Constant.DIRECTOR_INTERHAULING,
     Constant.DIRECTOR_TECH,
@@ -163,6 +166,7 @@ Constant.TASK_UPGRADE                   = 'upgrade';
 Constant.TASK_HAUL                      = 'haul';
 Constant.TASK_STOCK                     = 'stock';
 Constant.TASK_TECH                      = 'tech';
+Constant.TASK_FIELDTECH                 = 'fieldtech';
 Constant.TASK_RESERVE                   = 'reserve';
 Constant.TASK_MILITIA                   = 'militia';
 
@@ -173,6 +177,7 @@ Constant.TASK_TYPES = [
     Constant.TASK_HAUL,
     Constant.TASK_STOCK,
     Constant.TASK_TECH,
+    Constant.TASK_FIELDTECH,
     Constant.TASK_RESERVE,
     Constant.TASK_MILITIA,
 ];
