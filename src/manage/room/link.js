@@ -10,7 +10,9 @@ var Link = function() {
 };
 
 Link.prototype.doRoom = function(room) {
-    if (!room) { return ERR_INVALID_ARGS; }
+    let cpuStart = Game.cpu.getUsed();
+
+    let log = { command: 'links', };
 
     let links = room.getLinks();
 
@@ -61,7 +63,10 @@ Link.prototype.doRoom = function(room) {
         }
     }
 
-    return true;
+    log.status = 'OK';
+    log.cpu = Game.cpu.getUsed() - cpuStart;
+
+    Game.Visuals.addLog(room.name, log)
 };
 
 Link.prototype.setType = function(id, type) {

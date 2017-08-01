@@ -8,6 +8,7 @@ var Visuals = function() {
     this.memory = Memory.stats;
     this.memory.cpugraphdata = this.memory.cpugraphdata || [];
 
+    this.consoleRooms = [];
     this.roomLogs = {};
     this.globalLogs = [];
 };
@@ -29,6 +30,12 @@ Visuals.prototype.addLog = function(roomName, result) {
     }
 };
 
+Visuals.prototype.doFlag = function(flag) {
+    if (!this.consoleRooms[flag.pos.roomName]) {
+        this.consoleRooms.push(flag.pos.roomName);
+    }
+};
+
 Visuals.prototype.printLogs = function() {
     let size = {t: 2, l: 1, };
     let fontSize = 0.5;
@@ -43,8 +50,12 @@ Visuals.prototype.printLogs = function() {
         strokeWidth : 0.15,
 	};
 
+    if (this.consoleRooms.length == 0) {
+        return true;
+    }
 
-    var gOutput = 'Terminal Link JENOVA HEAVY INDUSTRIES\n\n' +
+    var gOutput = 'JENOVA HEAVY INDUSTRIES Establishing Terminal Link...\n' +
+        'Terminal Link Established...\n\n' +
         'Executing Global Processes\n';
 
     for (let i = 0; i < this.globalLogs.length; i++) {
@@ -59,10 +70,10 @@ Visuals.prototype.printLogs = function() {
         }
     }
 
-    for (let roomName in this.roomLogs) {
-        let logs = this.roomLogs[roomName];
+    for (let i = 0; i < this.consoleRooms.length; i++) {
+        let logs = this.roomLogs[this.consoleRooms[i]];
 
-        let rv = new RoomVisual(roomName);
+        let rv = new RoomVisual(this.consoleRooms[i]);
 
         let output = gOutput + '\nExecuting Room Processes\n';
 
@@ -71,7 +82,7 @@ Visuals.prototype.printLogs = function() {
 
             output += ' * ' + logEntry.command +
                 ' [ CPU ' + logEntry.cpu.toFixed(2) + ' ]' +
-                '... ' + logEntry.status + '\n';
+                ' ... ' + logEntry.status + '\n';
 
             if (logEntry.output) {
                 output += '    - ' + logEntry.output + '\n';

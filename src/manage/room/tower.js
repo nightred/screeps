@@ -14,13 +14,20 @@ var Tower = function() {
 };
 
 Tower.prototype.doRoom = function(room)  {
+    let cpuStart = Game.cpu.getUsed();
+
+    let log = { command: 'towers', };
+
     let towers = room.getTowers();
 
     if (towers.length > 0) {
         towers.forEach((tower) => this.doTower(tower));
     }
 
-    return true;
+    log.status = 'OK';
+    log.cpu = Game.cpu.getUsed() - cpuStart;
+
+    Game.Visuals.addLog(room.name, log)
 };
 
 Tower.prototype.doTower = function(tower) {

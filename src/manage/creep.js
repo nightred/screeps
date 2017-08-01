@@ -34,7 +34,7 @@ manageCreep.prototype.run = function() {
     let cpuStart = Game.cpu.getUsed();
 
     let log = {
-        command: 'creep tasks and cleanup',
+        command: 'creep tasks',
     };
 
     this.gc();

@@ -23,7 +23,7 @@ manageRoom.prototype.run = function() {
     let cpuStart = Game.cpu.getUsed();
 
     let log = {
-        command: 'executing room managment',
+        command: 'room managment',
     };
 
     let rCount = 0;
@@ -46,9 +46,7 @@ manageRoom.prototype.run = function() {
 manageRoom.prototype.runRoom = function(room) {
     let cpuStart = Game.cpu.getUsed();
 
-    let log = {
-        command: 'room managment',
-    };
+    let log = { command: 'manage', };
 
     // clean memory
     this.gcContainers(room);
@@ -64,7 +62,7 @@ manageRoom.prototype.runRoom = function(room) {
 
     let defense = room.memory.defense;
 
-    if (defense.active) {
+    if (defense && defense.active) {
         let args = {
             ticks: Game.time - defense.tick,
         };
@@ -83,8 +81,6 @@ manageRoom.prototype.runRoom = function(room) {
 };
 
 manageRoom.prototype.gcContainers = function(room) {
-    if (!room) {return false; }
-
     room.memory.containersMemory = room.memory.containersMemory || 0;
     if ((room.memory.containersMemory + C.MANAGE_MEMORY_TICKS) > Game.time) {
         return true;
@@ -114,8 +110,6 @@ manageRoom.prototype.gcContainers = function(room) {
 };
 
 manageRoom.prototype.gcTowers = function(room) {
-    if (!room) {return false; }
-
     room.memory.towersMemory = room.memory.towersMemory || 0;
     if ((room.memory.towersMemory + C.MANAGE_MEMORY_TICKS) > Game.time) {
         return true;
@@ -133,8 +127,6 @@ manageRoom.prototype.gcTowers = function(room) {
 };
 
 manageRoom.prototype.gcLinks = function(room) {
-    if (!room) {return false; }
-
     room.memory.linksMemory = room.memory.linksMemory || 0;
     if ((room.memory.linksMemory + C.MANAGE_MEMORY_TICKS) > Game.time) {
         return true;

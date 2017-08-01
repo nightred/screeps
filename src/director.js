@@ -55,7 +55,7 @@ Director.prototype.run = function() {
     let cpuStart = Game.cpu.getUsed();
 
     let log = {
-        command: 'executing directors',
+        command: 'directors',
     };
 
     let dCount = 0;

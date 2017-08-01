@@ -16,9 +16,7 @@ Flags.prototype.run = function() {
 
     let cpuStart = Game.cpu.getUsed();
 
-    let log = {
-        command: 'flag managment',
-    };
+    let log = { command: 'flag managment', };
 
     this.gc();
 
@@ -29,11 +27,17 @@ Flags.prototype.run = function() {
         case COLOR_RED:
             Game.Mil.doFlag(flag);
             break;
+
         case COLOR_GREEN:
             Game.Work.doFlag(flag);
             break;
+
         case COLOR_YELLOW:
             Game.Director.doFlag(flag);
+            break;
+
+        case COLOR_ORANGE:
+            Game.Visuals.doFlag(flag);
             break;
         }
     }

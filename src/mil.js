@@ -25,7 +25,7 @@ Mil.prototype.run = function() {
     let cpuStart = Game.cpu.getUsed();
 
     let log = {
-        command: 'military squads',
+        command: 'military',
     };
 
     this.doSquads();
