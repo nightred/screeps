@@ -86,7 +86,7 @@ directorFieldTech.prototype.run = function(task) {
             minSize: minSize,
             maxSize: maxSize,
             creepArgs: {
-                workRooms task.workRoom,
+                workRoom: task.workRoom,
                 task: C.TASK_FIELDTECH,
             },
         };
@@ -98,6 +98,7 @@ directorFieldTech.prototype.run = function(task) {
 
     return true;
 };
+
 /**
 * @param {Args} Args object with values for creation
 **/
