@@ -99,7 +99,7 @@ Squad.prototype.doTarget = function(flag) {
     }
 
     // update rally pos
-    squad.op.room = squad.op.room = flag.pos.roomName ? flag.pos.roomName : squad.op.room;
+    squad.op.room = squad.op.room != flag.pos.roomName ? flag.pos.roomName : squad.op.room;
     squad.op.x = squad.op.x != flag.pos.x ? flag.pos.x : squad.op.x;
     squad.op.y = squad.op.y != flag.pos.y ? flag.pos.y : squad.op.y;
 

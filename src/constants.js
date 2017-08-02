@@ -169,6 +169,7 @@ Constant.TASK_TECH                      = 'tech';
 Constant.TASK_FIELDTECH                 = 'fieldtech';
 Constant.TASK_RESERVE                   = 'reserve';
 Constant.TASK_MILITIA                   = 'militia';
+Constant.TASK_DISMANTLE                 = 'dismantle';
 
 Constant.TASK_TYPES = [
     Constant.TASK_SOURCE,
@@ -180,6 +181,7 @@ Constant.TASK_TYPES = [
     Constant.TASK_FIELDTECH,
     Constant.TASK_RESERVE,
     Constant.TASK_MILITIA,
+    Constant.TASK_DISMANTLE,
 ];
 
 Constant.WORK_TOWER_REFILL              = 'tower.fill';
@@ -191,6 +193,7 @@ Constant.WORK_SCOUTING                  = 'scouting';
 Constant.WORK_DEFENSE                   = 'defense';
 Constant.WORK_ATTACK                    = 'attack';
 Constant.WORK_CLAIM                     = 'claim';
+Constant.WORK_DISMANTLE                 = 'dismantle';
 
 Constant.WORK_TYPES = [
     Constant.WORK_TOWER_REFILL,
@@ -202,6 +205,7 @@ Constant.WORK_TYPES = [
     Constant.WORK_DEFENSE,
     Constant.WORK_ATTACK,
     Constant.WORK_CLAIM,
+    Constant.WORK_DISMANTLE,
 ];
 
 Constant.WORK_FIND = [
@@ -214,6 +218,7 @@ Constant.WORK_FLAG_TYPES = [
     Constant.WORK_SIGNCONTROLLER,
     Constant.WORK_SCOUTING,
     Constant.WORK_CLAIM,
+    Constant.WORK_DISMANTLE,
 ];
 
 Constant.DIRECTIONS = {

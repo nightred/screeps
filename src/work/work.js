@@ -139,23 +139,29 @@ Work.prototype.findWork = function(task, room) {
 Work.prototype.doFlag = function(flag) {
     if (!flag) { return ERR_INVALID_ARGS; }
 
-    if (flag.memory.init) {
-        return true;
+    if (!flag.memory.workId) {
+        let flagVars = flag.name.split(':');
+
+        let roomName = flag.pos.roomName;
+
+        if (C.WORK_FLAG_TYPES.indexOf(flagVars[1]) == -1) {
+            flag.memory.result = 'invalid task';
+
+            return false;
+        }
+
+        flag.memory.workId = this.work[flagVars[1]].flag(roomName, flagVars);
     }
 
-    let flagName = flag.name;
-    let flagVars = flagName.split(':');
+    let task = Game.Queue.getRecord(flag.memory.workId);
 
-    let roomName = flag.pos.roomName;
-
-    if (C.WORK_FLAG_TYPES.indexOf(flagVars[1]) == -1) {
-        flag.memory.result = 'invalid task';
-        return false;
+    if (!task.pos) {
+        task.pos = {};
     }
 
-    flag.memory.workId = this.work[flagVars[1]].flag(roomName, flagVars);
-
-    flag.memory.init = 1;
+    task.pos.room = task.pos.room != flag.pos.roomName ? flag.pos.roomName : task.pos.room;
+    task.pos.x = task.pos.x != flag.pos.x ? flag.pos.x : task.pos.x;
+    task.pos.y = task.pos.y != flag.pos.y ? flag.pos.y : task.pos.y;
 
     return true;
 };
