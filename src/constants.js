@@ -227,4 +227,16 @@ Constant.DIRECTIONS = {
     8: [-1, -1],
 };
 
+Constant.LOGLEVEL = {
+    SILLY:  -1,
+    DEBUG:  0,
+    INFO:   1,
+    ALERT:  2,
+    WARN:   3,
+    ERROR:  4,
+    FATAL:  5,
+};
+
+Constant.DEFAULT_LOGLEVEL = C.LOGLEVEL.INFO
+
 module.exports = Constant;
