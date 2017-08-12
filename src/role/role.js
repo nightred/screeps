@@ -4,6 +4,11 @@
  * This manages the roles for creeps
  */
 
+var Logger = require('util.logger');
+
+var logger = new Logger('[Role]');
+logger.level = C.LOGLEVEL.DEBUG;
+
 var Role = function() {
     this.roles = {};
     for (let i = 0; i < C.ROLE_TYPES.length; i++) {
@@ -21,7 +26,8 @@ Role.prototype.getBody = function(role, energy, args) {
 
 Role.prototype.getRole = function(name) {
     if (C.ROLE_TYPES.indexOf(name) < 0) {
-        if (C.DEBUG >= 2) { console.log('DEBUG - failed to load role: ' + name); }
+        logger.warn('invalid role: ' + name + ' load requested');
+
         return ERR_INVALID_ARGS;
     }
 
@@ -29,7 +35,7 @@ Role.prototype.getRole = function(name) {
     try {
         role = require('role.' + name);
     } catch(e) {
-        if (C.DEBUG >= 2) { console.log('DEBUG - failed to load role: ' + name + ', error:\n' + e); }
+        logger.error('failed to load role: ' + name + ', error:\n' + e);
     }
     return role;
 };

@@ -72,9 +72,7 @@ var taskHaul = {
                 energyOutTargets.push('container');
             }
 
-            if (!creep.doEmpty(energyOutTargets, RESOURCE_ENERGY)) {
-                if (C.DEBUG >= 2) { console.log('DEBUG - do empty energy failed for role: ' + creep.memory.role + ', name: ' + creep.name); }
-            }
+            creep.doEmpty(energyOutTargets, RESOURCE_ENERGY);
         } else {
             if (creep.room.name != creep.memory.workRoom) {
                 creep.moveToRoom(creep.memory.workRoom);

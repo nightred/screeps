@@ -5,6 +5,11 @@
  *
  */
 
+var Logger = require('util.logger');
+
+var logger = new Logger('[Spawn]');
+logger.level = C.LOGLEVEL.DEBUG;
+
 var Spawn = function() {
     // init
 };
@@ -125,11 +130,11 @@ Spawn.prototype.doSpawn = function(spawn, room) {
                 Game.Director.addCreep(records[r].directorId, name)
             }
 
-            if (C.DEBUG >= 1) { console.log('INFO - spawning' +
+            logger.info('spawning' +
             ' room: <p style=\"display:inline; color: #ed4543\"><a href=\"#!/room/' + room.name + '\">' + room.name + '</a></p>' +
             ', role: ' + records[r].role +
             ', parts: ' + Game.creeps[name].body.length +
-            ', name: ' + name); }
+            ', name: ' + name);
 
             break;
         }

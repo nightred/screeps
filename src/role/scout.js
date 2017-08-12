@@ -41,9 +41,7 @@ var roleScout = {
             }
         }
 
-        if (!creep.doWork()) {
-            if (C.DEBUG >= 2) { console.log('DEBUG - do work failed for role: ' + creep.memory.role + ', name: ' + creep.name); }
-        }
+        creep.doWork();
 
         return true;
     },

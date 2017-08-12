@@ -90,8 +90,6 @@ Creep.prototype.setDespawn = function() {
 
     this.leaveWork();
 
-    if (C.DEBUG >= 3) { console.log('VERBOSE - ' + this.memory.role + ' ' + this.name + ' end of life'); }
-
     return true;
 }
 

@@ -5,8 +5,8 @@
 
 const styles = {
     default:            "color: white; background-color: black;",
-    [C.LOGLEVEL.INFO]:  "color: darkgreen",
-    [C.LOGLEVEL.DEBUG]: "color: darkblue",
+    [C.LOGLEVEL.INFO]:  "color: green",
+    [C.LOGLEVEL.DEBUG]: "color: blue",
     [C.LOGLEVEL.SILLY]: "color: darkblue",
     [C.LOGLEVEL.ALERT]: "color: cyan",
     [C.LOGLEVEL.WARN]:  "color: white",

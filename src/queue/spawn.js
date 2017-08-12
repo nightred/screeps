@@ -5,6 +5,11 @@
  *
  */
 
+var Logger = require('util.logger');
+
+var logger = new Logger('[Queue Spawn]');
+logger.level = C.LOGLEVEL.INFO;
+
 var SpawnQueue = function() {
     if (!Memory.queues) { Memory.queues = {}; }
     if (!Memory.queues.queue) { Memory.queues.queue = {}; }
@@ -36,7 +41,8 @@ SpawnQueue.prototype.gc = function() {
         }
 
         if ((records[i].spawnedTime + C.SPAWN_QUEUE_DELAY) < Game.time) {
-            if (C.DEBUG >= 3) { console.log('VERBOSE - spawn queue removing record, id: ' + records[i].id + ', role: ' + records[i].role + ', name: ' + records[i].name + ', spawned'); }
+            logger.debug('removing record, id: ' + records[i].id + ', role: ' + records[i].role + ', name: ' + records[i].name + ', spawned');
+
             this.delRecord(records[i].id);
         }
     }
@@ -54,7 +60,8 @@ SpawnQueue.prototype.cleanRoomQueue = function(roomName) {
     }
 
     for(let i = 0; i < records.length; i++) {
-        if (C.DEBUG >= 3) { console.log('VERBOSE - spawn queue removing record, id: ' + records[i].id + ', role: ' + records[i].role + ', name: ' + records[i].name + ', spawned'); }
+        logger.debug('removing record, id: ' + records[i].id + ', role: ' + records[i].role + ', name: ' + records[i].name + ', spawned');
+
         this.delRecord(records[i].id);
     }
 
@@ -102,7 +109,7 @@ SpawnQueue.prototype.addRecord = function(args) {
         record.creepArgs = args.creepArgs;
     }
 
-    if (C.DEBUG >= 3) { console.log('VERBOSE - spawn queue adding record, role: ' + record.role + ', rooms: [' + record.rooms + '], priority: ' + record.priority); }
+    logger.debug('adding record, role: ' + record.role + ', rooms: [' + record.rooms + '], priority: ' + record.priority);
 
     return Game.Queue.addRecord(record);
 };

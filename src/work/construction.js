@@ -53,7 +53,7 @@ var taskConstruction = {
                 maxRooms: 1,
                 ignoreCreeps: true,
             };
-            
+
             creep.goto(target, args);
 
             return true;
@@ -87,9 +87,7 @@ var taskConstruction = {
             energyTargets.push('spawn');
         }
 
-        if (!creep.doFill(energyTargets, RESOURCE_ENERGY)) {
-            if (C.DEBUG >= 2) { console.log('DEBUG - do fill energy failed for role: ' + creep.memory.role + ', name: ' + creep.name); }
-        }
+        creep.doFill(energyTargets, RESOURCE_ENERGY);
 
         return true;
     },

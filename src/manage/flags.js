@@ -5,6 +5,11 @@
  *
  */
 
+var Logger = require('util.logger');
+
+var logger = new Logger('[Manage Flags]');
+logger.level = C.LOGLEVEL.DEBUG;
+
 var Flags = function() {
     // init
     Memory.flags = Memory.flags || {}
@@ -55,7 +60,7 @@ Flags.prototype.gc = function() {
                 Game.Queue.delRecord(Memory.flags[name].jobId);
             }
 
-            if (C.DEBUG >= 2) { console.log('DEBUG - clearing non-existant flag memory name: ' + name); }
+            logger.debug('clearing non-existant flag memory name: ' + name);
 
             delete Memory.flags[name];
         }

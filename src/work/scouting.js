@@ -15,11 +15,6 @@ var taskScouting = {
         if (!creep) { return ERR_INVALID_ARGS; }
         if (!task) { return ERR_INVALID_ARGS; }
 
-        if (task.workRooms.length <= 0) {
-            if (C.DEBUG >= 2) { console.log('DEBUG - missing work rooms on task: ' + task.task + ', id: ' + task.id); }
-            return false;
-        }
-
         if (creep.room.name != task.workRooms[0]) {
             creep.moveToRoom(task.workRooms[0]);
             return true;

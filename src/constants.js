@@ -18,8 +18,6 @@ Constant.USERNAME                       = 'nightred';
 // Versioning
 Constant.VERSION                        = 'v2.01'
 
-// debug = 0 off, 1 info, 2 debug, 3 verbose
-Constant.DEBUG                          = 2;
 Constant.SIM                            = false;
 Constant.VISUALS                        = true;
 
@@ -236,7 +234,6 @@ Constant.LOGLEVEL = {
     ERROR:  4,
     FATAL:  5,
 };
-
-Constant.DEFAULT_LOGLEVEL = C.LOGLEVEL.INFO
+Constant.DEFAULT_LOGLEVEL = Constant.LOGLEVEL.INFO
 
 module.exports = Constant;

@@ -13,11 +13,6 @@ var taskSource = {
     run: function(creep) {
         if (!creep) { return ERR_INVALID_ARGS; }
 
-        if (!creep.memory.sourceId) {
-            if (C.DEBUG >= 2) { console.log('DEBUG - creep:' + creep.name + ' has no source set'); }
-            return false;
-        }
-
         if ((creep.carryCapacity * 0.8) > _.sum(creep.carry) || creep.carryCapacity == 0) {
             this.doWork(creep);
         } else {
@@ -111,7 +106,6 @@ var taskSource = {
         let target = Game.getObjectById(source.getDropContainer());
 
         if (!target) {
-            if (C.DEBUG >= 3) { console.log('VERBOSE - drop container missing in room: ' + creep.room.name + ', creep: ' + creep.name); }
             source.clearContainer();
             creep.setDespawn();
             return false;

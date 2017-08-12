@@ -46,9 +46,7 @@ var roleHarvester = {
         }
 
         if (!creep.memory.working || creep.memory.style == 'drop') {
-            if (!creep.doWork()) {
-                if (C.DEBUG >= 2) { console.log('DEBUG - do work failed for role: ' + creep.memory.role + ', name: ' + creep.name); }
-            }
+            creep.doWork();
         } else {
             let emptyTargets = [
                 'containerIn',
@@ -59,9 +57,7 @@ var roleHarvester = {
                 creep.memory.goingTo = mineral.getLocalContainer();
             }
 
-            if (!creep.doEmptyMineral(emptyTargets)) {
-                if (C.DEBUG >= 2) { console.log('DEBUG - do empty failed for role: ' + creep.memory.role + ', name: ' + creep.name); }
-            }
+            creep.doEmptyMineral(emptyTargets);
         }
 
         return true;

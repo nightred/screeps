@@ -5,6 +5,11 @@
  *
  */
 
+var Logger = require('util.logger');
+
+var logger = new Logger('[Director]');
+logger.level = C.LOGLEVEL.INFO;
+
 var WorkQueue = function() {
     if (!Memory.queues) { Memory.queues = {}; }
     if (!Memory.queues.queue) { Memory.queues.queue = {}; }
@@ -49,7 +54,8 @@ WorkQueue.prototype.addRecord = function(args) {
     if (args.spawnRoom) { record.spawnRoom = args.spawnRoom; }
     if (args.managed) { record.managed = args.managed; }
 
-    if (C.DEBUG >= 3) { console.log('VERBOSE - work queue adding record, task: ' + record.task + ', priority: ' + record.priority); }
+    logger.debug('adding record, task: ' + record.task + ', priority: ' + record.priority);
+
     return Game.Queue.addRecord(record);
 };
 
@@ -63,7 +69,8 @@ WorkQueue.prototype.cleanRoomQueue = function(roomName) {
     if (records.length <= 0) { return true; }
 
     for(let i = 0; i < records.length; i++) {
-        if (C.DEBUG >= 3) { console.log('VERBOSE - work queue removing record, id: ' + records[i].id + ', task: ' + records[i].task); }
+        logger.debug('removing record, id: ' + records[i].id + ', task: ' + records[i].task);
+
         this.delRecord(records[i].id);
     }
 

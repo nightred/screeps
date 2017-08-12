@@ -5,6 +5,11 @@
  *
  */
 
+var Logger = require('util.logger');
+
+var logger = new Logger('[Director]');
+logger.level = C.LOGLEVEL.DEBUG;
+
 var Director = function() {
     if (!Memory.director) {
         Memory.director = {};
@@ -36,7 +41,8 @@ var Director = function() {
 
 Director.prototype.loadDirector = function(name) {
     if (C.DIRECTOR_TYPES.indexOf(name) == -1) {
-        if (C.DEBUG >= 2) { console.log('DEBUG - unknown director: ' + name); }
+        logger.warn('unknown director: ' + name);
+
         return ERR_INVALID_ARGS;
     }
 
@@ -45,7 +51,7 @@ Director.prototype.loadDirector = function(name) {
     try {
         director = require('director.' + name);
     } catch(e) {
-        if (C.DEBUG >= 2) { console.log('DEBUG - failed to load director: ' + name + ', error:\n' + e); }
+        logger.error('failed to load ' + name + ', error:\n' + e);
     }
 
     return director;
@@ -54,9 +60,7 @@ Director.prototype.loadDirector = function(name) {
 Director.prototype.run = function() {
     let cpuStart = Game.cpu.getUsed();
 
-    let log = {
-        command: 'directors',
-    };
+    let log = { command: 'directors', };
 
     let dCount = 0;
 
@@ -78,9 +82,7 @@ Director.prototype.run = function() {
 Director.prototype.runDirector = function(task) {
     let cpuStart = Game.cpu.getUsed();
 
-    let log = {
-        command: 'director ' + task.director + ' [ ' + task.id + ' ]',
-    };
+    let log = { command: 'director ' + task.director + ' [ ' + task.id + ' ]', };
 
     let status;
 
@@ -113,7 +115,7 @@ Director.prototype.addCreep = function(id, creepName) {
 
     director.creep.push(creepName);
 
-    if (C.DEBUG >= 3) { console.log('VERBOSE - director ' + director.director + ' adding creep: ' + creepName); }
+    logger.debug(director.director + ' adding creep: ' + creepName);
 
     return true;
 };
@@ -136,7 +138,7 @@ Director.prototype.delCreep = function(id, creepName) {
 
     director.creep.splice(index, 1);
 
-    if (C.DEBUG >= 3) { console.log('VERBOSE - director ' + director.director + ' removing creep: ' + creepName); }
+    logger.debug(director.director + ' removing creep: ' + creepName);
 
     return true;
 };
@@ -164,7 +166,7 @@ Director.prototype.addRecord = function(args) {
 
     this.db[id] = record;
 
-    if (C.DEBUG >= 3) { console.log('VERBOSE - director task added, type: ' + record.director + ', priority: ' + record.priority); }
+    logger.debug('task added, type: ' + record.director + ', priority: ' + record.priority);
 
     return id;
 };

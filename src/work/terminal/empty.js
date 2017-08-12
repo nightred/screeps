@@ -75,9 +75,7 @@ var taskTerminalEmpty = {
             'storage',
         ];
 
-        if (!creep.doEmpty(storeTargets, RESOURCE_ENERGY)) {
-            if (C.DEBUG >= 2) { console.log('DEBUG - do empty failed for role: ' + creep.memory.role + ', name: ' + creep.name); }
-        }
+        creep.doEmpty(storeTargets, RESOURCE_ENERGY);
 
         return true;
     },
