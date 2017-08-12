@@ -4,6 +4,11 @@
  * This manages the roles and tasks for creeps
  */
 
+var Logger = require('util.logger');
+
+var logger = new Logger('[Manage Creeps]');
+logger.level = C.LOGLEVEL.DEBUG;
+
 var manageCreep = function() {
     Memory.world = Memory.world || {};
     this.memory = Memory.world;
@@ -21,7 +26,8 @@ manageCreep.prototype.gc = function() {
             if (Memory.creeps[name].workId) {
                 Game.Work.removeCreep(name, Memory.creeps[name].workId);
             }
-            if (C.DEBUG >= 2) { console.log('DEBUG - clearing non-existant creep memory name: ' + name + ' role: ' + Memory.creeps[name].role); }
+
+            logger.debug('clearing non-existant creep memory name: ' + name + ' role: ' + Memory.creeps[name].role);
             delete Memory.creeps[name];
         }
     }
@@ -33,9 +39,7 @@ manageCreep.prototype.gc = function() {
 manageCreep.prototype.run = function() {
     let cpuStart = Game.cpu.getUsed();
 
-    let log = {
-        command: 'creep tasks',
-    };
+    let log = { command: 'creep tasks', };
 
     this.gc();
 
@@ -90,7 +94,7 @@ manageCreep.prototype.doDespawnOnContainer = function(creep) {
 
     if (creep.pos.x == target.pos.x && creep.pos.y == target.pos.y) {
         if (creep.room.memory.deSpawnContainerId && creep.room.memory.spawnId) {
-            if (C.DEBUG >= 1) { console.log("INFO - recycling " + creep.memory.role + " " + creep.name); }
+            logger.debug('recycling ' + creep.memory.role + ' ' + creep.name);
             let roomSpawn = Game.getObjectById(creep.room.getSpawn());
             roomSpawn.recycleCreep(creep);
         } else {

@@ -5,6 +5,11 @@
  *
  */
 
+var Logger = require('util.logger');
+
+var logger = new Logger('[Manage Rooms]');
+logger.level = C.LOGLEVEL.DEBUG;
+
 // managment modules
 var Tower           = require('manage.room.tower');
 var Storage         = require('manage.room.storage');
@@ -22,9 +27,7 @@ var manageRoom = function() {
 manageRoom.prototype.run = function() {
     let cpuStart = Game.cpu.getUsed();
 
-    let log = {
-        command: 'room managment',
-    };
+    let log = { command: 'room managment', };
 
     let rCount = 0;
 
@@ -90,7 +93,7 @@ manageRoom.prototype.gcContainers = function(room) {
     for (let containerId in room.memory.structureContainers) {
         if (!Game.getObjectById(containerId)) {
             delete room.memory.structureContainers[containerId];
-            if (C.DEBUG >= 1) { console.log('INFO - clearing non-existant container: ' + containerId); }
+            logger.debug('clearing non-existant container: ' + containerId);
         }
     }
 
@@ -119,7 +122,7 @@ manageRoom.prototype.gcTowers = function(room) {
     for (let towerId in room.memory.structureTowers) {
         if (!Game.getObjectById(towerId)) {
             delete room.memory.structureTowers[towerId];
-            if (C.DEBUG >= 1) { console.log('INFO - clearing non-existant tower: ' + towerId); }
+            logger.debug('clearing non-existant tower: ' + towerId);
         }
     }
 
@@ -136,7 +139,7 @@ manageRoom.prototype.gcLinks = function(room) {
     for (let linkId in room.memory.structureLinks) {
         if (!Game.getObjectById(linkId)) {
             delete room.memory.structureLinks[linkId];
-            if (C.DEBUG >= 1) { console.log('INFO - clearing non-existant link: ' + linkId); }
+            logger.debug('clearing non-existant link: ' + linkId);
         }
     }
 

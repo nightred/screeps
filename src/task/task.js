@@ -5,6 +5,11 @@
  *
  */
 
+var Logger = require('util.logger');
+
+var logger = new Logger('[Task]');
+logger.level = C.LOGLEVEL.DEBUG;
+
 var Task = function() {
     this.tasks = {};
 
@@ -15,7 +20,8 @@ var Task = function() {
 
 Task.prototype.loadTask = function(name) {
     if (C.TASK_TYPES.indexOf(name) == -1) {
-    if (C.DEBUG >= 2) { console.log('DEBUG - unknown task: ' + name); }
+        logger.warn('invalid task: ' + name + ' load requested');
+
         return ERR_INVALID_ARGS;
     }
 
@@ -24,7 +30,7 @@ Task.prototype.loadTask = function(name) {
     try {
         task = require('task.' + name);
     } catch(e) {
-        if (C.DEBUG >= 2) { console.log('DEBUG - failed to load task: ' + name + ', error:\n' + e); }
+        logger.error('failed to load task: ' + name + ', error:\n' + e);
     }
 
     return task;

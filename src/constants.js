@@ -18,8 +18,6 @@ Constant.USERNAME                       = 'nightred';
 // Versioning
 Constant.VERSION                        = 'v2.01'
 
-// debug = 0 off, 1 info, 2 debug, 3 verbose
-Constant.DEBUG                          = 2;
 Constant.SIM                            = false;
 Constant.VISUALS                        = true;
 
@@ -231,5 +229,16 @@ Constant.DIRECTIONS = {
     7: [-1, 0],
     8: [-1, -1],
 };
+
+Constant.LOGLEVEL = {
+    SILLY:  -1,
+    DEBUG:  0,
+    INFO:   1,
+    ALERT:  2,
+    WARN:   3,
+    ERROR:  4,
+    FATAL:  5,
+};
+Constant.DEFAULT_LOGLEVEL = Constant.LOGLEVEL.INFO
 
 module.exports = Constant;

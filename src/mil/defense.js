@@ -6,6 +6,11 @@
  *
  */
 
+var Logger = require('util.logger');
+
+var logger = new Logger('[Defense]');
+logger.level = C.LOGLEVEL.DEBUG;
+
 var Defense = function() {
     Memory.world.mil = Memory.world.mil || {}
     Memory.world.mil.allies = Memory.world.mil.allies || {}
@@ -120,7 +125,7 @@ Defense.prototype.doDefenseMode = function(room, parent) {
         defense.active = 1;
         defense.creepLimit = 1;
 
-        if (C.DEBUG >= 1) { console.log('INFO - defense mode activated in room: <p style=\"display:inline; color: #ed4543\"><a href=\"#!/room/' + room.name + '\">' + room.name + '</a></p>'); }
+        logger.info('defense mode activated in room: <p style=\"display:inline; color: #ed4543\"><a href=\"#!/room/' + room.name + '\">' + room.name + '</a></p>');
     }
 
     let creepLimit = Math.ceil((Game.time - defense.tick) / C.DEFENSE_LIMIT_INCREASE_DELAY);
@@ -175,7 +180,7 @@ Defense.prototype.doSafeMode = function(room) {
 
         room.controller.activateSafeMode();
 
-        if (C.DEBUG >= 1) { console.log('INFO - safe mode activated in room: <p style=\"display:inline; color: #ed4543\"><a href=\"#!/room/' + room.name + '\">' + room.name + '</a></p>'); }
+        logger.info('safe mode activated in room: <p style=\"display:inline; color: #ed4543\"><a href=\"#!/room/' + room.name + '\">' + room.name + '</a></p>');
     }
 
     return true;

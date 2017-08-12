@@ -5,6 +5,11 @@
  *
  */
 
+var Logger = require('util.logger');
+
+var logger = new Logger('[Queue Mil]');
+logger.level = C.LOGLEVEL.INFO;
+
 var MilQueue = function() {
     if (!Memory.queues) { Memory.queues = {}; }
     if (!Memory.queues.queue) { Memory.queues.queue = {}; }
@@ -48,7 +53,7 @@ MilQueue.prototype.addRecord = function(args) {
         creeps: [],
     };
 
-    if (C.DEBUG >= 3) { console.log('VERBOSE - mil queue adding record, task: ' + record.task + ', priority: ' + record.priority); }
+    logger.debug('adding record, task: ' + record.task + ', priority: ' + record.priority);
     return Game.Queue.addRecord(record);
 };
 

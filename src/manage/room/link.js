@@ -5,6 +5,11 @@
  *
  */
 
+var Logger = require('util.logger');
+
+var logger = new Logger('[Manage Link]');
+logger.level = C.LOGLEVEL.DEBUG;
+
 var Link = function() {
     // init
 };
@@ -38,7 +43,7 @@ Link.prototype.doRoom = function(room) {
     }
 
     if (linksStorage.length > 1) {
-        if (C.DEBUG >= 2) { console.log('DEBUG - room: ' + room.name + ' has more then one storage link'); }
+        logger.warn('room: ' + room.name + ' has more then one storage link');
     }
 
     let linksIn = _.filter(links, structure => structure.memory.type == 'in');

@@ -5,6 +5,11 @@
  *
  */
 
+var Logger = require('util.logger');
+
+var logger = new Logger('[Work]');
+logger.level = C.LOGLEVEL.DEBUG;
+
 var Work = function() {
     this.work = {};
 
@@ -15,7 +20,7 @@ var Work = function() {
 
 Work.prototype.loadWork = function(name) {
     if (C.WORK_TYPES.indexOf(name) == -1) {
-    if (C.DEBUG >= 2) { console.log('DEBUG - unknown work: ' + name); }
+        logger.warn('invalid work: ' + name + ' load reqested');
         return ERR_INVALID_ARGS;
     }
 
@@ -24,7 +29,7 @@ Work.prototype.loadWork = function(name) {
     try {
         work = require('work.' + name);
     } catch(e) {
-        if (C.DEBUG >= 2) { console.log('DEBUG - failed to load work: ' + name + ', error:\n' + e); }
+        logger.error('failed to load work: ' + name + ', error:\n' + e);
     }
 
     return work;
