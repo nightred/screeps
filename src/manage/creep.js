@@ -39,8 +39,6 @@ manageCreep.prototype.gc = function() {
 manageCreep.prototype.run = function() {
     let cpuStart = Game.cpu.getUsed();
 
-    let log = { command: 'creep tasks', };
-
     this.gc();
 
     let creepCount = 0;
@@ -62,10 +60,13 @@ manageCreep.prototype.run = function() {
         creepCount++;
     }
 
-    log.status = 'OK';
-    log.output = 'creep count: ' + creepCount;
-    log.cpu = Game.cpu.getUsed() - cpuStart;
-
+    let log = {
+        command: 'creep tasks',
+        status: 'OK',
+        cpu: (Game.cpu.getUsed() - cpuStart),
+    };
+    log.output = 'creep count: ' + creepCount + ' avg cpu: ' +
+        (log.cpu / creepCount).toFixed(2);
     Game.Visuals.addLog(undefined, log)
 };
 

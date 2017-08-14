@@ -64,8 +64,6 @@ Director.prototype.loadDirector = function(name) {
 Director.prototype.run = function() {
     let cpuStart = Game.cpu.getUsed();
 
-    let log = { command: 'directors', };
-
     let dCount = 0;
 
     for (let id in this.db) {
@@ -76,10 +74,13 @@ Director.prototype.run = function() {
         dCount++;
     }
 
-    log.status = 'OK';
-    log.output = 'director count: ' + dCount;
-    log.cpu = Game.cpu.getUsed() - cpuStart;
-
+    let log = {
+        command: 'directors',
+        status: 'OK',
+        cpu: (Game.cpu.getUsed() - cpuStart),
+    };
+    log.output = 'director count: ' + dCount + ' avg cpu: ' +
+        (log.cpu / dCount).toFixed(2);
     Game.Visuals.addLog(undefined, log)
 };
 

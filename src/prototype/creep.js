@@ -113,10 +113,10 @@ Creep.prototype.getWork = function(workTasks, args) {
 
     if (!args.ignoreRoom &&
         (!args.spawnRoom || !args.room || !args.rooms)) {
-            
+
         if (this.memory.workRoom) {
             args.room = this.memory.workRoom;
-        } else {
+        } else if (this.memory.workRooms) {
             args.rooms = this.memory.workRooms;
         }
     }
