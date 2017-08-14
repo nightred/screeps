@@ -14,6 +14,15 @@ const styles = {
     [C.LOGLEVEL.FATAL]: "color: yellow, background-color: red",
 };
 
+const logLevelName = {
+    0:      'DEBUG',
+    1:      'INFO',
+    2:      'ALERT',
+    3:      'WARN',
+    4:      'ERROR',
+    5:      'FATAL',
+};
+
 var Logger = function(prefix) {
     prefix = prefix || "";
 
@@ -31,7 +40,7 @@ Logger.prototype.log = function(level, message) {
 
         let style = styles[level] || styles.default;
 
-        let logLevel = C.LOGLEVEL[level];
+        let logLevel = logLevelName[level];
 
         console.log(`<log severity="${logLevel}" style="${style}">[${logLevel}] ${this.prefix} ${message}</log>`);
     }
