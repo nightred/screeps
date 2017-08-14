@@ -1,11 +1,11 @@
 /*
- * task Repair
+ * task Dismantle
  *
  * repair task handles repairing structures
  *
  */
 
-var taskRepair = {
+var taskDismantle = {
 
     /**
     * @param {Creep} creep The creep object
@@ -58,8 +58,7 @@ var taskRepair = {
     **/
     create: function(args) {
         let record = {
-            workRooms: [ args.roomName, ],
-            spawnRoom: args.roomName,
+            workRoom: args.roomName,
             task: C.WORK_DISMANTLE,
             priority: 64,
             creepLimit: 1,
@@ -83,4 +82,4 @@ var taskRepair = {
 
 };
 
-module.exports = taskRepair;
+module.exports = taskDismantle;

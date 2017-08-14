@@ -112,8 +112,13 @@ Creep.prototype.getWork = function(workTasks, args) {
     args = args || {};
 
     if (!args.ignoreRoom &&
-        (!args.spawnRoom || !args.room)) {
-        args.room = this.memory.workRoom;
+        (!args.spawnRoom || !args.room || !args.rooms)) {
+            
+        if (this.memory.workRoom) {
+            args.room = this.memory.workRoom;
+        } else {
+            args.rooms = this.memory.workRooms;
+        }
     }
 
     let workId = Game.Work.getWork(workTasks, this, args);

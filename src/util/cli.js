@@ -60,26 +60,6 @@ var Cli = {
 
     },
 
-    work: {
-
-        attack: function(room, limit) {
-            if (!room || isNaN(limit)) {
-                console.log('ERROR - command need the following values: room name, creep limit');
-                return false;
-            }
-            let record = {
-                workRooms: [ room, ],
-                task: C.WORK_ATTACK,
-                priority: 40,
-                managed: true,
-                creepLimit: limit,
-            };
-
-            return Game.Queue.work.addRecord(record);
-        },
-
-    },
-
 }
 
 module.exports = Cli;

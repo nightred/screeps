@@ -19,10 +19,14 @@ var Director = function() {
         Memory.director.db = {};
     }
 
-    if (!Memory.director.ver || Memory.director.ver != C.VERSION) {
+    if (!Memory.director.ver || Memory.director.ver != C.VERSION_DIRECTOR) {
+        logger.warn('new version detected ' + C.VERSION_DIRECTOR +
+        ' previous version ' + Memory.director.ver +
+        ' wiping directors');
+
         Memory.director = {};
         Memory.director.db = {};
-        Memory.director.ver = C.VERSION;
+        Memory.director.ver = C.VERSION_DIRECTOR;
     }
 
     this.memory = Memory.director;

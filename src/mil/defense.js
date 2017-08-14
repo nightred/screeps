@@ -140,7 +140,7 @@ Defense.prototype.doDefenseMode = function(room, parent) {
 
     if (!defense.jobId || !Game.Queue.getRecord(defense.jobId)) {
         let record = {
-            workRooms: [ room.name, ],
+            workRoom: room.name,
             spawnRoom: parent.name,
             task: C.WORK_DEFENSE,
             priority: 10,

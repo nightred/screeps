@@ -33,9 +33,13 @@ WorkQueue.prototype.isQueued = function(args) {
 };
 
 WorkQueue.prototype.addRecord = function(args) {
-    if (!args) { return ERR_INVALID_ARGS; }
-    if (!Array.isArray(args.workRooms)) { return ERR_INVALID_ARGS; }
-    if (C.WORK_TYPES.indexOf(args.task) < 0) { return ERR_INVALID_ARGS; }
+    if (!args || !args.workRoom) {
+        return ERR_INVALID_ARGS;
+    }
+
+    if (C.WORK_TYPES.indexOf(args.task) < 0) {
+        return ERR_INVALID_ARGS;
+    }
 
     args.priority = args.priority || 100;
     args.creepLimit = args.creepLimit || 0;
@@ -43,16 +47,27 @@ WorkQueue.prototype.addRecord = function(args) {
     let record = {
         queue: C.QUEUE_WORK,
         task: args.task,
-        workRooms: args.workRooms,
+        workRoom: args.workRoom,
         priority: args.priority,
         creeps: [],
         creepLimit: args.creepLimit,
     };
 
-    if (args.targetId) { record.targetId = args.targetId; }
-    if (args.message) { record.message = args.message; }
-    if (args.spawnRoom) { record.spawnRoom = args.spawnRoom; }
-    if (args.managed) { record.managed = args.managed; }
+    if (args.targetId) {
+        record.targetId = args.targetId;
+    }
+
+    if (args.message) {
+        record.message = args.message;
+    }
+
+    if (args.spawnRoom) {
+        record.spawnRoom = args.spawnRoom;
+    }
+
+    if (args.managed) {
+        record.managed = args.managed;
+    }
 
     logger.debug('adding record, task: ' + record.task + ', priority: ' + record.priority);
 

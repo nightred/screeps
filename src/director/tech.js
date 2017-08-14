@@ -21,13 +21,29 @@ directorTech.prototype.run = function(task) {
     ];
 
     for (let i = 0; i < findWorkTasks.length; i++) {
-        Game.Work.findWork(findWorkTasks[i], workRoom);
+        Game.Work.runFindWork(findWorkTasks[i], workRoom);
     }
 
     let spawnRoom = Game.rooms[task.spawnRoom];
 
+    if (!spawnRoom.isInCoverage(task.workRoom)) {
+        spawnRoom.addCoverage(task.workRoom);
+    }
+
+    if (task.spawnRoom == task.workRoom) {
+        this.doSpawn(task);
+    }
+
+    task.sleep = Game.time + C.DIRECTOR_SLEEP;
+
+    return true;
+};
+
+directorTech.prototype.doSpawn = function(task) {
+    let spawnRoom = Game.rooms[task.spawnRoom];
+
     if (!spawnRoom || !spawnRoom.controller || !spawnRoom.controller.my) {
-        return true;
+        return false;
     }
 
     // set size limits
@@ -71,9 +87,15 @@ directorTech.prototype.run = function(task) {
     let creepLimit = 1;
 
     if (!task.creepLimit) {
-        if (workRoom && workRoom.controller && workRoom.controller.my &&
-            workRoom.controller.level >= 4) {
-            creepLimit = 2;
+        let roomCount = spawnRoom.countCoverage();
+
+        if (!isNaN(roomCount)) {
+            creepLimit = roomCount;
+
+            if (spawnRoom && spawnRoom.controller && spawnRoom.controller.my &&
+                spawnRoom.controller.level >= 4) {
+                creepLimit++;
+            }
         }
     } else {
         creepLimit = task.creepLimit;
@@ -104,6 +126,9 @@ directorTech.prototype.run = function(task) {
 
     // spawn new creep if below limit
     if (task.creep.length < creepLimit && !task.spawnId) {
+
+        let coverage = spawnRoom.getCoverage();
+
         let record = {
             rooms: [ task.spawnRoom, ],
             role: C.TECH,
@@ -112,7 +137,7 @@ directorTech.prototype.run = function(task) {
             minSize: minSize,
             maxSize: maxSize,
             creepArgs: {
-                workRoom: task.workRoom,
+                workRooms: coverage,
                 task: C.TASK_TECH,
             },
         };
@@ -121,8 +146,6 @@ directorTech.prototype.run = function(task) {
 
         task.spawnId = Game.Queue.spawn.addRecord(record);
     }
-
-    task.sleep = Game.time + C.DIRECTOR_SLEEP;
 
     return true;
 };

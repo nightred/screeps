@@ -25,10 +25,14 @@ var Queue = function() {
         Memory.queues.queue = {};
     }
 
-    if (!Memory.queues.ver || Memory.queues.ver != C.VERSION) {
+    if (!Memory.queues.ver || Memory.queues.ver != C.VERSION_QUEUE) {
+        logger.warn('new version detected ' + C.VERSION_QUEUE +
+        ' previous version ' + Memory.queues.ver +
+        ' wiping queue');
+
         Memory.queues = {};
         Memory.queues.queue = {};
-        Memory.queues.ver = C.VERSION;
+        Memory.queues.ver = C.VERSION_QUEUE;
     }
 
     this.memory = Memory.queues;

@@ -146,8 +146,7 @@ var taskRepair = {
     **/
     create: function(args) {
         let record = {
-            workRooms: [ args.roomName, ],
-            spawnRoom: args.roomName,
+            workRoom: args.roomName,
             task: C.WORK_REPAIR,
             priority: 40,
             creepLimit: 1,

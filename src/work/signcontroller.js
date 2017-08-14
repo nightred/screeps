@@ -49,7 +49,7 @@ var taskSignController = {
         if (!room) { return ERR_INVALID_ARGS; }
 
         let record = {
-            workRooms: [ args.roomName, ],
+            workRoom: args.roomName,
             message: args.message,
             task: C.WORK_SIGNCONTROLLER,
             priority: 99,

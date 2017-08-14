@@ -145,8 +145,7 @@ var taskTerminalEmpty = {
     create: function(args) {
 
         let record = {
-            workRooms: [ args.roomName, ],
-            spawnRoom: args.roomName,
+            workRoom: args.roomName,
             task: C.WORK_TERMINAL_EMPTY,
             priority: 80,
             creepLimit: 1,

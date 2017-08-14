@@ -43,7 +43,7 @@ var taskClaim = {
     **/
     create: function(args) {
         let record = {
-            workRooms: [ args.roomName, ],
+            workRoom: args.roomName,
             task: C.WORK_CLAIM,
             priority: 40,
             creepLimit: 1,

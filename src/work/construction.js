@@ -132,8 +132,7 @@ var taskConstruction = {
     **/
     create: function(args) {
         let record = {
-            workRooms: [ args.roomName, ],
-            spawnRoom: args.roomName,
+            workRoom: args.roomName,
             task: C.WORK_CONSTRUCTION,
             priority: 70,
             creepLimit: 4,

@@ -139,8 +139,7 @@ var taskTowerFill = {
     **/
     create: function(args) {
         let record = {
-            workRooms: [ args.roomName, ],
-            spawnRoom: args.roomName,
+            workRoom: args.roomName,
             task: C.WORK_TOWER_REFILL,
             priority: 30,
             creepLimit: 1,

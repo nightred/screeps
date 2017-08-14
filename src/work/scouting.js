@@ -66,7 +66,7 @@ var taskScouting = {
     **/
     create: function(args) {
         let record = {
-            workRooms: [ args.roomName, ],
+            workRoom: args.roomName,
             task: C.WORK_SCOUTING,
             priority: 90,
             creepLimit: 1,

@@ -16,7 +16,8 @@ var Constant = {};
 Constant.USERNAME                       = 'nightred';
 
 // Versioning
-Constant.VERSION                        = 'v2.01'
+Constant.VERSION_DIRECTOR               = 'v2.01'
+Constant.VERSION_QUEUE                  = 'v2.02'
 
 Constant.SIM                            = false;
 Constant.VISUALS                        = true;
@@ -151,7 +152,6 @@ Constant.DIRECTOR_TYPES = [
 Constant.DIRECTOR_FLAG_TYPES = [
     Constant.DIRECTOR_ROOM,
     Constant.DIRECTOR_REMOTE,
-    Constant.DIRECTOR_FIELDTECH,
     Constant.DIRECTOR_MINING,
     Constant.DIRECTOR_INTERHAULING,
     Constant.DIRECTOR_TECH,

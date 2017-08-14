@@ -70,8 +70,9 @@ Work.prototype.getWork = function(workTasks, creep, args) {
 
     queue = _.filter(queue, record =>
         workTasks.indexOf(record.task) >= 0 &&
-        (!args.room || record.workRooms.indexOf(args.room) >= 0) &&
-        (!args.spawnRoom || record.spawnRoom.indexOf(args.spawnRoom) >= 0) &&
+        (!args.rooms || args.rooms.indexOf(record.workRoom) >= 0) &&
+        (!args.room || record.workRoom == args.room) &&
+        (!args.spawnRoom || record.spawnRoom == args.spawnRoom) &&
         record.creeps.indexOf(creep.name) == -1 &&
         record.creeps.length < record.creepLimit
     );
@@ -134,7 +135,7 @@ Work.prototype.removeCreep = function(creepName, id) {
     return true;
 };
 
-Work.prototype.findWork = function(task, room) {
+Work.prototype.runFindWork = function(task, room) {
     if (C.WORK_FIND.indexOf(task) == -1) { return ERR_INVALID_ARGS; }
     if (!room) { return ERR_INVALID_ARGS; }
 

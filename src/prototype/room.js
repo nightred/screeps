@@ -199,3 +199,47 @@ Room.prototype.getConstructionAtArea = function(pos, range) {
 
         return objects[0].constructionSite;
 };
+
+Room.prototype.getCoverage = function() {
+    this.memory.roomCoverage = this.memory.roomCoverage || [];
+
+    return this.memory.roomCoverage;
+};
+
+Room.prototype.addCoverage = function(roomName) {
+    if (!roomName) { return ERR_INVALID_ARGS; }
+
+    this.memory.roomCoverage = this.memory.roomCoverage || [];
+
+    if (this.memory.roomCoverage.indexOf(roomName) === -1) {
+        this.memory.roomCoverage.push(roomName);
+    }
+
+    return true;
+};
+
+Room.prototype.remCoverage = function(roomName) {
+    if (!roomName) { return ERR_INVALID_ARGS; }
+
+    this.memory.roomCoverage = this.memory.roomCoverage || [];
+
+    let index = this.memory.roomCoverage.indexOf(roomName);
+
+    if (index != -1) {
+        this.memory.roomCoverage.splice(index, 1);
+    }
+
+    return true;
+};
+
+Room.prototype.isInCoverage = function(roomName) {
+    this.memory.roomCoverage = this.memory.roomCoverage || [];
+
+    return (this.memory.roomCoverage.indexOf(roomName) != -1) ? true : false;
+};
+
+Room.prototype.countCoverage = function() {
+    this.memory.roomCoverage = this.memory.roomCoverage || [];
+    
+    return this.memory.roomCoverage.length;
+};
