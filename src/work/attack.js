@@ -17,8 +17,8 @@ var taskAttack = {
 
         if (Game.cpu.bucket < 1000) { return true; }
 
-        if (creep.room.name != task.workRooms[0]) {
-            creep.moveToRoom(task.workRooms[0]);
+        if (creep.room.name != task.workRoom) {
+            creep.moveToRoom(task.workRoom);
             return true;
         }
 

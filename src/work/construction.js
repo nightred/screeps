@@ -37,8 +37,8 @@ var taskConstruction = {
     * @param {Task} task The work task passed from the work Queue
     **/
     doConstuction: function(creep, task) {
-        if (creep.room.name != task.workRooms[0]) {
-            creep.moveToRoom(task.workRooms[0]);
+        if (creep.room.name != task.workRoom) {
+            creep.moveToRoom(task.workRoom);
             return true;
         }
 

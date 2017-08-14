@@ -28,7 +28,7 @@ WorkQueue.prototype.isQueued = function(args) {
     return _.filter(this.getQueue(), record =>
         (!args.targetId || record.targetId == args.targetId) &&
         ((!args.task || !args.room) ||
-        (record.task == args.task && record.workRooms.indexOf(args.room) >= 0))
+        (record.task == args.task && record.workRoom == args.room >= 0))
     ).length > 0 ? true : false;
 };
 
@@ -78,7 +78,7 @@ WorkQueue.prototype.cleanRoomQueue = function(roomName) {
     if (!roomName) { return -1 };
 
     let records = _.filter(this.getQueue(), record =>
-        record.workRooms.indexOf(roomName) >= 0
+        record.workRoom == roomName
     );
 
     if (records.length <= 0) { return true; }

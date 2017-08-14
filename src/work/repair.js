@@ -37,8 +37,8 @@ var taskRepair = {
     * @param {Task} task The work task passed from the work Queue
     **/
     doRepair: function(creep, task) {
-        if (creep.room.name != task.workRooms[0]) {
-            creep.moveToRoom(task.workRooms[0]);
+        if (creep.room.name != task.workRoom) {
+            creep.moveToRoom(task.workRoom);
             return true;
         }
 

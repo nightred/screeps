@@ -47,15 +47,15 @@ Work.prototype.runWork = function(creep) {
     if (work.creeps.indexOf(creep.name) == -1) {
         if (work.creeps.length >= work.creepLimit) {
             return false;
-        } else if (creep.room.name == work.workRooms[0]) {
+        } else if (creep.room.name == work.workRoom) {
             Game.Work.addCreep(creep.name, creep.memory.workId);
         }
     } else {
         return this.work[work.task].run(creep, work);
     }
 
-    if (creep.room.name != work.workRooms[0]) {
-        creep.moveToRoom(work.workRooms[0]);
+    if (creep.room.name != work.workRoom) {
+        creep.moveToRoom(work.workRoom);
     }
 
     return true

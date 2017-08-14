@@ -15,13 +15,8 @@ var taskMineral = {
         if (!creep) { return ERR_INVALID_ARGS; }
         if (!task) { return ERR_INVALID_ARGS; }
 
-        if (task.workRooms.length <= 0) {
-            if (C.DEBUG >= 2) { console.log('DEBUG - missing work rooms on task: ' + task.task + ', id: ' + task.id); }
-            return false;
-        }
-
-        if (creep.room.name != task.workRooms[0]) {
-            creep.moveToRoom(task.workRooms[0]);
+        if (creep.room.name != task.workRoom) {
+            creep.moveToRoom(task.workRoom);
             return true;
         }
 
@@ -63,13 +58,9 @@ var taskMineral = {
     doTaskManaged: function(task) {
         if (!task) { return ERR_INVALID_ARGS; }
 
-        if (task.workRooms.length <= 0) {
-            if (C.DEBUG >= 2) { console.log('DEBUG - missing work rooms on task: ' + task.task + ', id: ' + task.id); }
-            return false;
-        }
-        let room = Game.rooms[task.workRooms[0]];
+        let room = Game.rooms[task.workRoom];
         if (!room) {
-            if (C.DEBUG >= 3) { console.log('VERBOSE - no eyes on room: ' + task.workRooms[0] + ', task: ' + task.task + ', id: ' + task.id); }
+            if (C.DEBUG >= 3) { console.log('VERBOSE - no eyes on room: ' + task.workRoom + ', task: ' + task.task + ', id: ' + task.id); }
             return true;
         }
 
@@ -117,7 +108,7 @@ var taskMineral = {
                     role: C.HARVESTER,
                     priority: 78,
                     creepArgs: {
-                        workRooms: task.workRooms,
+                        workRoom: task.workRoom,
                         workId: task.id,
                         extractorId: task.extractorId,
                         mineralId: task.mineralId,

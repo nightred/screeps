@@ -15,8 +15,8 @@ var taskDismantle = {
         if (!creep) { return ERR_INVALID_ARGS; }
         if (!task) { return ERR_INVALID_ARGS; }
 
-        if (creep.room.name != task.workRooms[0]) {
-            creep.moveToRoom(task.workRooms[0]);
+        if (creep.room.name != task.workRoom) {
+            creep.moveToRoom(task.workRoom);
             return true;
         }
 

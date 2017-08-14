@@ -15,8 +15,8 @@ var taskScouting = {
         if (!creep) { return ERR_INVALID_ARGS; }
         if (!task) { return ERR_INVALID_ARGS; }
 
-        if (creep.room.name != task.workRooms[0]) {
-            creep.moveToRoom(task.workRooms[0]);
+        if (creep.room.name != task.workRoom) {
+            creep.moveToRoom(task.workRoom);
             return true;
         }
 
@@ -41,7 +41,7 @@ var taskScouting = {
             case 3:
                 x = 40;
         }
-        let target = new RoomPosition(x, y, task.workRooms[0]);
+        let target = new RoomPosition(x, y, task.workRoom);
         let args = {
             range: 6,
             reusePath: 30,
