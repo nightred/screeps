@@ -231,13 +231,18 @@ Constant.DIRECTIONS = {
 };
 
 Constant.LOGLEVEL = {
-    SILLY:  -1,
     DEBUG:  0,
+    0:      'DEBUG',
     INFO:   1,
+    1:      'INFO',
     ALERT:  2,
+    2:      'ALERT',
     WARN:   3,
+    3:      'WARN',
     ERROR:  4,
+    4:      'ERROR',
     FATAL:  5,
+    5:      'FATAL',
 };
 Constant.DEFAULT_LOGLEVEL = Constant.LOGLEVEL.INFO
 

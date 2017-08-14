@@ -31,7 +31,9 @@ Logger.prototype.log = function(level, message) {
 
         let style = styles[level] || styles.default;
 
-        console.log(`<log severity="${level}" style="${style}">[${level}] ${this.prefix} ${message}</log>`);
+        let logLevel = C.LOGLEVEL[level];
+
+        console.log(`<log severity="${logLevel}" style="${style}">[${logLevel}] ${this.prefix} ${message}</log>`);
     }
 };
 
