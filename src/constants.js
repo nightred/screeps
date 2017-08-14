@@ -152,9 +152,7 @@ Constant.DIRECTOR_TYPES = [
 Constant.DIRECTOR_FLAG_TYPES = [
     Constant.DIRECTOR_ROOM,
     Constant.DIRECTOR_REMOTE,
-    Constant.DIRECTOR_MINING,
-    Constant.DIRECTOR_INTERHAULING,
-    Constant.DIRECTOR_TECH,
+    Constant.DIRECTOR_FIELDTECH,
     Constant.DIRECTOR_RESERVE,
 ];
 
