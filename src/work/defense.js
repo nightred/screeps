@@ -36,14 +36,18 @@ var taskDefense = {
                 reusePath: 0,
                 maxRooms: 1,
             });
+
+            if (creep.getActiveBodyparts(HEAL)) {
+                if (creep.hits < creep.hitsMax) {
+                    creep.heal(creep);
+                }
+            }
         } else {
             creep.attack(targets[0]);
         }
 
-        if (creep.getActiveBodyparts(HEAL)) {
-            if (creep.hits < creep.hitsMax) {
-                creep.heal(creep);
-            }
+        if (creep.pos.inRangeTo(targets[0], 3)) {
+            creep.rangedAttack(targets[0]);
         }
 
         return true;

@@ -15,28 +15,36 @@ var roleCombatMilitia = {
     **/
     getBody: function(energy, args) {
         if (isNaN(energy)) { return ERR_INVALID_ARGS; }
+
         args = args || {};
 
         let moveUnits = 0;
         let attackUnits = Math.floor(energy / 130);
         attackUnits = attackUnits < 1 ? 1 : attackUnits;
-        attackUnits = attackUnits > 12 ? 12 : attackUnits;
+        attackUnits = attackUnits > 6 ? 6 : attackUnits;
 
         energy -= (attackUnits * 130);
-        moveUnits += Math.ceil(attackUnits);
+        moveUnits += attackUnits;
+
+        let rangedUnits = Math.floor(energy / 200);
+        rangedUnits = rangedUnits < 1 ? 1 : rangedUnits;
+        rangedUnits = rangedUnits > 7 ? 7 : rangedUnits;
+
+        energy -= (rangedUnits * 200);
+        moveUnits += rangedUnits;
 
         let healUnits = Math.floor(energy / 300);
         healUnits = healUnits < 0 ? 0 : healUnits;
-        healUnits = healUnits > 3 ? 3 : healUnits;
+        healUnits = healUnits > 2 ? 2 : healUnits;
 
         energy -= (healUnits * 300);
-        moveUnits += Math.ceil(healUnits);
+        moveUnits += healUnits;
 
         let toughUnits = Math.floor(energy / 60);
         toughUnits = toughUnits < 1 ? 1 : toughUnits;
         toughUnits = toughUnits > 10 ? 10 : toughUnits;
 
-        moveUnits += Math.ceil(toughUnits);
+        moveUnits += toughUnits;
 
         let body = [];
         for (let i = 0; i < toughUnits; i++) {
@@ -44,6 +52,9 @@ var roleCombatMilitia = {
         }
         for (let i = 0; i < moveUnits; i++) {
             body.push(MOVE);
+        }
+        for (let i = 0; i < attackUnits; i++) {
+            body.push(ATTACK);
         }
         for (let i = 0; i < attackUnits; i++) {
             body.push(ATTACK);
