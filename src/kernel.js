@@ -25,19 +25,20 @@ var Kernel = function() {
 };
 
 Kernel.prototype.run = function() {
-    let cpuStart = Game.cpu.getUsed();
+    Game.Visuals.addLog(undefined, { command: 'init', status: 'OK', cpu: Game.cpu.getUsed(), })
 
-    let log = { command: 'kernel', };
+    let cpuStart = Game.cpu.getUsed();
 
     Game.Queue.run();
     Game.Manage.run();
     Game.Director.run();
     Game.Mil.run();
 
-    log.status = 'OK';
-    log.cpu = Game.cpu.getUsed() - cpuStart;
-
-    Game.Visuals.addLog(undefined, log)
+    Game.Visuals.addLog(undefined, {
+        command: 'kernel',
+        status: 'OK',
+        cpu: (Game.cpu.getUsed() - cpuStart),
+    });
 
     Game.Visuals.run();
 };

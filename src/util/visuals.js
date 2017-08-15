@@ -107,7 +107,7 @@ Visuals.prototype.addDefense = function(roomName, args) {
     let lineSpace = 0.2;
     let textStyle = {
         align: 'center',
-        color: '#51d181',
+        color: '#963034',
         font: fontSize,
         opacity: 0.6,
         background: '#222222',
@@ -116,10 +116,10 @@ Visuals.prototype.addDefense = function(roomName, args) {
     };
 
     let output = '** Defense Mode Active **\n' +
-        'Run Time: ' + args.ticks + ' ticks\n';
+        '** Active ' + args.ticks + ' ticks **\n';
 
     if (args.cooldown) {
-        output += 'On Cooldown: ' + args.cooldown;
+        output += '** Cooldown ' + args.cooldown + ' remaining **';
     }
 
     let lines = output.split('\n');
@@ -162,7 +162,8 @@ Visuals.prototype.graphCPU = function() {
     rv.line(size.l, size.t + (size.h * 0.25), size.l + size.w, size.t + (size.h * 0.25), { color: '#8a8a8a', opacity: 0.3, lineStyle: 'dashed', });
     rv.line(size.l, size.t + (size.h * 0.50), size.l + size.w, size.t + (size.h * 0.50), { color: '#8a8a8a', opacity: 0.3, lineStyle: 'dashed', });
     rv.line(size.l, size.t + (size.h * 0.75), size.l + size.w, size.t + (size.h * 0.75), { color: '#8a8a8a', opacity: 0.3, lineStyle: 'dashed', });
-    rv.text("CPU Used Graph - Average " + cpuAvg.toFixed(2) + " - Bucket " + Game.cpu.bucket, size.l, size.t - 0.5, {opacity: 0.6, color: "#51d181", align: "left", size: 0.45, stroke : '#072812', strokeWidth : 0.15, background: "222222" });
+
+    rv.text("CPU Used, Avg: " + cpuAvg.toFixed(2) + ", Bucket: " + Game.cpu.bucket, size.l, size.t - 0.5, {opacity: 0.6, color: "#51d181", align: "left", size: 0.45, stroke : '#072812', strokeWidth : 0.15, background: "222222" });
     rv.text(cpuMax, size.l - 0.3, size.t + 0.2, {color: this.getCpuGraphColor(cpuMax), align: "right", size: 0.45, stroke : '#222222', strokeWidth : 0.15, background: "222222" });
     rv.text(cpuMin + (step * 3), size.l - 0.3, size.t + (size.h - (size.h * 0.75)) + 0.2, {color: this.getCpuGraphColor(cpuMin + (step * 3)), align: "right", size: 0.45, stroke : '#222222', strokeWidth : 0.15, background: "222222" });
     rv.text(cpuMin + (step * 2), size.l - 0.3,  size.t + (size.h - (size.h * 0.5)) + 0.2, {color: this.getCpuGraphColor(cpuMin + (step * 2)), align: "right", size: 0.45, stroke : '#222222', strokeWidth : 0.15, background: "222222" });
