@@ -115,11 +115,11 @@ Visuals.prototype.addDefense = function(roomName, args) {
     let lineSpace = 0.2;
     let textStyle = {
         align: 'center',
-        color: '#963034',
+        color: '#ad0202',
         font: fontSize,
         opacity: 0.6,
         background: '#222222',
-        stroke : '#072812',
+        stroke : '#2b0202',
         strokeWidth : 0.15,
     };
 
