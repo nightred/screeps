@@ -22,12 +22,20 @@ var Kernel = function() {
     Game.Manage         = new Manage;
     Game.Mil            = new Mil;
     Game.Visuals        = new Visuals;
+
+    Game.Visuals.addLog(undefined, {
+        command: 'init',
+        status: 'OK',
+        cpu: Game.cpu.getUsed(),
+    });
 };
 
 Kernel.prototype.run = function() {
-    Game.Visuals.addLog(undefined, { command: 'init', status: 'OK', cpu: Game.cpu.getUsed(), })
-
     let cpuStart = Game.cpu.getUsed();
+
+    Game.Visuals.addLog(undefined, {
+        command: 'kernel run',
+    });
 
     Game.Queue.run();
     Game.Manage.run();

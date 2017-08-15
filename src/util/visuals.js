@@ -62,9 +62,17 @@ Visuals.prototype.printLogs = function() {
     for (let i = 0; i < this.globalLogs.length; i++) {
         let logEntry = this.globalLogs[i];
 
-        gOutput += ' * ' + logEntry.command +
-            ' [ CPU ' + logEntry.cpu.toFixed(2) + ' ]' +
-            '... ' + logEntry.status + '\n';
+        gOutput += ' * ' + logEntry.command;
+
+        if (logEntry.cpu) {
+            gOutput += ' [ CPU ' + logEntry.cpu.toFixed(2) + ' ]';
+        }
+
+        if (logEntry.status) {
+            gOutput += '... ' + logEntry.status + '\n';
+        } else {
+            gOutput += '...\n';
+        }
 
         if (logEntry.output) {
             gOutput += '    - ' + logEntry.output + '\n';

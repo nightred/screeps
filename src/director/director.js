@@ -79,8 +79,8 @@ Director.prototype.run = function() {
         status: 'OK',
         cpu: (Game.cpu.getUsed() - cpuStart),
     };
-    log.output = 'director count: ' + dCount + ' avg cpu: ' +
-        (log.cpu / dCount).toFixed(2);
+    log.output = 'director count: ' + dCount +
+        ' avg cpu: ' + (log.cpu / dCount).toFixed(2);
     Game.Visuals.addLog(undefined, log)
 };
 

@@ -27,8 +27,6 @@ var manageRoom = function() {
 manageRoom.prototype.run = function() {
     let cpuStart = Game.cpu.getUsed();
 
-    let log = { command: 'room managment', };
-
     let rCount = 0;
 
     for (let name in Game.rooms) {
@@ -39,10 +37,13 @@ manageRoom.prototype.run = function() {
         rCount++;
     }
 
-    log.status = 'OK';
-    log.output = 'room count: ' + rCount;
-    log.cpu = Game.cpu.getUsed() - cpuStart;
-
+    let log = {
+        command: 'room managment',
+        status: 'OK',
+        cpu: (Game.cpu.getUsed() - cpuStart),
+    };
+    log.output = 'room count: ' + rCount +
+        ' avg cpu: ' + (log.cpu / rCount).toFixed(2);
     Game.Visuals.addLog(undefined, log)
 };
 
