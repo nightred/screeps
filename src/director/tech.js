@@ -32,9 +32,19 @@ directorTech.prototype.run = function(task) {
 
     if (task.spawnRoom == task.workRoom) {
         this.doSpawn(task);
+
+        let sCount = 0;
+
+        for (let i = 0; i < task.creep.length; i++) {
+            if (Game.creeps[task.creep[i]].isSleep()) {
+                sCount++;
+            }
+        }
+
+        task.output = 'creep count: ' + task.creep.length + ', idle: ' + sCount;
     }
 
-    task.sleep = Game.time + C.DIRECTOR_SLEEP;
+    task.sleep = Game.time + C.DIRECTOR_SLEEP + Math.floor(Math.random() * 8);
 
     return true;
 };

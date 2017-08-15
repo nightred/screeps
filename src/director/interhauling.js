@@ -90,7 +90,7 @@ directorInterHauling.prototype.run = function(task) {
         task.spawnId = Game.Queue.spawn.addRecord(record);
     }
 
-    task.sleep = Game.time + C.DIRECTOR_SLEEP;
+    task.sleep = Game.time + C.DIRECTOR_SLEEP + Math.floor(Math.random() * 8);
 
     return true;
 };

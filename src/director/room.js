@@ -25,7 +25,7 @@ directorRoom.prototype.run = function(task) {
 
     Game.Mil.defense.doRoom(room);
 
-    task.sleep = Game.time + C.DIRECTOR_SLEEP;
+    task.sleep = Game.time + C.DIRECTOR_SLEEP + Math.floor(Math.random() * 8);
 
     return true;
 };

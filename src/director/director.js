@@ -87,21 +87,28 @@ Director.prototype.run = function() {
 Director.prototype.runDirector = function(task) {
     let cpuStart = Game.cpu.getUsed();
 
-    let log = { command: 'director ' + task.director + ' [ ' + task.id + ' ]', };
-
     let status;
 
     if (task.sleep && task.sleep > Game.time) {
         status = 'SLEEP'
     } else {
-        this.directors[task.director].run(task);
-        status = 'OK'
+        let result = this.directors[task.director].run(task);
+
+        if (result) {
+            status = 'OK';
+        } else {
+            status = 'FAILED';
+        }
+        
+        task.cpu = Game.cpu.getUsed() - cpuStart;
     }
 
-    log.status = status;
-    log.cpu = Game.cpu.getUsed() - cpuStart;
-
-    Game.Visuals.addLog(task.workRoom, log)
+    Game.Visuals.addLog(task.workRoom, {
+        command: 'director ' + task.director + ' [ ' + task.id + ' ]',
+        status: status,
+        cpu: task.cpu,
+        output: task.output,
+    })
 }
 
 Director.prototype.addCreep = function(id, creepName) {
