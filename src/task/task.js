@@ -43,6 +43,10 @@ Task.prototype.runTask = function(creep) {
         return false;
     }
 
+    if (!this.tasks[creep.memory.task]) {
+        return false;
+    }
+
     if (creep.getOffExit()) {
         return true;
     }

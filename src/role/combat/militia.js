@@ -53,8 +53,8 @@ var roleCombatMilitia = {
         for (let i = 0; i < moveUnits; i++) {
             body.push(MOVE);
         }
-        for (let i = 0; i < attackUnits; i++) {
-            body.push(ATTACK);
+        for (let i = 0; i < rangedUnits; i++) {
+            body.push(RANGED_ATTACK);
         }
         for (let i = 0; i < attackUnits; i++) {
             body.push(ATTACK);

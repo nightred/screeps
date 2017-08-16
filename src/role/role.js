@@ -21,6 +21,10 @@ Role.prototype.getBody = function(role, energy, args) {
     if (isNaN(energy)) { return ERR_INVALID_ARGS; }
     args = args || {};
 
+    if (!this.roles[role]) {
+        return false;
+    }
+
     return this.roles[role].getBody(energy, args);
 };
 
@@ -31,7 +35,7 @@ Role.prototype.getRole = function(name) {
         return ERR_INVALID_ARGS;
     }
 
-    let role = false;
+    let role = undefined;
     try {
         role = require('role.' + name);
     } catch(e) {

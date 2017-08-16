@@ -44,6 +44,10 @@ Work.prototype.runWork = function(creep) {
         return false;
     }
 
+    if (!this.work[work.task]) {
+        return false;
+    }
+
     if (work.creeps.indexOf(creep.name) == -1) {
         if (work.creeps.length >= work.creepLimit) {
             return false;

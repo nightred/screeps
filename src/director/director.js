@@ -92,14 +92,18 @@ Director.prototype.runDirector = function(task) {
     if (task.sleep && task.sleep > Game.time) {
         status = 'SLEEP'
     } else {
-        let result = this.directors[task.director].run(task);
+        let result = false;
+
+        if (this.directors[task.director]) {
+            result = this.directors[task.director].run(task);
+        }
 
         if (result) {
             status = 'OK';
         } else {
             status = 'FAILED';
         }
-        
+
         task.cpu = Game.cpu.getUsed() - cpuStart;
     }
 

@@ -52,8 +52,10 @@ var taskStock = {
         }
 
 
-        if (creep.memory.idleStart && creep.memory.idleStart == Game.time) {
+        if (creep.isSleep()) {
             creep.memory.activity = undefined;
+
+            creep.doEmpty(['storage',], RESOURCE_ENERGY);
         }
 
         return true;

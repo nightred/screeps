@@ -135,7 +135,7 @@ var taskConstruction = {
             workRoom: args.roomName,
             task: C.WORK_CONSTRUCTION,
             priority: 70,
-            creepLimit: 4,
+            creepLimit: 2,
             targetId: args.targetId,
         };
 

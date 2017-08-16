@@ -46,16 +46,14 @@ var Queue = function() {
 Queue.prototype.run = function() {
     let cpuStart = Game.cpu.getUsed();
 
-    let log = {
-        command: 'queue cleanup',
-    };
-
     this.spawn.gc();
 
-    log.status = 'OK';
-    log.cpu = Game.cpu.getUsed() - cpuStart;
-
-    Game.Visuals.addLog(undefined, log)
+    Game.Visuals.addLog(undefined, {
+        command: 'queue cleanup',
+        status: 'OK',
+        cpu: (Game.cpu.getUsed() - cpuStart),
+        output: 'record count: ' + _.size(this.queue),
+    })
 };
 
 Queue.prototype.getQueue = function(args) {

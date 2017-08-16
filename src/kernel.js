@@ -27,6 +27,7 @@ var Kernel = function() {
         command: 'init',
         status: 'OK',
         cpu: Game.cpu.getUsed(),
+        output: 'memory usage: ' + (JSON.stringify(RawMemory).length / 1024).toFixed(2) + ' KB',
     });
 };
 
