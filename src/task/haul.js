@@ -47,7 +47,7 @@ var taskHaul = {
         if (creep.memory.working) {
             if (creep.pos.isOnRoad()) {
                 let road = creep.pos.getRoad();
-                if (road.hits < road.hitsMax) {
+                if (road.hits < (road.hitsMax - 100)) {
                     creep.repair(road);
                 }
             } else if (creep.pos.isOnConstruction()) {
