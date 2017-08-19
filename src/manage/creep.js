@@ -67,7 +67,7 @@ manageCreep.prototype.run = function() {
     };
     log.output = 'creep count: ' + creepCount + ' avg cpu: ' +
         (log.cpu / creepCount).toFixed(2);
-    Game.Visuals.addLog(undefined, log)
+    addTerminalLog(undefined, log)
 };
 
 manageCreep.prototype.doDespawn = function(creep) {

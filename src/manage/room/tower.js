@@ -27,7 +27,7 @@ Tower.prototype.doRoom = function(room)  {
     log.status = 'OK';
     log.cpu = Game.cpu.getUsed() - cpuStart;
 
-    Game.Visuals.addLog(room.name, log)
+    addTerminalLog(room.name, log)
 };
 
 Tower.prototype.doTower = function(tower) {

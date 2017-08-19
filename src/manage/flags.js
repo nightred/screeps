@@ -42,7 +42,7 @@ Flags.prototype.run = function() {
             break;
 
         case COLOR_ORANGE:
-            Game.Visuals.doFlag(flag);
+            doFlagVisuals(flag);
             break;
         }
     }
@@ -50,7 +50,7 @@ Flags.prototype.run = function() {
     log.status = 'OK';
     log.cpu = Game.cpu.getUsed() - cpuStart;
 
-    Game.Visuals.addLog(undefined, log)
+    addTerminalLog(undefined, log)
 };
 
 Flags.prototype.gc = function() {

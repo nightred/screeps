@@ -48,7 +48,7 @@ Queue.prototype.run = function() {
 
     this.spawn.gc();
 
-    Game.Visuals.addLog(undefined, {
+    addTerminalLog(undefined, {
         command: 'queue cleanup',
         status: 'OK',
         cpu: (Game.cpu.getUsed() - cpuStart),

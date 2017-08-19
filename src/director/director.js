@@ -74,14 +74,13 @@ Director.prototype.run = function() {
         dCount++;
     }
 
-    let log = {
+    addTerminalLog(undefined, {
         command: 'directors',
         status: 'OK',
         cpu: (Game.cpu.getUsed() - cpuStart),
-    };
-    log.output = 'director count: ' + dCount +
-        ' avg cpu: ' + (log.cpu / dCount).toFixed(2);
-    Game.Visuals.addLog(undefined, log)
+        output: 'director count: ' + dCount +
+            ' avg cpu: ' + (this.cpu / dCount).toFixed(2),
+    })
 };
 
 Director.prototype.runDirector = function(task) {
@@ -107,7 +106,7 @@ Director.prototype.runDirector = function(task) {
         task.cpu = Game.cpu.getUsed() - cpuStart;
     }
 
-    Game.Visuals.addLog(task.workRoom, {
+    addTerminalLog(task.workRoom, {
         command: 'director ' + task.director + ' [ ' + task.id + ' ]',
         status: status,
         cpu: task.cpu,

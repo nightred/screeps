@@ -19,7 +19,8 @@ var Role            = require('role.role');
 var Task            = require('task.task');
 var Work            = require('work.work');
 var Mil             = require('mil.mil');
-var Visuals         = require('util.visuals');
+
+require('util.visuals');
 
 var Logger = require('util.logger');
 
@@ -36,9 +37,10 @@ module.exports.loop = function () {
     Game.Work           = new Work;
     Game.Manage         = new Manage;
     Game.Mil            = new Mil;
-    Game.Visuals        = new Visuals;
 
-    Game.Visuals.addLog(undefined, {
+    resetVisuals();
+
+    addTerminalLog(undefined, {
         command: 'init',
         status: 'OK',
         cpu: Game.cpu.getUsed(),
@@ -46,7 +48,7 @@ module.exports.loop = function () {
     });
 
 
-    Game.Visuals.addLog(undefined, {
+    addTerminalLog(undefined, {
         command: 'starting main',
     });
 
@@ -55,12 +57,12 @@ module.exports.loop = function () {
     Game.Director.run();
     Game.Mil.run();
 
-    Game.Visuals.addLog(undefined, {
+    addTerminalLog(undefined, {
         command: 'main',
         status: 'OK',
         cpu: (Game.cpu.getUsed() - cpuStart),
     });
 
-    Game.Visuals.run();
+    runVisuals();
 
 }

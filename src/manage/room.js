@@ -44,7 +44,7 @@ manageRoom.prototype.run = function() {
     };
     log.output = 'room count: ' + rCount +
         ' avg cpu: ' + (log.cpu / rCount).toFixed(2);
-    Game.Visuals.addLog(undefined, log)
+    addTerminalLog(undefined, log)
 };
 
 manageRoom.prototype.runRoom = function(room) {
@@ -75,13 +75,13 @@ manageRoom.prototype.runRoom = function(room) {
             args.cooldown = (defense.cooldown + C.DEFENSE_COOLDOWN) - Game.time;
         }
 
-        Game.Visuals.addDefense(room.name, args);
+        addDefenseVisual(room.name, args);
     }
 
     log.status = 'OK';
     log.cpu = Game.cpu.getUsed() - cpuStart;
 
-    Game.Visuals.addLog(room.name, log)
+    addTerminalLog(room.name, log)
 };
 
 manageRoom.prototype.gcContainers = function(room) {

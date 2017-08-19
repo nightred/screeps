@@ -33,7 +33,7 @@ Mil.prototype.run = function() {
     log.status = 'OK';
     log.cpu = Game.cpu.getUsed() - cpuStart;
 
-    Game.Visuals.addLog(undefined, log)
+    addTerminalLog(undefined, log)
 };
 
 Mil.prototype.doSquads = function() {

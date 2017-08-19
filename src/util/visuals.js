@@ -13,27 +13,32 @@ var Visuals = function() {
     this.globalLogs = [];
 };
 
+Visuals.prototype.doReset = function() {
+    this.consoleRooms = [];
+    this.roomLogs = {};
+    this.globalLogs = [];
+};
+
 Visuals.prototype.run = function() {
     this.logCPU();
     this.visuals();
 };
 
-Visuals.prototype.addLog = function(roomName, result) {
-    if (roomName) {
-        if (!this.roomLogs[roomName]) {
-            this.roomLogs[roomName] = [];
-        }
+Visuals.prototype.logCPU = function() {
+    this.memory.cpugraphdata.push(Game.cpu.getUsed());
 
-        this.roomLogs[roomName].push(result);
-    } else {
-        this.globalLogs.push(result);
+    if ( this.memory.cpugraphdata.length > 50 ) {
+        this.memory.cpugraphdata.shift();
     }
 };
 
-Visuals.prototype.doFlag = function(flag) {
-    if (!this.consoleRooms[flag.pos.roomName]) {
-        this.consoleRooms.push(flag.pos.roomName);
+Visuals.prototype.visuals = function() {
+    if (!C.VISUALS) {
+        return true;
     }
+
+    this.graphCPU();
+    this.printLogs();
 };
 
 Visuals.prototype.printLogs = function() {
@@ -107,53 +112,6 @@ Visuals.prototype.printLogs = function() {
 
 };
 
-Visuals.prototype.addDefense = function(roomName, args) {
-    let rv = new RoomVisual(roomName);
-
-    let size = {t: 4, l: 25, };
-    let fontSize = 0.8;
-    let lineSpace = 0.2;
-    let textStyle = {
-        align: 'center',
-        color: '#ad0202',
-        font: fontSize,
-        opacity: 0.6,
-        background: '#222222',
-        stroke : '#2b0202',
-        strokeWidth : 0.15,
-    };
-
-    let output = '** Defense Mode Active **\n' +
-        '** Active ' + args.ticks + ' ticks **\n';
-
-    if (args.cooldown) {
-        output += '** Cooldown ' + args.cooldown + ' remaining **';
-    }
-
-    let lines = output.split('\n');
-
-    for (let l = 0; l < lines.length; l++) {
-        rv.text(lines[l], size.l, size.t + (l * (fontSize + lineSpace)), textStyle);
-    }
-};
-
-Visuals.prototype.logCPU = function() {
-    this.memory.cpugraphdata.push(Game.cpu.getUsed());
-
-    if ( this.memory.cpugraphdata.length > 50 ) {
-        this.memory.cpugraphdata.shift();
-    }
-};
-
-Visuals.prototype.visuals = function() {
-    if (!C.VISUALS) {
-        return true;
-    }
-
-    this.graphCPU();
-    this.printLogs();
-};
-
 Visuals.prototype.graphCPU = function() {
     let cpuMax = Math.floor(Math.max.apply(null, this.memory.cpugraphdata) + 2);
     let cpuMin = Math.floor(Math.min.apply(null, this.memory.cpugraphdata) - 2);
@@ -208,4 +166,79 @@ Visuals.prototype.getCpuGraphColor = function(num) {
     return color;
 };
 
-module.exports = Visuals;
+Visuals.prototype.addTerminalLog = function(roomName, result) {
+    if (roomName) {
+        if (!this.roomLogs[roomName]) {
+            this.roomLogs[roomName] = [];
+        }
+
+        this.roomLogs[roomName].push(result);
+    } else {
+        this.globalLogs.push(result);
+    }
+};
+
+Visuals.prototype.addDefenseVisual = function(roomName, args) {
+    let rv = new RoomVisual(roomName);
+
+    let size = {t: 4, l: 25, };
+    let fontSize = 0.8;
+    let lineSpace = 0.2;
+    let textStyle = {
+        align: 'center',
+        color: '#ad0202',
+        font: fontSize,
+        opacity: 0.6,
+        background: '#222222',
+        stroke : '#2b0202',
+        strokeWidth : 0.15,
+    };
+
+    let output = '** Defense Mode Active **\n' +
+        '** Active ' + args.ticks + ' ticks **\n';
+
+    if (args.cooldown) {
+        output += '** Cooldown ' + args.cooldown + ' remaining **';
+    }
+
+    let lines = output.split('\n');
+
+    for (let l = 0; l < lines.length; l++) {
+        rv.text(lines[l], size.l, size.t + (l * (fontSize + lineSpace)), textStyle);
+    }
+};
+
+Visuals.prototype.doFlag = function(flag) {
+    if (!this.consoleRooms[flag.pos.roomName]) {
+        this.consoleRooms.push(flag.pos.roomName);
+    }
+};
+
+let visuals = new Visuals();
+
+global.addTerminalLog = function(roomName, args) {
+    visuals.addTerminalLog(roomName, args);
+    return true;
+};
+
+global.addDefenseVisual = function(roomName, args) {
+    visuals.addDefenseVisual(roomName, args);
+    return true;
+};
+
+global.doFlagVisuals = function(flag) {
+    visuals.doFlag(flag);
+    return true;
+};
+
+global.runVisuals = function() {
+    visuals.run();
+    return true;
+};
+
+global.resetVisuals = function() {
+    visuals = new Visuals();
+    return true;
+}
+
+//module.exports = Visuals;
