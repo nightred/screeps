@@ -12,7 +12,7 @@ var Loader = function() {
 };
 
 Loader.prototype.run = function() {
-    logger.debug(`TICKED ${Game.time} loader`);
+    // loader
 };
 
 registerProcess('loader', Loader);
