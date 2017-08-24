@@ -171,7 +171,7 @@ Kernel.prototype.getProcessByPid = function(pid) {
 };
 
 var getPID = function() {
-    return Math.random().toString(32).slice(2) + '_P_' + Game.time.toString(32);
+    return 'P_' + Math.random().toString(32).slice(2) + Game.time.toString(32);
 };
 
 module.exports = Kernel;
