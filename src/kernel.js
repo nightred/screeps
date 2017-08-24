@@ -70,10 +70,10 @@ Kernel.prototype.run = function() {
 
     if (pids.length === 0) {
         let p = this.startProcess(undefined, 'loader', {});
-        if (p) pids.push(p.id.toString());
+        if (p) pids.push(pid.toString());
     }
 
-    for (let i =0; i < pids.length; i++) {
+    for (let i = 0; i < pids.length; i++) {
         let pid = pids[i];
 
         let procInfo = this.processTable[pid];
