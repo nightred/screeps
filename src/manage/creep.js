@@ -7,7 +7,7 @@
 var Logger = require('util.logger');
 
 var logger = new Logger('[Manage Creeps]');
-logger.level = C.LOGLEVEL.DEBUG;
+logger.level = C.LOGLEVEL.INFO;
 
 var manageCreep = function() {
     Memory.world = Memory.world || {};
