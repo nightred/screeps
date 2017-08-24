@@ -16,7 +16,7 @@ global.logger       = new (require('util.logger'));
 var Kernel = require('kernel');
 
 // load processes
-require('processes.processlist');
+require('processes.registry');
 
 // modules
 var Director        = require('director.director');

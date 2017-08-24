@@ -12,7 +12,9 @@ var Loader = function() {
 };
 
 Loader.prototype.run = function() {
-    // loader
+
 };
 
-registerProcess('loader', Loader);
+
+
+registerProcess('loader/init', Loader);

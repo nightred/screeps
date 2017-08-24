@@ -69,7 +69,7 @@ Kernel.prototype.run = function() {
     let pids = Object.keys(this.processTable);
 
     if (pids.length === 0) {
-        let p = this.startProcess(undefined, 'loader', {});
+        let p = this.startProcess(undefined, 'loader/init', {});
         if (p) pids.push(pid.toString());
     }
 
