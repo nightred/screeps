@@ -10,7 +10,6 @@ require('prototype.prototype');
 global.C            = require('constants');
 global.cli          = require('util.cli');
 global.utils        = new (require('util.utils'));
-global.logger       = new (require('util.logger'));
 
 // load kernel
 var Kernel = require('kernel');
@@ -28,6 +27,7 @@ var Work            = require('work.work');
 var Mil             = require('mil.mil');
 
 require('util.visuals');
+require('util.storage');
 
 // init the logger
 var Logger = require('util.logger');

@@ -7,7 +7,7 @@
 
 var Logger = require('util.logger');
 
-var logger = new Logger('[Spawn]');
+var logger = new Logger('[Spawn Manager]');
 logger.level = C.LOGLEVEL.DEBUG;
 
 var Spawn = function() {
@@ -17,27 +17,24 @@ var Spawn = function() {
 /**
 * @param {Room} room The room
 **/
-Spawn.prototype.doRoom = function(room) {
+Spawn.prototype.run = function() {
     let cpuStart = Game.cpu.getUsed();
 
-    let log = { command: 'spawn', };
+    let room = Game.rooms[this.memory.roomName];
 
-    let spawns = room.getSpawns();
+    if (room) {
+        let spawns = room.getSpawns();
 
-    if (spawns.length <= 0) {
-        return true;
+        for (let i = 0; i < spawns.length; i++) {
+            this.doSpawn(spawns[i], room);
+        }
     }
 
-    for (let s = 0; s < spawns.length; s++) {
-        let spawn = spawns[s];
-
-        this.doSpawn(spawn, room);
-    }
-
-    log.status = 'OK';
-    log.cpu = Game.cpu.getUsed() - cpuStart;
-
-    addTerminalLog(room.name, log)
+    addTerminalLog(room.name, {
+        command: 'spawn',
+        status: 'OK',
+        cpu: (Game.cpu.getUsed() - cpuStart),
+    })
 }
 
 /**
@@ -115,14 +112,14 @@ Spawn.prototype.doSpawn = function(spawn, room) {
 
         let body = Game.Role.getBody(records[r].role, spawnEnergy, args);
 
-        if (this.getBodyCost(body) > energy) {
+        if (getBodyCost(body) > energy) {
             continue;
         }
 
-        let name = this.doSpawnCreep(spawn, body, args);
+        let name = doSpawnCreep(spawn, body, args);
 
         if (name != undefined && !(name < 0)) {
-            energy -= this.getBodyCost(body);
+            energy -= getBodyCost(body);
             records[r].spawned = true;
             records[r].name = name;
 
@@ -149,11 +146,11 @@ Spawn.prototype.doSpawn = function(spawn, room) {
 * @param {array} body The creep body
 * @param {Object} args Extra arguments
 **/
-Spawn.prototype.doSpawnCreep = function(spawn, body, args) {
+var doSpawnCreep = function(spawn, body, args) {
     if (!spawn) { return ERR_INVALID_ARGS; }
     if (!Array.isArray(body) || body.length < 1) { return ERR_INVALID_ARGS; }
 
-    let name = this.getName(args.role);
+    let name = getName(args.role);
 
     return spawn.createCreep(body, name, args);
 };
@@ -162,7 +159,7 @@ Spawn.prototype.doSpawnCreep = function(spawn, body, args) {
 * get a body for the creep
 * @param {array} body The creep body
 **/
-Spawn.prototype.getBodyCost = function(body) {
+var getBodyCost = function(body) {
     if (!Array.isArray(body)) { return ERR_INVALID_ARGS; }
 
     let cost = 0;
@@ -173,7 +170,7 @@ Spawn.prototype.getBodyCost = function(body) {
     return cost;
 };
 
-Spawn.prototype.getName = function(role) {
+var getName = function(role) {
     let name = role.replace(/\./g, '_');
 
     name += '_' + Math.random().toString(36).substr(2, 1);
@@ -182,4 +179,4 @@ Spawn.prototype.getName = function(role) {
     return name;
 };
 
-module.exports = Spawn;
+registerProcess('managers/spawn', Spawn);

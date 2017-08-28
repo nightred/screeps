@@ -1,27 +1,25 @@
 /*
- * flags system
+ * flag service
  *
- * flags provides interaction controls
+ * provides interaction controls through flags
  *
  */
 
 var Logger = require('util.logger');
 
-var logger = new Logger('[Manage Flags]');
+var logger = new Logger('[Service Flag]');
 logger.level = C.LOGLEVEL.DEBUG;
 
-var Flags = function() {
+var Flag = function() {
     // init
     Memory.flags = Memory.flags || {}
     this.memory = Memory.flags;
 };
 
-Flags.prototype.run = function() {
+Flag.prototype.run = function() {
 	if (Game.cpu.bucket < C.CPU_MIN_BUCKET_FLAGS) { return true; }
 
     let cpuStart = Game.cpu.getUsed();
-
-    let log = { command: 'flag managment', };
 
     this.gc();
 
@@ -47,13 +45,14 @@ Flags.prototype.run = function() {
         }
     }
 
-    log.status = 'OK';
-    log.cpu = Game.cpu.getUsed() - cpuStart;
-
-    addTerminalLog(undefined, log)
+    addTerminalLog(undefined, {
+        command: 'service flag',
+        status: 'OK'
+        cpu: (Game.cpu.getUsed() - cpuStart),
+    })
 };
 
-Flags.prototype.gc = function() {
+Flag.prototype.gc = function() {
     for(let name in Memory.flags) {
         if(!Game.flags[name]) {
             if (Memory.flags[name].workId) {
@@ -69,4 +68,4 @@ Flags.prototype.gc = function() {
     return true;
 };
 
-module.exports = Flags;
+registerProcess('services/flag', Flag);

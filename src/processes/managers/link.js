@@ -7,22 +7,34 @@
 
 var Logger = require('util.logger');
 
-var logger = new Logger('[Manage Link]');
+var logger = new Logger('[Link Manager]');
 logger.level = C.LOGLEVEL.DEBUG;
 
 var Link = function() {
     // init
 };
 
-Link.prototype.doRoom = function(room) {
+Link.prototype.run = function(room) {
     let cpuStart = Game.cpu.getUsed();
 
-    let log = { command: 'links', };
+    let room = Game.rooms[this.memory.roomName];
 
+    if (room) {
+        this.doLinks(room);
+    }
+
+    addTerminalLog(room.name, {
+        command: 'links',
+        status: 'OK',
+        cpu: (Game.cpu.getUsed() - cpuStart),
+    });
+};
+
+Link.prototype.doLinks = function(room) {
     let links = room.getLinks();
 
     if (links.length <= 0) {
-        return true;
+        return flase;
     }
 
     let linksStorage = _.filter(links, structure => structure.memory.type == 'storage');
@@ -30,7 +42,7 @@ Link.prototype.doRoom = function(room) {
 
     if (linksStorage.length <= 0) {
         if (!room.storage) {
-            return true;
+            return false;
         }
 
         linkStorage = Game.getObjectById(room.storage.getLinkAtRange(2));
@@ -39,7 +51,7 @@ Link.prototype.doRoom = function(room) {
     }
 
     if (!linkStorage) {
-        return true;
+        return false;
     }
 
     if (linksStorage.length > 1) {
@@ -68,10 +80,7 @@ Link.prototype.doRoom = function(room) {
         }
     }
 
-    log.status = 'OK';
-    log.cpu = Game.cpu.getUsed() - cpuStart;
-
-    addTerminalLog(room.name, log)
+    return true;
 };
 
 Link.prototype.setType = function(id, type) {
@@ -84,7 +93,6 @@ Link.prototype.setType = function(id, type) {
     link.memory.type = type;
 
     return true;
-}
+};
 
-
-module.exports = Link;
+registerProcess('managers/link', Link);

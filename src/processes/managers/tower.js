@@ -7,27 +7,32 @@
 
 var Tower = function() {
     this.tick = this.tick || 0;
+    this.rooms = {};
+};
+
+Tower.prototype.run = function()  {
+    let cpuStart = Game.cpu.getUsed();
+
     if (this.tick < Game.time) {
         this.rooms = {};
         this.tick = Game.time;
     }
-};
 
-Tower.prototype.doRoom = function(room)  {
-    let cpuStart = Game.cpu.getUsed();
+    let room = Game.rooms[this.memory.roomName];
 
-    let log = { command: 'towers', };
+    if (room) {
+        let towers = room.getTowers();
 
-    let towers = room.getTowers();
-
-    if (towers.length > 0) {
-        towers.forEach((tower) => this.doTower(tower));
+        if (towers.length > 0) {
+            towers.forEach((tower) => this.doTower(tower));
+        }
     }
 
-    log.status = 'OK';
-    log.cpu = Game.cpu.getUsed() - cpuStart;
-
-    addTerminalLog(room.name, log)
+    addTerminalLog(room.name, {
+        command: 'towers',
+        status: 'OK',
+        cpu: (Game.cpu.getUsed() - cpuStart),
+    });
 };
 
 Tower.prototype.doTower = function(tower) {
@@ -156,4 +161,4 @@ Tower.prototype.buildCache = function(roomName) {
     return true;
 };
 
-module.exports = Tower;
+registerProcess('managers/tower', Tower);
