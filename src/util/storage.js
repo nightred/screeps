@@ -70,7 +70,7 @@ Storage.prototype.getStore = function(creep, amount, types) {
 
         target = creep.pos.findClosestByRange(targets);
 
-        return Game.getObjectById(target.id);
+        return target;
     }
 
     return false;
@@ -127,7 +127,7 @@ Storage.prototype.getWithdraw = function(creep, amount, types) {
 
         target = creep.pos.findClosestByRange(targets);
 
-        return Game.getObjectById(target);
+        return target;
     }
 
     return false;
