@@ -3,8 +3,5 @@
  *
  */
 
-var Utils = function() {
-
-};
-
-module.exports = Utils;
+require('util.visuals');
+require('util.storage');
