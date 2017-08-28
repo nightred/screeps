@@ -3,13 +3,21 @@
  *
  */
 
-// prototypes
-require('prototype.prototype');
-
 // global methods
 global.C            = require('constants');
 global.cli          = require('util.cli');
-global.utils        = new (require('util.utils'));
+
+// init the logger
+var Logger = require('util.logger');
+
+var logger = new Logger('[Main]');
+logger.level = C.LOGLEVEL.DEBUG;
+
+// prototypes
+require('prototype.prototype');
+
+// load utils
+require('util.utils');
 
 // load kernel
 var Kernel = require('kernel');
@@ -26,15 +34,6 @@ var Task            = require('task.task');
 var Work            = require('work.work');
 var Mil             = require('mil.mil');
 
-require('util.visuals');
-require('util.storage');
-
-// init the logger
-var Logger = require('util.logger');
-
-var logger = new Logger('[Main]');
-logger.level = C.LOGLEVEL.DEBUG;
-
 module.exports.loop = function () {
     let cpuStart = Game.cpu.getUsed();
 
@@ -50,7 +49,7 @@ module.exports.loop = function () {
     Game.Manage         = new Manage;
     Game.Mil            = new Mil;
 
-    resetVisuals();
+    resetOnTick();
 
     addTerminalLog(undefined, {
         command: 'init',
@@ -80,4 +79,8 @@ module.exports.loop = function () {
 
     runVisuals();
 
-}
+};
+
+var resetOnTick = function() {
+    resetVisuals();
+};

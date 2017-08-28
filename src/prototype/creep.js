@@ -272,9 +272,9 @@ Creep.prototype.getEmptyTarget = function(types, resourceSum) {
     if (!Array.isArray(types)) { return ERR_INVALID_ARGS; }
     if (isNaN(resourceSum)) { return ERR_INVALID_ARGS; }
 
-    let targetId = Game.Manage.room.storage.getStore(this, resourceSum, types);
-    if (targetId) {
-        this.setGoingTo(targetId);
+    let target = getStorageStore(this, resourceSum, types);
+    if (target) {
+        this.setGoingTo(target);
         return true;
     }
 
@@ -313,9 +313,10 @@ Creep.prototype.doFill = function(types, resourceType) {
 Creep.prototype.getFillTarget = function(types) {
     if (!Array.isArray(types)) { return ERR_INVALID_ARGS; }
 
-    let targetId = Game.Manage.room.storage.getWithdraw(this, (this.carryCapacity - _.sum(this.carry)), types);
-    if (targetId) {
-        this.setGoingTo(targetId);
+    let target = getStorageWithdraw(this, (this.carryCapacity - _.sum(this.carry)), types);
+
+    if (target) {
+        this.setGoingTo(target);
         return true;
     }
 

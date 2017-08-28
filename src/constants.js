@@ -48,7 +48,7 @@ Constant.CONTROLLER_RESERVE_MIN         = 1000;
 Constant.FIND_WAIT_TICKS                = 8;
 Constant.MANAGE_WAIT_TICKS              = 10;
 Constant.MANAGE_MEMORY_TICKS            = 20;
-Constant.TOWER_REPAIR_TICKS             = 5;
+Constant.TOWER_REPAIR_TICKS             = 4;
 Constant.REPORT_TICKS                   = 500;
 
 Constant.DEFENSE_SLEEP                  = 8;
