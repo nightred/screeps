@@ -136,8 +136,6 @@ Kernel.prototype.createProcess = function(pid) {
 
     let self = this;
 
-    this.processCache[pid] = process;
-
     Object.defineProperties(process, {
         pid: {
             writable: false,
@@ -162,6 +160,8 @@ Kernel.prototype.createProcess = function(pid) {
             },
         },
     });
+
+    this.processCache[pid] = process;
 
     return process;
 };

@@ -38,7 +38,7 @@ module.exports.loop = function () {
     let cpuStart = Game.cpu.getUsed();
 
     // init the kernel
-    Game.Kernel = new Kernel;
+    Game.Kernel         = new Kernel;
 
     // hook modules
     Game.Director       = new Director;
