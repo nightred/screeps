@@ -75,7 +75,7 @@ directorInterHauling.prototype.run = function(task) {
     if (task.creep.length < creepLimit && !task.spawnId) {
         let record = {
             rooms: [ task.spawnRoom, ],
-            role: C.HAULER,
+            role: C.ROLE_HAULER,
             priority: 66,
             directorId: task.id,
             minSize: minSize,

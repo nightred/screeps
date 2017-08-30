@@ -48,7 +48,7 @@ directorSource.prototype.run = function(task) {
     if (task.creep.length < creepLimit && !task.spawnId) {
         let record = {
             rooms: [ task.spawnRoom, ],
-            role: C.MINER,
+            role: C.ROLE_MINER,
             priority: 50,
             directorId: task.id,
             creepArgs: {

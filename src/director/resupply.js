@@ -67,7 +67,7 @@ directorResupply.prototype.run = function(task) {
     if (task.creep.length < creepLimit && !task.spawnId) {
         let record = {
             rooms: [ task.spawnRoom, ],
-            role: C.RESUPPLY,
+            role: C.ROLE_RESUPPLY,
             priority: 10,
             directorId: task.id,
             minSize: minSize,

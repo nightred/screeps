@@ -90,35 +90,35 @@ Constant.WORK_FIND_SLEEP                = 12;
 
 Constant.DIRECTOR_SLEEP                 = 12;
 
-Constant.MINER                          = 'miner';
-Constant.HARVESTER                      = 'harvester';
-Constant.UPGRADER                       = 'upgrader';
-Constant.TECH                           = 'tech';
-Constant.FIELDTECH                      = 'fieldtech';
-Constant.HAULER                         = 'hauler';
-Constant.RESUPPLY                       = 'resupply';
-Constant.STOCKER                        = 'stocker';
-Constant.SCOUT                          = 'scout';
-Constant.CONTROLLER                     = 'controller';
-Constant.COMBAT_BRAWLER                 = 'combat.brawler';
-Constant.COMBAT_SWARMER                 = 'combat.swarmer';
-Constant.COMBAT_MEDIC                   = 'combat.medic';
-Constant.COMBAT_MILITIA                 = 'combat.militia';
+Constant.ROLE_MINER                     = 'miner';
+Constant.ROLE_HARVESTER                 = 'harvester';
+Constant.ROLE_UPGRADER                  = 'upgrader';
+Constant.ROLE_TECH                      = 'tech';
+Constant.ROLE_FIELDTECH                 = 'fieldtech';
+Constant.ROLE_HAULER                    = 'hauler';
+Constant.ROLE_RESUPPLY                  = 'resupply';
+Constant.ROLE_STOCKER                   = 'stocker';
+Constant.ROLE_SCOUT                     = 'scout';
+Constant.ROLE_CONTROLLER                = 'controller';
+Constant.ROLE_COMBAT_BRAWLER            = 'combatbrawler';
+Constant.ROLE_COMBAT_SWARMER            = 'combatswarmer';
+Constant.ROLE_COMBAT_MEDIC              = 'combatmedic';
+Constant.ROLE_COMBAT_MILITIA            = 'combatmilitia';
 
 Constant.ROLE_TYPES = [
-    Constant.MINER,
-    Constant.UPGRADER,
-    Constant.TECH,
-    Constant.FIELDTECH,
-    Constant.HAULER,
-    Constant.RESUPPLY,
-    Constant.STOCKER,
-    Constant.SCOUT,
-    Constant.CONTROLLER,
-    Constant.COMBAT_BRAWLER,
-    Constant.COMBAT_SWARMER,
-    Constant.COMBAT_MEDIC,
-    Constant.COMBAT_MILITIA,
+    Constant.ROLE_MINER,
+    Constant.ROLE_UPGRADER,
+    Constant.ROLE_TECH,
+    Constant.ROLE_FIELDTECH,
+    Constant.ROLE_HAULER,
+    Constant.ROLE_RESUPPLY,
+    Constant.ROLE_STOCKER,
+    Constant.ROLE_SCOUT,
+    Constant.ROLE_CONTROLLER,
+    Constant.ROLE_COMBAT_BRAWLER,
+    Constant.ROLE_COMBAT_SWARMER,
+    Constant.ROLE_COMBAT_MEDIC,
+    Constant.ROLE_COMBAT_MILITIA,
 ];
 
 Constant.DIRECTOR_ROOM                  = 'room';
@@ -156,16 +156,16 @@ Constant.DIRECTOR_FLAG_TYPES = [
     Constant.DIRECTOR_RESERVE,
 ];
 
-Constant.TASK_SOURCE                    = 'source';
-Constant.TASK_RESUPPLY                  = 'resupply';
-Constant.TASK_UPGRADE                   = 'upgrade';
-Constant.TASK_HAUL                      = 'haul';
-Constant.TASK_STOCK                     = 'stock';
-Constant.TASK_TECH                      = 'tech';
-Constant.TASK_FIELDTECH                 = 'fieldtech';
-Constant.TASK_RESERVE                   = 'reserve';
-Constant.TASK_MILITIA                   = 'militia';
-Constant.TASK_DISMANTLE                 = 'dismantle';
+Constant.TASK_SOURCE                    = 'task/source';
+Constant.TASK_RESUPPLY                  = 'task/resupply';
+Constant.TASK_UPGRADE                   = 'task/upgrade';
+Constant.TASK_HAUL                      = 'task/haul';
+Constant.TASK_STOCK                     = 'task/stock';
+Constant.TASK_TECH                      = 'task/tech';
+Constant.TASK_FIELDTECH                 = 'task/fieldtech';
+Constant.TASK_RESERVE                   = 'task/reserve';
+Constant.TASK_MILITIA                   = 'task/militia';
+Constant.TASK_DISMANTLE                 = 'task/dismantle';
 
 Constant.TASK_TYPES = [
     Constant.TASK_SOURCE,
@@ -180,8 +180,8 @@ Constant.TASK_TYPES = [
     Constant.TASK_DISMANTLE,
 ];
 
-Constant.WORK_TOWER_REFILL              = 'tower.fill';
-Constant.WORK_TERMINAL_EMPTY            = 'terminal.empty';
+Constant.WORK_TOWER_REFILL              = 'towerfill';
+Constant.WORK_TERMINAL_EMPTY            = 'terminalempty';
 Constant.WORK_REPAIR                    = 'repair';
 Constant.WORK_CONSTRUCTION              = 'construction';
 Constant.WORK_SIGNCONTROLLER            = 'signcontroller';

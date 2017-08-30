@@ -54,7 +54,7 @@ directorReserve.prototype.run = function(task) {
     if (task.creep.length < creepLimit && !task.spawnId) {
         let record = {
             rooms: [ task.spawnRoom, ],
-            role: C.CONTROLLER,
+            role: C.ROLE_CONTROLLER,
             priority: 70,
             directorId: task.id,
             creepArgs: {

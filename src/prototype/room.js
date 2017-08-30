@@ -159,12 +159,6 @@ Room.prototype.getHarvestTarget = function() {
     return false;
 };
 
-Room.prototype.getDespawnContainer = function() {
-    this.memory.deSpawnContainerId = this.memory.deSpawnContainerId || false;
-
-    return this.memory.deSpawnContainerId;
-};
-
 Room.prototype.getSpawn = function() {
     if (!this.memory.spawnId || this.memory.spawnId == undefined) {
         this.findSpawn();
@@ -240,6 +234,6 @@ Room.prototype.isInCoverage = function(roomName) {
 
 Room.prototype.countCoverage = function() {
     this.memory.roomCoverage = this.memory.roomCoverage || [];
-    
+
     return this.memory.roomCoverage.length;
 };

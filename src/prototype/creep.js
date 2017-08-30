@@ -76,8 +76,8 @@ Creep.prototype.sleep = function() {
 
 Creep.prototype.isDespawnWarning = function() {
     if (this.memory.despawn) { return true; }
-    if (this.memory.role == C.CONTROLLER ||
-        this.memory.role == C.SCOUT) {
+    if (this.memory.role == C.ROLE_CONTROLLER ||
+        this.memory.role == C.ROLE_SCOUT) {
         return false;
     }
 
@@ -90,6 +90,11 @@ Creep.prototype.setDespawn = function() {
 
     this.leaveWork();
 
+    if (this.process) {
+        let p = this.process;
+        Game.kernel.killProcess(p.pid);
+    }
+
     return true;
 }
 
@@ -99,7 +104,7 @@ Creep.prototype.hasWork = function() {
 
 Creep.prototype.leaveWork = function() {
     if (this.memory.workId) {
-        Game.Work.removeCreep(this.name, this.memory.workId);
+        workRemoveCreep(this.name, this.memory.workId);
         this.memory.workId = undefined;
     }
 
@@ -121,7 +126,7 @@ Creep.prototype.getWork = function(workTasks, args) {
         }
     }
 
-    let workId = Game.Work.getWork(workTasks, this, args);
+    let workId = getWorkTask(workTasks, this, args);
 
     if (!workId) {
         return false;
@@ -133,7 +138,7 @@ Creep.prototype.getWork = function(workTasks, args) {
 }
 
 Creep.prototype.doWork = function() {
-    if (!Game.Work.runWork(this)) {
+    if (!doWorkTask(this)) {
         this.leaveWork();
     }
 
@@ -148,6 +153,16 @@ Creep.prototype.removeWork = function() {
 
     return true;
 }
+
+Object.defineProperty(Creep.prototype, 'process', {
+    get: function() {
+        if (!this.memory.pid) return false;
+        return Game.kernel.getProcessByPid(this.memory.pid);
+    },
+    set: function(value) {
+        this.memory.pid = value.pid;
+    },
+});
 
 Creep.prototype.doTransfer = function(target, resourceType) {
     if (!target) {
@@ -167,11 +182,11 @@ Creep.prototype.doTransfer = function(target, resourceType) {
             ignoreCreeps: true,
         };
 
-        if (this.memory.role == C.RESUPPLY) {
+        if (this.memory.role == C.ROLE_RESUPPLY) {
             args.ignoreCreeps = false;
         }
 
-        if (this.memory.role == C.STOCKER) {
+        if (this.memory.role == C.ROLE_STOCKER) {
             args.ignoreRoads = true;
         }
 
@@ -212,11 +227,11 @@ Creep.prototype.doWithdraw = function(target, resourceType) {
             ignoreCreeps: true,
         };
 
-        if (this.memory.role == C.RESUPPLY) {
+        if (this.memory.role == C.ROLE_RESUPPLY) {
             args.ignoreCreeps = false;
         }
 
-        if (this.memory.role == C.STOCKER) {
+        if (this.memory.role == C.ROLE_STOCKER) {
             args.ignoreRoads = true;
         }
 
@@ -321,7 +336,7 @@ Creep.prototype.getFillTarget = function(types) {
     }
 
     if (this.room.name != this.memory.spawnRoom &&
-        (this.memory.role != C.HAULER && this.memory.style != 'longhauler')) {
+        (this.memory.role != C.ROLE_HAULER && this.memory.style != 'longhauler')) {
         this.moveToRoom(this.memory.spawnRoom);
         return true;
     }

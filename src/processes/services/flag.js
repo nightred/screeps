@@ -32,7 +32,7 @@ Flag.prototype.run = function() {
             break;
 
         case COLOR_GREEN:
-            Game.Work.doFlag(flag);
+            doFlagWork(flag);
             break;
 
         case COLOR_YELLOW:

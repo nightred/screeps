@@ -64,7 +64,7 @@ Defense.prototype.spawnMilitia = function(room) {
     // spawn brawlers for the militia
     let count = _.filter(Game.creeps, creep =>
         creep.memory.spawnRoom == room.name &&
-        creep.memory.role == C.COMBAT_MILITIA &&
+        creep.memory.role == C.ROLE_COMBAT_MILITIA &&
         creep.memory.squad == 'militia' &&
         creep.memory.despawn != true
         ).length;
@@ -77,7 +77,7 @@ Defense.prototype.spawnMilitia = function(room) {
         if (!defense.spawnJob) {
             let record = {
                 rooms: [ room.name, ],
-                role: C.COMBAT_MILITIA,
+                role: C.ROLE_COMBAT_MILITIA,
                 priority: 38,
                 creepArgs: {
                     squad: 'militia',

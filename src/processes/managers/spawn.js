@@ -110,7 +110,7 @@ Spawn.prototype.doSpawn = function(spawn, room) {
             };
         }
 
-        let body = Game.Role.getBody(records[r].role, spawnEnergy, args);
+        let body = getRoleBody(records[r].role, spawnEnergy, args);
 
         if (getBodyCost(body) > energy) {
             continue;

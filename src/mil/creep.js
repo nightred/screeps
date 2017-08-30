@@ -21,7 +21,7 @@ milCreep.prototype.doCreep = function(creep, squad) {
     }
 
     switch(creep.memory.role) {
-        case C.COMBAT_MEDIC:
+        case C.ROLE_COMBAT_MEDIC:
             this.doHeal(creep, squad);
             break;
         default:

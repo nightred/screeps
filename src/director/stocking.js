@@ -53,7 +53,7 @@ directorStocking.prototype.run = function(task) {
     if (task.creep.length < creepLimit && !task.spawnId) {
         let record = {
             rooms: [ task.spawnRoom, ],
-            role: C.STOCKER,
+            role: C.ROLE_STOCKER,
             priority: 49,
             directorId: task.id,
             creepArgs: {

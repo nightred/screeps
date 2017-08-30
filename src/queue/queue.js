@@ -10,7 +10,7 @@
 var Logger = require('util.logger');
 
 var logger = new Logger('[Queue]');
-logger.level = C.LOGLEVEL.INFO;
+logger.level = C.LOGLEVEL.DEBUG;
 
  var SpawnQueue      = require('queue.spawn');
  var WorkQueue       = require('queue.work');
@@ -65,17 +65,16 @@ Queue.prototype.getQueue = function(args) {
 };
 
 Queue.prototype.getId = function() {
-    this.memory.queueID = this.memory.queueID || 0;
-    this.memory.queueID = this.memory.queueID < 99999 ? this.memory.queueID : 0;
+    let currentIDs _.sortBy(_.map(this.queue, r => r.id));
 
-    let newId = this.memory.queueID;
-    while (true) {
-        newId++;
-        if (!this.queue[newId]) { break; }
+    let c = 0;
+
+    for (let id of currentIDs) {
+        c += 1;
+        if (c !== id) return c;
     }
-    this.memory.queueID = newId;
 
-    return newId;
+    return currentIDs.length;
 };
 
 Queue.prototype.delRecord = function(id) {
@@ -114,29 +113,6 @@ Queue.prototype.getRecord = function(id) {
     }
 
     return this.queue[id];
-}
-
-Queue.prototype.print = function(id) {
-    if (isNaN(id)) { return ERR_INVALID_ARGS; }
-    if (!this.queue[id]) {
-        console.log('queue record id: ' + id + ', does not exist');
-        return false;
-    }
-
-    let record = this.queue[id];
-    let output = '{';
-    for (let item in record) {
-        output += item + ': ';
-        if (Array.isArray(record[item])) {
-            output += '['+ record[item] + ']';
-        } else {
-            output += record[item]
-        }
-        output += ', ';
-    };
-    output += '}';
-
-    return output;
 }
 
 module.exports = Queue;

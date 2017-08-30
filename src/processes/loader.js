@@ -31,14 +31,28 @@ Object.defineProperty(Kernel.prototype, 'serviceRoom', {
     },
 });
 
+Object.defineProperty(Kernel.prototype, 'serviceCreep', {
+    get: function() {
+        if (!this.memory.serviceCreepPid) return false;
+        return Game.kernel.getProcessByPid(this.memory.serviceCreepPid);
+    },
+    set: function(value) {
+        this.memory.serviceCreepPid = value.pid;
+    },
+});
+
 Loader.prototype.run = function() {
-    // check default services
+    // check default services have been started
     if (!this.serviceFlag) {
         this.serviceFlag = Game.kernel.startProcess(this, 'services/flag', {});
     }
 
     if (!this.serviceRoom) {
         this.serviceRoom = Game.kernel.startProcess(this, 'services/room', {});
+    }
+
+    if (!this.serviceCreep) {
+        this.serviceCreep = Game.kernel.startProcess(this, 'services/creep', {});
     }
 };
 

@@ -90,7 +90,7 @@ directorUpgrade.prototype.run = function(task) {
     if (task.creep.length < creepLimit && !task.spawnId) {
         let record = {
             rooms: [ task.spawnRoom, ],
-            role: C.UPGRADER,
+            role: C.ROLE_UPGRADER,
             priority: 60,
             directorId: task.id,
             minSize: minSize,

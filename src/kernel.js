@@ -9,6 +9,9 @@ var Logger = require('util.logger');
 var logger = new Logger('[Kernel]');
 logger.level = C.LOGLEVEL.DEBUG;
 
+// load processes
+require('processes.registry');
+
 var processRegistry = {
     registry: {},
 
@@ -78,13 +81,17 @@ Kernel.prototype.run = function() {
 
         let procInfo = this.processTable[pid];
 
+        if (procInfo.status == 'killed') {
+            delete this.processTable[pid];
+        }
+
         if (procInfo.status !== 'running') continue;
 
         try {
             let process = this.getProcessByPid(pid);
 
             if (!process) {
-                logger.error(`failed to get process ${procInfo.name} : ${procInfo.pid}`);
+                throw new Error(`failed to get process ${procInfo.name} : ${procInfo.pid}`);
                 continue;
             }
 
@@ -164,6 +171,12 @@ Kernel.prototype.createProcess = function(pid) {
     this.processCache[pid] = process;
 
     return process;
+};
+
+Kernel.prototype.killProcess = function(pid) {
+    if (this.processTable[pid]) {
+        this.processTable[pid].status = 'killed';
+    }
 };
 
 Kernel.prototype.getProcessByPid = function(pid) {

@@ -4,8 +4,7 @@
  */
 
 // global methods
-global.C            = require('constants');
-global.cli          = require('util.cli');
+global.C = require('constants');
 
 // init the logger
 var Logger = require('util.logger');
@@ -22,17 +21,12 @@ require('util.utils');
 // load kernel
 var Kernel = require('kernel');
 
-// load processes
-require('processes.registry');
-
 // modules
 var Director        = require('director.director');
 var Queue           = require('queue.queue');
-var Manage          = require('manage.manage');
-var Role            = require('role.role');
-var Task            = require('task.task');
-var Work            = require('work.work');
 var Mil             = require('mil.mil');
+require('modules.role');
+require('modules.work');
 
 module.exports.loop = function () {
     let cpuStart = Game.cpu.getUsed();
@@ -43,10 +37,6 @@ module.exports.loop = function () {
     // hook modules
     Game.Director       = new Director;
     Game.Queue          = new Queue;
-    Game.Role           = new Role;
-    Game.Task           = new Task;
-    Game.Work           = new Work;
-    Game.Manage         = new Manage;
     Game.Mil            = new Mil;
 
     resetOnTick();

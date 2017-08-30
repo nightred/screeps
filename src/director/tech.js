@@ -21,7 +21,7 @@ directorTech.prototype.run = function(task) {
     ];
 
     for (let i = 0; i < findWorkTasks.length; i++) {
-        Game.Work.runFindWork(findWorkTasks[i], workRoom);
+        doWorkFind(findWorkTasks[i], workRoom);
     }
 
     let spawnRoom = Game.rooms[task.spawnRoom];
@@ -141,7 +141,7 @@ directorTech.prototype.doSpawn = function(task) {
 
         let record = {
             rooms: [ task.spawnRoom, ],
-            role: C.TECH,
+            role: C.ROLE_TECH,
             priority: 54,
             directorId: task.id,
             minSize: minSize,
