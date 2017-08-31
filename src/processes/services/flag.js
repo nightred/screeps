@@ -36,7 +36,7 @@ Flag.prototype.run = function() {
             break;
 
         case COLOR_YELLOW:
-            Game.Director.doFlag(flag);
+            this.doDirectorFlag(flag);
             break;
 
         case COLOR_ORANGE:
@@ -50,6 +50,25 @@ Flag.prototype.run = function() {
         status: 'OK'
         cpu: (Game.cpu.getUsed() - cpuStart),
     })
+};
+
+Flag.prototype.doDirectorFlag = function(flag) {
+    let pid = Memory.rooms[flag.pos.roomName].pid;
+
+    if (!pid) {
+        logger.debug('failed to get process room manager pid for room: ' + flag.pos.roomName);
+        return;
+    }
+
+    let process = Game.kernel.getProcessByPid(pid);
+
+    if (!process) {
+        logger.error('failed to get process room manager pid: ' + pid +
+            ', for director flag: ' + flag.name);
+        return;
+    }
+
+    process.doDirectorFlag(flag);
 };
 
 Flag.prototype.gc = function() {

@@ -22,20 +22,19 @@ require('util.utils');
 var Kernel = require('kernel');
 
 // modules
-var Director        = require('director.director');
 var Queue           = require('queue.queue');
 var Mil             = require('mil.mil');
 require('modules.role');
 require('modules.work');
+require('modules.director');
 
 module.exports.loop = function () {
     let cpuStart = Game.cpu.getUsed();
 
     // init the kernel
-    Game.Kernel         = new Kernel;
+    Game.kernel         = new Kernel;
 
     // hook modules
-    Game.Director       = new Director;
     Game.Queue          = new Queue;
     Game.Mil            = new Mil;
 
@@ -49,16 +48,10 @@ module.exports.loop = function () {
     });
 
     // start the kernel
-    Game.Kernel.run();
-
-    addTerminalLog(undefined, {
-        command: 'starting main',
-    });
+    Game.kernel.run();
 
     // run modules
     Game.Queue.run();
-    Game.Manage.run();
-    Game.Director.run();
     Game.Mil.run();
 
     addTerminalLog(undefined, {
@@ -68,7 +61,6 @@ module.exports.loop = function () {
     });
 
     runVisuals();
-
 };
 
 var resetOnTick = function() {

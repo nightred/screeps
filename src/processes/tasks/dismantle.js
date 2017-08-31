@@ -6,88 +6,80 @@
  *
  */
 
-var taskDismantle = {
+var taskDismantle = function() {
+    // init
+};
 
-    // Run the requested task
-    run: function() {
-        let creep = Game.creeps[this.memory.creepName];
+taskDismantle.prototype.run = function() {
+    let creep = Game.creeps[this.memory.creepName];
 
-        if (!creep) {
-            Game.kernel.killProcess(this.pid);
-        }
+    if (!creep) {
+        Game.kernel.killProcess(this.pid);
+    }
 
-        if (creep.getOffExit()) {
-            return true;
-        }
+    if (creep.getOffExit()) {
+        return;
+    }
 
-        if (creep.isSleep()) {
-            creep.moveToIdlePosition();
-            return true;
-        }
+    if (creep.isSleep()) {
+        creep.moveToIdlePosition();
+        return;
+    }
 
-        if (creep.manageState()) {
-            if (creep.isWorking()) {
-                creep.say('⚙');
-
-                creep.memory.harvestTarget = false;
-            } else {
-                creep.say('🔋');
-
-                creep.leaveWork();
-            }
-        }
-
+    if (creep.manageState()) {
         if (creep.isWorking()) {
-            this.doWork(creep);
+            creep.say('⚙');
+
+            creep.memory.harvestTarget = false;
         } else {
-            this.doStore(creep);
+            creep.say('🔋');
+
+            creep.leaveWork();
         }
+    }
 
-        return true;
-    },
+    if (creep.isWorking()) {
+        this.doWork(creep);
+    } else {
+        this.doStore(creep);
+    }
+};
 
-    /**
-    * @param {Creep} creep
-    **/
-    doWork: function(creep) {
-
-        if (!creep.hasWork()) {
-            let workTasks = [
-                C.WORK_DISMANTLE,
-            ];
-
-            if (!creep.getWork(workTasks)) {
-                creep.sleep();
-                creep.say('💤');
-
-                return true;
-            }
-        }
-
-        creep.doWork();
-
-        return true;
-    },
-
-    /**
-    * @param {Creep} creep
-    **/
-    doStore: function(creep) {
-        if (creep.room.name != creep.memory.spawnRoom) {
-            creep.moveToRoom(creep.memory.spawnRoom);
-            return true;
-        }
-
-        let energyTargets = [
-            'storage',
-            'container',
+/**
+* @param {Creep} creep
+**/
+taskDismantle.prototype.doWork = function(creep) {
+    if (!creep.hasWork()) {
+        let workTasks = [
+            C.WORK_DISMANTLE,
         ];
 
-        creep.doEmpty(energyTargets, RESOURCE_ENERGY);
+        if (!creep.getWork(workTasks)) {
+            creep.sleep();
+            creep.say('💤');
 
-        return true;
-    },
+            return;
+        }
+    }
 
+    creep.doWork();
+};
+
+/**
+* @param {Creep} creep
+**/
+taskDismantle.prototype.doStore = function(creep) {
+    if (creep.room.name != creep.memory.spawnRoom) {
+        creep.moveToRoom(creep.memory.spawnRoom);
+        return;
+    }
+
+    let energyTargets = [
+        'storage',
+        'container',
+    ];
+
+    creep.doEmpty(energyTargets, RESOURCE_ENERGY);
 };
 
 registerProcess('tasks/dismantle', taskDismantle);

@@ -1,18 +1,18 @@
 /*
- * Director Upgrade
+ * Director Controller
  *
  * runs processes to manage the upgrading of the controller
  *
  */
 
-var directorUpgrade = function() {
+var directorController = function() {
     // init
 }
 
-directorUpgrade.prototype.run = function(task) {
-    if (!task) { return ERR_INVALID_ARGS; }
+directorController.prototype.run = function() {
+    if (isSleep(this)) return true;
 
-    let room = Game.rooms[task.workRoom];
+    let room = Game.rooms[this.memory.roomName];
 
     if (!room || !room.controller || !room.controller.my) {
         return false;
@@ -56,59 +56,59 @@ directorUpgrade.prototype.run = function(task) {
         }
     } else if (room.controller.level == 8 ) {
         creepLimit = 1;
-        task.rcl8 = task.rcl8 ? task.rcl8 : 1;
+        this.memory.rcl8 = this.memory.rcl8 ? this.memory.rcl8 : 1;
     }
 
     if (C.SIM) {
         creepLimit = 1;
     };
 
-    if (!task.creep) {
-        task.creep = [];
+    if (!this.memory.creep) {
+        this.memory.creep = [];
     }
 
     // remove old creep and clear spawn job when done
     let removeCreep = [];
 
-    for (let i = 0; i < task.creep.length; i++) {
-        if (!Game.creeps[task.creep[i]]) {
-            removeCreep.push(task.creep[i]);
+    for (let i = 0; i < this.memory.creep.length; i++) {
+        if (!Game.creeps[this.memory.creep[i]]) {
+            removeCreep.push(this.memory.creep[i]);
         }
     }
 
     if (removeCreep.length > 0) {
         for (let i = 0; i < removeCreep.length; i++) {
-            Game.Director.delCreep(task.id, removeCreep[i]);
+            directorRemoveCreep(this.pid, removeCreep[i]);
         }
     }
 
-    if (task.spawnId && !Game.Queue.getRecord(task.spawnId)) {
-        task.spawnId = undefined;
+    if (this.memory.spawnId && !Game.Queue.getRecord(this.memory.spawnId)) {
+        this.memory.spawnId = undefined;
     }
 
     // spawn new creep if below limit
-    if (task.creep.length < creepLimit && !task.spawnId) {
+    if (this.memory.creep.length < creepLimit && !this.memory.spawnId) {
         let record = {
-            rooms: [ task.spawnRoom, ],
+            rooms: [ this.memory.spawnRoom, ],
             role: C.ROLE_UPGRADER,
             priority: 60,
-            directorId: task.id,
+            directorId: this.memory.id,
             minSize: minSize,
             maxSize: maxSize,
             creepArgs: {
-                workRoom: task.workRoom,
+                workRoom: this.memory.workRoom,
                 task: C.TASK_UPGRADE,
             },
         };
 
-        if (task.rcl8) { record.creepArgs.style = 'rcl8'; }
+        if (this.memory.rcl8) { record.creepArgs.style = 'rcl8'; }
 
-        task.spawnId = Game.Queue.spawn.addRecord(record);
+        this.memory.spawnId = Game.Queue.spawn.addRecord(record);
     }
 
-    task.sleep = Game.time + C.DIRECTOR_SLEEP + Math.floor(Math.random() * 8);
+    setSleep(this, (Game.time + C.DIRECTOR_SLEEP + Math.floor(Math.random() * 8)));
 
     return true;
 };
 
-module.exports = directorUpgrade;
+registerProcess(C.DIRECTOR_CONTROLLER, directorController);

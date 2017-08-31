@@ -124,7 +124,7 @@ Spawn.prototype.doSpawn = function(spawn, room) {
             records[r].name = name;
 
             if (records[r].directorId) {
-                Game.Director.addCreep(records[r].directorId, name)
+                directorAddCreep(records[r].pid, name)
             }
 
             logger.info('spawning' +

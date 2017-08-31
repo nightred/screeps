@@ -5,45 +5,42 @@
  *
  */
 
-var taskMilitia = {
+var taskMilitia = function() {
+    // init
+};
 
-    // Run the requested task
-    run: function() {
-        let creep = Game.creeps[this.memory.creepName];
+taskMilitia.prototype.run = function() {
+    let creep = Game.creeps[this.memory.creepName];
 
-        if (!creep) {
-            Game.kernel.killProcess(this.pid);
+    if (!creep) {
+        Game.kernel.killProcess(this.pid);
+    }
+
+    if (creep.getOffExit()) {
+        return;
+    }
+
+    if (creep.isSleep()) {
+        creep.moveToIdlePosition();
+        return;
+    }
+
+    if (!creep.hasWork()) {
+        let workTasks = [
+            C.WORK_DEFENSE,
+        ];
+
+        if (!creep.getWork(workTasks, {
+            spawnRoom: creep.memory.spawnRoom
+        })) {
+            creep.sleep();
+            creep.say('💤');
+
+            return;
         }
+    }
 
-        if (creep.getOffExit()) {
-            return true;
-        }
-
-        if (creep.isSleep()) {
-            creep.moveToIdlePosition();
-            return true;
-        }
-
-        if (!creep.hasWork()) {
-            let workTasks = [
-                C.WORK_DEFENSE,
-            ];
-
-            if (!creep.getWork(workTasks, {
-                spawnRoom: creep.memory.spawnRoom
-            })) {
-                creep.sleep();
-                creep.say('💤');
-
-                return true;
-            }
-        }
-
-        creep.doWork();
-
-        return true;
-    },
-
+    creep.doWork();
 };
 
 registerProcess('tasks/militia', taskMilitia);

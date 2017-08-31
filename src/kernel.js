@@ -69,6 +69,10 @@ Object.defineProperty(Kernel.prototype, 'processMemory', {
 });
 
 Kernel.prototype.run = function() {
+    addTerminalLog(undefined, {
+        command: 'starting kernel',
+    });
+
     let pids = Object.keys(this.processTable);
 
     if (pids.length === 0) {
@@ -82,6 +86,7 @@ Kernel.prototype.run = function() {
         let procInfo = this.processTable[pid];
 
         if (procInfo.status == 'killed') {
+            delete this.processMemory[procInfo.ms];
             delete this.processTable[pid];
         }
 
@@ -176,6 +181,13 @@ Kernel.prototype.createProcess = function(pid) {
 Kernel.prototype.killProcess = function(pid) {
     if (this.processTable[pid]) {
         this.processTable[pid].status = 'killed';
+    }
+
+    for (var opid in this.processTable) {
+        if (this.processTable[opid].parentPID === pid &&
+            this.processTable[opid].stats !== 'killed') {
+            this.killProcess(opid)
+        }
     }
 };
 

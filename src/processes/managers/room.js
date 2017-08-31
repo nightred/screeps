@@ -149,21 +149,47 @@ RoomManager.prototype.doManagers = function() {
     let roomName = this.memory.roomName;
 
     if (!this.managerTower) {
-        this.managerTower = Game.kernel.startProcess(this, 'managers/tower', {
+        let p = Game.kernel.startProcess(this, 'managers/tower', {
             roomName: roomName,
         });
+        this.managerTower = p;
     }
 
     if (!this.managerLink) {
-        this.managerLink = Game.kernel.startProcess(this, 'managers/link', {
+        let p = Game.kernel.startProcess(this, 'managers/link', {
             roomName: roomName,
         });
+        this.managerLink = p;
     }
 
     if (!this.managerSpawn) {
-        this.managerSpawn = Game.kernel.startProcess(this, 'managers/spawn', {
+        let p = Game.kernel.startProcess(this, 'managers/spawn', {
             roomName: roomName,
         });
+        this.managerSpawn = p;
+    }
+};
+
+RoomManager.prototype.doDirectorFlag = function(flag) {
+    if (!flag.memory.init) {
+        let flagName = flag.name;
+        let flagVars = flagName.split(':');
+        let roomName = flag.pos.roomName;
+
+        if (C.DIRECTOR_FLAG_MAP.indexOf(flagVars[1]) == -1) {
+            logger.debug('invalid director type requested by flag: ' + flag.name);
+            flag.memory.result = 'invalid director';
+            return;
+        }
+
+        let imageName = C.DIRECTOR_FLAG_MAP[flagVars[1]];
+
+        let process = Game.kernel.startProcess(this, imageName, {});
+
+        process.flag(roomName, flagVars)
+
+        flag.memory.pid = process.pid;
+        flag.memory.init = 1;
     }
 };
 

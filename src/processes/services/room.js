@@ -31,9 +31,12 @@ Room.prototype.run = function() {
     for (let name in Game.rooms) {
         if (!this.processTable[name] ||
             !Game.kernel.getProcessByPid(this.processTable[name])) {
-            this.processTable[name] = Game.kernel.startProcess(this, 'managers/room', {
+            let process = Game.kernel.startProcess(this, 'managers/room', {
                 roomName: name,
             });
+
+            Memory.rooms[name].pid = process.pid;
+            this.processTable[name] = process.pid;
         }
     }
 

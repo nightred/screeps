@@ -121,18 +121,18 @@ Constant.ROLE_TYPES = [
     Constant.ROLE_COMBAT_MILITIA,
 ];
 
-Constant.DIRECTOR_ROOM                  = 'room';
-Constant.DIRECTOR_REMOTE                = 'remote';
-Constant.DIRECTOR_MINING                = 'mining';
-Constant.DIRECTOR_SOURCE                = 'source';
-Constant.DIRECTOR_RESUPPLY              = 'resupply';
-Constant.DIRECTOR_CONTROLLER            = 'controller';
-Constant.DIRECTOR_HAULING               = 'hauling';
-Constant.DIRECTOR_INTERHAULING          = 'interhauling';
-Constant.DIRECTOR_STOCKING              = 'stocking';
-Constant.DIRECTOR_TECH                  = 'tech';
-Constant.DIRECTOR_FIELDTECH             = 'fieldtech';
-Constant.DIRECTOR_RESERVE               = 'reserve';
+Constant.DIRECTOR_ROOM                  = 'directors/room';
+Constant.DIRECTOR_REMOTE                = 'directors/remote';
+Constant.DIRECTOR_MINING                = 'directors/mining';
+Constant.DIRECTOR_SOURCE                = 'directors/source';
+Constant.DIRECTOR_RESUPPLY              = 'directors/resupply';
+Constant.DIRECTOR_CONTROLLER            = 'directors/controller';
+Constant.DIRECTOR_HAULING               = 'directors/hauling';
+Constant.DIRECTOR_INTERHAULING          = 'directors/interhauling';
+Constant.DIRECTOR_STOCKING              = 'directors/stocking';
+Constant.DIRECTOR_TECH                  = 'directors/tech';
+Constant.DIRECTOR_FIELDTECH             = 'directors/fieldtech';
+Constant.DIRECTOR_RESERVE               = 'directors/reserve';
 
 Constant.DIRECTOR_TYPES = [
     Constant.DIRECTOR_ROOM,
@@ -149,12 +149,12 @@ Constant.DIRECTOR_TYPES = [
     Constant.DIRECTOR_RESERVE,
 ];
 
-Constant.DIRECTOR_FLAG_TYPES = [
-    Constant.DIRECTOR_ROOM,
-    Constant.DIRECTOR_REMOTE,
-    Constant.DIRECTOR_FIELDTECH,
-    Constant.DIRECTOR_RESERVE,
-];
+Constant.DIRECTOR_FLAG_MAP = {
+    'room':         Constant.DIRECTOR_ROOM,
+    'remote':       Constant.DIRECTOR_REMOTE,
+    'fieldtech':    Constant.DIRECTOR_FIELDTECH,
+    'reserve':      Constant.DIRECTOR_RESERVE,
+};
 
 Constant.TASK_SOURCE                    = 'task/source';
 Constant.TASK_RESUPPLY                  = 'task/resupply';

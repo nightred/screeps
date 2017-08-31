@@ -9,10 +9,10 @@ var directorHauling = function() {
     // init
 }
 
-directorHauling.prototype.run = function(task) {
-    if (!task) { return ERR_INVALID_ARGS; }
+directorHauling.prototype.run = function() {
+    if (isSleep(this)) return true;
 
-    let room = Game.rooms[task.workRoom];
+    let room = Game.rooms[this.memory.workRoom];
 
     if (!room || !room.controller || !room.controller.my) {
         return false;
@@ -49,51 +49,51 @@ directorHauling.prototype.run = function(task) {
         creepLimit = 0;
     }
 
-    if (!task.creep) {
-        task.creep = [];
+    if (!this.memory.creep) {
+        this.memory.creep = [];
     }
 
     // remove old creep and clear spawn job when done
     let removeCreep = [];
 
-    for (let i = 0; i < task.creep.length; i++) {
-        if (!Game.creeps[task.creep[i]]) {
-            removeCreep.push(task.creep[i]);
+    for (let i = 0; i < this.memory.creep.length; i++) {
+        if (!Game.creeps[this.memory.creep[i]]) {
+            removeCreep.push(this.memory.creep[i]);
         }
     }
 
     if (removeCreep.length > 0) {
         for (let i = 0; i < removeCreep.length; i++) {
-            Game.Director.delCreep(task.id, removeCreep[i]);
+            directorRemoveCreep(this.pid, removeCreep[i]);
         }
     }
 
-    if (task.spawnId && !Game.Queue.getRecord(task.spawnId)) {
-        task.spawnId = undefined;
+    if (this.memory.spawnId && !Game.Queue.getRecord(this.memory.spawnId)) {
+        this.memory.spawnId = undefined;
     }
 
     // spawn new creep if below limit
-    if (task.creep.length < creepLimit && !task.spawnId) {
+    if (this.memory.creep.length < creepLimit && !this.memory.spawnId) {
         let record = {
-            rooms: [ task.spawnRoom, ],
+            rooms: [ this.memory.spawnRoom, ],
             role: C.ROLE_HAULER,
             priority: 52,
-            directorId: task.id,
+            directorId: this.memory.id,
             minSize: minSize,
             maxSize: maxSize,
             creepArgs: {
-                workRoom: task.workRoom,
+                workRoom: this.memory.workRoom,
                 task: C.TASK_HAUL,
                 style: 'default',
             },
         };
 
-        task.spawnId = Game.Queue.spawn.addRecord(record);
+        this.memory.spawnId = Game.Queue.spawn.addRecord(record);
     }
 
-    task.sleep = Game.time + C.DIRECTOR_SLEEP + Math.floor(Math.random() * 8);
+    setSleep(this, (Game.time + C.DIRECTOR_SLEEP + Math.floor(Math.random() * 8)));
 
     return true;
 };
 
-module.exports = directorHauling;
+registerProcess(C.DIRECTOR_HAULING, directorHauling);
