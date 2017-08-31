@@ -12,30 +12,26 @@ var logger = new Logger('[Defense]');
 logger.level = C.LOGLEVEL.DEBUG;
 
 var Defense = function() {
-    Memory.world.mil = Memory.world.mil || {}
-    Memory.world.mil.allies = Memory.world.mil.allies || {}
-    this.memory = Memory.world.mil;
+
 };
 
-Defense.prototype.doRoom = function(room, parent) {
-    if (!room) { return ERR_INVALID_ARGS; }
+Defense.prototype.doRoom = function() {
+    if (isSleep(this)) return;
+
+    let room = Game.rooms[this.memory.workRoom];
 
     room.memory.defense = room.memory.defense || {}
 
     let defense = room.memory.defense;
 
-    if (!defense.sleep || defense.sleep < Game.time) {
-        if (room.controller && room.controller.my) {
-            this.doSafeMode(room);
-            this.spawnMilitia(room);
-        }
-
-        this.doDefenseMode(room, parent);
-
-        defense.sleep = Game.time + C.DEFENSE_SLEEP;
+    if (room.controller && room.controller.my) {
+        this.doSafeMode(room);
+        this.spawnMilitia(room);
     }
 
-    return true;
+    this.doDefenseMode(room);
+
+    setSleep(this, (Game.time + C.DEFENSE_SLEEP + Math.floor(Math.random() * 8)));
 };
 
 Defense.prototype.spawnMilitia = function(room) {
@@ -88,18 +84,16 @@ Defense.prototype.spawnMilitia = function(room) {
             defense.spawnJob = Game.Queue.spawn.addRecord(record);
         }
     }
-
-    return true;
 };
 
-Defense.prototype.doDefenseMode = function(room, parent) {
+Defense.prototype.doDefenseMode = function(room) {
     let defense = room.memory.defense;
 
     let targets = room.getHostiles();
 
     targets = _.filter(targets, creep =>
         creep.owner &&
-        !Game.Mil.isAlly(creep.owner.username)
+        !isAlly(creep.owner.username)
     );
 
     if (targets.length <= 0) {
@@ -115,7 +109,7 @@ Defense.prototype.doDefenseMode = function(room, parent) {
             }
         }
 
-        return true;
+        return;
     }
 
     defense.cooldown = defense.cooldown != undefined ? undefined : defense.cooldown;
@@ -134,14 +128,10 @@ Defense.prototype.doDefenseMode = function(room, parent) {
         defense.creepLimit = creepLimit;
     }
 
-    if (!parent) {
-        parent = room;
-    }
-
     if (!defense.jobId || !Game.Queue.getRecord(defense.jobId)) {
         let record = {
             workRoom: room.name,
-            spawnRoom: parent.name,
+            spawnRoom: this.memory.spawnRoom,
             task: C.WORK_DEFENSE,
             priority: 10,
         };
@@ -154,8 +144,6 @@ Defense.prototype.doDefenseMode = function(room, parent) {
     if (defense.creepLimit > task.creepLimit) {
         task.creepLimit = defense.creepLimit;
     }
-
-    return true;
 };
 
 Defense.prototype.doSafeMode = function(room) {
@@ -168,7 +156,6 @@ Defense.prototype.doSafeMode = function(room) {
     for (let i = 0; i < spawns.length; i++) {
         if (spawns[i].hits < (spawns[i].hitsMax / 2)) {
             alert = true;
-
             break;
         }
     }
@@ -182,8 +169,6 @@ Defense.prototype.doSafeMode = function(room) {
 
         logger.info('safe mode activated in room: <p style=\"display:inline; color: #ed4543\"><a href=\"#!/room/' + room.name + '\">' + room.name + '</a></p>');
     }
-
-    return true;
 };
 
-module.exports = Defense;
+registerProcess('managers/defense', Defense);

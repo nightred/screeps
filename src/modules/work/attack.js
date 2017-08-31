@@ -138,7 +138,7 @@ var taskAttack = {
             target.structureType == STRUCTURE_TOWER);
         targets = _.filter(targets, structure =>
             structure.owner &&
-            !Game.Mil.isAlly(structure.owner.username));
+            !isAlly(structure.owner.username));
         if (targets.length > 0) {
             targets = _.sortBy(targets, target => creep.pos.getRangeTo(target));
             return targets[0];
@@ -146,7 +146,7 @@ var taskAttack = {
         targets = creep.room.getHostiles();
         targets = _.filter(targets, creep =>
             creep.owner &&
-            !Game.Mil.isAlly(creep.owner.username));
+            !isAlly(creep.owner.username));
         if (targets.length > 0) {
             targets = _.sortBy(targets, target => creep.pos.getRangeTo(target));
             return targets[0];
@@ -154,7 +154,7 @@ var taskAttack = {
         targets = creep.room.getHostileSpawns()
         targets = _.filter(targets, structure =>
             structure.owner &&
-            !Game.Mil.isAlly(structure.owner.username));
+            !isAlly(structure.owner.username));
         if (targets.length > 0) {
             targets = _.sortBy(targets, target => creep.pos.getRangeTo(target));
             return targets[0];
@@ -162,7 +162,7 @@ var taskAttack = {
         targets = creep.room.getHostileStructures()
         targets = _.filter(targets, structure =>
             structure.owner &&
-            !Game.Mil.isAlly(structure.owner.username));
+            !isAlly(structure.owner.username));
         if (targets.length > 0) {
             targets = _.filter(targets, target =>
                 target.structureType != STRUCTURE_CONTROLLER);

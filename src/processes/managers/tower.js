@@ -57,7 +57,7 @@ Tower.prototype.defence = function(tower) {
 
     targets = _.filter(targets, creep =>
         creep.owner &&
-        !Game.Mil.isAlly(creep.owner.username));
+        !isAlly(creep.owner.username));
     if (!targets || targets.length == 0) { return false; }
     targets = _.sortBy(targets, hostile => hostile.hits);
 

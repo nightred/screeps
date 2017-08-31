@@ -25,7 +25,7 @@ var taskDefense = {
 
         targets = _.filter(targets, creep =>
             creep.owner &&
-            !Game.Mil.isAlly(creep.owner.username)
+            !isAlly(creep.owner.username)
         );
 
         targets = _.sortBy(targets, target => creep.pos.getRangeTo(target));

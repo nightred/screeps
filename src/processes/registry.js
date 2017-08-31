@@ -15,6 +15,7 @@ require('processes.managers.room');
 require('processes.managers.tower');
 require('processes.managers.link');
 require('processes.managers.spawn');
+require('processes.managers.defense');
 
 // tasks
 require('processes.tasks.dismantle');

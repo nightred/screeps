@@ -23,10 +23,10 @@ var Kernel = require('kernel');
 
 // modules
 var Queue           = require('queue.queue');
-var Mil             = require('mil.mil');
 require('modules.role');
 require('modules.work');
 require('modules.director');
+require('modules.mil');
 
 module.exports.loop = function () {
     let cpuStart = Game.cpu.getUsed();
@@ -36,7 +36,6 @@ module.exports.loop = function () {
 
     // hook modules
     Game.Queue          = new Queue;
-    Game.Mil            = new Mil;
 
     resetOnTick();
 

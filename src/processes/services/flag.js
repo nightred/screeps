@@ -28,7 +28,7 @@ Flag.prototype.run = function() {
 
         switch (flag.color) {
         case COLOR_RED:
-            Game.Mil.doFlag(flag);
+            //Game.Mil.doFlag(flag);
             break;
 
         case COLOR_GREEN:

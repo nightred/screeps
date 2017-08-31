@@ -49,6 +49,16 @@ Object.defineProperty(Kernel.prototype, 'directorTech', {
     },
 });
 
+Object.defineProperty(Kernel.prototype, 'managerDefense', {
+    get: function() {
+        if (!this.memory.managerDefensePid) return false;
+        return Game.kernel.getProcessByPid(this.memory.managerDefensePid);
+    },
+    set: function(value) {
+        this.memory.managerDefensePid = value.pid;
+    },
+});
+
 /**
 * @param {task} task the director task memory
 **/
@@ -108,6 +118,14 @@ directorRemote.prototype.doDirectors = function() {
             spawnRoom: this.memory.spawnRoom,
         });
         this.directorTech = p;
+    }
+
+    if (!this.managerDefense) {
+        let p = Game.kernel.startProcess(this, 'managers/defense', {
+            workRoom: this.memory.workRoom,
+            spawnRoom: this.memory.spawnRoom,
+        });
+        this.managerDefense = p;
     }
 };
 

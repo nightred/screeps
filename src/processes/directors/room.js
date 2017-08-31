@@ -69,16 +69,26 @@ Object.defineProperty(Kernel.prototype, 'directorTech', {
     },
 });
 
+Object.defineProperty(Kernel.prototype, 'managerDefense', {
+    get: function() {
+        if (!this.memory.managerDefensePid) return false;
+        return Game.kernel.getProcessByPid(this.memory.managerDefensePid);
+    },
+    set: function(value) {
+        this.memory.managerDefensePid = value.pid;
+    },
+});
+
 /**
 * @param {task} task the director task memory
 **/
 directorRoom.prototype.run = function() {
-    if (isSleep(this)) return true;
+    if (isSleep(this)) return;
 
     let room = Game.rooms[this.memory.workRoom];
 
     if (!room || !room.controller || !room.controller.my) {
-        return false;
+        return;
     }
 
     this.doDirectors(task);
@@ -86,8 +96,6 @@ directorRoom.prototype.run = function() {
     Game.Mil.defense.doRoom(room);
 
     setSleep(this, (Game.time + C.DIRECTOR_SLEEP + Math.floor(Math.random() * 8)));
-
-    return true;
 };
 
 directorRoom.prototype.doDirectors = function(task) {
@@ -137,6 +145,14 @@ directorRoom.prototype.doDirectors = function(task) {
             spawnRoom: this.memory.spawnRoom,
         });
         this.directorTech = p;
+    }
+
+    if (!this.managerDefense) {
+        let p = Game.kernel.startProcess(this, 'managers/defense', {
+            workRoom: this.memory.workRoom,
+            spawnRoom: this.memory.workRoom,
+        });
+        this.managerDefense = p;
     }
 };
 
