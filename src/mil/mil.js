@@ -56,7 +56,7 @@ Mil.prototype.doFlag = function(flag) {
     let flagName = flag.name;
     let args = flagName.split(':');
 
-    if (flag.memory.squadId && !Game.Queue.getRecord(flag.memory.squadId)) {
+    if (flag.memory.squadId && !getQueueRecord(flag.memory.squadId)) {
         flag.memory.squadId = undefined;
     }
 

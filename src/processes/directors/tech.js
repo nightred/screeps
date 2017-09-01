@@ -128,7 +128,7 @@ directorTech.prototype.doSpawn = function(task) {
         }
     }
 
-    if (this.memory.spawnId && !Game.Queue.getRecord(this.memory.spawnId)) {
+    if (this.memory.spawnId && !getQueueRecord(this.memory.spawnId)) {
         this.memory.spawnId = undefined;
     }
 
@@ -152,7 +152,7 @@ directorTech.prototype.doSpawn = function(task) {
 
         if (this.memory.rcl8) { record.creepArgs.style = 'rcl8'; }
 
-        this.memory.spawnId = Game.Queue.spawn.addRecord(record);
+        this.memory.spawnId = addQueueSpawn(record);
     }
 
     return true;

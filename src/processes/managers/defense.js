@@ -66,7 +66,7 @@ Defense.prototype.spawnMilitia = function(room) {
         ).length;
 
     if (count < maxCreep) {
-        if (defense.spawnJob && !Game.Queue.getRecord(defense.spawnJob)) {
+        if (defense.spawnJob && !getQueueRecord(defense.spawnJob)) {
             defense.spawnJob = undefined;
         }
 
@@ -81,7 +81,7 @@ Defense.prototype.spawnMilitia = function(room) {
                 },
             };
 
-            defense.spawnJob = Game.Queue.spawn.addRecord(record);
+            defense.spawnJob = addQueueSpawn(record);
         }
     }
 };
@@ -103,7 +103,7 @@ Defense.prototype.doDefenseMode = function(room) {
             if ((defense.cooldown + C.DEFENSE_COOLDOWN) < Game.time) {
                 defense.active = 0;
 
-                Game.Queue.delRecord(defense.jobId);
+                delQueue(defense.jobId);
 
                 defense.jobId = undefined;
             }
@@ -128,7 +128,7 @@ Defense.prototype.doDefenseMode = function(room) {
         defense.creepLimit = creepLimit;
     }
 
-    if (!defense.jobId || !Game.Queue.getRecord(defense.jobId)) {
+    if (!defense.jobId || !getQueueRecord(defense.jobId)) {
         let record = {
             workRoom: room.name,
             spawnRoom: this.memory.spawnRoom,
@@ -136,10 +136,10 @@ Defense.prototype.doDefenseMode = function(room) {
             priority: 10,
         };
 
-        defense.jobId = Game.Queue.work.addRecord(record);
+        defense.jobId = addQueueWork(record);
     }
 
-    let task = Game.Queue.getRecord(defense.jobId);
+    let task = getQueueRecord(defense.jobId);
 
     if (defense.creepLimit > task.creepLimit) {
         task.creepLimit = defense.creepLimit;

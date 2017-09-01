@@ -12,41 +12,36 @@ var Logger = require('util.logger');
 var logger = new Logger('[Queue]');
 logger.level = C.LOGLEVEL.DEBUG;
 
- var SpawnQueue      = require('queue.spawn');
- var WorkQueue       = require('queue.work');
- var MilQueue       = require('queue.mil');
+require('modules.queue.spawn');
+require('modules.queue.work');
 
 var Queue = function() {
-    if (!Memory.queues) {
-        Memory.queues = {};
-    }
+    Memory.world = Memory.world || {};
 
-    if (!Memory.queues.queue) {
-        Memory.queues.queue = {};
-    }
-
-    if (!Memory.queues.ver || Memory.queues.ver != C.VERSION_QUEUE) {
+    if (!Memory.world.verQueue || Memory.world.verQueue != C.VERSION_QUEUE) {
         logger.warn('new version detected ' + C.VERSION_QUEUE +
-        ' previous version ' + Memory.queues.ver +
         ' wiping queue');
 
-        Memory.queues = {};
-        Memory.queues.queue = {};
-        Memory.queues.ver = C.VERSION_QUEUE;
+        this.queue = {};
+        Memory.world.verQueue = C.VERSION_QUEUE;
     }
-
-    this.memory = Memory.queues;
-    this.queue = Memory.queues.queue;
-
-    this.spawn  = new SpawnQueue;
-    this.work   = new WorkQueue;
-    this.mil    = new MilQueue;
 };
 
-Queue.prototype.run = function() {
+Object.defineProperty(Kernel.prototype, 'queue', {
+    get: function() {
+        Memory.queue = Memory.queue || {};
+        return this.memory.processTable;
+    },
+    set: function(value) {
+        Memory.queue = Memory.queue || {};
+        this.memory.processTable = value;
+    },
+});
+
+Queue.prototype.onTick = function() {
     let cpuStart = Game.cpu.getUsed();
 
-    this.spawn.gc();
+    onTickQueueSpawn();
 
     addTerminalLog(undefined, {
         command: 'queue cleanup',
@@ -61,7 +56,7 @@ Queue.prototype.getQueue = function(args) {
 
     return _.filter(this.queue, record =>
         (!args.queue || record.queue == args.queue)
-        );
+    );
 };
 
 Queue.prototype.getId = function() {
@@ -78,13 +73,10 @@ Queue.prototype.getId = function() {
 };
 
 Queue.prototype.delRecord = function(id) {
-    if (isNaN(id)) { return ERR_INVALID_ARGS; }
-    if (!this.queue[id]) { return true; }
+    if (!this.queue[id]) return;
 
-    logger.debug('queue record removed:\n' + this.print(id));
+    logger.debug('queue record removed id: ' + id);
     delete this.queue[id];
-
-    return true;
 };
 
 Queue.prototype.addRecord = function(args) {
@@ -100,19 +92,34 @@ Queue.prototype.addRecord = function(args) {
     };
 
     this.queue[id] = record;
-    logger.debug('queue record added:\n' + this.print(id));
+    logger.debug('queue record added id: ' + id);
 
     return id;
 };
 
 Queue.prototype.getRecord = function(id) {
-    if (isNaN(id)) { return ERR_INVALID_ARGS; }
-
-    if (!this.queue[id]) {
-        return false;
-    }
-
+    if (!this.queue[id]) return;
     return this.queue[id];
 }
 
-module.exports = Queue;
+let queue = new Queue();
+
+global.onTickQueue = function() {
+    queue.onTick();
+};
+
+global.getQueue = function(args) {
+    return queue.getQueue(args);
+};
+
+global.getQueueRecord = function(id) {
+    return queue.getRecord(id);
+};
+
+global.addQueue = function(args) {
+    return queue.addRecord(args);
+};
+
+global.delQueue = function(id) {
+    queue.delRecord(id);
+};

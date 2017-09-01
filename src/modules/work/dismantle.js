@@ -65,7 +65,7 @@ var taskDismantle = {
             targetId: args.targetId,
         };
 
-        return Game.Queue.work.addRecord(record);
+        return addQueueWork(record);
     },
 
     /**

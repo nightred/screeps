@@ -19,7 +19,7 @@ var MilQueue = function() {
 };
 
 MilQueue.prototype.getQueue = function() {
-    return Game.Queue.getQueue({queue: C.QUEUE_MIL, });
+    return getQueue({queue: C.QUEUE_MIL, });
 };
 
 MilQueue.prototype.getSquad = function(squad) {
@@ -54,11 +54,11 @@ MilQueue.prototype.addRecord = function(args) {
     };
 
     logger.debug('adding record, task: ' + record.task + ', priority: ' + record.priority);
-    return Game.Queue.addRecord(record);
+    return addQueue(record);
 };
 
 MilQueue.prototype.delRecord = function(id) {
-    return Game.Queue.delRecord(id);
+    return delQueue(id);
 };
 
 module.exports = MilQueue;

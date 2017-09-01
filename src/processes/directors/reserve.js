@@ -46,7 +46,7 @@ directorReserve.prototype.run = function() {
         }
     }
 
-    if (this.memory.spawnId && !Game.Queue.getRecord(this.memory.spawnId)) {
+    if (this.memory.spawnId && !getQueueRecord(this.memory.spawnId)) {
         this.memory.spawnId = undefined;
     }
 
@@ -64,7 +64,7 @@ directorReserve.prototype.run = function() {
             },
         };
 
-        this.memory.spawnId = Game.Queue.spawn.addRecord(record);
+        this.memory.spawnId = addQueueSpawn(record);
     }
 
     setSleep(this, (Game.time + C.DIRECTOR_SLEEP + Math.floor(Math.random() * 8)));

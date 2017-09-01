@@ -11,11 +11,7 @@ var logger = new Logger('[Queue Spawn]');
 logger.level = C.LOGLEVEL.INFO;
 
 var SpawnQueue = function() {
-    if (!Memory.queues) { Memory.queues = {}; }
-    if (!Memory.queues.queue) { Memory.queues.queue = {}; }
-
-    this.memory = Memory.queues;
-    this.queue = Memory.queues.queue;
+    // init
 };
 
 SpawnQueue.prototype.gc = function() {
@@ -48,39 +44,8 @@ SpawnQueue.prototype.gc = function() {
     }
 };
 
-SpawnQueue.prototype.cleanRoomQueue = function(roomName) {
-    if (!roomName) { return -1 };
-
-    let records = _.filter(this.getQueue(), record =>
-        record.rooms.indexOf(roomName) >= 0
-    );
-
-    if (records.length <= 0) {
-        return true;
-    }
-
-    for(let i = 0; i < records.length; i++) {
-        logger.debug('removing record, id: ' + records[i].id + ', role: ' + records[i].role + ', name: ' + records[i].name + ', spawned');
-
-        this.delRecord(records[i].id);
-    }
-
-    return true;
-};
-
 SpawnQueue.prototype.getQueue = function() {
-    return Game.Queue.getQueue({queue: C.QUEUE_SPAWN, });
-};
-
-SpawnQueue.prototype.isQueued = function(args) {
-    if (!args) { return ERR_INVALID_ARGS; }
-
-    return _.filter(this.getQueue(), record =>
-        (!args.role || record.role == args.role) &&
-        (!args.workId || (record.creepArgs && record.creepArgs.workId == args.workId)) &&
-        (!args.directorId || (record.creepArgs && record.creepArgs.directorId == args.directorId)) &&
-        (!args.room || record.rooms.indexOf(args.room) >= 0)
-    ).length > 0 ? true : false;
+    return getQueue({queue: C.QUEUE_SPAWN, });
 };
 
 SpawnQueue.prototype.addRecord = function(args) {
@@ -111,11 +76,19 @@ SpawnQueue.prototype.addRecord = function(args) {
 
     logger.debug('adding record, role: ' + record.role + ', rooms: [' + record.rooms + '], priority: ' + record.priority);
 
-    return Game.Queue.addRecord(record);
+    return addQueue(record);
 };
 
-SpawnQueue.prototype.delRecord = function(id) {
-    return Game.Queue.delRecord(id);
+let spawnQueue = new SpawnQueue();
+
+global.onTickQueueSpawn = function() {
+    spawnQueue.gc();
 };
 
-module.exports = SpawnQueue;
+global.addQueueSpawn = function(args) {
+    return spawnQueue.addRecord(args);
+};
+
+global.getQueueSpawn = function() {
+    return spawnQueue.getQueue();
+};

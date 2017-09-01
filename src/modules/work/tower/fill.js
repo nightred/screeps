@@ -119,7 +119,7 @@ var taskTowerFill = {
         }
 
         for (let i = 0; i < targets.length; i++) {
-            if (Game.Queue.work.isQueued({ targetId: targets[i].id, })) {
+            if (isQueuedWork({ targetId: targets[i].id, })) {
                 continue;
             }
 
@@ -146,7 +146,7 @@ var taskTowerFill = {
             targetId: args.targetId,
         };
 
-        return Game.Queue.work.addRecord(record);
+        return addQueueWork(record);
     },
 
 };

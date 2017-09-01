@@ -75,7 +75,7 @@ Flag.prototype.gc = function() {
     for(let name in Memory.flags) {
         if(!Game.flags[name]) {
             if (Memory.flags[name].workId) {
-                Game.Queue.delRecord(Memory.flags[name].jobId);
+                delQueue(Memory.flags[name].jobId);
             }
 
             logger.debug('clearing non-existant flag memory name: ' + name);

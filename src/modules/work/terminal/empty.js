@@ -114,7 +114,7 @@ var taskTerminalEmpty = {
 
         let jobId = room.memory.terminal.jobEmptyId;
 
-        if (jobId && Game.Queue.getRecord(jobId)) {
+        if (jobId && getQueueRecord(jobId)) {
             return true;
         }
 
@@ -152,7 +152,7 @@ var taskTerminalEmpty = {
             targetId: args.targetId,
         };
 
-        return Game.Queue.work.addRecord(record);
+        return addQueueWork(record);
     },
 
 };

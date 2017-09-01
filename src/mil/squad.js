@@ -76,7 +76,7 @@ Squad.prototype.doSpawn = function(flag, args) {
         },
     };
 
-    Game.Queue.spawn.addRecord(record);
+    addQueueSpawn(record);
 
     return true;
 };

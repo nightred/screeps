@@ -147,7 +147,7 @@ Creep.prototype.doWork = function() {
 
 Creep.prototype.removeWork = function() {
     if (this.memory.workId) {
-        Game.Queue.delRecord(this.memory.workId);
+        delQueue(this.memory.workId);
         this.memory.workId = undefined;
     }
 

@@ -98,7 +98,7 @@ var taskMineral = {
             creep.memory.despawn != true
             ).length;
         if (count < task.creepLimit) {
-            if (task.spawnJob && !Game.Queue.getRecord(task.spawnJob)) {
+            if (task.spawnJob && !getQueueRecord(task.spawnJob)) {
                 task.spawnJob = undefined;
             }
 
@@ -115,7 +115,7 @@ var taskMineral = {
                     },
                 };
 
-                task.spawnJob = Game.Queue.spawn.addRecord(record);
+                task.spawnJob = addQueueSpawn(record);
             }
         }
 

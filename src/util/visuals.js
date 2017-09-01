@@ -236,8 +236,8 @@ global.runVisuals = function() {
     return true;
 };
 
-global.resetVisuals = function() {
-    visuals = new Visuals();
+global.onTickVisuals = function() {
+    visuals.doReset();
     return true;
 }
 

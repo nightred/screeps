@@ -22,7 +22,7 @@ require('util.utils');
 var Kernel = require('kernel');
 
 // modules
-var Queue           = require('queue.queue');
+require('modules.queue');
 require('modules.role');
 require('modules.work');
 require('modules.director');
@@ -34,10 +34,7 @@ module.exports.loop = function () {
     // init the kernel
     Game.kernel         = new Kernel;
 
-    // hook modules
-    Game.Queue          = new Queue;
-
-    resetOnTick();
+    onTick();
 
     addTerminalLog(undefined, {
         command: 'init',
@@ -50,7 +47,6 @@ module.exports.loop = function () {
     Game.kernel.run();
 
     // run modules
-    Game.Queue.run();
     Game.Mil.run();
 
     addTerminalLog(undefined, {
@@ -62,6 +58,7 @@ module.exports.loop = function () {
     runVisuals();
 };
 
-var resetOnTick = function() {
-    resetVisuals();
+var onTick = function() {
+    onTickVisuals();
+    onTickQueue();
 };

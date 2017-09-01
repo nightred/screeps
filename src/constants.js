@@ -17,7 +17,7 @@ Constant.USERNAME                       = 'nightred';
 
 // Versioning
 Constant.VERSION_DIRECTOR               = 'v2.01'
-Constant.VERSION_QUEUE                  = 'v2.02'
+Constant.VERSION_QUEUE                  = 'v3.00'
 
 Constant.SIM                            = false;
 Constant.VISUALS                        = true;

@@ -56,7 +56,7 @@ var taskSignController = {
             creepLimit: 1,
         };
 
-        return Game.Queue.work.addRecord(record);
+        return addQueueWork(record);
     },
 
     /**

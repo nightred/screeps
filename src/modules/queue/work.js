@@ -7,28 +7,22 @@
 
 var Logger = require('util.logger');
 
-var logger = new Logger('[Director]');
+var logger = new Logger('[Queue Work]');
 logger.level = C.LOGLEVEL.INFO;
 
 var WorkQueue = function() {
-    if (!Memory.queues) { Memory.queues = {}; }
-    if (!Memory.queues.queue) { Memory.queues.queue = {}; }
-
-    this.memory = Memory.queues;
-    this.queue = Memory.queues.queue;
+    // init
 };
 
 WorkQueue.prototype.getQueue = function() {
-    return Game.Queue.getQueue({queue: C.QUEUE_WORK, });
+    return getQueue({queue: C.QUEUE_WORK, });
 };
 
 WorkQueue.prototype.isQueued = function(args) {
     if (!args) { return ERR_INVALID_ARGS; }
 
     return _.filter(this.getQueue(), record =>
-        (!args.targetId || record.targetId == args.targetId) &&
-        ((!args.task || !args.room) ||
-        (record.task == args.task && record.workRoom == args.room >= 0))
+        (!args.targetId || record.targetId == args.targetId)
     ).length > 0 ? true : false;
 };
 
@@ -71,25 +65,19 @@ WorkQueue.prototype.addRecord = function(args) {
 
     logger.debug('adding record, task: ' + record.task + ', priority: ' + record.priority);
 
-    return Game.Queue.addRecord(record);
+    return addQueue(record);
 };
 
-WorkQueue.prototype.cleanRoomQueue = function(roomName) {
-    if (!roomName) { return -1 };
+let workQueue = new WorkQueue();
 
-    let records = _.filter(this.getQueue(), record =>
-        record.workRoom == roomName
-    );
-
-    if (records.length <= 0) { return true; }
-
-    for(let i = 0; i < records.length; i++) {
-        logger.debug('removing record, id: ' + records[i].id + ', task: ' + records[i].task);
-
-        this.delRecord(records[i].id);
-    }
-
-    return true;
+global.addQueueWork = function(args) {
+    return workQueue.addRecord(args);
 };
 
-module.exports = WorkQueue;
+global.getQueueWork = function() {
+    return workQueue.getQueue();
+};
+
+global.isQueuedWork = function(args) {
+    return workQueue.isQueued(args);
+};

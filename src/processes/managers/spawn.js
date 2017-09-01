@@ -54,7 +54,7 @@ Spawn.prototype.doSpawn = function(spawn, room) {
         return true;
     }
 
-    let records = _.filter(Game.Queue.spawn.getQueue(), record =>
+    let records = _.filter(getQueueSpawn(), record =>
         (record.rooms.indexOf(room.name) >= 0 ||
         record.rooms.length == 0) &&
         !record.spawned

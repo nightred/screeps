@@ -46,7 +46,7 @@ var Work = function() {
 };
 
 Work.prototype.doWorkTask = function(creep) {
-    let workTask = Game.Queue.getRecord(creep.memory.workId);
+    let workTask = getQueueRecord(creep.memory.workId);
 
     if (!workTask) {
         logger.error('failed to load work task id: ' + creep.memory.workId +
@@ -79,7 +79,7 @@ Work.prototype.getWorkTask = function(workTasks, creep, args) {
 
     args = args || {};
 
-    let queue = Game.Queue.work.getQueue();
+    let queue = getQueueWork();
 
     queue = _.filter(queue, record =>
         workTasks.indexOf(record.task) >= 0 &&
@@ -105,7 +105,7 @@ Work.prototype.getWorkTask = function(workTasks, creep, args) {
 };
 
 Work.prototype.addCreep = function(creepName, id) {
-    let workTask = Game.Queue.getRecord(id);
+    let workTask = getQueueRecord(id);
 
     if (!workTask) {
         logger.error('failed to load work task id: ' + id +
@@ -121,7 +121,7 @@ Work.prototype.addCreep = function(creepName, id) {
 };
 
 Work.prototype.removeCreep = function(creepName, id) {
-    let work = Game.Queue.getRecord(id);
+    let work = getQueueRecord(id);
 
     if (!work) {
         logger.error('failed to load work task id" ' + id +
@@ -174,7 +174,7 @@ Work.prototype.doFlag = function(flag) {
         flag.memory.workId = work.flag(roomName, flagVars);
     }
 
-    let task = Game.Queue.getRecord(flag.memory.workId);
+    let task = getQueueRecord(flag.memory.workId);
 
     if (!task.pos) {
         task.pos = {};

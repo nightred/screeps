@@ -126,7 +126,7 @@ var taskRepair = {
         if (targets.length <= 0) { return true; }
 
         for (let i = 0; i < targets.length; i++) {
-            if (Game.Queue.work.isQueued({ targetId: targets[i].id, })) {
+            if (isQueuedWork({ targetId: targets[i].id, })) {
                 continue;
             }
 
@@ -153,7 +153,7 @@ var taskRepair = {
             targetId: args.targetId,
         };
 
-        return Game.Queue.work.addRecord(record);
+        return addQueueWork(record);
     },
 
 };

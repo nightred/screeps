@@ -5,12 +5,10 @@
  *
  */
 
-var Defense     = require('mil.defense');
 var Squad       = require('mil.squad');
 var milCreep    = require('mil.creep');
 
 var Mil = function() {
-    this.defense    = new Defense;
     this.squad      = new Squad;
     this.creep      = new milCreep;
 
@@ -56,7 +54,7 @@ Mil.prototype.doFlag = function(flag) {
     let flagName = flag.name;
     let args = flagName.split(':');
 
-    if (flag.memory.squadId && !Game.Queue.getRecord(flag.memory.squadId)) {
+    if (flag.memory.squadId && !getQueueRecord(flag.memory.squadId)) {
         flag.memory.squadId = undefined;
     }
 
