@@ -5,6 +5,9 @@
  *
  */
 
+var logger = new Logger('[FieldTech Director]');
+logger.level = C.LOGLEVEL.DEBUG;
+
 var directorFieldTech = function() {
     // init
 }

@@ -5,6 +5,7 @@
 
 require('util.visuals');
 require('util.storage');
+require('util.allies');
 
 global.setSleep = function(obj, ticks) {
     if (!obj.memory) return;

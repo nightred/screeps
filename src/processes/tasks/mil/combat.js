@@ -1,45 +1,36 @@
 /*
- * Mil Creep system
+ * task Militia
  *
- * mil Creep provides functions for military creep
+ * task Militia defends rooms
  *
  */
 
-var milCreep = function() {
-    Memory.world = Memory.world || {};
-    Memory.world.mil = Memory.world.mil || {}
-    this.memory = Memory.world.mil;
+var taskMilCombat = function() {
+    // init
 };
 
-milCreep.prototype.doCreep = function(creep, squad) {
-    if (!creep) { return ERR_INVALID_ARGS; }
-    if (!squad) { return ERR_INVALID_ARGS; }
+taskMilCombat.prototype.run = function() {
+    let creep = Game.creeps[this.memory.creepName];
 
-    if (creep.room.name != squad.op.room) {
-        creep.moveToRoom(squad.op.room);
-        return true;
+    if (!creep) {
+        Game.kernel.killProcess(this.pid);
+    }
+
+    if (creep.getOffExit()) {
+        return;
     }
 
     switch(creep.memory.role) {
         case C.ROLE_COMBAT_MEDIC:
-            this.doHeal(creep, squad);
+            this.doHeal(creep);
             break;
         default:
-            this.doAttack(creep, squad);
+            this.doAttack(creep);
     }
-
-    return true;
 };
 
-milCreep.prototype.doAttack = function(creep, squad) {
-    if (!creep) { return ERR_INVALID_ARGS; }
-    if (!squad) { return ERR_INVALID_ARGS; }
-
+taskMilCombat.prototype.doAttack = function(creep) {
     creep.memory.targetId = creep.memory.targetId || false;
-
-    if (squad.targetId) {
-        creep.memory.targetId = squad.targetId;
-    }
 
     if (!creep.memory.targetId) {
         creep.memory.targetId = this.getTarget(creep);
@@ -48,7 +39,7 @@ milCreep.prototype.doAttack = function(creep, squad) {
     let target = Game.getObjectById(creep.memory.targetId);
     if (!target) {
         creep.memory.targetId = false;
-        return this.doRally(creep, squad);
+        return this.doRally(creep);
     }
 
     if (creep.attack(target) == ERR_NOT_IN_RANGE) {
@@ -76,10 +67,7 @@ milCreep.prototype.doAttack = function(creep, squad) {
     return true;
 };
 
-milCreep.prototype.doHeal = function(creep, squad) {
-    if (!creep) { return ERR_INVALID_ARGS; }
-    if (!squad) { return ERR_INVALID_ARGS; }
-
+taskMilCombat.prototype.doHeal = function(creep) {
     let targets = _.sortBy(_.filter(creep.room.find(FIND_MY_CREEPS), creep =>
         creep.hits < creep.hitsMax
         ), creep => creep.hits);
@@ -97,39 +85,44 @@ milCreep.prototype.doHeal = function(creep, squad) {
     return true;
 };
 
-milCreep.prototype.getTarget = function(creep) {
-    if (!creep) { return ERR_INVALID_ARGS; }
-
+taskMilCombat.prototype.getTarget = function(creep) {
     let targets = creep.room.getHostileStructures()
     targets = _.filter(targets, target =>
         target.structureType == STRUCTURE_TOWER);
     targets = _.filter(targets, structure =>
         structure.owner &&
         !isAlly(structure.owner.username));
+
     if (targets.length > 0) {
         targets = _.sortBy(targets, target => creep.pos.getRangeTo(target));
         return targets[0];
     }
+
     targets = creep.room.getHostiles();
     targets = _.filter(targets, creep =>
         creep.owner &&
         !isAlly(creep.owner.username));
+
     if (targets.length > 0) {
         targets = _.sortBy(targets, target => creep.pos.getRangeTo(target));
         return targets[0];
     }
+
     targets = creep.room.getHostileSpawns()
     targets = _.filter(targets, structure =>
         structure.owner &&
         !isAlly(structure.owner.username));
+
     if (targets.length > 0) {
         targets = _.sortBy(targets, target => creep.pos.getRangeTo(target));
         return targets[0];
     }
+
     targets = creep.room.getHostileStructures()
     targets = _.filter(targets, structure =>
         structure.owner &&
         !isAlly(structure.owner.username));
+
     if (targets.length > 0) {
         targets = _.filter(targets, target =>
             target.structureType != STRUCTURE_CONTROLLER);
@@ -140,18 +133,8 @@ milCreep.prototype.getTarget = function(creep) {
     return false;
 };
 
-milCreep.prototype.doRally = function(creep, squad) {
-    if (!creep) { return ERR_INVALID_ARGS; }
-    if (!squad) { return ERR_INVALID_ARGS; }
-
-    if (squad.op) {
-        let rallyPos = new RoomPosition(squad.op.x, squad.op.y, squad.op.room);
-
-        creep.goto(rallyPos, { reusePath: 5, maxRooms: 1, });
-    } else {
-        creep.moveToIdlePosition();
-    }
-    return true;
+taskMilCombat.prototype.doRally = function(creep) {
+    creep.moveToIdlePosition();
 };
 
-module.exports = milCreep;
+registerProcess(C.TASK_MIL_COMBAT, taskMilCombat);

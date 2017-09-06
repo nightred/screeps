@@ -5,6 +5,9 @@
  *
  */
 
+var logger = new Logger('[Mining Director]');
+logger.level = C.LOGLEVEL.DEBUG;
+
 var directorMining = function() {
     // init
 }

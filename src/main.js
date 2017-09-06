@@ -1,30 +1,26 @@
 /*
  * Main Loop
- *
  */
 
 // global methods
 global.C        = require('constants');
 global.Logger   = require('util.logger');
 
-// init the logger
-var logger = new Logger('[Main]');
-logger.level = C.LOGLEVEL.DEBUG;
-
 // prototypes
 require('prototype.prototype');
-
-// load utils
+// utils
 require('util.utils');
-
-// load kernel
-var Kernel = require('kernel');
-
 // modules
 require('modules.queue');
 require('modules.role');
 require('modules.work');
-require('modules.mil');
+
+// load kernel
+var Kernel = require('kernel');
+
+// init the logger
+var logger = new Logger('[Main]');
+logger.level = C.LOGLEVEL.DEBUG;
 
 module.exports.loop = function () {
     let cpuStart = Game.cpu.getUsed();
@@ -43,9 +39,6 @@ module.exports.loop = function () {
 
     // start the kernel
     Game.kernel.run();
-
-    // run modules
-    Game.Mil.run();
 
     addTerminalLog(undefined, {
         command: 'main',

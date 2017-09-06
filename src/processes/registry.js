@@ -30,6 +30,7 @@ require('processes.tasks.source');
 require('processes.tasks.stock');
 require('processes.tasks.tech');
 require('processes.tasks.upgrade');
+require('processes.tasks.mil.combat');
 
 // directors
 //require('processes.directors.controller');

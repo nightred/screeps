@@ -5,6 +5,9 @@
  *
  */
 
+var logger = new Logger('[Remote Room Director]');
+logger.level = C.LOGLEVEL.DEBUG;
+
 var directorRemote = function() {
     // init
 }

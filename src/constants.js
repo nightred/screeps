@@ -169,6 +169,7 @@ Constant.TASK_FIELDTECH                 = 'task/fieldtech';
 Constant.TASK_RESERVE                   = 'task/reserve';
 Constant.TASK_MILITIA                   = 'task/militia';
 Constant.TASK_DISMANTLE                 = 'task/dismantle';
+Constant.TASK_MIL_COMBAT                = 'task/mil/combat';
 
 Constant.TASK_TYPES = [
     Constant.TASK_SOURCE,
@@ -181,6 +182,7 @@ Constant.TASK_TYPES = [
     Constant.TASK_RESERVE,
     Constant.TASK_MILITIA,
     Constant.TASK_DISMANTLE,
+    Constant.TASK_MIL_COMBAT,
 ];
 
 Constant.WORK_TOWER_REFILL              = 'towerfill';

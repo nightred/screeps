@@ -43,4 +43,4 @@ taskMilitia.prototype.run = function() {
     creep.doWork();
 };
 
-registerProcess('tasks/militia', taskMilitia);
+registerProcess(C.TASK_MILITIA, taskMilitia);

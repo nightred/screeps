@@ -5,6 +5,9 @@
  *
  */
 
+var logger = new Logger('[Source Director]');
+logger.level = C.LOGLEVEL.DEBUG;
+
 var directorSource = function() {
     // init
 };
