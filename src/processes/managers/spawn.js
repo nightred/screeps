@@ -5,8 +5,6 @@
  *
  */
 
-var Logger = require('util.logger');
-
 var logger = new Logger('[Spawn Manager]');
 logger.level = C.LOGLEVEL.DEBUG;
 
@@ -42,17 +40,13 @@ Spawn.prototype.run = function() {
 * @param {Room} room The room
 **/
 Spawn.prototype.doSpawn = function(spawn, room) {
-    if (spawn.spawning) {
-        return true;
-    }
+    if (spawn.spawning) return;
 
     let energy = room.energyAvailable;
 
     let maxEnergy = room.energyCapacityAvailable * C.SPAWN_ENERGY_MAX;
 
-    if (energy < C.ENERGY_CREEP_SPAWN_MIN) {
-        return true;
-    }
+    if (energy < C.ENERGY_CREEP_SPAWN_MIN) return;
 
     let records = _.filter(getQueueSpawn(), record =>
         (record.rooms.indexOf(room.name) >= 0 ||
@@ -60,9 +54,7 @@ Spawn.prototype.doSpawn = function(spawn, room) {
         !record.spawned
     );
 
-    if (records.length <= 0) {
-        return true;
-    }
+    if (records.length <= 0) return;
 
     let maxAge = Game.time - Math.min.apply(null, records.tick);
 
@@ -78,9 +70,11 @@ Spawn.prototype.doSpawn = function(spawn, room) {
 
         let spawnEnergy = energy > maxEnergy ? maxEnergy : energy;
 
-        if (records[r].minSize && spawnEnergy < records[r].minSize) {
-            continue;
+        if (records[r].maxSize && spawnEnergy > records[r].maxSize) {
+            spawnEnergy = records[r].maxSize;
         }
+
+        if (records[r].minSize && spawnEnergy < records[r].minSize) continue;
 
         let minSize = 0;
 
@@ -89,31 +83,23 @@ Spawn.prototype.doSpawn = function(spawn, room) {
             minSize = minSize >= 0 ? minSize : 0;
         }
 
-        minSize += C.ENERGY_CREEP_SPAWN_MIN;
+        minSize = minSize > C.ENERGY_CREEP_SPAWN_MIN ? minSize : C.ENERGY_CREEP_SPAWN_MIN;
 
-        if (minSize > spawnEnergy) {
-            continue;
-        }
+        if (minSize > spawnEnergy) continue;
 
-        if (records[r].maxSize && spawnEnergy > records[r].maxSize) {
-            spawnEnergy = records[r].maxSize;
-        }
+        let body = getRoleBody(records[r].role, spawnEnergy, args);
 
-        let args = {};
+        if (getBodyCost(body) > spawnEnergy) continue;
 
-        args.spawnRoom = room.name;
-        args.role = records[r].role;
+        let args = {
+            spawnRoom: room.name,
+            role: records[r].role
+        };
 
         if (records[r].creepArgs) {
             for (let item in records[r].creepArgs) {
                 args[item] = records[r].creepArgs[item];
             };
-        }
-
-        let body = getRoleBody(records[r].role, spawnEnergy, args);
-
-        if (getBodyCost(body) > energy) {
-            continue;
         }
 
         let name = doSpawnCreep(spawn, body, args);
@@ -123,8 +109,15 @@ Spawn.prototype.doSpawn = function(spawn, room) {
             records[r].spawned = true;
             records[r].name = name;
 
-            if (records[r].directorId) {
-                directorAddCreep(records[r].pid, name)
+            if (records[r].squadPid) {
+                let process = Game.kernel.getProcessByPid(records[r].squadPid);
+
+                if (!process) {
+                    logger.error('failed to get process squad pid: ' + records[r].squadPid);
+                    return;
+                }
+
+                process.addNewCreep(name);
             }
 
             logger.info('spawning' +
@@ -136,8 +129,6 @@ Spawn.prototype.doSpawn = function(spawn, room) {
             break;
         }
     }
-
-    return true;
 };
 
 /**
@@ -147,12 +138,7 @@ Spawn.prototype.doSpawn = function(spawn, room) {
 * @param {Object} args Extra arguments
 **/
 var doSpawnCreep = function(spawn, body, args) {
-    if (!spawn) { return ERR_INVALID_ARGS; }
-    if (!Array.isArray(body) || body.length < 1) { return ERR_INVALID_ARGS; }
-
-    let name = getName(args.role);
-
-    return spawn.createCreep(body, name, args);
+    return spawn.createCreep(body, getName(args.role), args);
 };
 
 /**
@@ -160,8 +146,6 @@ var doSpawnCreep = function(spawn, body, args) {
 * @param {array} body The creep body
 **/
 var getBodyCost = function(body) {
-    if (!Array.isArray(body)) { return ERR_INVALID_ARGS; }
-
     let cost = 0;
     for (let i = 0; i < body.length; i++) {
         cost += BODYPART_COST[body[i]];
@@ -172,7 +156,6 @@ var getBodyCost = function(body) {
 
 var getName = function(role) {
     let name = role.replace(/\./g, '_');
-
     name += '_' + Math.random().toString(36).substr(2, 1);
     name += '_' + Game.time % 1000;
 

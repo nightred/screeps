@@ -83,5 +83,4 @@ directorMining.prototype.getSources = function(task) {
     return true;
 };
 
-module.exports = directorMining;
 registerProcess(C.DIRECTOR_MINING, directorMining);

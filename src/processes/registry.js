@@ -16,6 +16,7 @@ require('processes.managers.tower');
 require('processes.managers.link');
 require('processes.managers.spawn');
 require('processes.managers.defense');
+require('processes.managers.squad');
 
 // tasks
 require('processes.tasks.dismantle');
@@ -31,15 +32,15 @@ require('processes.tasks.tech');
 require('processes.tasks.upgrade');
 
 // directors
-require('processes.directors.controller');
+//require('processes.directors.controller');
 require('processes.directors.fieldtech');
-require('processes.directors.hauling');
-require('processes.directors.interhauling');
+//require('processes.directors.hauling');
+//require('processes.directors.interhauling');
 require('processes.directors.mining');
 require('processes.directors.remote');
-require('processes.directors.reserve');
-require('processes.directors.resupply');
+//require('processes.directors.reserve');
+//require('processes.directors.resupply');
 require('processes.directors.room');
 require('processes.directors.source');
-require('processes.directors.stocking');
+//require('processes.directors.stocking');
 require('processes.directors.tech');

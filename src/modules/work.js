@@ -5,8 +5,6 @@
  *
  */
 
-var Logger = require('util.logger');
-
 var logger = new Logger('[Work]');
 logger.level = C.LOGLEVEL.DEBUG;
 

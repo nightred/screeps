@@ -5,8 +5,6 @@
  *
  */
 
-var Logger = require('util.logger');
-
 var logger = new Logger('[Service Flag]');
 logger.level = C.LOGLEVEL.DEBUG;
 

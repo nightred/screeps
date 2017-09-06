@@ -5,8 +5,6 @@
  *
  */
 
-var Logger = require('util.logger');
-
 var logger = new Logger('[Queue Mil]');
 logger.level = C.LOGLEVEL.INFO;
 

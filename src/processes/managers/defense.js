@@ -6,16 +6,24 @@
  *
  */
 
-var Logger = require('util.logger');
-
 var logger = new Logger('[Defense]');
 logger.level = C.LOGLEVEL.DEBUG;
 
 var Defense = function() {
-
+    // init
 };
 
-Defense.prototype.doRoom = function() {
+Object.defineProperty(Defense.prototype, 'squad', {
+    get: function() {
+        if (!this.memory.squadPid) return false;
+        return Game.kernel.getProcessByPid(this.memory.squadPid);
+    },
+    set: function(value) {
+        this.memory.squadPid = value.pid;
+    },
+});
+
+Defense.prototype.run = function() {
     if (isSleep(this)) return;
 
     let room = Game.rooms[this.memory.workRoom];
@@ -26,7 +34,10 @@ Defense.prototype.doRoom = function() {
 
     if (room.controller && room.controller.my) {
         this.doSafeMode(room);
-        this.spawnMilitia(room);
+    }
+
+    if (this.memory.workRoom == this.memory.spawnRoom) {
+        this.doSquadSpawnLimits();
     }
 
     this.doDefenseMode(room);
@@ -34,56 +45,51 @@ Defense.prototype.doRoom = function() {
     setSleep(this, (Game.time + C.DEFENSE_SLEEP + Math.floor(Math.random() * 8)));
 };
 
-Defense.prototype.spawnMilitia = function(room) {
-    let defense = room.memory.defense;
+Defense.prototype.doSquadSpawnLimits = function(room) {
+    let spawnRoom = Game.rooms[this.memory.spawnRoom];
 
-    let maxCreep = 0;
+    if (!spawnRoom || !spawnRoom.controller || !spawnRoom.controller.my) return;
 
-    switch (room.controller.level) {
-        case 1:
-        case 2:
-        case 3:
-            break;
+    let creepLimit = 0;
+    let minSize = 200;
+    let maxSize = 200;
 
-        case 4:
-        case 5:
-        case 6:
-            maxCreep = 1;
-            break;
-
-        case 7:
-        case 8:
-            maxCreep = 2;
-            break;
+    let rlevel = spawnRoom.controller.level;
+    if (rlevel == 2 || rlevel == 3) {
+        minSize = 200;
+        maxSize = 300;
+        creepLimit = 1;
+    } else if (rlevel == 4 || rlevel == 5 || rlevel == 6) {
+        minSize = 200;
+        maxSize = 500;
+        creepLimit = 1;
+    } else if (rlevel == 7) {
+       minSize = 200;
+       maxSize = 800;
+       creepLimit = 1;
+    } else if (rlevel == 8) {
+        minSize = 400;
+        maxSize = 9999;
+        creepLimit = 2;
     }
 
-    // spawn brawlers for the militia
-    let count = _.filter(Game.creeps, creep =>
-        creep.memory.spawnRoom == room.name &&
-        creep.memory.role == C.ROLE_COMBAT_MILITIA &&
-        creep.memory.squad == 'militia' &&
-        creep.memory.despawn != true
-        ).length;
+    let record = {
+        name: 'techs',
+        task: C.TASK_MILITIA,
+        role: C.ROLE_COMBAT_MILITIA,
+        maxSize: maxSize,
+        minSize: minSize,
+        limit: creepLimit,
+    };
 
-    if (count < maxCreep) {
-        if (defense.spawnJob && !getQueueRecord(defense.spawnJob)) {
-            defense.spawnJob = undefined;
-        }
+    let process = this.squad;
 
-        if (!defense.spawnJob) {
-            let record = {
-                rooms: [ room.name, ],
-                role: C.ROLE_COMBAT_MILITIA,
-                priority: 38,
-                creepArgs: {
-                    squad: 'militia',
-                    task: C.TASK_MILITIA,
-                },
-            };
-
-            defense.spawnJob = addQueueSpawn(record);
-        }
+    if (!process) {
+        logger.error('failed to load squad process for creep group update');
+        continue;
     }
+
+    process.setGroup(record);
 };
 
 Defense.prototype.doDefenseMode = function(room) {
@@ -169,6 +175,24 @@ Defense.prototype.doSafeMode = function(room) {
 
         logger.info('safe mode activated in room: <p style=\"display:inline; color: #ed4543\"><a href=\"#!/room/' + room.name + '\">' + room.name + '</a></p>');
     }
+};
+
+directorSource.prototype.initSquad = function() {
+    let imageName = 'managers/squad';
+    let squadName = this.memory.workRoom + '_defense';
+
+    let process = Game.kernel.startProcess(this, imageName, {
+        name: squadName,
+        spawnRoom: this.memory.spawnRoom,
+        workRooms: this.memory.workRoom,
+    });
+
+    if (!process) {
+        logger.error('failed to create process ' + imageName);
+        continue;
+    }
+
+    this.squad = process;
 };
 
 registerProcess('managers/defense', Defense);

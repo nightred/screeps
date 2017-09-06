@@ -4,8 +4,6 @@
  * This manages the roles for creeps
  */
 
-var Logger = require('util.logger');
-
 var logger = new Logger('[Role]');
 logger.level = C.LOGLEVEL.DEBUG;
 

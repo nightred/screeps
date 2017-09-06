@@ -4,11 +4,10 @@
  */
 
 // global methods
-global.C = require('constants');
+global.C        = require('constants');
+global.Logger   = require('util.logger');
 
 // init the logger
-var Logger = require('util.logger');
-
 var logger = new Logger('[Main]');
 logger.level = C.LOGLEVEL.DEBUG;
 
@@ -25,14 +24,13 @@ var Kernel = require('kernel');
 require('modules.queue');
 require('modules.role');
 require('modules.work');
-require('modules.director');
 require('modules.mil');
 
 module.exports.loop = function () {
     let cpuStart = Game.cpu.getUsed();
 
     // init the kernel
-    Game.kernel         = new Kernel;
+    Game.kernel = new Kernel;
 
     onTick();
 
@@ -40,7 +38,7 @@ module.exports.loop = function () {
         command: 'init',
         status: 'OK',
         cpu: Game.cpu.getUsed(),
-        output: 'memory usage: ' + (JSON.stringify(RawMemory).length / 1024).toFixed(2) + ' KB',
+        output: 'memory usage: ' + (RawMemory.get().length / 1024).toFixed(2) + ' KB',
     });
 
     // start the kernel

@@ -7,71 +7,84 @@
 
 var directorSource = function() {
     // init
-}
+};
+
+Object.defineProperty(directorSource.prototype, 'squad', {
+    get: function() {
+        if (!this.memory.squadPid) return false;
+        return Game.kernel.getProcessByPid(this.memory.squadPid);
+    },
+    set: function(value) {
+        this.memory.squadPid = value.pid;
+    },
+});
 
 directorSource.prototype.run = function() {
-    if (isSleep(this)) return true;
+    if (isSleep(this)) return;
 
-    let room = Game.rooms[this.memory.workRoom];
-
-    if (!room) {
-        return false;
+    if (!this.squad) {
+        this.initSquad();
     }
 
-    if (!this.memory.creep) {
-        this.memory.creep = [];
-    }
+    this.doSquadLimits();
 
-    // set spawn limits
+    setSleep(this, (Game.time + C.DIRECTOR_SLEEP + Math.floor(Math.random() * 8)));
+};
+
+directorSource.prototype.doSquadLimits = function() {
+    let workRoom = Game.rooms[this.memory.workRoom];
+
+    if (!workRoom) return;
+
     let creepLimit = 1;
 
     // remove old creep and clear spawn job when done
     let removeCreep = [];
 
-    for (let i = 0; i < this.memory.creep.length; i++) {
-        if (!Game.creeps[this.memory.creep[i]]) {
-            removeCreep.push(this.memory.creep[i]);
-        }
+    let record = {
+        name: 'source',
+        task: C.TASK_SOURCE,
+        role: C.ROLE_MINER,
+        maxSize: maxSize,
+        minSize: minSize,
+        limit: creepLimit,
+        creepArgs: {
+            sourceId: this.memory.sourceId,
+        },
+    };
+
+    let source = Game.getObjectById(this.memory.sourceId);
+
+    if (source && source.getDropContainer()) {
+        record.creepArgs.style = 'drop';
+    } else if (this.memory.spawnRoom != this.memory.roomName) {
+        record.creepArgs.style = 'ranged';
     }
 
-    if (removeCreep.length > 0) {
-        for (let i = 0; i < removeCreep.length; i++) {
-            directorRemoveCreep(this.pid, removeCreep[i]);
-        }
+    let process = this.squad;
+
+    if (!process) {
+        logger.error('failed to load squad process for creep group update');
+        continue;
     }
 
-    if (this.memory.spawnId && !getQueueRecord(this.memory.spawnId)) {
-        this.memory.spawnId = undefined;
+    process.setGroup(record);
+};
+
+directorSource.prototype.initSquad = function() {
+    let imageName = 'managers/squad';
+    let process = Game.kernel.startProcess(this, imageName, {
+        name: (this.memory.workRoom + '_source'),
+        spawnRoom: this.memory.spawnRoom,
+        workRooms: this.memory.workRoom,
+    });
+
+    if (!process) {
+        logger.error('failed to create process ' + imageName);
+        continue;
     }
 
-    // spawn new creep if below limit
-    if (this.memory.creep.length < creepLimit && !this.memory.spawnId) {
-        let record = {
-            rooms: [ this.memory.spawnRoom, ],
-            role: C.ROLE_MINER,
-            priority: 50,
-            directorId: this.memory.id,
-            creepArgs: {
-                sourceId: this.memory.sourceId,
-                workRoom: this.memory.workRoom,
-                task: C.TASK_SOURCE,
-            },
-        };
-
-        let source = Game.getObjectById(this.memory.sourceId);
-
-        if (source && source.getDropContainer()) {
-            record.creepArgs.style = 'drop';
-        } else if (this.memory.spawnRoom != this.memory.roomName) {
-            record.creepArgs.style = 'ranged';
-        }
-
-        this.memory.spawnId = addQueueSpawn(record);
-    }
-
-    setSleep(this, (Game.time + C.DIRECTOR_SLEEP + Math.floor(Math.random() * 8)));
-
-    return true;
+    this.squad = process;
 };
 
 registerProcess(C.DIRECTOR_SOURCE, directorSource);

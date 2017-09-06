@@ -4,32 +4,24 @@
  * This manages the roles and tasks for creeps
  */
 
-var Logger = require('util.logger');
-
 var logger = new Logger('[Service Creep]');
 logger.level = C.LOGLEVEL.INFO;
 
-var Creep = function() {
+var CreepService = function() {
     // init
 };
 
-Creep.prototype.run = function() {
+CreepService.prototype.run = function() {
     let cpuStart = Game.cpu.getUsed();
-
-    this.gc();
 
     let creepCount = 0;
 
-    for(var name in Game.creeps) {
+    for (var name in Game.creeps) {
         var creep = Game.creeps[name];
 
-        if (!creep) {
-            this.gc(name);
-        }
+        if (!creep) this.cleanOldCreep(name);
 
-        if (creep.spawning || !creep.memory.task) {
-            continue;
-        }
+        if (creep.spawning || !creep.memory.task || creep.memory.despawn) continue;
 
         if (creep.isDespawnWarning()) {
             this.doDespawn(creep);
@@ -64,7 +56,7 @@ Creep.prototype.run = function() {
     addTerminalLog(undefined, log)
 };
 
-Creep.prototype.doDespawn = function(creep) {
+CreepService.prototype.doDespawn = function(creep) {
     if (!creep) { return ERR_INVALID_ARGS; }
 
     if (!creep.memory.despawn || creep.memory.despawn == undefined) {
@@ -78,15 +70,17 @@ Creep.prototype.doDespawn = function(creep) {
     return true;
 };
 
-Creep.prototype.gc = function(name) {
-    if (Memory.creeps[name].workId) {
-        workRemoveCreep(name, Memory.creeps[name].workId);
+CreepService.prototype.cleanOldCreep = function(creepName) {
+    let creepMemory = Memory.creeps[creepName];
+
+    if (creepMemory.workId) {
+        workRemoveCreep(creepName, creepMemory.workId);
     }
 
     logger.debug('clearing non-existant creep memory name: ' + name +
-        ' role: ' + Memory.creeps[name].role);
+        ' role: ' + creepMemory.role);
 
     delete Memory.creeps[name];
 };
 
-registerProcess('services/creep', Creep);
+registerProcess('services/creep', CreepService);

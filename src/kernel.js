@@ -4,8 +4,6 @@
  * main kernel of the system
  */
 
-var Logger = require('util.logger');
-
 var logger = new Logger('[Kernel]');
 logger.level = C.LOGLEVEL.DEBUG;
 
@@ -83,6 +81,8 @@ Kernel.prototype.run = function() {
     for (let i = 0; i < pids.length; i++) {
         let pid = pids[i];
 
+        let procStartCPU = Game.cpu.getUsed();
+
         let procInfo = this.processTable[pid];
 
         if (procInfo.status == 'killed') {
@@ -101,11 +101,15 @@ Kernel.prototype.run = function() {
             }
 
             process.run();
+
+            procInfo.lastTick = Game.cpu.getUsed();
         } catch (e) {
             procInfo.status = 'crashed';
             procInfo.error = e.stack || e.toString();
             logger.error(`process crashed ${procInfo.name} : ${procInfo.pid}\n${e.stack}`);
         }
+
+        procInfo.cpuUsed = (Game.cpu.getUsed() - procStartCPU);
     }
 };
 

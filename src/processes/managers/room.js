@@ -5,8 +5,6 @@
  *
  */
 
-var Logger = require('util.logger');
-
 var logger = new Logger('[Room Manager]');
 logger.level = C.LOGLEVEL.DEBUG;
 
@@ -172,8 +170,7 @@ RoomManager.prototype.doManagers = function() {
 
 RoomManager.prototype.doDirectorFlag = function(flag) {
     if (!flag.memory.init) {
-        let flagName = flag.name;
-        let flagVars = flagName.split(':');
+        let flagVars = flag.name.split(':');
         let roomName = flag.pos.roomName;
 
         if (C.DIRECTOR_FLAG_MAP.indexOf(flagVars[1]) == -1) {

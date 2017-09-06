@@ -7,8 +7,6 @@
  *
  */
 
-var Logger = require('util.logger');
-
 var logger = new Logger('[Queue]');
 logger.level = C.LOGLEVEL.DEBUG;
 

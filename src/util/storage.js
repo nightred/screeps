@@ -6,8 +6,6 @@
  *
  */
 
-var Logger = require('util.logger');
-
 var logger = new Logger('[Storage]');
 logger.level = C.LOGLEVEL.DEBUG;
 

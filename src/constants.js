@@ -58,6 +58,9 @@ Constant.DEFENSE_LIMIT_INCREASE_DELAY   = 100;
 Constant.MIL_SQUAD_SPAWN_COOLDOWN       = 8;
 Constant.MIL_SQUAD_CREEP_COOLDOWN       = 6;
 
+Constant.SQUAD_SLEEP_SPAWN              = 8;
+Constant.SQUAD_SLEEP_NEWCREEP           = 3;
+
 Constant.SPAWN_COST_DECAY               = 200;
 Constant.SPAWN_QUEUE_DELAY              = 2;
 Constant.SPAWN_ENERGY_MAX               = 0.8;

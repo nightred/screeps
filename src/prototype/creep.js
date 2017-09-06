@@ -84,19 +84,20 @@ Creep.prototype.isDespawnWarning = function() {
     return this.ticksToLive <= C.CREEP_DESPAWN_TICKS;
 }
 
-Creep.prototype.setDespawn = function() {
-    this.memory.despawn = true;
-    this.memory.goingTo = false;
+CreepService.prototype.doDespawn = function() {
+    if (!this.memory.despawn) {
+        this.memory.despawn = true;
+        this.memory.goingTo = false;
 
-    this.leaveWork();
+        this.leaveWork();
 
-    if (this.process) {
-        let p = this.process;
-        Game.kernel.killProcess(p.pid);
+        if (this.memory.pid) {
+            Game.kernel.killProcess(this.memory.pid);
+        }
     }
 
-    return true;
-}
+    this.getOffExit()
+};
 
 Creep.prototype.hasWork = function() {
     return this.memory.workId > 0;

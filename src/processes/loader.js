@@ -2,8 +2,6 @@
  * Loader
  */
 
-var Logger = require('util.logger');
-
 var logger = new Logger('[Loader]');
 logger.level = C.LOGLEVEL.DEBUG;
 
