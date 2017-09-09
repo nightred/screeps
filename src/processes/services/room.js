@@ -8,11 +8,11 @@
 var logger = new Logger('[Service Room]');
 logger.level = C.LOGLEVEL.DEBUG;
 
-var Room = function() {
+var ServiceRoom = function() {
     // init
 };
 
-Object.defineProperty(Kernel.prototype, 'processTable', {
+Object.defineProperty(ServiceRoom.prototype, 'processTable', {
     get: function() {
         this.memory.processTable = this.memory.processTable || {};
         return this.memory.processTable;
@@ -23,7 +23,7 @@ Object.defineProperty(Kernel.prototype, 'processTable', {
     },
 });
 
-Room.prototype.run = function() {
+ServiceRoom.prototype.run = function() {
     let cpuStart = Game.cpu.getUsed();
 
     for (let name in Game.rooms) {
@@ -45,4 +45,4 @@ Room.prototype.run = function() {
     });
 };
 
-registerProcess('services/room', Room);
+registerProcess('services/room', ServiceRoom);

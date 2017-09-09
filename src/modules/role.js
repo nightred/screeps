@@ -7,18 +7,6 @@
 var logger = new Logger('[Role]');
 logger.level = C.LOGLEVEL.DEBUG;
 
-// load the roles
-require('modules.role.combat.brawler');
-require('modules.role.combat.militia');
-require('modules.role.controller');
-require('modules.role.fieldtech');
-require('modules.role.hauler');
-require('modules.role.miner');
-require('modules.role.resupply');
-require('modules.role.stocker');
-require('modules.role.tech');
-require('modules.role.upgrader');
-
 // registry of roles
 var roleRegistry = {
     registry: {},
@@ -52,3 +40,15 @@ global.getRoleBody = function(roleName, energy, args) {
 
     return role.getBody(energy, args);
 };
+
+// load the roles
+require('modules.role.combat.brawler');
+require('modules.role.combat.militia');
+require('modules.role.controller');
+require('modules.role.fieldtech');
+require('modules.role.hauler');
+require('modules.role.miner');
+require('modules.role.resupply');
+require('modules.role.stocker');
+require('modules.role.tech');
+require('modules.role.upgrader');

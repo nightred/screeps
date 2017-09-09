@@ -30,17 +30,17 @@ CreepService.prototype.run = function() {
 
         if (!creep.process) {
             let imageName = creep.memory.task;
-            let p = Game.kernel.startProcess(this, imageName, {
+            let proc = Game.kernel.startProcess(this, imageName, {
                 creepName: creep.name,
             });
 
-            if (!p) {
+            if (!proc) {
                 logger.error('failed to create process ' + imageName +
                     ' on creep ' + creep.name);
                 continue;
             }
 
-            creep.process = p;
+            creep.process = proc;
         }
 
         creepCount++;

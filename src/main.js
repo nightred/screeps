@@ -17,6 +17,8 @@ require('modules.work');
 
 // load kernel
 var Kernel = require('kernel');
+// load processes
+require('processes.registry');
 
 // init the logger
 var logger = new Logger('[Main]');

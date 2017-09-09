@@ -8,18 +8,6 @@
 var logger = new Logger('[Work]');
 logger.level = C.LOGLEVEL.DEBUG;
 
-// load the work tasks
-require('modules.work.terminal.empty');
-require('modules.work.tower.fill');
-require('modules.work.attack');
-require('modules.work.claim');
-require('modules.work.construction');
-require('modules.work.defense');
-require('modules.work.dismantle');
-require('modules.work.repair');
-require('modules.work.scouting');
-require('modules.work.signcontroller');
-
 // registry of work
 var workRegistry = {
     registry: {},
@@ -40,7 +28,7 @@ global.registerWork = function(workName, workImage) {
 };
 
 var Work = function() {
-
+    // init
 };
 
 Work.prototype.doWorkTask = function(creep) {
@@ -214,3 +202,15 @@ global.doWorkTask = function(creep) {
 global.getWorkTask = function(workTask, creep, args) {
     return work.getWorkTask(workTask, creep, args);
 };
+
+// load the work tasks
+require('modules.work.terminal.empty');
+require('modules.work.tower.fill');
+require('modules.work.attack');
+require('modules.work.claim');
+require('modules.work.construction');
+require('modules.work.defense');
+require('modules.work.dismantle');
+require('modules.work.repair');
+require('modules.work.scouting');
+require('modules.work.signcontroller');

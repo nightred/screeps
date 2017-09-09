@@ -12,7 +12,7 @@ var RoomManager = function() {
     // init
 };
 
-Object.defineProperty(Kernel.prototype, 'managerLink', {
+Object.defineProperty(RoomManager.prototype, 'managerLink', {
     get: function() {
         if (!this.memory.managerLinkPid) return false;
         return Game.kernel.getProcessByPid(this.memory.managerLinkPid);
@@ -22,7 +22,7 @@ Object.defineProperty(Kernel.prototype, 'managerLink', {
     },
 });
 
-Object.defineProperty(Kernel.prototype, 'managerSpawn', {
+Object.defineProperty(RoomManager.prototype, 'managerSpawn', {
     get: function() {
         if (!this.memory.managerSpawnPid) return false;
         return Game.kernel.getProcessByPid(this.memory.managerSpawnPid);
@@ -32,7 +32,7 @@ Object.defineProperty(Kernel.prototype, 'managerSpawn', {
     },
 });
 
-Object.defineProperty(Kernel.prototype, 'managerTower', {
+Object.defineProperty(RoomManager.prototype, 'managerTower', {
     get: function() {
         if (!this.memory.managerTowerPid) return false;
         return Game.kernel.getProcessByPid(this.memory.managerTowerPid);

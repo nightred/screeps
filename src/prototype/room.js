@@ -237,3 +237,7 @@ Room.prototype.countCoverage = function() {
 
     return this.memory.roomCoverage.length;
 };
+
+Room.prototype.toString = function() {
+    return '<p style=\"display:inline; color: #ed4543\"><a href=\"#!/room/' + this.name + '\">' + this.name + '</a></p>';
+};

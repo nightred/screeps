@@ -23,8 +23,6 @@ Object.defineProperty(directorTech.prototype, 'squad', {
 });
 
 directorTech.prototype.run = function() {
-    if (isSleep(this)) return true;
-
     this.createWork();
 
     let spawnRoom = Game.rooms[this.memory.spawnRoom];
@@ -37,9 +35,7 @@ directorTech.prototype.run = function() {
         this.doSquadSpawnLimits();
     }
 
-    setSleep(this, (Game.time + C.DIRECTOR_SLEEP + Math.floor(Math.random() * 8)));
-
-    return true;
+    Game.kernel.sleepProcess(this.pid, (C.DIRECTOR_SLEEP + Math.floor(Math.random() * 8)));
 };
 
 directorTech.prototype.createWork = function() {
@@ -117,7 +113,7 @@ directorTech.prototype.doSquadSpawnLimits = function() {
 
     if (!process) {
         logger.error('failed to load squad process for creep group update');
-        continue;
+        return;
     }
 
     process.memory.workRooms = roomCoverage;
@@ -134,7 +130,7 @@ directorTech.prototype.initSquad = function() {
 
     if (!process) {
         logger.error('failed to create process ' + imageName);
-        continue;
+        return;
     }
 
     this.squad = process;

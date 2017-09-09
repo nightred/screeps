@@ -9,7 +9,7 @@ var Loader = function() {
     // init
 };
 
-Object.defineProperty(Kernel.prototype, 'serviceFlag', {
+Object.defineProperty(Loader.prototype, 'serviceFlag', {
     get: function() {
         if (!this.memory.serviceFlagPid) return false;
         return Game.kernel.getProcessByPid(this.memory.serviceFlagPid);
@@ -19,7 +19,7 @@ Object.defineProperty(Kernel.prototype, 'serviceFlag', {
     },
 });
 
-Object.defineProperty(Kernel.prototype, 'serviceRoom', {
+Object.defineProperty(Loader.prototype, 'serviceRoom', {
     get: function() {
         if (!this.memory.serviceRoomPid) return false;
         return Game.kernel.getProcessByPid(this.memory.serviceRoomPid);
@@ -29,7 +29,7 @@ Object.defineProperty(Kernel.prototype, 'serviceRoom', {
     },
 });
 
-Object.defineProperty(Kernel.prototype, 'serviceCreep', {
+Object.defineProperty(Loader.prototype, 'serviceCreep', {
     get: function() {
         if (!this.memory.serviceCreepPid) return false;
         return Game.kernel.getProcessByPid(this.memory.serviceCreepPid);

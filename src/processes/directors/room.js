@@ -56,8 +56,6 @@ Object.defineProperty(directorRoom.prototype, 'squad', {
 * @param {task} task the director task memory
 **/
 directorRoom.prototype.run = function() {
-    if (isSleep(this)) return;
-
     let workRoom = Game.rooms[this.memory.workRoom];
 
     if (!workRoom || !workRoom.controller || !workRoom.controller.my) return;
@@ -73,7 +71,7 @@ directorRoom.prototype.run = function() {
 
     this.doDirectors();
 
-    setSleep(this, (Game.time + C.DIRECTOR_SLEEP + Math.floor(Math.random() * 8)));
+    Game.kernel.sleepProcess(this.pid, (C.DIRECTOR_SLEEP + Math.floor(Math.random() * 8)));
 };
 
 directorRoom.prototype.doSquadGroupStockers = function() {
@@ -291,7 +289,7 @@ directorRoom.prototype.initSquad = function() {
 
     if (!process) {
         logger.error('failed to create process ' + imageName);
-        continue;
+        return;
     }
 
     this.squad = process;

@@ -23,15 +23,13 @@ Object.defineProperty(directorFieldTech.prototype, 'squad', {
 });
 
 directorFieldTech.prototype.run = function() {
-    if (isSleep(this)) return;
-
     if (!this.squad) {
         this.initSquad();
     }
 
     this.doSquadLimits();
 
-    setSleep(this, (Game.time + C.DIRECTOR_SLEEP + Math.floor(Math.random() * 8)));
+    Game.kernel.sleepProcess(this.pid, (C.DIRECTOR_SLEEP + Math.floor(Math.random() * 8)));
 };
 
 directorFieldTech.prototype.doSquadLimits = function() {
@@ -71,7 +69,7 @@ directorFieldTech.prototype.doSquadLimits = function() {
 
     if (!process) {
         logger.error('failed to load squad process for creep group update');
-        continue;
+        return;
     }
 
     process.setGroup(record);
@@ -97,7 +95,7 @@ directorFieldTech.prototype.initSquad = function() {
 
     if (!process) {
         logger.error('failed to create process ' + imageName);
-        continue;
+        return;
     }
 
     this.squad = process;

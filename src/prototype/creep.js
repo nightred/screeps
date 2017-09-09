@@ -84,7 +84,7 @@ Creep.prototype.isDespawnWarning = function() {
     return this.ticksToLive <= C.CREEP_DESPAWN_TICKS;
 }
 
-CreepService.prototype.doDespawn = function() {
+Creep.prototype.doDespawn = function() {
     if (!this.memory.despawn) {
         this.memory.despawn = true;
         this.memory.goingTo = false;

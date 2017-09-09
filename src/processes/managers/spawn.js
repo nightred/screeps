@@ -121,7 +121,7 @@ Spawn.prototype.doSpawn = function(spawn, room) {
             }
 
             logger.info('spawning' +
-            ' room: <p style=\"display:inline; color: #ed4543\"><a href=\"#!/room/' + room.name + '\">' + room.name + '</a></p>' +
+            ' room: ' + room.toString() +
             ', role: ' + records[r].role +
             ', parts: ' + Game.creeps[name].body.length +
             ', name: ' + name);

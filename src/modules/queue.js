@@ -25,14 +25,14 @@ var Queue = function() {
     }
 };
 
-Object.defineProperty(Kernel.prototype, 'queue', {
+Object.defineProperty(Queue.prototype, 'queue', {
     get: function() {
         Memory.queue = Memory.queue || {};
-        return this.memory.processTable;
+        return Memory.queue;
     },
     set: function(value) {
         Memory.queue = Memory.queue || {};
-        this.memory.processTable = value;
+        Memory.queue = value;
     },
 });
 
@@ -58,7 +58,7 @@ Queue.prototype.getQueue = function(args) {
 };
 
 Queue.prototype.getId = function() {
-    let currentIDs _.sortBy(_.map(this.queue, r => r.id));
+    let currentIDs = _.sortBy(_.map(this.queue, r => r.id));
 
     let c = 0;
 

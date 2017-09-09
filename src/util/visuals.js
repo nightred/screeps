@@ -240,5 +240,3 @@ global.onTickVisuals = function() {
     visuals.doReset();
     return true;
 }
-
-//module.exports = Visuals;

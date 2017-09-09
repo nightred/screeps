@@ -24,8 +24,6 @@ Object.defineProperty(Defense.prototype, 'squad', {
 });
 
 Defense.prototype.run = function() {
-    if (isSleep(this)) return;
-
     let room = Game.rooms[this.memory.workRoom];
 
     room.memory.defense = room.memory.defense || {}
@@ -42,7 +40,7 @@ Defense.prototype.run = function() {
 
     this.doDefenseMode(room);
 
-    setSleep(this, (Game.time + C.DEFENSE_SLEEP + Math.floor(Math.random() * 8)));
+    Game.kernel.sleepProcess(this.pid, (C.DIRECTOR_SLEEP + Math.floor(Math.random() * 8)));
 };
 
 Defense.prototype.doSquadSpawnLimits = function(room) {
@@ -86,7 +84,7 @@ Defense.prototype.doSquadSpawnLimits = function(room) {
 
     if (!process) {
         logger.error('failed to load squad process for creep group update');
-        continue;
+        return;
     }
 
     process.setGroup(record);
@@ -125,7 +123,7 @@ Defense.prototype.doDefenseMode = function(room) {
         defense.active = 1;
         defense.creepLimit = 1;
 
-        logger.info('defense mode activated in room: <p style=\"display:inline; color: #ed4543\"><a href=\"#!/room/' + room.name + '\">' + room.name + '</a></p>');
+        logger.info('defense mode activated in room: ' + room.toString());
     }
 
     let creepLimit = Math.ceil((Game.time - defense.tick) / C.DEFENSE_LIMIT_INCREASE_DELAY);
@@ -173,11 +171,11 @@ Defense.prototype.doSafeMode = function(room) {
 
         room.controller.activateSafeMode();
 
-        logger.info('safe mode activated in room: <p style=\"display:inline; color: #ed4543\"><a href=\"#!/room/' + room.name + '\">' + room.name + '</a></p>');
+        logger.info('safe mode activated in room: ' + room.toString());
     }
 };
 
-directorSource.prototype.initSquad = function() {
+Defense.prototype.initSquad = function() {
     let imageName = 'managers/squad';
     let squadName = this.memory.workRoom + '_defense';
 
@@ -189,7 +187,7 @@ directorSource.prototype.initSquad = function() {
 
     if (!process) {
         logger.error('failed to create process ' + imageName);
-        continue;
+        return;
     }
 
     this.squad = process;

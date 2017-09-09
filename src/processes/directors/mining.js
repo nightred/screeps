@@ -12,7 +12,7 @@ var directorMining = function() {
     // init
 }
 
-Object.defineProperty(Kernel.prototype, 'processTable', {
+Object.defineProperty(directorMining.prototype, 'processTable', {
     get: function() {
         this.memory.processTable = this.memory.processTable || {};
         return this.memory.processTable;
@@ -24,8 +24,6 @@ Object.defineProperty(Kernel.prototype, 'processTable', {
 });
 
 directorMining.prototype.run = function() {
-    if (isSleep(this)) return true;
-
     let room = Game.rooms[this.memory.workRoom];
 
     if (!room) {
@@ -52,7 +50,7 @@ directorMining.prototype.run = function() {
         }
     }
 
-    setSleep(this, (Game.time + C.DIRECTOR_SLEEP + Math.floor(Math.random() * 8)));
+    Game.kernel.sleepProcess(this.pid, (C.DIRECTOR_SLEEP + Math.floor(Math.random() * 8)));
 
     return true;
 };

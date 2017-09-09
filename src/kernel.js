@@ -7,9 +7,6 @@
 var logger = new Logger('[Kernel]');
 logger.level = C.LOGLEVEL.DEBUG;
 
-// load processes
-require('processes.registry');
-
 var processRegistry = {
     registry: {},
 
@@ -74,8 +71,8 @@ Kernel.prototype.run = function() {
     let pids = Object.keys(this.processTable);
 
     if (pids.length === 0) {
-        let p = this.startProcess(undefined, 'loader/init', {});
-        if (p) pids.push(pid.toString());
+        let proc = this.startProcess(undefined, 'loader/init', {});
+        if (proc) pids.push(pid.toString());
     }
 
     for (let i = 0; i < pids.length; i++) {
@@ -88,6 +85,11 @@ Kernel.prototype.run = function() {
         if (procInfo.status == 'killed') {
             delete this.processMemory[procInfo.ms];
             delete this.processTable[pid];
+        }
+
+        if (procInfo.status == 'sleep') {
+            procInfo.sleep--;
+            if (procInfo.sleep <= 0) procInfo.status = 'running';
         }
 
         if (procInfo.status !== 'running') continue;
@@ -123,12 +125,15 @@ Kernel.prototype.startProcess = function(parent, imageName, startMem) {
         ms: `${pid}_MS`,
         status: 'running',
         timestamp: Game.time,
+        cpuUsed: 0,
     };
 
     this.processTable[pid] = procInfo;
     this.processMemory[procInfo.ms] = startMem || {};
 
     let process = this.createProcess(pid);
+
+    if (!process) return;
 
     logger.info(`spawned new process ${procInfo.name} : ${procInfo.pid}`);
 
@@ -138,16 +143,16 @@ Kernel.prototype.startProcess = function(parent, imageName, startMem) {
 Kernel.prototype.createProcess = function(pid) {
     let procInfo = this.processTable[pid];
 
-    if (!procInfo || procInfo.status !== 'running') {
-        logger.error(`process ${procInfo.name} : ${procInfo.pid} is not in running status`)
-        return false;
+    if (!procInfo) {
+        logger.error(`process ${pid} is not in the process table`)
+        return;
     }
 
     let process = processRegistry.getNewProcess(procInfo.name);
 
     if (!process) {
         logger.error(`failed to create process ${procInfo.name} : ${procInfo.pid}`);
-        return false;
+        return;
     }
 
     let self = this;
@@ -192,6 +197,13 @@ Kernel.prototype.killProcess = function(pid) {
             this.processTable[opid].stats !== 'killed') {
             this.killProcess(opid)
         }
+    }
+};
+
+Kernel.prototype.sleepProcess = function(pid, sleepTime) {
+    if (this.processTable[pid]) {
+        this.processTable[pid].status = 'sleep';
+        this.processTable[pid].sleep = sleepTime;
     }
 };
 

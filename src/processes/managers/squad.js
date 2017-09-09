@@ -91,7 +91,7 @@ Squad.prototype.doGroup = function(creepGroup) {
     }
 };
 
-CreepService.prototype.setGroup = function(args) {
+Squad.prototype.setGroup = function(args) {
     if (!this.creepGroups[args.name]) this.creepGroups[args.name] = {};
 
     let creepGroup = this.creepGroups[args.name];
@@ -108,7 +108,7 @@ CreepService.prototype.setGroup = function(args) {
     if (args.creepArgs) creepGroup.creepArgs = args.creepArgs;
 };
 
-CreepService.prototype.removeGroup = function(groupName) {
+Squad.prototype.removeGroup = function(groupName) {
     if (!this.creepGroups[groupName]) return;
     delete this.creepGroups[groupName];
 };

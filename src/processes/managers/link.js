@@ -12,7 +12,7 @@ var Link = function() {
     // init
 };
 
-Link.prototype.run = function(room) {
+Link.prototype.run = function() {
     let cpuStart = Game.cpu.getUsed();
 
     let room = Game.rooms[this.memory.roomName];
@@ -77,18 +77,6 @@ Link.prototype.doLinks = function(room) {
             }
         }
     }
-
-    return true;
-};
-
-Link.prototype.setType = function(id, type) {
-    if (!id) { return ERR_INVALID_ARGS; }
-    if (!type) { return ERR_INVALID_ARGS; }
-
-    let link = Game.getObjectById(id);
-    if (!link) { return false; }
-
-    link.memory.type = type;
 
     return true;
 };

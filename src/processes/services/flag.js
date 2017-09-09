@@ -45,7 +45,7 @@ Flag.prototype.run = function() {
 
     addTerminalLog(undefined, {
         command: 'service flag',
-        status: 'OK'
+        status: 'OK',
         cpu: (Game.cpu.getUsed() - cpuStart),
     })
 };

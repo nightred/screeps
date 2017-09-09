@@ -56,8 +56,6 @@ Object.defineProperty(directorRemote.prototype, 'squad', {
 * @param {task} task the director task memory
 **/
 directorRemote.prototype.run = function() {
-    if (isSleep(this)) return true;
-
     let spawnRoom = Game.rooms[this.memory.spawnRoom];
 
     if (!spawnRoom || !spawnRoom.controller || !spawnRoom.controller.my) return;
@@ -71,9 +69,7 @@ directorRemote.prototype.run = function() {
 
     this.doDirectors();
 
-    setSleep(this, (Game.time + C.DIRECTOR_SLEEP + Math.floor(Math.random() * 8)));
-
-    return true;
+    Game.kernel.sleepProcess(this.pid, (C.DIRECTOR_SLEEP + Math.floor(Math.random() * 8)));
 };
 
 directorRemote.prototype.doSquadGroupInterHaulers = function() {
@@ -85,7 +81,7 @@ directorRemote.prototype.doSquadGroupInterHaulers = function() {
     let maxSize = 200;
 
     let rlevel = spawnRoom.controller.level;
-    if (rlevel == 1 || rlevel == 2 || rlevel == 3 || rlevel == 4 {
+    if (rlevel == 1 || rlevel == 2 || rlevel == 3 || rlevel == 4) {
         maxSize = 400;
     } else if (rlevel == 5 || rlevel == 6) {
         minSize = 400;
@@ -199,7 +195,7 @@ directorRemote.prototype.initSquad = function() {
 
     if (!process) {
         logger.error('failed to create process ' + imageName);
-        continue;
+        return;
     }
 
     this.squad = process;
