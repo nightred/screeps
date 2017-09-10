@@ -21,7 +21,10 @@ var taskDefense = {
         }
 
         let targets = creep.room.getHostiles();
-        if (!targets || targets.length <= 0) { return creep.removeWork(); }
+        if (!targets || targets.length <= 0) {
+            task.completed = true;
+            return;
+        }
 
         targets = _.filter(targets, creep =>
             creep.owner &&

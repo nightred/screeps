@@ -14,6 +14,7 @@ taskResupply.prototype.run = function() {
 
     if (!creep) {
         Game.kernel.killProcess(this.pid);
+        return;
     }
 
     if (creep.getOffExit()) {

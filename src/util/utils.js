@@ -3,6 +3,9 @@
  *
  */
 
+var logger = new Logger('[Utils]');
+logger.level = C.LOGLEVEL.DEBUG;
+
 require('util.visuals');
 require('util.storage');
 require('util.allies');
@@ -17,6 +20,19 @@ global.setLinkType = function(id, type) {
     link.memory.type = type;
 
     return true;
+};
+
+global.reset = function(accept = false) {
+    if (!accept) {
+        logger.info('reset failed, did not accept')
+        return;
+    }
+
+    logger.info('resetting kernel, queue memory, suicide all creep')
+    delete Memory.kernel;
+    delete Memory.queue;
+
+    _.forEach(Game.creeps, creep => creep.suicide());
 };
 
 global.ps = function(pid = 0) {

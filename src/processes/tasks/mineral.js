@@ -115,7 +115,7 @@ var taskMineral = {
                     },
                 };
 
-                task.spawnJob = addQueueSpawn(record);
+                task.spawnJob = addQueueRecordSpawn(record);
             }
         }
 

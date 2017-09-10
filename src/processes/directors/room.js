@@ -60,11 +60,9 @@ directorRoom.prototype.run = function() {
 
     if (!workRoom || !workRoom.controller || !workRoom.controller.my) return;
 
-    if (!this.squad) {
-        this.initSquad();
-    }
+    if (!this.squad) this.initSquad();
 
-    this.doSquadGroupControllers();
+    this.doSquadGroupUpgraders();
     this.doSquadGroupResupply();
     this.doSquadGroupHaulers();
     this.doSquadGroupStockers();
@@ -92,8 +90,8 @@ directorRoom.prototype.doSquadGroupStockers = function() {
         name: 'stockers',
         task: C.TASK_STOCK,
         role: C.ROLE_STOCKER,
-        maxSize: maxSize,
-        minSize: minSize,
+        minSize: 200,
+        maxSize: 9999,
         limit: creepLimit,
     };
 
@@ -112,6 +110,10 @@ directorRoom.prototype.doSquadGroupHaulers = function() {
 
     if (!spawnRoom || !spawnRoom.controller || !spawnRoom.controller.my) return;
 
+    let workRoom = Game.rooms[this.memory.workRoom];
+
+    if (!workRoom) return;
+
     let minSize = 200;
     let maxSize = 200;
 
@@ -126,9 +128,9 @@ directorRoom.prototype.doSquadGroupHaulers = function() {
         maxSize = 9999;
     }
 
-    let creepLimit = room.getSourceCount();
+    let creepLimit = workRoom.getSourceCount();
 
-    if (_.filter(room.getContainers(), structure =>
+    if (_.filter(workRoom.getContainers(), structure =>
         structure.memory.type == 'in').length <= 0) {
         creepLimit = 0;
     }
@@ -191,7 +193,7 @@ directorRoom.prototype.doSquadGroupResupply = function() {
     process.setGroup(record);
 };
 
-directorRoom.prototype.doSquadGroupControllers = function() {
+directorRoom.prototype.doSquadGroupUpgraders = function() {
     let spawnRoom = Game.rooms[this.memory.spawnRoom];
 
     if (!spawnRoom || !spawnRoom.controller || !spawnRoom.controller.my) return;
@@ -227,9 +229,9 @@ directorRoom.prototype.doSquadGroupControllers = function() {
     }
 
     let record = {
-        name: 'controllers',
+        name: 'upgraders',
         task: C.TASK_UPGRADE,
-        role: C.ROLE_CONTROLLER,
+        role: C.ROLE_UPGRADER,
         maxSize: maxSize,
         minSize: minSize,
         limit: creepLimit,
@@ -282,7 +284,7 @@ directorRoom.prototype.initSquad = function() {
     let squadName = this.memory.workRoom + '_services';
 
     let process = Game.kernel.startProcess(this, imageName, {
-        name: squadName,
+        squadName: squadName,
         spawnRoom: this.memory.spawnRoom,
         workRooms: this.memory.workRoom,
     });

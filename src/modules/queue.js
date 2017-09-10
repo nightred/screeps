@@ -57,19 +57,6 @@ Queue.prototype.getQueue = function(args) {
     );
 };
 
-Queue.prototype.getId = function() {
-    let currentIDs = _.sortBy(_.map(this.queue, r => r.id));
-
-    let c = 0;
-
-    for (let id of currentIDs) {
-        c += 1;
-        if (c !== id) return c;
-    }
-
-    return currentIDs.length;
-};
-
 Queue.prototype.delRecord = function(id) {
     if (!this.queue[id]) return;
 
@@ -80,7 +67,7 @@ Queue.prototype.delRecord = function(id) {
 Queue.prototype.addRecord = function(args) {
     args = args || {};
 
-    let id = this.getId();
+    let id = getId();
     let record = {
         id: id,
         tick: Game.time,
@@ -96,15 +83,14 @@ Queue.prototype.addRecord = function(args) {
 };
 
 Queue.prototype.getRecord = function(id) {
-    if (!this.queue[id]) return;
     return this.queue[id];
 }
 
-let queue = new Queue();
-
-global.onTickQueue = function() {
-    queue.onTick();
+var getId = function() {
+    return 'Q_' + Math.random().toString(32).slice(2) + Game.time.toString(32);;
 };
+
+let queue = new Queue();
 
 global.getQueue = function(args) {
     return queue.getQueue(args);
@@ -114,10 +100,10 @@ global.getQueueRecord = function(id) {
     return queue.getRecord(id);
 };
 
-global.addQueue = function(args) {
+global.addQueueRecord = function(args) {
     return queue.addRecord(args);
 };
 
-global.delQueue = function(id) {
+global.delQueueRecord = function(id) {
     queue.delRecord(id);
 };

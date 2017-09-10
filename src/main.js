@@ -53,5 +53,4 @@ module.exports.loop = function () {
 
 var onTick = function() {
     onTickVisuals();
-    onTickQueue();
 };

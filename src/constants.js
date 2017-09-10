@@ -159,17 +159,17 @@ Constant.DIRECTOR_FLAG_MAP = {
     'reserve':      Constant.DIRECTOR_RESERVE,
 };
 
-Constant.TASK_SOURCE                    = 'task/source';
-Constant.TASK_RESUPPLY                  = 'task/resupply';
-Constant.TASK_UPGRADE                   = 'task/upgrade';
-Constant.TASK_HAUL                      = 'task/haul';
-Constant.TASK_STOCK                     = 'task/stock';
-Constant.TASK_TECH                      = 'task/tech';
-Constant.TASK_FIELDTECH                 = 'task/fieldtech';
-Constant.TASK_RESERVE                   = 'task/reserve';
-Constant.TASK_MILITIA                   = 'task/militia';
-Constant.TASK_DISMANTLE                 = 'task/dismantle';
-Constant.TASK_MIL_COMBAT                = 'task/mil/combat';
+Constant.TASK_SOURCE                    = 'tasks/source';
+Constant.TASK_RESUPPLY                  = 'tasks/resupply';
+Constant.TASK_UPGRADE                   = 'tasks/upgrade';
+Constant.TASK_HAUL                      = 'tasks/haul';
+Constant.TASK_STOCK                     = 'tasks/stock';
+Constant.TASK_TECH                      = 'tasks/tech';
+Constant.TASK_FIELDTECH                 = 'tasks/fieldtech';
+Constant.TASK_RESERVE                   = 'tasks/reserve';
+Constant.TASK_MILITIA                   = 'tasks/militia';
+Constant.TASK_DISMANTLE                 = 'tasks/dismantle';
+Constant.TASK_MIL_COMBAT                = 'tasks/mil/combat';
 
 Constant.TASK_TYPES = [
     Constant.TASK_SOURCE,

@@ -31,7 +31,7 @@ directorMining.prototype.run = function() {
     }
 
     if (!this.memory.sourceInit) {
-        if (this.getSources(task)) {
+        if (this.getSources()) {
             this.memory.sourceInit = 1;
         }
     }
@@ -55,9 +55,7 @@ directorMining.prototype.run = function() {
     return true;
 };
 
-directorMining.prototype.getSources = function(task) {
-    if (!task) { return ERR_INVALID_ARGS; }
-
+directorMining.prototype.getSources = function() {
     this.memory.sources = this.memory.sources || [];
 
     let room = Game.rooms[this.memory.workRoom];

@@ -4,7 +4,7 @@
  * provides creep group control and spawning for all creep groups
  *
  * [data structure]
- * name
+ * squadName
  * spawnRoom
  * workRooms
  * creepNew []
@@ -41,9 +41,9 @@ Object.defineProperty(Squad.prototype, 'creepGroups', {
 });
 
 Squad.prototype.run = function() {
-    if (!squad.sleepNewCreep || squad.sleepNewCreep < Game.time) {
+    if (!this.memory.sleepNewCreep || this.memory.sleepNewCreep < Game.time) {
         this.doNewCreep();
-        squad.sleepNewCreep = Game.time + C.SQUAD_SLEEP_NEWCREEP;
+        this.memory.sleepNewCreep = Game.time + C.SQUAD_SLEEP_NEWCREEP;
     }
 
     let groups = Object.keys(this.creepGroups);
@@ -57,11 +57,11 @@ Squad.prototype.run = function() {
 
 Squad.prototype.doGroup = function(creepGroup) {
     for (let i = (creepGroup.creeps.length - 1); i >= 0 ; i--) {
-        let creep = Game.creeps[squad.creeps[i]];
+        let creep = Game.creeps[creepGroup.creeps[i]];
 
         if (!creep) {
-            logger.debug('removing non-existant creep: ' + squad.creeps[i] +
-                ', squad: ' + this.memory.name +
+            logger.debug('removing non-existant creep: ' + creepGroup.creeps[i] +
+                ', squad: ' + this.memory.squadName +
                 ', group: ' + creepGroup.name);
             creepGroup.creeps.splice(i, 1);
             continue;
@@ -113,17 +113,6 @@ Squad.prototype.removeGroup = function(groupName) {
     delete this.creepGroups[groupName];
 };
 
-Squad.prototype.addNewCreep = function(creepName) {
-    this.memory.newCreeps = this.memory.newCreeps || [];
-
-    let creeps = this.memory.newCreeps;
-
-    if (creeps.indexOf(creepName) === -1) {
-        creeps.push(creepName);
-        logger.debug(this.memory.name + ' registered new creep ' + creepName);
-    }
-};
-
 Squad.prototype.doNewCreep = function() {
     this.memory.newCreeps = this.memory.newCreeps || [];
 
@@ -136,9 +125,9 @@ Squad.prototype.doNewCreep = function() {
 
         let creepGroup = this.creepGroups[creep.memory.group];
 
-        if (creepGroup.creeps.indexOf(creepName) === -1) {
-            creepGroup.creeps.push(creepName);
-            logger.debug(this.memory.name + ' added creep ' + creepName +
+        if (creepGroup.creeps.indexOf(creep.name) === -1) {
+            creepGroup.creeps.push(creep.name);
+            logger.debug(this.memory.squadName + ' added creep ' + creep.name +
             ' to group ' + creep.memory.group);
         }
 
@@ -153,8 +142,26 @@ Squad.prototype.doGroupSpawn = function(creepGroup) {
     }
     creepGroup.sleepSpawn = Game.time + C.SQUAD_SLEEP_SPAWN;
 
-    if (creepGroup.spawnId && !getQueueRecord(creepGroup.spawnId)) {
-        this.memory.spawnId = undefined;
+    let spawnRecord = getQueueRecord(creepGroup.spawnId);
+
+    if (!spawnRecord && creepGroup.spawnId) {
+        creepGroup.spawnId = undefined;
+    }
+
+    if (spawnRecord && spawnRecord.spawned) {
+        if (creepGroup.creeps.indexOf(spawnRecord.name) === -1) {
+            creepGroup.creeps.push(spawnRecord.name);
+            logger.debug('adding creep ' + spawnRecord.name +
+                ', to squad ' + this.memory.squadName +
+                ', group ' + creepGroup.name
+            );
+        }
+
+        logger.debug('removing spawn queue id: ' + spawnRecord.id +
+            ', role: ' + spawnRecord.role
+        );
+
+        delQueueRecord(spawnRecord.id);
     }
 
     let count = creepGroup.creeps.length;
@@ -167,8 +174,6 @@ Squad.prototype.doGroupSpawn = function(creepGroup) {
             maxSize: creepGroup.maxSize,
             squadPid: this.pid,
             creepArgs: {
-                squad: this.memory.name,
-                group: creepGroup.name,
                 workRooms: this.memory.workRooms,
             },
         };
@@ -179,7 +184,7 @@ Squad.prototype.doGroupSpawn = function(creepGroup) {
             };
         }
 
-        creepGroup.spawnId = addQueueSpawn(record);
+        creepGroup.spawnId = addQueueRecordSpawn(record);
     }
 };
 

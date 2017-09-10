@@ -83,13 +83,9 @@ Spawn.prototype.doSpawn = function(spawn, room) {
             minSize = minSize >= 0 ? minSize : 0;
         }
 
-        minSize = minSize > C.ENERGY_CREEP_SPAWN_MIN ? minSize : C.ENERGY_CREEP_SPAWN_MIN;
+        minSize += C.ENERGY_CREEP_SPAWN_MIN;
 
         if (minSize > spawnEnergy) continue;
-
-        let body = getRoleBody(records[r].role, spawnEnergy, args);
-
-        if (getBodyCost(body) > spawnEnergy) continue;
 
         let args = {
             spawnRoom: room.name,
@@ -102,23 +98,16 @@ Spawn.prototype.doSpawn = function(spawn, room) {
             };
         }
 
+        let body = getRoleBody(records[r].role, spawnEnergy, args);
+
+        if (getBodyCost(body) > spawnEnergy) continue;
+
         let name = doSpawnCreep(spawn, body, args);
 
         if (name != undefined && !(name < 0)) {
             energy -= getBodyCost(body);
             records[r].spawned = true;
             records[r].name = name;
-
-            if (records[r].squadPid) {
-                let process = Game.kernel.getProcessByPid(records[r].squadPid);
-
-                if (!process) {
-                    logger.error('failed to get process squad pid: ' + records[r].squadPid);
-                    return;
-                }
-
-                process.addNewCreep(name);
-            }
 
             logger.info('spawning' +
             ' room: ' + room.toString() +

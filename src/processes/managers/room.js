@@ -168,26 +168,4 @@ RoomManager.prototype.doManagers = function() {
     }
 };
 
-RoomManager.prototype.doDirectorFlag = function(flag) {
-    if (!flag.memory.init) {
-        let flagVars = flag.name.split(':');
-        let roomName = flag.pos.roomName;
-
-        if (C.DIRECTOR_FLAG_MAP.indexOf(flagVars[1]) == -1) {
-            logger.debug('invalid director type requested by flag: ' + flag.name);
-            flag.memory.result = 'invalid director';
-            return;
-        }
-
-        let imageName = C.DIRECTOR_FLAG_MAP[flagVars[1]];
-
-        let process = Game.kernel.startProcess(this, imageName, {});
-
-        process.flag(roomName, flagVars)
-
-        flag.memory.pid = process.pid;
-        flag.memory.init = 1;
-    }
-};
-
 registerProcess('managers/room', RoomManager);

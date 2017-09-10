@@ -122,16 +122,21 @@ directorRemote.prototype.doSquadGroupInterHaulers = function() {
 directorRemote.prototype.doSquadGroupReserve = function() {
     let workRoom = Game.rooms[this.memory.workRoom];
 
-    if (!workRoom || !workRoom.controller) {
+    if (workRoom || !workRoom.controller) {
         return;
     }
 
     let creepLimit = 0;
 
-    if (!workRoom.controller.reservation ||
+    if (workRoom &&
+        (!workRoom.controller.reservation ||
         (workRoom.controller.reservation &&
-        workRoom.controller.reservation.ticksToEnd < C.CONTROLLER_RESERVE_MIN)
+        workRoom.controller.reservation.ticksToEnd < C.CONTROLLER_RESERVE_MIN))
     ) {
+        creepLimit = 1;
+    }
+
+    if (!workRoom) {
         creepLimit = 1;
     }
 
@@ -188,7 +193,7 @@ directorRemote.prototype.initSquad = function() {
     let squadName = this.memory.workRoom + '_services';
 
     let process = Game.kernel.startProcess(this, imageName, {
-        name: squadName,
+        squadName: squadName,
         spawnRoom: this.memory.spawnRoom,
         workRooms: this.memory.workRoom,
     });

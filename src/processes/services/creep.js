@@ -19,29 +19,7 @@ CreepService.prototype.run = function() {
     for (var name in Game.creeps) {
         var creep = Game.creeps[name];
 
-        if (!creep) this.cleanOldCreep(name);
-
-        if (creep.spawning || !creep.memory.task || creep.memory.despawn) continue;
-
-        if (creep.isDespawnWarning()) {
-            this.doDespawn(creep);
-            continue;
-        }
-
-        if (!creep.process) {
-            let imageName = creep.memory.task;
-            let proc = Game.kernel.startProcess(this, imageName, {
-                creepName: creep.name,
-            });
-
-            if (!proc) {
-                logger.error('failed to create process ' + imageName +
-                    ' on creep ' + creep.name);
-                continue;
-            }
-
-            creep.process = proc;
-        }
+        this.doCreep(creep);
 
         creepCount++;
     }
@@ -54,6 +32,34 @@ CreepService.prototype.run = function() {
     log.output = 'creep count: ' + creepCount + ' avg cpu: ' +
         (log.cpu / creepCount).toFixed(2);
     addTerminalLog(undefined, log)
+};
+
+CreepService.prototype.doCreep = function(creep) {
+    if (!creep) this.cleanOldCreep(name);
+
+    if (creep.spawning || !creep.memory.task || creep.memory.despawn) return;
+
+    if (creep.isDespawnWarning()) {
+        this.doDespawn(creep);
+        return;
+    }
+
+    if (C.TASK_TYPES.indexOf(creep.memory.task) === -1) return;
+
+    if (!creep.process) {
+        let imageName = creep.memory.task;
+        let proc = Game.kernel.startProcess(this, imageName, {
+            creepName: creep.name,
+        });
+
+        if (!proc) {
+            logger.error('failed to create process ' + imageName +
+                ' on creep ' + creep.name);
+            return;
+        }
+
+        creep.process = proc;
+    }
 };
 
 CreepService.prototype.doDespawn = function(creep) {

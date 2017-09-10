@@ -100,7 +100,7 @@ Creep.prototype.doDespawn = function() {
 };
 
 Creep.prototype.hasWork = function() {
-    return this.memory.workId > 0;
+    return !!this.memory.workId;
 }
 
 Creep.prototype.leaveWork = function() {
@@ -108,8 +108,6 @@ Creep.prototype.leaveWork = function() {
         workRemoveCreep(this.name, this.memory.workId);
         this.memory.workId = undefined;
     }
-
-    return true;
 }
 
 Creep.prototype.getWork = function(workTasks, args) {
@@ -139,20 +137,7 @@ Creep.prototype.getWork = function(workTasks, args) {
 }
 
 Creep.prototype.doWork = function() {
-    if (!doWorkTask(this)) {
-        this.leaveWork();
-    }
-
-    return true;
-}
-
-Creep.prototype.removeWork = function() {
-    if (this.memory.workId) {
-        delQueue(this.memory.workId);
-        this.memory.workId = undefined;
-    }
-
-    return true;
+    doWorkTask(this);
 }
 
 Object.defineProperty(Creep.prototype, 'process', {

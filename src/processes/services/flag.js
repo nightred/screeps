@@ -51,29 +51,32 @@ Flag.prototype.run = function() {
 };
 
 Flag.prototype.doDirectorFlag = function(flag) {
-    let pid = Memory.rooms[flag.pos.roomName].pid;
+    if (!flag.memory.init) {
+        let flagVars = flag.name.split(':');
+        let roomName = flag.pos.roomName;
 
-    if (!pid) {
-        logger.debug('failed to get process room manager pid for room: ' + flag.pos.roomName);
-        return;
+        if (!C.DIRECTOR_FLAG_MAP[flagVars[1]]) {
+            logger.debug('invalid director type requested by flag: ' + flag.name);
+            flag.memory.result = 'invalid director';
+            return;
+        }
+
+        let imageName = C.DIRECTOR_FLAG_MAP[flagVars[1]];
+
+        let process = Game.kernel.startProcess(this, imageName, {});
+
+        process.flag(roomName, flagVars)
+
+        flag.memory.pid = process.pid;
+        flag.memory.init = 1;
     }
-
-    let process = Game.kernel.getProcessByPid(pid);
-
-    if (!process) {
-        logger.error('failed to get process room manager pid: ' + pid +
-            ', for director flag: ' + flag.name);
-        return;
-    }
-
-    process.doDirectorFlag(flag);
 };
 
 Flag.prototype.gc = function() {
     for(let name in Memory.flags) {
         if(!Game.flags[name]) {
             if (Memory.flags[name].workId) {
-                delQueue(Memory.flags[name].jobId);
+                delQueueRecord(Memory.flags[name].jobId);
             }
 
             logger.debug('clearing non-existant flag memory name: ' + name);

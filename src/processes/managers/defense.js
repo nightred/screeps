@@ -26,6 +26,8 @@ Object.defineProperty(Defense.prototype, 'squad', {
 Defense.prototype.run = function() {
     let room = Game.rooms[this.memory.workRoom];
 
+    if (!room) return;
+
     room.memory.defense = room.memory.defense || {}
 
     let defense = room.memory.defense;
@@ -35,6 +37,7 @@ Defense.prototype.run = function() {
     }
 
     if (this.memory.workRoom == this.memory.spawnRoom) {
+        if (!this.squad) this.initSquad();
         this.doSquadSpawnLimits();
     }
 
@@ -72,7 +75,7 @@ Defense.prototype.doSquadSpawnLimits = function(room) {
     }
 
     let record = {
-        name: 'techs',
+        name: 'militia',
         task: C.TASK_MILITIA,
         role: C.ROLE_COMBAT_MILITIA,
         maxSize: maxSize,
@@ -83,7 +86,7 @@ Defense.prototype.doSquadSpawnLimits = function(room) {
     let process = this.squad;
 
     if (!process) {
-        logger.error('failed to load squad process for creep group update');
+        logger.error('failed to load squad process for defense militia');
         return;
     }
 
@@ -107,7 +110,7 @@ Defense.prototype.doDefenseMode = function(room) {
             if ((defense.cooldown + C.DEFENSE_COOLDOWN) < Game.time) {
                 defense.active = 0;
 
-                delQueue(defense.jobId);
+                delQueueRecord(defense.jobId);
 
                 defense.jobId = undefined;
             }
@@ -140,7 +143,7 @@ Defense.prototype.doDefenseMode = function(room) {
             priority: 10,
         };
 
-        defense.jobId = addQueueWork(record);
+        defense.jobId = addQueueRecordWork(record);
     }
 
     let task = getQueueRecord(defense.jobId);
@@ -177,10 +180,10 @@ Defense.prototype.doSafeMode = function(room) {
 
 Defense.prototype.initSquad = function() {
     let imageName = 'managers/squad';
-    let squadName = this.memory.workRoom + '_defense';
+    let squadName = this.memory.spawnRoom + '_defense';
 
     let process = Game.kernel.startProcess(this, imageName, {
-        name: squadName,
+        squadName: squadName,
         spawnRoom: this.memory.spawnRoom,
         workRooms: this.memory.workRoom,
     });

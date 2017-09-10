@@ -88,7 +88,7 @@ directorFieldTech.prototype.flag = function(roomName, args) {
 directorFieldTech.prototype.initSquad = function() {
     let imageName = 'managers/squad';
     let process = Game.kernel.startProcess(this, imageName, {
-        name: (this.memory.spawnRoom + '_fieldtech'),
+        squadName: (this.memory.spawnRoom + '_fieldtech'),
         spawnRoom: this.memory.spawnRoom,
         workRooms: this.memory.workRoom,
     });

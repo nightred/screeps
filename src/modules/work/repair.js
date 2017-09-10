@@ -5,16 +5,12 @@
  *
  */
 
+var logger = new Logger('[Work Repair]');
+logger.level = C.LOGLEVEL.DEBUG;
+
 var taskRepair = {
 
-    /**
-    * @param {Creep} creep The creep object
-    * @param {Task} task The work task passed from the work Queue
-    **/
     run: function(creep, task) {
-        if (!creep) { return ERR_INVALID_ARGS; }
-        if (!task) { return ERR_INVALID_ARGS; }
-
         if (creep.manageState()) {
             if (creep.isWorking()) {
                 creep.say('⚙');
@@ -45,11 +41,13 @@ var taskRepair = {
         let target = Game.getObjectById(task.targetId);
 
         if (!target) {
-            return creep.removeWork();
+            task.completed = true;
+            return;
         }
 
         if (target.hits >= Math.floor(target.hitsMax * C.REPAIR_HIT_WORK_MAX)) {
-            return creep.removeWork();
+            task.completed = true;
+            return;
         }
 
         if (!creep.pos.inRangeTo(target, 3)) {
@@ -61,12 +59,10 @@ var taskRepair = {
             };
 
             creep.goto(target, args);
-            return true;
+            return;
         }
 
-        creep.repair(target)
-
-        return true;
+        creep.repair(target);
     },
 
     /**
@@ -76,7 +72,7 @@ var taskRepair = {
     getEnergy: function(creep, task) {
         if (creep.memory.spawnRoom != creep.room.name) {
             creep.moveToRoom(creep.memory.spawnRoom);
-            return true;
+            return;
         }
 
         let energyTargets = [
@@ -99,14 +95,12 @@ var taskRepair = {
     * @param {Room} room The room object
     **/
     find: function(room) {
-        if (!room) { return -1; }
-
         room.memory.work = room.memory.work || {};
 
         let memory = room.memory.work;
 
         if (memory.sleepRepair && memory.sleepRepair > Game.time) {
-            return true;
+            return;
         }
         memory.sleepRepair = Game.time + C.WORK_FIND_SLEEP;
 
@@ -123,7 +117,7 @@ var taskRepair = {
             structure.hits < (structure.hitsMax * C.REPAIR_HIT_WORK_MIN)
             ).forEach(structure => targets.push(structure));
 
-        if (targets.length <= 0) { return true; }
+        if (targets.length <= 0) { return; }
 
         for (let i = 0; i < targets.length; i++) {
             if (isQueuedWork({ targetId: targets[i].id, })) {
@@ -138,7 +132,7 @@ var taskRepair = {
             this.create(args);
         }
 
-        return true;
+        return;
     },
 
     /**
@@ -153,7 +147,7 @@ var taskRepair = {
             targetId: args.targetId,
         };
 
-        return addQueueWork(record);
+        return addQueueRecordWork(record);
     },
 
 };

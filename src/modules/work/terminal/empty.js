@@ -12,9 +12,6 @@ var taskTerminalEmpty = {
     * @param {Task} task The work task passed from the work Queue
     **/
     run: function(creep, task) {
-        if (!creep) { return ERR_INVALID_ARGS; }
-        if (!task) { return ERR_INVALID_ARGS; }
-
         if (creep.manageState()) {
             if (creep.isWorking()) {
                 creep.say('🚛');
@@ -22,9 +19,8 @@ var taskTerminalEmpty = {
                 creep.say('📦');
 
                 if (this.isComplete(creep.room)) {
-                    creep.removeWork();
-
-                    return true;
+                    task.completed = true;
+                    return;
                 }
             }
         }
@@ -36,8 +32,6 @@ var taskTerminalEmpty = {
             // creep empty
             this.doEmptyTerminal(creep, task);
         }
-
-        return true;
     },
 
     /**
@@ -53,7 +47,8 @@ var taskTerminalEmpty = {
         let terminal = Game.getObjectById(task.targetId);
 
         if (!terminal) {
-            return creep.removeWork();
+            task.completed = true;
+            return;
         }
 
         creep.doWithdraw(terminal, RESOURCE_ENERGY);
@@ -152,7 +147,7 @@ var taskTerminalEmpty = {
             targetId: args.targetId,
         };
 
-        return addQueueWork(record);
+        return addQueueRecordWork(record);
     },
 
 };

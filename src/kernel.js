@@ -72,7 +72,7 @@ Kernel.prototype.run = function() {
 
     if (pids.length === 0) {
         let proc = this.startProcess(undefined, 'loader/init', {});
-        if (proc) pids.push(pid.toString());
+        if (proc) pids.push(proc.pid);
     }
 
     for (let i = 0; i < pids.length; i++) {
@@ -133,7 +133,11 @@ Kernel.prototype.startProcess = function(parent, imageName, startMem) {
 
     let process = this.createProcess(pid);
 
-    if (!process) return;
+    if (!process) {
+        delete this.processTable[pid];
+        delete this.processMemory[procInfo.ms];
+        return;
+    }
 
     logger.info(`spawned new process ${procInfo.name} : ${procInfo.pid}`);
 

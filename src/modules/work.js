@@ -36,15 +36,23 @@ Work.prototype.doWorkTask = function(creep) {
 
     if (!workTask) {
         logger.error('failed to load work task id: ' + creep.memory.workId +
-            ', when adding creep: ' + creep.name);
-        return false;
+            ', when adding creep: ' + creep.name
+        );
+
+        creep.memory.workId = undefined;
+
+        return;
     }
 
     let work = workRegistry.getWork(workTask.task);
 
     if (!work) {
         logger.error('failed to load work task: ' + workTask.task);
-        return false;
+
+        delQueueRecord(creep.memory.workId)
+        creep.memory.workId = undefined;
+
+        return;
     }
 
     if (workTask.creeps.indexOf(creep.name) === -1) {
@@ -57,7 +65,15 @@ Work.prototype.doWorkTask = function(creep) {
         }
     }
 
-    return work.run(creep, workTask);
+    work.run(creep, workTask);
+
+    if (workTask.completed) {
+        logger.debug('work task id: ' + creep.memory.workId +
+            ', has been completed by ' + creep.name);
+
+        delQueueRecord(creep.memory.workId)
+        creep.memory.workId = undefined;
+    };
 }
 
 Work.prototype.getWorkTask = function(workTasks, creep, args) {
@@ -125,9 +141,6 @@ Work.prototype.removeCreep = function(creepName, id) {
 };
 
 Work.prototype.doWorkFind = function(task, room) {
-    if (C.WORK_FIND.indexOf(task) == -1) { return ERR_INVALID_ARGS; }
-    if (!room) { return ERR_INVALID_ARGS; }
-
     let work = workRegistry.getWork(task);
 
     if (!work) {
@@ -191,7 +204,7 @@ global.doFlagWork = function(flag) {
 };
 
 global.doWorkFind = function(task, room) {
-    work.doWorkFind(task, work);
+    work.doWorkFind(task, room);
     return true;
 };
 

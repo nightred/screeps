@@ -65,7 +65,7 @@ var taskDismantle = {
             targetId: args.targetId,
         };
 
-        return addQueueWork(record);
+        return addQueueRecordWork(record);
     },
 
     /**

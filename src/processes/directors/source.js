@@ -46,8 +46,8 @@ directorSource.prototype.doSquadLimits = function() {
         name: 'source',
         task: C.TASK_SOURCE,
         role: C.ROLE_MINER,
-        maxSize: maxSize,
-        minSize: minSize,
+        maxSize: 9999,
+        minSize: 200,
         limit: creepLimit,
         creepArgs: {
             sourceId: this.memory.sourceId,
@@ -75,7 +75,7 @@ directorSource.prototype.doSquadLimits = function() {
 directorSource.prototype.initSquad = function() {
     let imageName = 'managers/squad';
     let process = Game.kernel.startProcess(this, imageName, {
-        name: (this.memory.workRoom + '_source'),
+        squadName: (this.memory.workRoom + '_source'),
         spawnRoom: this.memory.spawnRoom,
         workRooms: this.memory.workRoom,
     });

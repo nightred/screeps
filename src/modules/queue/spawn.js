@@ -12,7 +12,7 @@ var SpawnQueue = function() {
     // init
 };
 
-SpawnQueue.prototype.gc = function() {
+SpawnQueue.prototype.cleanup = function() {
     let records = _.filter(this.getQueue(), record =>
         record.spawned
     );
@@ -22,22 +22,12 @@ SpawnQueue.prototype.gc = function() {
     }
 
     for(let i = 0; i < records.length; i++) {
-        if (!Game.creeps[records[i].name]) {
-            records[i].spawnedTime = records[i].spawnedTime || Game.time;
-        }
 
-        if (Game.creeps[records[i].name] && Game.creeps[records[i].name].spawning && records[i].spawnedTime) {
-            delete records[i].spawnedTime;
-        }
-
-        if (Game.creeps[records[i].name] && !Game.creeps[records[i].name].spawning) {
-            records[i].spawnedTime = records[i].spawnedTime || Game.time;
-        }
 
         if ((records[i].spawnedTime + C.SPAWN_QUEUE_DELAY) < Game.time) {
             logger.debug('removing record, id: ' + records[i].id + ', role: ' + records[i].role + ', name: ' + records[i].name + ', spawned');
 
-            this.delRecord(records[i].id);
+            delQueueRecord(records[i].id);
         }
     }
 };
@@ -60,30 +50,17 @@ SpawnQueue.prototype.addRecord = function(args) {
         priority: args.priority,
     };
 
-    if (args.minSize) {
-        record.minSize = args.minSize;
-    }
-
-    if (args.directorId) {
-        record.directorId = args.directorId;
-    }
-
-    if (args.creepArgs) {
-        record.creepArgs = args.creepArgs;
-    }
+    if (args.minSize) record.minSize = args.minSize;
+    if (args.creepArgs) record.creepArgs = args.creepArgs;
 
     logger.debug('adding record, role: ' + record.role + ', rooms: [' + record.rooms + '], priority: ' + record.priority);
 
-    return addQueue(record);
+    return addQueueRecord(record);
 };
 
 let spawnQueue = new SpawnQueue();
 
-global.onTickQueueSpawn = function() {
-    spawnQueue.gc();
-};
-
-global.addQueueSpawn = function(args) {
+global.addQueueRecordSpawn = function(args) {
     return spawnQueue.addRecord(args);
 };
 

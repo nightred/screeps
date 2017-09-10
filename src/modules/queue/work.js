@@ -63,12 +63,12 @@ WorkQueue.prototype.addRecord = function(args) {
 
     logger.debug('adding record, task: ' + record.task + ', priority: ' + record.priority);
 
-    return addQueue(record);
+    return addQueueRecord(record);
 };
 
 let workQueue = new WorkQueue();
 
-global.addQueueWork = function(args) {
+global.addQueueRecordWork = function(args) {
     return workQueue.addRecord(args);
 };
 

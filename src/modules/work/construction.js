@@ -44,7 +44,10 @@ var taskConstruction = {
 
         let target = Game.getObjectById(task.targetId);
 
-        if (!target) { return creep.removeWork(); }
+        if (!target) {
+            task.completed = true;
+            return;
+        }
 
         if (!creep.pos.inRangeTo(target, 3)) {
             let args = {
@@ -139,7 +142,7 @@ var taskConstruction = {
             targetId: args.targetId,
         };
 
-        return addQueueWork(record);
+        return addQueueRecordWork(record);
     },
 
 };

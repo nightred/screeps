@@ -14,6 +14,7 @@ taskSource.prototype.run = function() {
 
     if (!creep) {
         Game.kernel.killProcess(this.pid);
+        return;
     }
 
     if (creep.getOffExit()) {
@@ -59,8 +60,8 @@ taskSource.prototype.doEmpty = function(creep) {
 * @param {Creep} creep The creep object
 **/
 taskSource.prototype.doWork = function(creep) {
-    if (creep.room.name != creep.memory.workRoom) {
-        creep.moveToRoom(creep.memory.workRoom);
+    if (creep.room.name != creep.memory.workRooms) {
+        creep.moveToRoom(creep.memory.workRooms);
         return;
     }
 

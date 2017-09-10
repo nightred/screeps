@@ -21,7 +21,8 @@ var taskSignController = {
         }
 
         if (!creep.room.controller) {
-            return creep.removeWork();
+            task.completed = true;
+            return;
         }
 
         if (!creep.pos.inRangeTo(creep.room.controller, 1)) {
@@ -37,9 +38,8 @@ var taskSignController = {
 
         creep.signController(creep.room.controller, task.message)
 
-        creep.removeWork();
-
-        return true;
+        task.completed = true;
+        return;
     },
 
     /**
@@ -56,7 +56,7 @@ var taskSignController = {
             creepLimit: 1,
         };
 
-        return addQueueWork(record);
+        return addQueueRecordWork(record);
     },
 
     /**

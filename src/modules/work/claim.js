@@ -21,7 +21,8 @@ var taskClaim = {
         }
 
         if (!creep.room.controller || creep.room.controller.my) {
-            return creep.removeWork();
+            task.completed = true;
+            return;
         }
 
         if (!creep.pos.inRangeTo(creep.room.controller, 1)) {
@@ -49,7 +50,7 @@ var taskClaim = {
             creepLimit: 1,
         };
 
-        return addQueueWork(record);
+        return addQueueRecordWork(record);
     },
 
     /**

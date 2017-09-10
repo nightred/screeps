@@ -32,6 +32,7 @@ directorTech.prototype.run = function() {
     }
 
     if (this.memory.spawnRoom == this.memory.workRoom) {
+        if (!this.squad) this.initSquad();
         this.doSquadSpawnLimits();
     }
 
@@ -40,6 +41,8 @@ directorTech.prototype.run = function() {
 
 directorTech.prototype.createWork = function() {
     let workRoom = Game.rooms[this.memory.workRoom];
+
+    if (!workRoom) return;
 
     let findWorkTasks = [
         C.WORK_TOWER_REFILL,
@@ -104,9 +107,6 @@ directorTech.prototype.doSquadSpawnLimits = function() {
         maxSize: maxSize,
         minSize: minSize,
         limit: creepLimit,
-        creepArgs: {
-            style: 'default',
-        },
     };
 
     let process = this.squad;
@@ -123,7 +123,7 @@ directorTech.prototype.doSquadSpawnLimits = function() {
 directorTech.prototype.initSquad = function() {
     let imageName = 'managers/squad';
     let process = Game.kernel.startProcess(this, imageName, {
-        name: (this.memory.workRoom + '_techs'),
+        squadName: (this.memory.spawnRoom + '_techs'),
         spawnRoom: this.memory.spawnRoom,
         workRooms: this.memory.workRoom,
     });

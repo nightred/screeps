@@ -12,9 +12,6 @@ var taskTowerFill = {
     * @param {Task} task The work task passed from the work Queue
     **/
     run: function(creep, task) {
-        if (!creep) { return ERR_INVALID_ARGS; }
-        if (!task) { return ERR_INVALID_ARGS; }
-
         if (creep.manageState()) {
             if (creep.isWorking()) {
                 creep.say('⚙');
@@ -45,11 +42,13 @@ var taskTowerFill = {
         let target = Game.getObjectById(task.targetId);
 
         if (!target) {
-            return creep.removeWork();
+            task.completed = true;
+            return;
         }
 
         if (target.energy >= Math.floor(target.energyCapacity * C.REFILL_TOWER_MAX)) {
-            return creep.removeWork();
+            task.completed = true;
+            return;
         }
 
         creep.doTransfer(target, RESOURCE_ENERGY);
@@ -89,8 +88,6 @@ var taskTowerFill = {
     * @param {Room} room The room object
     **/
     find: function(room) {
-        if (!room) { return ERR_INVALID_ARGS; }
-
         room.memory.work = room.memory.work || {};
 
         let memory = room.memory.work;
@@ -146,7 +143,7 @@ var taskTowerFill = {
             targetId: args.targetId,
         };
 
-        return addQueueWork(record);
+        return addQueueRecordWork(record);
     },
 
 };

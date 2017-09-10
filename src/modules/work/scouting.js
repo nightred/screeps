@@ -72,7 +72,7 @@ var taskScouting = {
             creepLimit: 1,
         };
 
-        return addQueueWork(record);
+        return addQueueRecordWork(record);
     },
 
 
