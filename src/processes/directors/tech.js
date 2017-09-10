@@ -36,7 +36,7 @@ directorTech.prototype.run = function() {
         this.doSquadSpawnLimits();
     }
 
-    Game.kernel.sleepProcess(this.pid, (C.DIRECTOR_SLEEP + Math.floor(Math.random() * 8)));
+    Game.kernel.sleepProcessbyPid(this.pid, (C.DIRECTOR_SLEEP + Math.floor(Math.random() * 8)));
 };
 
 directorTech.prototype.createWork = function() {
@@ -104,6 +104,7 @@ directorTech.prototype.doSquadSpawnLimits = function() {
         name: 'techs',
         task: C.TASK_TECH,
         role: C.ROLE_TECH,
+        priority: 54,
         maxSize: maxSize,
         minSize: minSize,
         limit: creepLimit,

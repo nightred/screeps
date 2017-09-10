@@ -43,7 +43,7 @@ Defense.prototype.run = function() {
 
     this.doDefenseMode(room);
 
-    Game.kernel.sleepProcess(this.pid, (C.DIRECTOR_SLEEP + Math.floor(Math.random() * 8)));
+    Game.kernel.sleepProcessbyPid(this.pid, (C.DIRECTOR_SLEEP + Math.floor(Math.random() * 8)));
 };
 
 Defense.prototype.doSquadSpawnLimits = function(room) {
@@ -78,6 +78,7 @@ Defense.prototype.doSquadSpawnLimits = function(room) {
         name: 'militia',
         task: C.TASK_MILITIA,
         role: C.ROLE_COMBAT_MILITIA,
+        priority: 38,
         maxSize: maxSize,
         minSize: minSize,
         limit: creepLimit,
@@ -105,14 +106,18 @@ Defense.prototype.doDefenseMode = function(room) {
 
     if (targets.length <= 0) {
         if (defense.active == 1) {
-            defense.cooldown = defense.cooldown || Game.time;
+            if (!defense.cooldown) {
+                 defense.cooldown = Game.time + C.DEFENSE_COOLDOWN;
+            }
 
-            if ((defense.cooldown + C.DEFENSE_COOLDOWN) < Game.time) {
+            if (defense.cooldown < Game.time) {
                 defense.active = 0;
+                defense.jobId = undefined;
+                defense.cooldown = undefined;
+
+                logger.info('defense mode standing down in room: ' + room.toString());
 
                 delQueueRecord(defense.jobId);
-
-                defense.jobId = undefined;
             }
         }
 

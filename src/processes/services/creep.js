@@ -18,11 +18,11 @@ CreepService.prototype.run = function() {
 
     for (var name in Game.creeps) {
         var creep = Game.creeps[name];
-
         this.doCreep(creep);
-
         creepCount++;
     }
+
+    this.cleanCreep();
 
     let log = {
         command: 'service creep',
@@ -35,8 +35,6 @@ CreepService.prototype.run = function() {
 };
 
 CreepService.prototype.doCreep = function(creep) {
-    if (!creep) this.cleanOldCreep(name);
-
     if (creep.spawning || !creep.memory.task || creep.memory.despawn) return;
 
     if (creep.isDespawnWarning()) {
@@ -44,9 +42,9 @@ CreepService.prototype.doCreep = function(creep) {
         return;
     }
 
-    if (C.TASK_TYPES.indexOf(creep.memory.task) === -1) return;
-
     if (!creep.process) {
+        if (C.TASK_TYPES.indexOf(creep.memory.task) === -1) return;
+
         let imageName = creep.memory.task;
         let proc = Game.kernel.startProcess(this, imageName, {
             creepName: creep.name,
@@ -62,31 +60,29 @@ CreepService.prototype.doCreep = function(creep) {
     }
 };
 
+CreepService.prototype.cleanCreep = function() {
+    if (this.memory.sleepCleanup && this.memory.sleepCleanup > Game.time) return;
+    this.memory.sleepCleanup = C.MANAGE_MEMORY_TICKS + Game.time;
+
+    for (let creepName in Memory.creeps) {
+        if (!Game.creeps[creepName]) this.cleanOldCreep(creepName);
+    }
+};
+
 CreepService.prototype.doDespawn = function(creep) {
-    if (!creep) { return ERR_INVALID_ARGS; }
-
-    if (!creep.memory.despawn || creep.memory.despawn == undefined) {
-        creep.setDespawn();
-    }
-
-    if (creep.getOffExit()) {
-        return true;
-    }
-
-    return true;
+    if (!creep.memory.despawn) creep.setDespawn();
+    if (creep.getOffExit()) return;
 };
 
 CreepService.prototype.cleanOldCreep = function(creepName) {
     let creepMemory = Memory.creeps[creepName];
 
-    if (creepMemory.workId) {
-        workRemoveCreep(creepName, creepMemory.workId);
-    }
+    if (creepMemory.workId) workRemoveCreep(creepName, creepMemory.workId);
 
-    logger.debug('clearing non-existant creep memory name: ' + name +
+    logger.debug('clearing non-existant creep memory name: ' + creepName +
         ' role: ' + creepMemory.role);
 
-    delete Memory.creeps[name];
+    delete Memory.creeps[creepName];
 };
 
 registerProcess('services/creep', CreepService);

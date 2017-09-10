@@ -29,7 +29,7 @@ directorFieldTech.prototype.run = function() {
 
     this.doSquadLimits();
 
-    Game.kernel.sleepProcess(this.pid, (C.DIRECTOR_SLEEP + Math.floor(Math.random() * 8)));
+    Game.kernel.sleepProcessbyPid(this.pid, (C.DIRECTOR_SLEEP + Math.floor(Math.random() * 8)));
 };
 
 directorFieldTech.prototype.doSquadLimits = function() {
@@ -60,6 +60,7 @@ directorFieldTech.prototype.doSquadLimits = function() {
         name: 'fieldtechs',
         task: C.TASK_FIELDTECH,
         role: C.ROLE_FIELDTECH,
+        priority: 58,
         maxSize: maxSize,
         minSize: minSize,
         limit: creepLimit,

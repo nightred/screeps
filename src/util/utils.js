@@ -35,16 +35,55 @@ global.reset = function(accept = false) {
     _.forEach(Game.creeps, creep => creep.suicide());
 };
 
+global.psTop = function(count = 10, status) {
+    if (!Memory.kernel.processTable) return;
+
+    let processTable = JSON.parse(JSON.stringify(Memory.kernel.processTable));
+
+    if (status) {
+        processTable = _.filter(processTable, procInfo =>
+            procInfo.status == status
+        );
+    }
+
+    processTable = _.sortBy(processTable, procInfo =>
+        procInfo.cpuUsed
+    ).reverse();
+
+    longestName = (_.max(processTable, item => item.name.length)).name.length + 2;
+
+    let output = 'Process List:\n';
+    output += _.padRight('PID', 19);
+    output += _.padRight('NAME', longestName);
+    output += _.padLeft('STATUS', 10);
+    output += _.padLeft('CPU', 7);
+    output +='\n';
+
+    let loopCount = 0;
+    for (let pid in processTable) {
+        let item = processTable[pid];
+        output += _.padRight(item.pid, 19);
+        output += _.padRight(item.name, longestName);
+        output += _.padLeft(item.status, 10);
+        output += _.padLeft(item.cpuUsed.toFixed(2), 7);
+        output +='\n';
+        loopCount++;
+        if (loopCount >= count) break;
+    }
+
+    return output;
+};
+
 global.ps = function(pid = 0) {
     if (!Memory.kernel.processTable) return;
 
     let psOutput = [];
 	let levelMap = [];
     let indent = {
-        hasNextSibling:         '+',
-        isLastChild:            '`',
-        ancestorHasNextSibling: '|',
-        ancestorIsLastChild:    ' ',
+        hasNextSibling:         '├',
+        isLastChild:            '└',
+        ancestorHasNextSibling: '│',
+        ancestorIsLastChild:    ' ',
     };
 
     (function traverse(tree, depth) {
@@ -73,7 +112,7 @@ global.ps = function(pid = 0) {
     longestName = (_.max(psOutput, item => item.name.length)).name.length + 2;
 
     let output = 'Process List:\n';
-    output += _.padRight('', longestIndent + 1);
+    output += _.padRight('', longestIndent, ' ') + ' ';
     output += _.padRight('PID', 19);
     output += _.padRight('NAME', longestName);
     output += _.padLeft('STATUS', 10);
@@ -81,7 +120,7 @@ global.ps = function(pid = 0) {
     output +='\n';
 
     psOutput.forEach(item => {
-        output += _.padRight(item.indent, longestIndent, '-') + ' ';
+        output += _.padRight(item.indent, longestIndent, '─') + ' ';
         output += _.padRight(item.pid, 19);
         output += _.padRight(item.name, longestName);
         output += _.padLeft(item.status, 10);

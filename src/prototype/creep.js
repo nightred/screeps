@@ -6,9 +6,6 @@
  */
 
 Creep.prototype.moveToRoom = function(roomName) {
-    if (!roomName) { return ERR_INVALID_ARGS; }
-    if (this.room.name == roomName) { return true; }
-
     if (Game.cpu.bucket < 1000) { return true; }
 
     let target = new RoomPosition(25, 25, roomName);
@@ -115,9 +112,7 @@ Creep.prototype.getWork = function(workTasks, args) {
 
     args = args || {};
 
-    if (!args.ignoreRoom &&
-        (!args.spawnRoom || !args.room || !args.rooms)) {
-
+    if (!args.ignoreRoom && !args.spawnRoom && !args.room && !args.rooms) {
         if (this.memory.workRoom) {
             args.room = this.memory.workRoom;
         } else if (this.memory.workRooms) {
@@ -155,6 +150,7 @@ Creep.prototype.doTransfer = function(target, resourceType) {
         this.memory.goingTo = false;
         return ERR_INVALID_ARGS;
     }
+
     if (resourceType && RESOURCES_ALL.indexOf(resourceType) < 0) {
         this.memory.goingTo = false;
         return ERR_INVALID_ARGS;

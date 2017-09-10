@@ -35,12 +35,7 @@ Work.prototype.doWorkTask = function(creep) {
     let workTask = getQueueRecord(creep.memory.workId);
 
     if (!workTask) {
-        logger.error('failed to load work task id: ' + creep.memory.workId +
-            ', when adding creep: ' + creep.name
-        );
-
         creep.memory.workId = undefined;
-
         return;
     }
 
@@ -48,10 +43,8 @@ Work.prototype.doWorkTask = function(creep) {
 
     if (!work) {
         logger.error('failed to load work task: ' + workTask.task);
-
         delQueueRecord(creep.memory.workId)
         creep.memory.workId = undefined;
-
         return;
     }
 
@@ -59,7 +52,7 @@ Work.prototype.doWorkTask = function(creep) {
         if (workTask.creeps.length >= workTask.creepLimit) {
             logger.debug('work task id: ' + creep.memory.workId +
                 ', full when adding creep: ' + creep.name);
-            return false;
+            return;
         } else {
             this.addCreep(creep.name, creep.memory.workId);
         }
@@ -70,7 +63,6 @@ Work.prototype.doWorkTask = function(creep) {
     if (workTask.completed) {
         logger.debug('work task id: ' + creep.memory.workId +
             ', has been completed by ' + creep.name);
-
         delQueueRecord(creep.memory.workId)
         creep.memory.workId = undefined;
     };

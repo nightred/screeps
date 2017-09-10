@@ -22,16 +22,6 @@ Object.defineProperty(directorRemote.prototype, 'directorMining', {
     },
 });
 
-Object.defineProperty(directorRemote.prototype, 'directorTech', {
-    get: function() {
-        if (!this.memory.directorTechPid) return false;
-        return Game.kernel.getProcessByPid(this.memory.directorTechPid);
-    },
-    set: function(value) {
-        this.memory.directorTechPid = value.pid;
-    },
-});
-
 Object.defineProperty(directorRemote.prototype, 'managerDefense', {
     get: function() {
         if (!this.memory.managerDefensePid) return false;
@@ -60,6 +50,10 @@ directorRemote.prototype.run = function() {
 
     if (!spawnRoom || !spawnRoom.controller || !spawnRoom.controller.my) return;
 
+    if (!spawnRoom.isInCoverage(this.memory.workRoom)) {
+        spawnRoom.addCoverage(this.memory.workRoom);
+    }
+
     if (!this.squad) {
         this.initSquad();
     }
@@ -67,9 +61,27 @@ directorRemote.prototype.run = function() {
     this.doSquadGroupReserve();
     this.doSquadGroupInterHaulers();
 
+    this.doTechServices();
+
     this.doDirectors();
 
-    Game.kernel.sleepProcess(this.pid, (C.DIRECTOR_SLEEP + Math.floor(Math.random() * 8)));
+    Game.kernel.sleepProcessbyPid(this.pid, (C.DIRECTOR_SLEEP + Math.floor(Math.random() * 8)));
+};
+
+directorRemote.prototype.doTechServices = function() {
+    let workRoom = Game.rooms[this.memory.workRoom];
+
+    if (!workRoom) return;
+
+    let findWorkTasks = [
+        C.WORK_TOWER_REFILL,
+        C.WORK_REPAIR,
+        C.WORK_CONSTRUCTION,
+    ];
+
+    for (let i = 0; i < findWorkTasks.length; i++) {
+        doWorkFind(findWorkTasks[i], workRoom);
+    }
 };
 
 directorRemote.prototype.doSquadGroupInterHaulers = function() {
@@ -101,6 +113,7 @@ directorRemote.prototype.doSquadGroupInterHaulers = function() {
         name: 'interhaulers',
         task: C.TASK_HAUL,
         role: C.ROLE_HAULER,
+        priority: 66,
         maxSize: maxSize,
         minSize: minSize,
         limit: creepLimit,
@@ -122,21 +135,17 @@ directorRemote.prototype.doSquadGroupInterHaulers = function() {
 directorRemote.prototype.doSquadGroupReserve = function() {
     let workRoom = Game.rooms[this.memory.workRoom];
 
-    if (workRoom && !workRoom.controller) {
+    if (!workRoom || !workRoom.controller) {
         return;
     }
 
     let creepLimit = 0;
 
-    if (workRoom &&
-        (!workRoom.controller.reservation ||
+    if (
+        !workRoom.controller.reservation ||
         (workRoom.controller.reservation &&
-        workRoom.controller.reservation.ticksToEnd < C.CONTROLLER_RESERVE_MIN))
+        workRoom.controller.reservation.ticksToEnd < C.CONTROLLER_RESERVE_MIN)
     ) {
-        creepLimit = 1;
-    }
-
-    if (!workRoom) {
         creepLimit = 1;
     }
 
@@ -144,6 +153,7 @@ directorRemote.prototype.doSquadGroupReserve = function() {
         name: 'reservers',
         task: C.TASK_RESERVE,
         role: C.ROLE_CONTROLLER,
+        priority: 70,
         maxSize: 9999,
         minSize: 0,
         limit: creepLimit,
@@ -169,14 +179,6 @@ directorRemote.prototype.doDirectors = function() {
             spawnRoom: this.memory.spawnRoom,
         });
         this.directorMining = proc;
-    }
-
-    if (!this.directorTech) {
-        let proc = Game.kernel.startProcess(this, C.DIRECTOR_TECH, {
-            workRoom: this.memory.workRoom,
-            spawnRoom: this.memory.spawnRoom,
-        });
-        this.directorTech = proc;
     }
 
     if (!this.managerDefense) {

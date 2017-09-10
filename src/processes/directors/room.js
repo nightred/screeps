@@ -69,7 +69,7 @@ directorRoom.prototype.run = function() {
 
     this.doDirectors();
 
-    Game.kernel.sleepProcess(this.pid, (C.DIRECTOR_SLEEP + Math.floor(Math.random() * 8)));
+    Game.kernel.sleepProcessbyPid(this.pid, (C.DIRECTOR_SLEEP + Math.floor(Math.random() * 8)));
 };
 
 directorRoom.prototype.doSquadGroupStockers = function() {
@@ -90,6 +90,7 @@ directorRoom.prototype.doSquadGroupStockers = function() {
         name: 'stockers',
         task: C.TASK_STOCK,
         role: C.ROLE_STOCKER,
+        priority: 49,
         minSize: 200,
         maxSize: 9999,
         limit: creepLimit,
@@ -139,6 +140,7 @@ directorRoom.prototype.doSquadGroupHaulers = function() {
         name: 'haulers',
         task: C.TASK_HAUL,
         role: C.ROLE_HAULER,
+        priority: 52,
         maxSize: maxSize,
         minSize: minSize,
         limit: creepLimit,
@@ -178,6 +180,7 @@ directorRoom.prototype.doSquadGroupResupply = function() {
         name: 'resupply',
         task: C.TASK_RESUPPLY,
         role: C.ROLE_RESUPPLY,
+        priority: 10,
         maxSize: maxSize,
         minSize: minSize,
         limit: creepLimit,
@@ -232,6 +235,7 @@ directorRoom.prototype.doSquadGroupUpgraders = function() {
         name: 'upgraders',
         task: C.TASK_UPGRADE,
         role: C.ROLE_UPGRADER,
+        priority: 60,
         maxSize: maxSize,
         minSize: minSize,
         limit: creepLimit,

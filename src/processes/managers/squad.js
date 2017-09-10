@@ -102,10 +102,11 @@ Squad.prototype.setGroup = function(args) {
     if (!creepGroup.task && args.task) creepGroup.task = args.task;
     if (!creepGroup.role && args.role) creepGroup.role = args.role;
 
-    if (args.limit) creepGroup.limit = args.limit;
+    creepGroup.limit = args.limit;
     if (args.minSize) creepGroup.minSize = args.minSize;
     if (args.maxSize) creepGroup.maxSize = args.maxSize;
     if (args.creepArgs) creepGroup.creepArgs = args.creepArgs;
+    if (args.priority) creepGroup.priority = args.priority;
 };
 
 Squad.prototype.removeGroup = function(groupName) {
@@ -173,6 +174,7 @@ Squad.prototype.doGroupSpawn = function(creepGroup) {
             minSize: creepGroup.minSize,
             maxSize: creepGroup.maxSize,
             squadPid: this.pid,
+            priority: creepGroup.priority,
             creepArgs: {
                 workRooms: this.memory.workRooms,
             },

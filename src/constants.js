@@ -16,7 +16,6 @@ var Constant = {};
 Constant.USERNAME                       = 'nightred';
 
 // Versioning
-Constant.VERSION_DIRECTOR               = 'v2.01'
 Constant.VERSION_QUEUE                  = 'v3.00'
 
 Constant.SIM                            = false;
@@ -32,12 +31,13 @@ Constant.ENERGY_CONTAINER_MIN_WITHDRAW  = 100;
 Constant.ENERGY_STORAGE_MIN_WITHDRAW    = 100;
 Constant.ENERGY_LINK_IN_MIN             = 0.1;
 Constant.ENERGY_LINK_OUT_MAX            = 0.8;
-Constant.LINK_STORAGE_TRANSFER_MIN      = 0.34;
 Constant.ENERGY_LINK_STORAGE_MIN        = 0.38;
 Constant.ENERGY_LINK_STORAGE_MAX        = 0.8;
 Constant.ENERGY_STORAGE_MAX             = 0.6;
 Constant.ENERGY_CONTAINER_MAX           = 0.9;
 Constant.ENERGY_STORAGE_SECONDARY_MIN   = 0.14;
+
+Constant.LINK_STORAGE_TRANSFER_MIN      = 0.34;
 
 Constant.TERMINAL_ENERGY_MAX            = 0.2;
 
@@ -45,18 +45,12 @@ Constant.CONTROLLER_WITHDRAW_LEVEL      = 2;
 Constant.CONTROLLER_RESERVE_MAX         = 4000;
 Constant.CONTROLLER_RESERVE_MIN         = 1000;
 
-Constant.FIND_WAIT_TICKS                = 8;
-Constant.MANAGE_WAIT_TICKS              = 10;
 Constant.MANAGE_MEMORY_TICKS            = 20;
 Constant.TOWER_REPAIR_TICKS             = 4;
-Constant.REPORT_TICKS                   = 500;
 
 Constant.DEFENSE_SLEEP                  = 8;
 Constant.DEFENSE_COOLDOWN               = 80;
 Constant.DEFENSE_LIMIT_INCREASE_DELAY   = 100;
-
-Constant.MIL_SQUAD_SPAWN_COOLDOWN       = 8;
-Constant.MIL_SQUAD_CREEP_COOLDOWN       = 6;
 
 Constant.SQUAD_SLEEP_SPAWN              = 8;
 Constant.SQUAD_SLEEP_NEWCREEP           = 3;
@@ -85,13 +79,10 @@ Constant.CPU_MIN_BUCKET_FLAGS           = 1000;
 
 Constant.QUEUE_WORK                     = 'work';
 Constant.QUEUE_SPAWN                    = 'spawn';
-Constant.QUEUE_MIL                      = 'mil';
-
-Constant.DB_DIRECTOR                    = 1;
 
 Constant.WORK_FIND_SLEEP                = 12;
 
-Constant.DIRECTOR_SLEEP                 = 12;
+Constant.DIRECTOR_SLEEP                 = 24;
 
 Constant.ROLE_MINER                     = 'miner';
 Constant.ROLE_HARVESTER                 = 'harvester';
@@ -124,32 +115,18 @@ Constant.ROLE_TYPES = [
     Constant.ROLE_COMBAT_MILITIA,
 ];
 
-Constant.DIRECTOR_ROOM                  = 'directors/room';
-Constant.DIRECTOR_REMOTE                = 'directors/remote';
-Constant.DIRECTOR_MINING                = 'directors/mining';
-Constant.DIRECTOR_SOURCE                = 'directors/source';
-Constant.DIRECTOR_RESUPPLY              = 'directors/resupply';
-Constant.DIRECTOR_CONTROLLER            = 'directors/controller';
-Constant.DIRECTOR_HAULING               = 'directors/hauling';
-Constant.DIRECTOR_INTERHAULING          = 'directors/interhauling';
-Constant.DIRECTOR_STOCKING              = 'directors/stocking';
-Constant.DIRECTOR_TECH                  = 'directors/tech';
 Constant.DIRECTOR_FIELDTECH             = 'directors/fieldtech';
-Constant.DIRECTOR_RESERVE               = 'directors/reserve';
+Constant.DIRECTOR_MINING                = 'directors/mining';
+Constant.DIRECTOR_REMOTE                = 'directors/remote';
+Constant.DIRECTOR_ROOM                  = 'directors/room';
+Constant.DIRECTOR_TECH                  = 'directors/tech';
 
 Constant.DIRECTOR_TYPES = [
-    Constant.DIRECTOR_ROOM,
-    Constant.DIRECTOR_REMOTE,
-    Constant.DIRECTOR_MINING,
-    Constant.DIRECTOR_SOURCE,
-    Constant.DIRECTOR_RESUPPLY,
-    Constant.DIRECTOR_CONTROLLER,
-    Constant.DIRECTOR_HAULING,
-    Constant.DIRECTOR_INTERHAULING,
-    Constant.DIRECTOR_STOCKING,
-    Constant.DIRECTOR_TECH,
     Constant.DIRECTOR_FIELDTECH,
-    Constant.DIRECTOR_RESERVE,
+    Constant.DIRECTOR_MINING,
+    Constant.DIRECTOR_REMOTE,
+    Constant.DIRECTOR_ROOM,
+    Constant.DIRECTOR_TECH,
 ];
 
 Constant.DIRECTOR_FLAG_MAP = {
