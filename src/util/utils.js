@@ -93,7 +93,7 @@ global.ps = function(pid = 0) {
 };
 
 var processTableTree = function() {
-    let processTable = Memory.kernel.processTable;
+    let processTable = JSON.parse(JSON.stringify(Memory.kernel.processTable));
     let tree = [];
     let children = {};
 

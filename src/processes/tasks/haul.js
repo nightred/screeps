@@ -85,8 +85,8 @@ taskHaul.prototype.doLongHaul = function(creep) {
 
         creep.doEmpty(energyOutTargets, RESOURCE_ENERGY);
     } else {
-        if (creep.room.name != creep.memory.workRoom) {
-            creep.moveToRoom(creep.memory.workRoom);
+        if (creep.room.name != creep.memory.workRooms) {
+            creep.moveToRoom(creep.memory.workRooms);
             return;
         }
 

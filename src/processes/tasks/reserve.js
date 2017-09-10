@@ -28,8 +28,8 @@ taskReserve.prototype.run = function() {
 
     if (Game.cpu.bucket < 2000) { return true; }
 
-    if (creep.room.name != creep.memory.workRoom) {
-        creep.moveToRoom(creep.memory.workRoom);
+    if (creep.room.name != creep.memory.workRooms) {
+        creep.moveToRoom(creep.memory.workRooms);
         return;
     }
 

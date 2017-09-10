@@ -122,7 +122,7 @@ directorRemote.prototype.doSquadGroupInterHaulers = function() {
 directorRemote.prototype.doSquadGroupReserve = function() {
     let workRoom = Game.rooms[this.memory.workRoom];
 
-    if (workRoom || !workRoom.controller) {
+    if (workRoom && !workRoom.controller) {
         return;
     }
 
@@ -211,7 +211,7 @@ directorRemote.prototype.initSquad = function() {
 * @param {Args} Args Array of values from flag
 **/
 directorRemote.prototype.flag = function(roomName, args) {
-    this.memory.workName = roomName;
+    this.memory.workRoom = roomName;
     this.memory.spawnRoom = args[2];
 };
 
