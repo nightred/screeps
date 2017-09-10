@@ -61,8 +61,9 @@ Work.prototype.doWorkTask = function(creep) {
     work.run(creep, workTask);
 
     if (workTask.completed) {
-        logger.debug('work task id: ' + creep.memory.workId +
-            ', has been completed by ' + creep.name);
+        logger.debug('task: ' + workTask.task +
+            ', completed by creep: ' + creep.name +
+            ', id: ' + creep.memory.workId);
         delQueueRecord(creep.memory.workId)
         creep.memory.workId = undefined;
     };

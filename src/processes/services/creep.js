@@ -70,7 +70,7 @@ CreepService.prototype.cleanCreep = function() {
 };
 
 CreepService.prototype.doDespawn = function(creep) {
-    if (!creep.memory.despawn) creep.setDespawn();
+    if (!creep.memory.despawn) creep.doDespawn();
     if (creep.getOffExit()) return;
 };
 

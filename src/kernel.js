@@ -5,7 +5,7 @@
  */
 
 var logger = new Logger('[Kernel]');
-logger.level = C.LOGLEVEL.DEBUG;
+logger.level = C.LOGLEVEL.INFO;
 
 var processRegistry = {
     registry: {},
@@ -139,7 +139,7 @@ Kernel.prototype.startProcess = function(parent, imageName, startMem) {
         return;
     }
 
-    logger.info(`spawned new process ${procInfo.name} : ${procInfo.pid}`);
+    logger.debug(`spawned new process ${procInfo.name} : ${procInfo.pid}`);
 
     return process;
 };
@@ -195,7 +195,7 @@ Kernel.prototype.createProcess = function(pid) {
 
 Kernel.prototype.killProcess = function(pid) {
     if (this.processTable[pid]) {
-        logger.info(`killed process ${this.processTable[pid].name} : ${this.processTable[pid].pid}`);
+        logger.debug(`killed process ${this.processTable[pid].name} : ${this.processTable[pid].pid}`);
         this.processTable[pid].status = 'killed';
     }
 

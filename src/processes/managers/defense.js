@@ -115,7 +115,7 @@ Defense.prototype.doDefenseMode = function(room) {
                 defense.jobId = undefined;
                 defense.cooldown = undefined;
 
-                logger.info('defense mode standing down in room: ' + room.toString());
+                logger.alert('standing down defense mode, room: ' + room.toString());
 
                 delQueueRecord(defense.jobId);
             }
@@ -131,7 +131,7 @@ Defense.prototype.doDefenseMode = function(room) {
         defense.active = 1;
         defense.creepLimit = 1;
 
-        logger.info('defense mode activated in room: ' + room.toString());
+        logger.alert('activated defense mode, room: ' + room.toString());
     }
 
     let creepLimit = Math.ceil((Game.time - defense.tick) / C.DEFENSE_LIMIT_INCREASE_DELAY);

@@ -3,27 +3,10 @@
  *
  * provides creep group control and spawning for all creep groups
  *
- * [data structure]
- * squadName
- * spawnRoom
- * workRooms
- * creepNew []
- * creepGroup {}
- * - group {}
- * - - name
- * - - creeps []
- * - - limit
- * - - spawnid
- * - - sleepSpawn
- * - - task
- * - - role
- * - - minSize
- * - - maxSize
- * - - creepsArgs
  */
 
 var logger = new Logger('[Squad]');
-logger.level = C.LOGLEVEL.DEBUG;
+logger.level = C.LOGLEVEL.INFO;
 
 var Squad = function() {
     // init

@@ -8,7 +8,7 @@
  */
 
 var logger = new Logger('[Queue]');
-logger.level = C.LOGLEVEL.DEBUG;
+logger.level = C.LOGLEVEL.INFO;
 
 require('modules.queue.spawn');
 require('modules.queue.work');
