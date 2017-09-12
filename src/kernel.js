@@ -68,6 +68,8 @@ Kernel.prototype.run = function() {
         command: 'starting kernel',
     });
 
+    let cpuStart = Game.cpu.getUsed();
+
     let pids = Object.keys(this.processTable);
 
     if (pids.length === 0) {
@@ -75,7 +77,9 @@ Kernel.prototype.run = function() {
         if (proc) pids.push(proc.pid);
     }
 
-    for (let i = 0; i < pids.length; i++) {
+    let pidCount = pids.length;
+
+    for (let i = 0; i < pidCount; i++) {
         let pid = pids[i];
 
         let procStartCPU = Game.cpu.getUsed();
@@ -113,6 +117,13 @@ Kernel.prototype.run = function() {
 
         procInfo.cpuUsed = (Game.cpu.getUsed() - procStartCPU);
     }
+
+    addTerminalLog(undefined, {
+        command: 'kernel',
+        status: 'OK',
+        cpu: (Game.cpu.getUsed() - cpuStart),
+        output: ('process count: ' + pidCount),
+    });
 };
 
 Kernel.prototype.startProcess = function(parent, imageName, startMem) {
