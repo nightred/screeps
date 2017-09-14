@@ -23,7 +23,7 @@ var taskMineral = {
         let extractor = Game.getObjectById(creep.extractorId);
         if (!extractor) {
             if (C.DEBUG >= 3) { console.log('VERBOSE - extractor missing in room: ' + creep.room.name + ', creep: ' + creep.name); }
-            creep.setDespawn();
+            creep.doDespawn();
             return false;
         }
         if (extractor.cooldown > 0) {
@@ -33,7 +33,7 @@ var taskMineral = {
         let mineral = Game.getObjectById(creep.mineralId);
         if (!mineral) {
             if (C.DEBUG >= 3) { console.log('VERBOSE - mineral missing in room: ' + creep.room.name + ', creep: ' + creep.name); }
-            creep.setDespawn();
+            creep.doDespawn();
             return false;
         }
 

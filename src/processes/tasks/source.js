@@ -112,7 +112,7 @@ taskSource.prototype.doDropHarvest = function(creep) {
 
     if (!target) {
         source.clearContainer();
-        creep.setDespawn();
+        creep.doDespawn();
         return;
     }
 

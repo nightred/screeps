@@ -88,11 +88,7 @@ directorTech.prototype.doSquadSpawnLimits = function() {
 
         if (!isNaN(roomCount)) {
             creepLimit = roomCount;
-
-            if (spawnRoom && spawnRoom.controller && spawnRoom.controller.my &&
-                spawnRoom.controller.level >= 4) {
-                creepLimit++;
-            }
+            if (creepLimit > 3) creepLimit = 3;
         }
     } else {
         creepLimit = this.memory.creepLimit;

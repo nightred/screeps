@@ -5,7 +5,7 @@
  */
 
 var logger = new Logger('[Kernel]');
-logger.level = C.LOGLEVEL.DEBUG;
+logger.level = C.LOGLEVEL.INFO;
 
 var processRegistry = {
     registry: {},
@@ -68,6 +68,8 @@ Kernel.prototype.run = function() {
         command: 'starting kernel',
     });
 
+    let cpuStart = Game.cpu.getUsed();
+
     let pids = Object.keys(this.processTable);
 
     if (pids.length === 0) {
@@ -75,7 +77,9 @@ Kernel.prototype.run = function() {
         if (proc) pids.push(proc.pid);
     }
 
-    for (let i = 0; i < pids.length; i++) {
+    let pidCount = pids.length;
+
+    for (let i = 0; i < pidCount; i++) {
         let pid = pids[i];
 
         let procStartCPU = Game.cpu.getUsed();
@@ -113,6 +117,13 @@ Kernel.prototype.run = function() {
 
         procInfo.cpuUsed = (Game.cpu.getUsed() - procStartCPU);
     }
+
+    addTerminalLog(undefined, {
+        command: 'kernel',
+        status: 'OK',
+        cpu: (Game.cpu.getUsed() - cpuStart),
+        output: ('process count: ' + pidCount),
+    });
 };
 
 Kernel.prototype.startProcess = function(parent, imageName, startMem) {
@@ -139,7 +150,7 @@ Kernel.prototype.startProcess = function(parent, imageName, startMem) {
         return;
     }
 
-    logger.info(`spawned new process ${procInfo.name} : ${procInfo.pid}`);
+    logger.debug(`spawned new process ${procInfo.name} : ${procInfo.pid}`);
 
     return process;
 };
@@ -195,7 +206,7 @@ Kernel.prototype.createProcess = function(pid) {
 
 Kernel.prototype.killProcess = function(pid) {
     if (this.processTable[pid]) {
-        logger.info(`killed process ${this.processTable[pid].name} : ${this.processTable[pid].pid}`);
+        logger.debug(`killed process ${this.processTable[pid].name} : ${this.processTable[pid].pid}`);
         this.processTable[pid].status = 'killed';
     }
 

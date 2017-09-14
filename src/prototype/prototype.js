@@ -3,11 +3,15 @@
  *
  */
 
- require('prototype.memory');
- require('prototype.creep');
- require('prototype.source');
- require('prototype.mineral');
- require('prototype.room');
- require('prototype.structureContainer');
- require('prototype.structureStorage');
- require('prototype.roomPosition');
+// set memory
+require('prototype.memory');
+
+// default prototypes
+require('prototype.creep');
+require('prototype.mineral');
+require('prototype.room');
+require('prototype.roomPosition');
+require('prototype.source');
+require('prototype.structureContainer');
+require('prototype.structureStorage');
+require('prototype.structureTower');

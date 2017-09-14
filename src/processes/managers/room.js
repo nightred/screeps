@@ -189,8 +189,8 @@ RoomManager.prototype.doTowerHeal = function(tower) {
 };
 
 RoomManager.prototype.doTowerRepair = function(tower) {
-    if (this.memory.sleepTowerRepair && this.memory.sleepTowerRepair > Game.time) return false;
-    this.memory.sleepTowerRepair = C.TOWER_REPAIR_TICKS + Game.time;
+    if (tower.memory.sleepTowerRepair && tower.memory.sleepTowerRepair > Game.time) return false;
+    tower.memory.sleepTowerRepair = C.TOWER_REPAIR_TICKS + Game.time;
 
     if (!this.cacheTick || this.cacheTick < Game.time) {
         this.roomCache = [];
