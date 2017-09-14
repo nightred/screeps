@@ -6,9 +6,6 @@
  */
 
 Creep.prototype.moveToRoom = function(roomName) {
-    if (!roomName) { return ERR_INVALID_ARGS; }
-    if (this.room.name == roomName) { return true; }
-
     if (Game.cpu.bucket < 1000) { return true; }
 
     let target = new RoomPosition(25, 25, roomName);
@@ -76,34 +73,38 @@ Creep.prototype.sleep = function() {
 
 Creep.prototype.isDespawnWarning = function() {
     if (this.memory.despawn) { return true; }
-    if (this.memory.role == C.CONTROLLER ||
-        this.memory.role == C.SCOUT) {
+    if (this.memory.role == C.ROLE_CONTROLLER ||
+        this.memory.role == C.ROLE_SCOUT) {
         return false;
     }
 
     return this.ticksToLive <= C.CREEP_DESPAWN_TICKS;
 }
 
-Creep.prototype.setDespawn = function() {
-    this.memory.despawn = true;
-    this.memory.goingTo = false;
+Creep.prototype.doDespawn = function() {
+    if (!this.memory.despawn) {
+        this.memory.despawn = true;
+        this.memory.goingTo = false;
 
-    this.leaveWork();
+        this.leaveWork();
 
-    return true;
-}
+        if (this.memory.pid) {
+            Game.kernel.killProcess(this.memory.pid);
+        }
+    }
+
+    this.getOffExit()
+};
 
 Creep.prototype.hasWork = function() {
-    return this.memory.workId > 0;
+    return !!this.memory.workId;
 }
 
 Creep.prototype.leaveWork = function() {
     if (this.memory.workId) {
-        Game.Work.removeCreep(this.name, this.memory.workId);
+        workRemoveCreep(this.name, this.memory.workId);
         this.memory.workId = undefined;
     }
-
-    return true;
 }
 
 Creep.prototype.getWork = function(workTasks, args) {
@@ -111,9 +112,7 @@ Creep.prototype.getWork = function(workTasks, args) {
 
     args = args || {};
 
-    if (!args.ignoreRoom &&
-        (!args.spawnRoom || !args.room || !args.rooms)) {
-
+    if (!args.ignoreRoom && !args.spawnRoom && !args.room && !args.rooms) {
         if (this.memory.workRoom) {
             args.room = this.memory.workRoom;
         } else if (this.memory.workRooms) {
@@ -121,7 +120,7 @@ Creep.prototype.getWork = function(workTasks, args) {
         }
     }
 
-    let workId = Game.Work.getWork(workTasks, this, args);
+    let workId = getWorkTask(workTasks, this, args);
 
     if (!workId) {
         return false;
@@ -133,27 +132,25 @@ Creep.prototype.getWork = function(workTasks, args) {
 }
 
 Creep.prototype.doWork = function() {
-    if (!Game.Work.runWork(this)) {
-        this.leaveWork();
-    }
-
-    return true;
+    doWorkTask(this);
 }
 
-Creep.prototype.removeWork = function() {
-    if (this.memory.workId) {
-        Game.Queue.delRecord(this.memory.workId);
-        this.memory.workId = undefined;
-    }
-
-    return true;
-}
+Object.defineProperty(Creep.prototype, 'process', {
+    get: function() {
+        if (!this.memory.pid) return false;
+        return Game.kernel.getProcessByPid(this.memory.pid);
+    },
+    set: function(value) {
+        this.memory.pid = value.pid;
+    },
+});
 
 Creep.prototype.doTransfer = function(target, resourceType) {
     if (!target) {
         this.memory.goingTo = false;
         return ERR_INVALID_ARGS;
     }
+
     if (resourceType && RESOURCES_ALL.indexOf(resourceType) < 0) {
         this.memory.goingTo = false;
         return ERR_INVALID_ARGS;
@@ -167,11 +164,11 @@ Creep.prototype.doTransfer = function(target, resourceType) {
             ignoreCreeps: true,
         };
 
-        if (this.memory.role == C.RESUPPLY) {
+        if (this.memory.role == C.ROLE_RESUPPLY) {
             args.ignoreCreeps = false;
         }
 
-        if (this.memory.role == C.STOCKER) {
+        if (this.memory.role == C.ROLE_STOCKER) {
             args.ignoreRoads = true;
         }
 
@@ -212,11 +209,11 @@ Creep.prototype.doWithdraw = function(target, resourceType) {
             ignoreCreeps: true,
         };
 
-        if (this.memory.role == C.RESUPPLY) {
+        if (this.memory.role == C.ROLE_RESUPPLY) {
             args.ignoreCreeps = false;
         }
 
-        if (this.memory.role == C.STOCKER) {
+        if (this.memory.role == C.ROLE_STOCKER) {
             args.ignoreRoads = true;
         }
 
@@ -321,7 +318,7 @@ Creep.prototype.getFillTarget = function(types) {
     }
 
     if (this.room.name != this.memory.spawnRoom &&
-        (this.memory.role != C.HAULER && this.memory.style != 'longhauler')) {
+        (this.memory.role != C.ROLE_HAULER && this.memory.style != 'longhauler')) {
         this.moveToRoom(this.memory.spawnRoom);
         return true;
     }

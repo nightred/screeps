@@ -5,13 +5,13 @@
 
 const styles = {
     default:            "color: white; background-color: black;",
-    [C.LOGLEVEL.INFO]:  "color: green",
-    [C.LOGLEVEL.DEBUG]: "color: blue",
-    [C.LOGLEVEL.SILLY]: "color: darkblue",
-    [C.LOGLEVEL.ALERT]: "color: cyan",
-    [C.LOGLEVEL.WARN]:  "color: white",
-    [C.LOGLEVEL.ERROR]: "color: red",
-    [C.LOGLEVEL.FATAL]: "color: yellow, background-color: red",
+    [C.LOGLEVEL.SILLY]: "color: darkcyan; background-color: black;",
+    [C.LOGLEVEL.DEBUG]: "color: darkcyan;",
+    [C.LOGLEVEL.INFO]:  "color: green;",
+    [C.LOGLEVEL.ALERT]: "color: lightgrey;",
+    [C.LOGLEVEL.WARN]:  "color: lightgrey; background-color: black;",
+    [C.LOGLEVEL.ERROR]: "color: yellow; background-color: darkred;",
+    [C.LOGLEVEL.FATAL]: "color: black; background-color: yellow;",
 };
 
 const logLevelName = {
@@ -42,7 +42,12 @@ Logger.prototype.log = function(level, message) {
 
         let logLevel = logLevelName[level];
 
-        console.log(`<log severity="${logLevel}" style="${style}">[${logLevel}] ${this.prefix} ${message}</log>`);
+        let output = '';
+        output += `<log severity="${logLevel}" style="${style}">`;
+        output += `[${Game.time}] [${logLevel}] ${this.prefix} ${message}`;
+        output += `</log>`;
+
+        console.log(output);
     }
 };
 

@@ -1,75 +1,46 @@
 /*
  * Main Loop
- *
  */
 
 // global methods
-global.C            = require('constants');
-global.cli          = require('util.cli');
-
-// init the logger
-var Logger = require('util.logger');
-
-var logger = new Logger('[Main]');
-logger.level = C.LOGLEVEL.DEBUG;
+global.C        = require('constants');
+global.Logger   = require('util.logger');
 
 // prototypes
 require('prototype.prototype');
-
-// load utils
+// utils
 require('util.utils');
+// modules
+require('modules.queue');
+require('modules.role');
+require('modules.work');
 
 // load kernel
 var Kernel = require('kernel');
-
 // load processes
-require('processes.processlist');
+require('processes.registry');
 
-// modules
-var Director        = require('director.director');
-var Queue           = require('queue.queue');
-var Manage          = require('manage.manage');
-var Role            = require('role.role');
-var Task            = require('task.task');
-var Work            = require('work.work');
-var Mil             = require('mil.mil');
+// init the logger
+var logger = new Logger('[Main]');
+logger.level = C.LOGLEVEL.DEBUG;
 
 module.exports.loop = function () {
     let cpuStart = Game.cpu.getUsed();
 
     // init the kernel
-    Game.Kernel = new Kernel;
+    Game.kernel = new Kernel;
 
-    // hook modules
-    Game.Director       = new Director;
-    Game.Queue          = new Queue;
-    Game.Role           = new Role;
-    Game.Task           = new Task;
-    Game.Work           = new Work;
-    Game.Manage         = new Manage;
-    Game.Mil            = new Mil;
-
-    resetOnTick();
+    onTick();
 
     addTerminalLog(undefined, {
         command: 'init',
         status: 'OK',
         cpu: Game.cpu.getUsed(),
-        output: 'memory usage: ' + (JSON.stringify(RawMemory).length / 1024).toFixed(2) + ' KB',
+        output: 'memory usage: ' + (RawMemory.get().length / 1024).toFixed(2) + ' KB',
     });
 
     // start the kernel
-    Game.Kernel.run();
-
-    addTerminalLog(undefined, {
-        command: 'starting main',
-    });
-
-    // run modules
-    Game.Queue.run();
-    Game.Manage.run();
-    Game.Director.run();
-    Game.Mil.run();
+    Game.kernel.run();
 
     addTerminalLog(undefined, {
         command: 'main',
@@ -78,9 +49,8 @@ module.exports.loop = function () {
     });
 
     runVisuals();
-
 };
 
-var resetOnTick = function() {
-    resetVisuals();
+var onTick = function() {
+    onTickVisuals();
 };

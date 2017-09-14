@@ -87,6 +87,8 @@ Visuals.prototype.printLogs = function() {
     for (let i = 0; i < this.consoleRooms.length; i++) {
         let logs = this.roomLogs[this.consoleRooms[i]];
 
+        if (!logs) continue;
+
         let rv = new RoomVisual(this.consoleRooms[i]);
 
         let output = gOutput + '\nExecuting Room Processes\n';
@@ -236,9 +238,7 @@ global.runVisuals = function() {
     return true;
 };
 
-global.resetVisuals = function() {
+global.onTickVisuals = function() {
     visuals = new Visuals();
     return true;
 }
-
-//module.exports = Visuals;
