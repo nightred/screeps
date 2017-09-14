@@ -5,123 +5,62 @@
  *
  */
 
-var taskMineral = {
+var taskMineral = function() {
+    // init
+};
 
-    /**
-    * @param {Creep} creep The creep object
-    * @param {Task} task The work task passed from the work Queue
-    **/
-    doTask: function(creep, task) {
-        if (!creep) { return ERR_INVALID_ARGS; }
-        if (!task) { return ERR_INVALID_ARGS; }
+taskMineral.prototype.run = function() {
+    let creep = Game.creeps[this.memory.creepName];
 
-        if (creep.room.name != task.workRoom) {
-            creep.moveToRoom(task.workRoom);
-            return true;
-        }
+    if (!creep) {
+        Game.kernel.killProcess(this.pid);
+        return;
+    }
 
-        let extractor = Game.getObjectById(creep.extractorId);
-        if (!extractor) {
-            if (C.DEBUG >= 3) { console.log('VERBOSE - extractor missing in room: ' + creep.room.name + ', creep: ' + creep.name); }
-            creep.doDespawn();
-            return false;
-        }
-        if (extractor.cooldown > 0) {
-            return true;
-        }
+    if (creep.getOffExit()) {
+        return;
+    }
 
-        let mineral = Game.getObjectById(creep.mineralId);
-        if (!mineral) {
-            if (C.DEBUG >= 3) { console.log('VERBOSE - mineral missing in room: ' + creep.room.name + ', creep: ' + creep.name); }
-            creep.doDespawn();
-            return false;
-        }
+    if (creep.isSleep()) {
+        creep.moveToIdlePosition();
+        return;
+    }
 
-        if (!creep.pos.inRangeTo(mineral, 1)) {
-            let args = {
-                range: 1,
-                reusePath: 30,
-                maxRooms: 1,
-                ignoreCreeps: true,
-            };
-            creep.goto(mineral, args);
-            return true;
-        }
-
-        creep.harvest(mineral)
+    if (creep.room.name != task.workRoom) {
+        creep.moveToRoom(task.workRoom);
         return true;
-    },
+    }
 
-    /**
-    * @param {Task} task The work task passed from the work Queue
-    **/
-    doTaskManaged: function(task) {
-        if (!task) { return ERR_INVALID_ARGS; }
-
-        let room = Game.rooms[task.workRoom];
-        if (!room) {
-            if (C.DEBUG >= 3) { console.log('VERBOSE - no eyes on room: ' + task.workRoom + ', task: ' + task.task + ', id: ' + task.id); }
-            return true;
-        }
-
-        if (!task.mineralId) {
-            let minerals = room.getMinerals();
-            if (minerals.length > 0) {
-                task.mineralId = task.mineralId != minerals[0].id ? minerals[0].id : task.mineralId;
-            } else {
-                task.mineralId = task.mineralId ? false : task.mineralId;
-                return true;
-            }
-        }
-
-        if (task.extractorId) {
-            if (!Game.getObjectById(task.extractorId)) {
-                task.creepLimit = 0;
-                task.extractorId = false;
-                return true;
-            }
-        } else {
-            let extractors = room.getExtractors();
-            if (extractors.length > 0) {
-                task.creepLimit = 1;
-                task.extractorId = extractors[0].id;
-            } else {
-                task.creepLimit = 0;
-                task.extractorId = false;
-                return true;
-            }
-        }
-
-        // spawn new creeps if needed
-        let count = _.filter(Game.creeps, creep =>
-            creep.memory.workId == task.id &&
-            creep.memory.despawn != true
-            ).length;
-        if (count < task.creepLimit) {
-            if (task.spawnJob && !getQueueRecord(task.spawnJob)) {
-                task.spawnJob = undefined;
-            }
-
-            if (!task.spawnJob) {
-                let record = {
-                    rooms: [ task.spawnRoom, ],
-                    role: C.ROLE_HARVESTER,
-                    priority: 78,
-                    creepArgs: {
-                        workRoom: task.workRoom,
-                        workId: task.id,
-                        extractorId: task.extractorId,
-                        mineralId: task.mineralId,
-                    },
-                };
-
-                task.spawnJob = addQueueRecordSpawn(record);
-            }
-        }
-
+    let extractor = Game.getObjectById(creep.extractorId);
+    if (!extractor) {
+        if (C.DEBUG >= 3) { console.log('VERBOSE - extractor missing in room: ' + creep.room.name + ', creep: ' + creep.name); }
+        creep.doDespawn();
+        return false;
+    }
+    if (extractor.cooldown > 0) {
         return true;
-    },
+    }
 
+    let mineral = Game.getObjectById(creep.mineralId);
+    if (!mineral) {
+        if (C.DEBUG >= 3) { console.log('VERBOSE - mineral missing in room: ' + creep.room.name + ', creep: ' + creep.name); }
+        creep.doDespawn();
+        return false;
+    }
+
+    if (!creep.pos.inRangeTo(mineral, 1)) {
+        let args = {
+            range: 1,
+            reusePath: 30,
+            maxRooms: 1,
+            ignoreCreeps: true,
+        };
+        creep.goto(mineral, args);
+        return true;
+    }
+
+    creep.harvest(mineral)
+    return true;
 };
 
 registerProcess('tasks/mineral', taskMineral);
