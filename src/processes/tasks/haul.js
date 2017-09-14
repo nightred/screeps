@@ -37,54 +37,15 @@ taskHaul.prototype.run = function() {
         creep.say('🚚');
     }
 
-    switch (creep.memory.style) {
-    case 'longhauler':
-        this.doLongHaul(creep);
-        break;
-    default:
-        this.doHaul(creep);
-        break;
-    }
-};
-
-/**
-* @param {Creep} creep The creep object
-**/
-taskHaul.prototype.doLongHaul = function(creep) {
-    if (Game.cpu.bucket < 1000) {
-        return;
-    }
-
     if (creep.memory.working) {
-        if (creep.pos.isOnRoad()) {
-            let road = creep.pos.getRoad();
-            if (road.hits < (road.hitsMax - 100)) {
-                creep.repair(road);
-            }
-        } else if (creep.pos.isOnConstruction()) {
-            creep.build(creep.pos.getConstruction());
-        }
-
-        if (creep.room.name != creep.memory.spawnRoom) {
-            creep.moveToRoom(creep.memory.spawnRoom);
+        this.doTransfer(creep);
+    } else {
+        if (creep.memory.containerId) {
+            this.doWithdrawFromContainer(creep);
             return;
         }
 
-        let energyOutTargets = [
-            'storage',
-            'spawn',
-            'extention',
-        ];
-
-        if (!creep.room.storage ||
-            (creep.room.controller && creep.room.controller.my &&
-            creep.room.controller.level < 4)) {
-            energyOutTargets.push('containerOut');
-            energyOutTargets.push('container');
-        }
-
-        creep.doEmpty(energyOutTargets, RESOURCE_ENERGY);
-    } else {
+        // old method
         if (creep.room.name != creep.memory.workRooms) {
             creep.moveToRoom(creep.memory.workRooms);
             return;
@@ -93,41 +54,68 @@ taskHaul.prototype.doLongHaul = function(creep) {
         let energyInTargets = [
             'containerIn',
         ];
-
         creep.doFill(energyInTargets, RESOURCE_ENERGY);
     }
 };
 
-/**
-* @param {Creep} creep The creep object
-**/
-taskHaul.prototype.doHaul = function(creep) {
-    // working has energy, else need energy
-    if (creep.memory.working) {
-        let energyOutTargets = [
-            'spawn',
-            'storage',
-        ];
-
-        if (!creep.room.storage ||
-            (creep.room.controller && creep.room.controller.my &&
-            creep.room.controller.level < 4)) {
-            energyOutTargets = [
-                'extention',
-                'spawn',
-                'containerOut',
-                'container',
-            ];
+taskHaul.prototype.doTransfer = function(creep) {
+    if (creep.getActiveBodyparts(WORK)) {
+        if (creep.pos.isOnRoad()) {
+            let road = creep.pos.getRoad();
+            if (road.hits < (road.hitsMax - 100)) {
+                creep.repair(road);
+            }
+        } else if (creep.pos.isOnConstruction()) {
+            creep.build(creep.pos.getConstruction());
         }
-
-        creep.doEmpty(energyOutTargets, RESOURCE_ENERGY);
-    } else {
-        let energyInTargets =  [
-            'containerIn',
-        ];
-
-        creep.doFill(energyInTargets, RESOURCE_ENERGY);
     }
+
+    if (creep.room.name != creep.memory.spawnRoom) {
+        creep.moveToRoom(creep.memory.spawnRoom);
+        return;
+    }
+
+    this.doTransferToStorage(creep);
+};
+
+taskHaul.prototype.doTransferToStorage = function(creep) {
+    let storage = creep.room.storage;
+
+    if (!storage ||
+        (creep.room.controller && creep.room.controller.my &&
+        creep.room.controller.level < 4) ||
+        _.sum(storage.store) >= (storage.storeCapacity * 0.99)
+    ) {
+        this.doTransferEnergy(creep);
+        return;
+    }
+
+    creep.doTransfer(storage);
+};
+
+taskHaul.prototype.doTransferEnergy = function(creep) {
+    let energyTargets = [
+        'spawn',
+        'extention',
+        'containerOut',
+        'container',
+    ];
+
+    creep.doEmpty(energyTargets, RESOURCE_ENERGY);
+};
+
+taskHaul.prototype.doWithdrawFromContainer = function(creep) {
+    if (creep.room.name != creep.memory.workRooms) {
+        creep.moveToRoom(creep.memory.workRooms);
+        return;
+    }
+
+    let container = Game.getObjectById(creep.memory.containerId);
+    if (!container) return;
+
+    if (_.sum(container.store) < container.storeCapacity * 0.15) return;
+
+    creep.doWithdraw(container);
 };
 
 registerProcess('tasks/haul', taskHaul);

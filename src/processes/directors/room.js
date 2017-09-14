@@ -5,12 +5,20 @@
  *
  */
 
+var LibContainers   = require('lib.containers');
+var LibSources      = require('lib.sources');
+var LibDefense      = require('lib.defense');
+
 var logger = new Logger('[Room Manager]');
 logger.level = C.LOGLEVEL.DEBUG;
 
 var directorRoom = function() {
     // init
 }
+
+_.extend(directorRoom.prototype, LibContainers);
+_.extend(directorRoom.prototype, LibSources);
+_.extend(directorRoom.prototype, LibDefense);
 
 Object.defineProperty(directorRoom.prototype, 'directorMining', {
     get: function() {
@@ -29,16 +37,6 @@ Object.defineProperty(directorRoom.prototype, 'directorTech', {
     },
     set: function(value) {
         this.memory.directorTechPid = value.pid;
-    },
-});
-
-Object.defineProperty(directorRoom.prototype, 'managerDefense', {
-    get: function() {
-        if (!this.memory.managerDefensePid) return false;
-        return Game.kernel.getProcessByPid(this.memory.managerDefensePid);
-    },
-    set: function(value) {
-        this.memory.managerDefensePid = value.pid;
     },
 });
 
@@ -66,6 +64,8 @@ directorRoom.prototype.run = function() {
     this.doSquadGroupResupply();
     this.doSquadGroupHaulers();
     this.doSquadGroupStockers();
+
+    this.doDefense();
 
     this.doDirectors();
 
@@ -108,11 +108,9 @@ directorRoom.prototype.doSquadGroupStockers = function() {
 
 directorRoom.prototype.doSquadGroupHaulers = function() {
     let spawnRoom = Game.rooms[this.memory.spawnRoom];
-
     if (!spawnRoom || !spawnRoom.controller || !spawnRoom.controller.my) return;
 
     let workRoom = Game.rooms[this.memory.workRoom];
-
     if (!workRoom) return;
 
     let minSize = 200;
@@ -129,34 +127,30 @@ directorRoom.prototype.doSquadGroupHaulers = function() {
         maxSize = 9999;
     }
 
-    let creepLimit = workRoom.getSourceCount();
-
-    if (_.filter(workRoom.getContainers(), structure =>
-        structure.memory.type == 'in').length <= 0) {
-        creepLimit = 0;
-    }
-
-    let record = {
-        name: 'haulers',
-        task: C.TASK_HAUL,
-        role: C.ROLE_HAULER,
-        priority: 52,
-        maxSize: maxSize,
-        minSize: minSize,
-        limit: creepLimit,
-        creepArgs: {
-            style: 'default',
-        },
-    };
+    let containersIn = this.getIdsContainersIn();
+    if (containersIn.length === 0) return;
 
     let process = this.squad;
-
     if (!process) {
         logger.error('failed to load squad process for creep group update');
         return;
     }
 
-    process.setGroup(record);
+    for (let i = 0; i < containersIn.length; i++) {
+        process.setGroup({
+            name: ('hauler_' + containersIn[i]),
+            task: C.TASK_HAUL,
+            role: C.ROLE_HAULER,
+            priority: 52,
+            maxSize: maxSize,
+            minSize: minSize,
+            limit: 1,
+            creepArgs: {
+                style: 'default',
+                containerId: containersIn[i],
+            },
+        });
+    }
 };
 
 directorRoom.prototype.doSquadGroupResupply = function() {
@@ -272,14 +266,6 @@ directorRoom.prototype.doDirectors = function() {
             spawnRoom: this.memory.spawnRoom,
         });
         this.directorTech = proc;
-    }
-
-    if (!this.managerDefense) {
-        let proc = Game.kernel.startProcess(this, 'managers/defense', {
-            workRoom: this.memory.workRoom,
-            spawnRoom: this.memory.workRoom,
-        });
-        this.managerDefense = proc;
     }
 };
 
