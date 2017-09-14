@@ -36,24 +36,23 @@ var taskTowerFill = {
     doFillTower: function(creep, task) {
         if (creep.room.name != task.workRoom) {
             creep.moveToRoom(task.workRoom);
-            return true;
+            return;
         }
 
-        let target = Game.getObjectById(task.targetId);
+        let tower = Game.getObjectById(task.targetId);
 
-        if (!target) {
+        if (!tower) {
             task.completed = true;
             return;
         }
 
-        if (target.energy >= Math.floor(target.energyCapacity * C.REFILL_TOWER_MAX)) {
+        if (tower.energy >= Math.floor(tower.energyCapacity * C.REFILL_TOWER_MAX)) {
             task.completed = true;
+            tower.workTask = undefined;
             return;
         }
 
-        creep.doTransfer(target, RESOURCE_ENERGY);
-
-        return true;
+        creep.doTransfer(tower, RESOURCE_ENERGY);
     },
 
     /**
@@ -63,7 +62,7 @@ var taskTowerFill = {
     getEnergy: function(creep, task) {
         if (creep.memory.spawnRoom != creep.room.name) {
             creep.moveToRoom(creep.memory.spawnRoom);
-            return true;
+            return;
         }
 
         let energyTargets = [
@@ -80,23 +79,12 @@ var taskTowerFill = {
         }
 
         creep.doFill(energyTargets, RESOURCE_ENERGY);
-
-        return true;
     },
 
     /**
     * @param {Room} room The room object
     **/
     find: function(room) {
-        room.memory.work = room.memory.work || {};
-
-        let memory = room.memory.work;
-
-        if (memory.sleepTowerFill && memory.sleepTowerFill > Game.time) {
-            return true;
-        }
-        memory.sleepTowerFill = Game.time + C.WORK_FIND_SLEEP;
-
         let storage = room.storage;
 
         if (storage) {
@@ -116,19 +104,15 @@ var taskTowerFill = {
         }
 
         for (let i = 0; i < targets.length; i++) {
-            if (isQueuedWork({ targetId: targets[i].id, })) {
-                continue;
-            }
+            let tower = targets[i];
 
-            let args = {
+            if (tower.workTask) continue;
+
+            tower.workTask = this.create({
                 roomName: room.name,
                 targetId: targets[i].id,
-            };
-
-            this.create(args);
+            });
         }
-
-        return true;
     },
 
     /**

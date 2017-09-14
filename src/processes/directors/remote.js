@@ -74,7 +74,6 @@ directorRemote.prototype.doTechServices = function() {
     if (!workRoom) return;
 
     let findWorkTasks = [
-        C.WORK_TOWER_REFILL,
         C.WORK_REPAIR,
         C.WORK_CONSTRUCTION,
     ];

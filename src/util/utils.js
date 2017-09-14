@@ -46,6 +46,8 @@ global.psTop = function(count = 10, status) {
         );
     }
 
+    if (processTable.length === 0) return;
+
     processTable = _.sortBy(processTable, procInfo =>
         procInfo.cpuUsed
     ).reverse();
