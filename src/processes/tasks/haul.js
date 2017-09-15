@@ -109,11 +109,6 @@ taskHaul.prototype.doWithdrawFromContainer = function(creep) {
         return;
     }
 
-    if (_.sum(container.store) < container.storeCapacity * 0.15) {
-        creep.sleep();
-        return;
-    }
-
     creep.doWithdraw(container);
 };
 
@@ -138,7 +133,7 @@ taskHaul.prototype.manageState = function(creep) {
                 return;
             }
 
-            if (_.sum(container.store) === 0) {
+            if (_.sum(container.store) === 0 && !creep.isEmpty()) {
                 this.state = 'transfer'
                 return;
             }
@@ -153,7 +148,8 @@ taskHaul.prototype.manageState = function(creep) {
             return;
         }
 
-        if (creep.room.controller &&
+        if (creep.room.name == creep.memory.spawnRoom &&
+            creep.room.controller &&
             creep.room.controller.my &&
             creep.room.controller.level < 4 &&
             creep.isEmptyEnergy()

@@ -145,6 +145,7 @@ Constant.TASK_TECH                      = 'tasks/tech';
 Constant.TASK_FIELDTECH                 = 'tasks/fieldtech';
 Constant.TASK_SCOUT                     = 'tasks/scout';
 Constant.TASK_RESERVE                   = 'tasks/reserve';
+Constant.TASK_MINERAL                   = 'tasks/mineral';
 Constant.TASK_MILITIA                   = 'tasks/militia';
 Constant.TASK_DISMANTLE                 = 'tasks/dismantle';
 Constant.TASK_MIL_COMBAT                = 'tasks/mil/combat';
@@ -159,6 +160,7 @@ Constant.TASK_TYPES = [
     Constant.TASK_FIELDTECH,
     Constant.TASK_SCOUT,
     Constant.TASK_RESERVE,
+    Constant.TASK_MINERAL,
     Constant.TASK_MILITIA,
     Constant.TASK_DISMANTLE,
     Constant.TASK_MIL_COMBAT,

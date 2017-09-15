@@ -23,30 +23,40 @@ Object.defineProperty(directorMining.prototype, 'squad', {
 });
 
 directorMining.prototype.run = function() {
-    let room = Game.rooms[this.memory.workRoom];
+    if (!Game.rooms[this.memory.workRoom]) return;
 
-    if (!room) {
-        return false;
-    }
+    if (!this.squad) this.initSquad();
 
-    if (!this.squad) {
-        this.initSquad();
-    }
+    this.doSourceMining();
+    this.doMineralMining();
 
+    Game.kernel.sleepProcessbyPid(this.pid, (C.DIRECTOR_SLEEP + Math.floor(Math.random() * 8)));
+};
+
+directorMining.prototype.doSourceMining = function() {
     if (!this.memory.sourceInit) {
-        if (this.getSources()) {
-            this.memory.sourceInit = 1;
-        }
+        if (this.getSources()) this.memory.sourceInit = 1;
     }
 
     for (let i = 0; i < this.memory.sources.length; i++) {
         let source = this.memory.sources[i];
         this.doSourceSquadGroup(source);
     }
+};
 
-    Game.kernel.sleepProcessbyPid(this.pid, (C.DIRECTOR_SLEEP + Math.floor(Math.random() * 8)));
+directorMining.prototype.doMineralMining = function() {
+    if (!this.memory.mineralInit) {
+        if (this.getMineral()) this.memory.mineralInit = 1;
+    }
 
-    return true;
+    if (!this.memory.extractorId || !Game.getObjectById(this.memory.extractorId)) {
+        let room = Game.rooms[this.memory.workRoom];
+        let extractors = room.getExtractors();
+        if (extractors.length === 0) return;
+        this.memory.extractorId = extractors[0].id;
+    }
+
+    this.doMineralSquadGroup();
 };
 
 directorMining.prototype.doSourceSquadGroup = function(sourceRecord) {
@@ -83,29 +93,64 @@ directorMining.prototype.doSourceSquadGroup = function(sourceRecord) {
     process.setGroup(record);
 };
 
+directorMining.prototype.doMineralSquadGroup = function() {
+    let groupName = 'mineral';
+
+    let record = {
+        name: groupName,
+        task: C.TASK_MINERAL,
+        role: C.ROLE_MINER,
+        priority: 50,
+        maxSize: 9999,
+        minSize: 200,
+        limit: 1,
+        creepArgs: {
+            mineralId: this.memory.mineralId,
+            extractorId: this.memory.extractorId,
+        },
+    };
+
+    let mineral = Game.getObjectById(this.memory.mineralId);
+    if (mineral && mineral.getContainer()) {
+        record.creepArgs.style = 'drop';
+    }
+
+    let process = this.squad;
+    if (!process) {
+        logger.error('failed to load squad process for creep group update');
+        return;
+    }
+
+    process.setGroup(record);
+};
+
 directorMining.prototype.getSources = function() {
     this.memory.sources = this.memory.sources || [];
 
     let room = Game.rooms[this.memory.workRoom];
-
-    if (!room) {
-        return false;
-    }
+    if (!room) return false;
 
     let sources = room.getSources();
-
-    if (sources.length <= 0) {
-        return true;
-    }
+    if (sources.length === 0) return true;
 
     for (let i = 0; i < sources.length; i++) {
-        let source = {
+        this.memory.sources.push({
             id: sources[i].id,
             pid: undefined,
-        };
-
-        this.memory.sources.push(source);
+        });
     }
+
+    return true;
+};
+
+directorMining.prototype.getMineral = function() {
+    let room = Game.rooms[this.memory.workRoom];
+    if (!room) return false;
+
+    let minerals = room.getMinerals();
+    if (minerals.length === 0) return true;
+
+    this.memory.mineralId = minerals[0].id;
 
     return true;
 };

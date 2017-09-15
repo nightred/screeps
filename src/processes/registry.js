@@ -19,6 +19,7 @@ require('processes.managers.squad');
 require('processes.tasks.dismantle');
 require('processes.tasks.fieldtech');
 require('processes.tasks.haul');
+require('processes.tasks.mineral');
 require('processes.tasks.militia');
 require('processes.tasks.reserve');
 require('processes.tasks.resupply');

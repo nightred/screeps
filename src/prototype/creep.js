@@ -151,12 +151,12 @@ Object.defineProperty(Creep.prototype, 'process', {
 
 Creep.prototype.doTransfer = function(target, resourceType) {
     if (!target) {
-        this.memory.goingTo = false;
+        this.memory.goingTo = undefined;
         return ERR_INVALID_ARGS;
     }
 
     if (resourceType && RESOURCES_ALL.indexOf(resourceType) < 0) {
-        this.memory.goingTo = false;
+        this.memory.goingTo = undefined;
         return ERR_INVALID_ARGS;
     }
 
@@ -188,7 +188,7 @@ Creep.prototype.doTransfer = function(target, resourceType) {
         }
     }
 
-    this.memory.goingTo = false;
+    this.memory.goingTo = undefined;
 }
 
 Creep.prototype.doWithdraw = function(target, resourceType) {
