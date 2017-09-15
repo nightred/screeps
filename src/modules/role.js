@@ -49,6 +49,7 @@ require('modules.role.fieldtech');
 require('modules.role.hauler');
 require('modules.role.miner');
 require('modules.role.resupply');
+require('modules.role.scout');
 require('modules.role.stocker');
 require('modules.role.tech');
 require('modules.role.upgrader');

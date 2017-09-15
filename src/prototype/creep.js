@@ -173,22 +173,18 @@ Creep.prototype.doTransfer = function(target, resourceType) {
         }
 
         this.goto(target, args);
-        return false;
-    } else {
-        this.memory.goingTo = false;
+        return;
     }
 
     if (resourceType) {
         this.transfer(target, resourceType);
     } else {
-        for (var resource in target.carry) {
+        for (let resource in this.carry) {
             this.transfer(target, resource);
         }
     }
 
     this.memory.goingTo = false;
-
-    return true;
 }
 
 Creep.prototype.doWithdraw = function(target, resourceType) {
@@ -224,18 +220,12 @@ Creep.prototype.doWithdraw = function(target, resourceType) {
     if (resourceType) {
         this.withdraw(target, resourceType);
     } else {
-        if (!target.store) {
-            this.withdraw(target, RESOURCE_ENERGY);
-        } else {
-            for (var resource in target.store) {
-                this.withdraw(target, resource);
-            }
+        for (let resource in target.store) {
+            this.withdraw(target, resource);
         }
     }
 
     this.memory.goingTo = false;
-
-    return true;
 }
 
 Creep.prototype.doEmpty = function(types, resourceType) {
@@ -261,8 +251,7 @@ Creep.prototype.doEmpty = function(types, resourceType) {
         }
     }
 
-    this.doTransfer(Game.getObjectById(this.memory.goingTo), resourceType);
-    return true;
+    this.doTransfer(Game.getObjectById(this.memory.goingTo), resourceType)
 };
 
 Creep.prototype.getEmptyTarget = function(types, resourceSum) {

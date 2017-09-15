@@ -143,6 +143,7 @@ Constant.TASK_HAUL                      = 'tasks/haul';
 Constant.TASK_STOCK                     = 'tasks/stock';
 Constant.TASK_TECH                      = 'tasks/tech';
 Constant.TASK_FIELDTECH                 = 'tasks/fieldtech';
+Constant.TASK_SCOUT                     = 'tasks/scout';
 Constant.TASK_RESERVE                   = 'tasks/reserve';
 Constant.TASK_MILITIA                   = 'tasks/militia';
 Constant.TASK_DISMANTLE                 = 'tasks/dismantle';
@@ -156,6 +157,7 @@ Constant.TASK_TYPES = [
     Constant.TASK_STOCK,
     Constant.TASK_TECH,
     Constant.TASK_FIELDTECH,
+    Constant.TASK_SCOUT,
     Constant.TASK_RESERVE,
     Constant.TASK_MILITIA,
     Constant.TASK_DISMANTLE,
@@ -167,7 +169,6 @@ Constant.WORK_TERMINAL_EMPTY            = 'terminalempty';
 Constant.WORK_REPAIR                    = 'repair';
 Constant.WORK_CONSTRUCTION              = 'construction';
 Constant.WORK_SIGNCONTROLLER            = 'signcontroller';
-Constant.WORK_SCOUTING                  = 'scouting';
 Constant.WORK_DEFENSE                   = 'defense';
 Constant.WORK_ATTACK                    = 'attack';
 Constant.WORK_CLAIM                     = 'claim';
@@ -179,7 +180,6 @@ Constant.WORK_TYPES = [
     Constant.WORK_REPAIR,
     Constant.WORK_CONSTRUCTION,
     Constant.WORK_SIGNCONTROLLER,
-    Constant.WORK_SCOUTING,
     Constant.WORK_DEFENSE,
     Constant.WORK_ATTACK,
     Constant.WORK_CLAIM,
