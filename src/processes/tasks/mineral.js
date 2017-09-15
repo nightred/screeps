@@ -28,7 +28,7 @@ taskMineral.prototype.run = function() {
         return;
     }
 
-    if ((creep.carryCapacity * 0.8) > _.sum(creep.carry) || creep.carryCapacity == 0) {
+    if (0 === _.sum(creep.carry) || creep.carryCapacity == 0) {
         this.doWork(creep);
     } else {
         this.doEmpty(creep);
@@ -39,33 +39,28 @@ taskMineral.prototype.run = function() {
 * @param {Creep} creep The creep object
 **/
 taskMineral.prototype.doEmpty = function(creep) {
-    let energyTargets = [
-        'containerIn',
-        'storage',
-    ];
-
-    let mineral = Game.getObjectById(creep.memory.mineralId);
-
-    if (!creep.memory.goingTo && mineral) {
-        creep.memory.goingTo = mineral.getLocalContainer();
+    if (!this.memory.containerId) {
+        let mineral = Game.getObjectById(creep.memory.mineralId);
+        this.memory.containerId = mineral.getContainer();
     }
 
-    creep.doEmpty(energyTargets, RESOURCE_ENERGY);
+    let container = Game.getObjectById(this.memory.containerId);
+    if (!container) {
+        let mineral = Game.getObjectById(creep.memory.mineralId);
+        mineral.clearContainer();
+        this.memory.containerId = undefined;
+    }
+
+    creep.doTransfer(container);
 };
 
 /**
 * @param {Creep} creep The creep object
 **/
 taskMineral.prototype.doWork = function(creep) {
-    let extractor = Game.getObjectById(creep.memory.extractorId);
-    if (!extractor) {
-        creep.doDespawn();
-        return;
-    }
-    if (extractor.cooldown && extractor.cooldown > 0) return;
+    if (Game.time % 5 !== 0) return;
 
     let mineral = Game.getObjectById(creep.memory.mineralId);
-
     if (!creep.pos.inRangeTo(mineral, 1)) {
         creep.goto(mineral, {
             range: 1,

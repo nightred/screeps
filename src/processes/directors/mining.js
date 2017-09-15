@@ -111,13 +111,11 @@ directorMining.prototype.doMineralSquadGroup = function() {
     };
 
     let mineral = Game.getObjectById(this.memory.mineralId);
-
     if (mineral && mineral.getContainer()) {
         record.creepArgs.style = 'drop';
     }
 
     let process = this.squad;
-
     if (!process) {
         logger.error('failed to load squad process for creep group update');
         return;
@@ -130,20 +128,16 @@ directorMining.prototype.getSources = function() {
     this.memory.sources = this.memory.sources || [];
 
     let room = Game.rooms[this.memory.workRoom];
-
     if (!room) return false;
 
     let sources = room.getSources();
-
     if (sources.length === 0) return true;
 
     for (let i = 0; i < sources.length; i++) {
-        let source = {
+        this.memory.sources.push({
             id: sources[i].id,
             pid: undefined,
-        };
-
-        this.memory.sources.push(source);
+        });
     }
 
     return true;
@@ -151,11 +145,9 @@ directorMining.prototype.getSources = function() {
 
 directorMining.prototype.getMineral = function() {
     let room = Game.rooms[this.memory.workRoom];
-
     if (!room) return false;
 
     let minerals = room.getMinerals();
-
     if (minerals.length === 0) return true;
 
     this.memory.mineralId = minerals[0].id;
