@@ -218,5 +218,4 @@ require('modules.work.construction');
 require('modules.work.defense');
 require('modules.work.dismantle');
 require('modules.work.repair');
-require('modules.work.scouting');
 require('modules.work.signcontroller');

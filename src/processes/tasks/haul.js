@@ -51,10 +51,7 @@ taskHaul.prototype.run = function() {
             return;
         }
 
-        let energyInTargets = [
-            'containerIn',
-        ];
-        creep.doFill(energyInTargets, RESOURCE_ENERGY);
+        creep.doFill([ 'containerIn', ], RESOURCE_ENERGY);
     }
 };
 
@@ -75,33 +72,22 @@ taskHaul.prototype.doTransfer = function(creep) {
         return;
     }
 
-    this.doTransferToStorage(creep);
-};
-
-taskHaul.prototype.doTransferToStorage = function(creep) {
     let storage = creep.room.storage;
-
     if (!storage ||
         (creep.room.controller && creep.room.controller.my &&
         creep.room.controller.level < 4) ||
         _.sum(storage.store) >= (storage.storeCapacity * 0.99)
     ) {
-        this.doTransferEnergy(creep);
+        creep.doEmpty([
+            'spawn',
+            'extention',
+            'containerOut',
+            'container',
+        ], RESOURCE_ENERGY);
         return;
     }
 
     creep.doTransfer(storage);
-};
-
-taskHaul.prototype.doTransferEnergy = function(creep) {
-    let energyTargets = [
-        'spawn',
-        'extention',
-        'containerOut',
-        'container',
-    ];
-
-    creep.doEmpty(energyTargets, RESOURCE_ENERGY);
 };
 
 taskHaul.prototype.doWithdrawFromContainer = function(creep) {
@@ -113,7 +99,20 @@ taskHaul.prototype.doWithdrawFromContainer = function(creep) {
     let container = Game.getObjectById(creep.memory.containerId);
     if (!container) return;
 
-    if (_.sum(container.store) < container.storeCapacity * 0.15) return;
+    if (!creep.pos.inRangeTo(container, 1)) {
+        creep.goto(container, {
+            range: 1,
+            reusePath: 30,
+            maxRooms: 1,
+            ignoreCreeps: true,
+        });
+        return;
+    }
+
+    if (_.sum(container.store) < container.storeCapacity * 0.15) {
+        creep.sleep();
+        return;
+    }
 
     creep.doWithdraw(container);
 };

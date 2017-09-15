@@ -136,6 +136,8 @@ directorRoom.prototype.doSquadGroupHaulers = function() {
         return;
     }
 
+    process.removeGroup('haulers');
+
     for (let i = 0; i < containersIn.length; i++) {
         process.setGroup({
             name: ('hauler_' + containersIn[i]),

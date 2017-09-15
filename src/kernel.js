@@ -91,30 +91,30 @@ Kernel.prototype.run = function() {
             delete this.processTable[pid];
         }
 
-        if (procInfo.status == 'sleep') {
+        if (procInfo.sleep) {
             procInfo.sleep--;
-            if (procInfo.sleep <= 0) procInfo.status = 'running';
+            if (procInfo.sleep > 0) continue;
+            procInfo.sleep = undefined;
+            procInfo.status = 'running';
         }
 
         if (procInfo.status !== 'running') continue;
 
         try {
             let process = this.getProcessByPid(pid);
-
             if (!process) {
                 logger.error(`failed to get process ${procInfo.name} : ${procInfo.pid}`);
                 continue;
             }
 
             process.run();
-
-            procInfo.lastTick = Game.time;
         } catch (e) {
             procInfo.status = 'crashed';
             procInfo.error = e.stack || e.toString();
             logger.error(`process crashed ${procInfo.name} : ${procInfo.pid}\n${e.stack}`);
         }
 
+        procInfo.lastTick = Game.time;
         procInfo.cpuUsed = (Game.cpu.getUsed() - procStartCPU);
     }
 
@@ -157,14 +157,12 @@ Kernel.prototype.startProcess = function(parent, imageName, startMem) {
 
 Kernel.prototype.createProcess = function(pid) {
     let procInfo = this.processTable[pid];
-
     if (!procInfo) {
         logger.error(`process ${pid} is not in the process table`)
         return;
     }
 
     let process = processRegistry.getNewProcess(procInfo.name);
-
     if (!process) {
         logger.error(`failed to create process ${procInfo.name} : ${procInfo.pid}`);
 
