@@ -49,6 +49,7 @@ taskMineral.prototype.doEmpty = function(creep) {
         let mineral = Game.getObjectById(creep.memory.mineralId);
         mineral.clearContainer();
         this.memory.containerId = undefined;
+        return;
     }
 
     creep.doTransfer(container);
@@ -58,19 +59,43 @@ taskMineral.prototype.doEmpty = function(creep) {
 * @param {Creep} creep The creep object
 **/
 taskMineral.prototype.doWork = function(creep) {
-    if (Game.time % 5 !== 0) return;
-
     let mineral = Game.getObjectById(creep.memory.mineralId);
-    if (!creep.pos.inRangeTo(mineral, 1)) {
-        creep.goto(mineral, {
-            range: 1,
-            reusePath: 30,
-            maxRooms: 1,
-            ignoreCreeps: true,
-        });
-        return;
+
+    if (creep.memory.style == 'drop') {
+        if (!this.memory.containerId) {
+            this.memory.containerId = mineral.getContainer();
+        }
+
+        let container = Game.getObjectById(this.memory.containerId);
+        if (!container) {
+            mineral.clearContainer();
+            this.memory.containerId = undefined;
+            return;
+        }
+
+        if (!creep.pos.isEqualTo(container)) {
+            creep.goto(target, {
+                range: 0,
+                maxRooms:1,
+                reUsePath: 80,
+            });
+            return;
+        }
+
+    } else {
+        if (!creep.pos.inRangeTo(mineral, 1)) {
+            creep.goto(mineral, {
+                range: 1,
+                reusePath: 30,
+                maxRooms: 1,
+                ignoreCreeps: true,
+            });
+            return;
+        }
     }
 
+    if (Memory.world.mineralDisable) return;
+    if (Game.time % 5 !== 0) return;
     creep.harvest(mineral)
 };
 
