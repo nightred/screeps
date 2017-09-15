@@ -12,7 +12,7 @@ var directorRoom = function() {
     // init
 }
 
-_.extend(directorRoom.prototype, require('lib.containers');
+_.extend(directorRoom.prototype, require('lib.containers'));
 _.extend(directorRoom.prototype, require('lib.sources'));
 _.extend(directorRoom.prototype, require('lib.defense'));
 

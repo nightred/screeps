@@ -6,7 +6,7 @@
  */
 
 var taskHaul = function() {
-    this.creep = Game.creeps[this.memory.creepName];
+    // init
 };
 
 Object.defineProperty(taskHaul.prototype, 'state', {
@@ -32,7 +32,7 @@ taskHaul.prototype.run = function() {
         return;
     }
 
-    this.manageState();
+    this.manageState(creep);
     if (this.state == 'transfer') {
         this.doTransfer(creep);
     } else if (this.state == 'withdraw') {
@@ -117,21 +117,21 @@ taskHaul.prototype.doWithdrawFromContainer = function(creep) {
     creep.doWithdraw(container);
 };
 
-taskHaul.prototype.manageState = function() {
+taskHaul.prototype.manageState = function(creep) {
     if (this.state == 'init') this.state = 'withdraw';
 
     if (this.state == 'withdraw') {
-        if (this.creep.isFull()) {
+        if (creep.isFull()) {
             this.state = 'transfer'
             return;
         }
 
-        if (this.creep.memory.containerId) {
-            let container = Game.getObjectById(this.creep.memory.containerId);
+        if (creep.memory.containerId) {
+            let container = Game.getObjectById(creep.memory.containerId);
             if (!container) return;
-            if (this.creep.room.controller &&
-                this.creep.room.controller.my &&
-                this.creep.room.controller.level < 4 &&
+            if (creep.room.controller &&
+                creep.room.controller.my &&
+                creep.room.controller.level < 4 &&
                 container.store[RESOURCE_ENERGY] === 0
             ) {
                 this.state = 'transfer'
@@ -148,15 +148,15 @@ taskHaul.prototype.manageState = function() {
     }
 
     if (this.state == 'transfer') {
-        if (this.creep.isEmpty()) {
+        if (creep.isEmpty()) {
             this.state = 'withdraw'
             return;
         }
 
-        if (this.creep.room.controller &&
-            this.creep.room.controller.my &&
-            this.creep.room.controller.level < 4 &&
-            this.creep.isEmptyEnergy())
+        if (creep.room.controller &&
+            creep.room.controller.my &&
+            creep.room.controller.level < 4 &&
+            creep.isEmptyEnergy()
         ) {
             this.state = 'withdraw'
             return;
