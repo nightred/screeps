@@ -5,10 +5,6 @@
  *
  */
 
-var LibContainers   = require('lib.containers');
-var LibSources      = require('lib.sources');
-var LibDefense      = require('lib.defense');
-
 var logger = new Logger('[Room Manager]');
 logger.level = C.LOGLEVEL.DEBUG;
 
@@ -16,9 +12,9 @@ var directorRoom = function() {
     // init
 }
 
-_.extend(directorRoom.prototype, LibContainers);
-_.extend(directorRoom.prototype, LibSources);
-_.extend(directorRoom.prototype, LibDefense);
+_.extend(directorRoom.prototype, require('lib.containers'));
+_.extend(directorRoom.prototype, require('lib.sources'));
+_.extend(directorRoom.prototype, require('lib.defense'));
 
 Object.defineProperty(directorRoom.prototype, 'directorMining', {
     get: function() {
