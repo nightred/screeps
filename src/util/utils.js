@@ -22,13 +22,16 @@ global.setLinkType = function(id, type) {
     return true;
 };
 
-global.reset = function(accept = false) {
+global.resetKernel = function(accept = false) {
     if (!accept) {
-        logger.info('reset failed, did not accept')
+        logger.info('reset missing validation, exiting')
         return;
     }
 
-    logger.info('resetting kernel, queue memory, suicide all creep')
+    logger.info('resetting kernel processes and memory\n' +
+        'clearing queue of all records\n' +
+        'suiciding all creeps'
+    );
     delete Memory.kernel;
     delete Memory.queue;
 
@@ -38,42 +41,15 @@ global.reset = function(accept = false) {
 global.psTop = function(count = 10, status) {
     if (!Memory.kernel.processTable) return;
 
-    let processTable = JSON.parse(JSON.stringify(Memory.kernel.processTable));
+    let psOutput = JSON.parse(JSON.stringify(Memory.kernel.processTable));
 
     if (status) {
-        processTable = _.filter(processTable, procInfo =>
+        psOutput = _.filter(psOutput, procInfo =>
             procInfo.status == status
         );
     }
 
-    if (processTable.length === 0) return;
-
-    processTable = _.sortBy(processTable, procInfo =>
-        procInfo.cpuUsed
-    ).reverse();
-
-    longestName = (_.max(processTable, item => item.name.length)).name.length + 2;
-
-    let output = 'Process List:\n';
-    output += _.padRight('PID', 19);
-    output += _.padRight('NAME', longestName);
-    output += _.padLeft('STATUS', 10);
-    output += _.padLeft('CPU', 7);
-    output +='\n';
-
-    let loopCount = 0;
-    for (let pid in processTable) {
-        let item = processTable[pid];
-        output += _.padRight(item.pid, 19);
-        output += _.padRight(item.name, longestName);
-        output += _.padLeft(item.status, 10);
-        output += _.padLeft(item.cpuUsed.toFixed(2), 7);
-        output +='\n';
-        loopCount++;
-        if (loopCount >= count) break;
-    }
-
-    return output;
+    printProcessTable(psOutput, count)
 };
 
 global.ps = function(pid = 0) {
@@ -85,7 +61,7 @@ global.ps = function(pid = 0) {
         hasNextSibling:         '├',
         isLastChild:            '└',
         ancestorHasNextSibling: '│',
-        ancestorIsLastChild:    ' ',
+        ancestorIsLastChild:    ' ',
     };
 
     (function traverse(tree, depth) {
@@ -114,7 +90,7 @@ global.ps = function(pid = 0) {
     longestName = (_.max(psOutput, item => item.name.length)).name.length + 2;
 
     let output = 'Process List:\n';
-    output += _.padRight('', longestIndent, ' ') + ' ';
+    output += _.padRight('', longestIndent, ' ') + ' ';
     output += _.padRight('PID', 19);
     output += _.padRight('NAME', longestName);
     output += _.padLeft('STATUS', 10);
@@ -130,7 +106,7 @@ global.ps = function(pid = 0) {
         output +='\n';
     });
 
-    return output;
+    logger.info(output)
 };
 
 var processTableTree = function() {
@@ -158,10 +134,60 @@ var processTableTree = function() {
     return tree;
 };
 
-String.prototype.paddingLeft = function (paddingValue) {
-   return String(paddingValue + this).slice(-paddingValue.length);
+global.setPidStatus = function(pid, status = 'running') {
+    if (!Memory.kernel.processTable[pid]) return;
+    Memory.kernel.processTable[pid].status = 'running';
 };
 
-String.prototype.paddingRight = function (paddingValue) {
-   return String(this + paddingValue).slice(0, paddingValue.length);
+global.resetCrashProcesses = function() {
+    let psOutput = JSON.parse(JSON.stringify(Memory.kernel.processTable));
+
+    psOutput = _.filter(psOutput, procInfo =>
+        procInfo.status == 'crashed'
+    );
+
+    for (let pid in psOutput) {
+        setPidStatus(pid, 'running');
+        psOutput[pid].status = 'restarted';
+    }
+
+    printProcessTable(psOutput, Object.keys(psOutput).length)
+};
+
+var printProcessTable = function(psOutput, count = 20) {
+    let totalCount = Object.keys(psOutput).length;
+
+    let longestName = 6;
+    if (totalCount > 0) {
+        longestName = (_.max(psOutput, item => item.name.length)).name.length + 2;
+    }
+
+    let output = 'Process List:\n';
+    output += _.padRight('PID', 19);
+    output += _.padRight('NAME', longestName);
+    output += _.padLeft('STATUS', 10);
+    output += _.padLeft('CPU', 7);
+    output +='\n';
+
+    if (totalCount > 0) {
+        psOutput = _.sortBy(psOutput, procInfo =>
+            procInfo.cpuUsed
+        ).reverse();
+
+        let loopCount = 0;
+        for (let pid in psOutput) {
+            let item = psOutput[pid];
+
+            output += _.padRight(item.pid, 19);
+            output += _.padRight(item.name, longestName);
+            output += _.padLeft(item.status, 10);
+            output += _.padLeft(item.cpuUsed.toFixed(2), 7);
+            output +='\n';
+
+            loopCount++;
+            if (loopCount >= count) break;
+        }
+    }
+
+    logger.info(output)
 };
