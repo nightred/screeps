@@ -13,7 +13,6 @@ require('processes.services.creep');
 // managers
 require('processes.managers.room');
 require('processes.managers.spawn');
-require('processes.managers.defense');
 require('processes.managers.squad');
 
 // tasks

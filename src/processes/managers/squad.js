@@ -94,6 +94,7 @@ Squad.prototype.setGroup = function(args) {
 
 Squad.prototype.removeGroup = function(groupName) {
     if (!this.creepGroups[groupName]) return;
+    logger.debug('removed squad ' + groupName);
     delete this.creepGroups[groupName];
 };
 
