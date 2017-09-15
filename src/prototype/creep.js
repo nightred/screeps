@@ -52,7 +52,11 @@ Creep.prototype.isWorking = function() {
 }
 
 Creep.prototype.isEmpty = function() {
-    return _.sum(this.carry) == 0;
+    return _.sum(this.carry) === 0;
+}
+
+Creep.prototype.isEmptyEnergy = function() {
+    return this.carry[RESOURCE_ENERGY] === 0;
 }
 
 Creep.prototype.isFull = function() {
