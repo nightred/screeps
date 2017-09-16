@@ -22,6 +22,16 @@ Object.defineProperty(RoomManager.prototype, 'managerSpawn', {
     },
 });
 
+Object.defineProperty(RoomManager.prototype, 'managerMarket', {
+    get: function() {
+        if (!this.memory.managerMarketPid) return false;
+        return Game.kernel.getProcessByPid(this.memory.managerMarketPid);
+    },
+    set: function(value) {
+        this.memory.managerMarketPid = value.pid;
+    },
+});
+
 RoomManager.prototype.run = function() {
     let cpuStart = Game.cpu.getUsed();
 
@@ -270,10 +280,17 @@ RoomManager.prototype.doManagers = function() {
     let roomName = this.memory.roomName;
 
     if (!this.managerSpawn) {
-        let p = Game.kernel.startProcess(this, 'managers/spawn', {
+        let proc = Game.kernel.startProcess(this, 'managers/spawn', {
             roomName: roomName,
         });
-        this.managerSpawn = p;
+        this.managerSpawn = proc;
+    }
+
+    if (!this.managerMarket) {
+        let proc = Game.kernel.startProcess(this, 'managers/market', {
+            roomName: roomName,
+        });
+        this.managerMarket = proc;
     }
 };
 

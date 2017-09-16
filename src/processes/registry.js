@@ -11,6 +11,7 @@ require('processes.services.room');
 require('processes.services.creep');
 
 // managers
+require('processes.managers.market');
 require('processes.managers.room');
 require('processes.managers.spawn');
 require('processes.managers.squad');

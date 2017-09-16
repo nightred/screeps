@@ -233,12 +233,6 @@ directorRemote.prototype.initSquad = function() {
         spawnRoom: this.memory.spawnRoom,
         workRooms: this.memory.workRoom,
     });
-
-    if (!process) {
-        logger.error('failed to create process ' + imageName);
-        return;
-    }
-
     this.squad = process;
 };
 
