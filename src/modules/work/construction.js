@@ -72,6 +72,20 @@ var taskConstruction = {
     * @param {Task} task The work task passed from the work Queue
     **/
     getEnergy: function(creep, task) {
+        let containersIn = this.getIdsContainersIn();
+        if (!containersIn || containersIn.length === 0) {
+            this.getEnergySpawn(creep, task);
+            return;
+        }
+
+        creep.doFill(['containerIn'], RESOURCE_ENERGY);
+    },
+
+    /**
+    * @param {Creep} creep The creep object
+    * @param {Task} task The work task passed from the work Queue
+    **/
+    getEnergySpawn: function(creep, task) {
         if (creep.memory.spawnRoom != creep.room.name) {
             creep.moveToRoom(creep.memory.spawnRoom);
             return true;
@@ -146,5 +160,7 @@ var taskConstruction = {
     },
 
 };
+
+_.extend(taskConstruction, require('lib.containers'));
 
 registerWork(C.WORK_CONSTRUCTION, taskConstruction);

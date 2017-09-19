@@ -33,6 +33,7 @@ ServiceRoom.prototype.run = function() {
                 roomName: name,
             });
 
+            if (!Memory.rooms[name]) Memory.rooms[name] = {};
             Memory.rooms[name].pid = process.pid;
             this.processTable[name] = process.pid;
         }

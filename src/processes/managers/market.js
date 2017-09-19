@@ -6,14 +6,14 @@
 var logger = new Logger('[Market Manager]');
 logger.level = C.LOGLEVEL.DEBUG;
 
-var Market = function() {
+var MarketManager = function() {
     // init
 };
 
 /**
 * @param {Room} room The room
 **/
-Market.prototype.run = function() {
+MarketManager.prototype.run = function() {
     let cpuStart = Game.cpu.getUsed();
 
     let room = Game.rooms[this.memory.roomName];
@@ -29,4 +29,4 @@ Market.prototype.run = function() {
 };
 
 
-registerProcess('managers/market', Market);
+registerProcess('managers/market', MarketManager);

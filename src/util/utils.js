@@ -22,20 +22,48 @@ global.setLinkType = function(id, type) {
     return true;
 };
 
+global.setPidStatus = function(pid, status = 'running') {
+    if (!Memory.kernel.processTable[pid]) return;
+    Memory.kernel.processTable[pid].status = 'running';
+    Memory.kernel.processTable[pid].error = undefined;
+};
+
+global.restartCrashed = function() {
+    let psOutput = _.filter(Memory.kernel.processTable, procInfo =>
+        procInfo.status == 'crashed'
+    );
+
+    for (let i in psOutput) {
+        setPidStatus(psOutput[i].pid, 'running');
+    }
+
+    printProcessTable(psOutput, Object.keys(psOutput).length);
+};
+
+global.printCrashReport = function(pid) {
+    let output = 'Crash report for pid: ' + pid;
+    if (Memory.kernel.processTable[pid])
+        output += '\n' +Memory.kernel.processTable[pid].error;
+    logger.info(output);
+};
+
 global.resetKernel = function(accept = false) {
     if (!accept) {
         logger.info('reset missing validation, exiting')
         return;
     }
 
-    logger.info('resetting kernel processes and memory\n' +
-        'clearing queue of all records\n' +
-        'suiciding all creeps'
-    );
+    logger.info('resetting kernel processes and memory');
     delete Memory.kernel;
+
+    logger.info('clearing queue of all records');
     delete Memory.queue;
 
+    logger.info('suiciding all creeps');
     _.forEach(Game.creeps, creep => creep.suicide());
+
+    logger.info('clearing all room memory');
+    Memory.rooms = {};
 };
 
 global.psTop = function(count = 10, status) {
@@ -134,26 +162,6 @@ var processTableTree = function() {
     return tree;
 };
 
-global.setPidStatus = function(pid, status = 'running') {
-    if (!Memory.kernel.processTable[pid]) return;
-    Memory.kernel.processTable[pid].status = 'running';
-};
-
-global.resetCrashProcesses = function() {
-    let psOutput = JSON.parse(JSON.stringify(Memory.kernel.processTable));
-
-    psOutput = _.filter(psOutput, procInfo =>
-        procInfo.status == 'crashed'
-    );
-
-    for (let pid in psOutput) {
-        setPidStatus(pid, 'running');
-        psOutput[pid].status = 'restarted';
-    }
-
-    printProcessTable(psOutput, Object.keys(psOutput).length)
-};
-
 var printProcessTable = function(psOutput, count = 20) {
     let totalCount = Object.keys(psOutput).length;
 
@@ -177,7 +185,6 @@ var printProcessTable = function(psOutput, count = 20) {
         let loopCount = 0;
         for (let pid in psOutput) {
             let item = psOutput[pid];
-
             output += _.padRight(item.pid, 19);
             output += _.padRight(item.name, longestName);
             output += _.padLeft(item.status, 10);

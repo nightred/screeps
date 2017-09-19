@@ -146,7 +146,7 @@ Squad.prototype.doGroupSpawn = function(creepGroup) {
             ', role: ' + spawnRecord.role
         );
 
-        delQueueRecord(spawnRecord.id);
+        delQueueRecord(creepGroup.spawnId);
     }
 
     let count = creepGroup.creeps.length;

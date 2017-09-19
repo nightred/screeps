@@ -36,19 +36,6 @@ Object.defineProperty(Queue.prototype, 'queue', {
     },
 });
 
-Queue.prototype.onTick = function() {
-    let cpuStart = Game.cpu.getUsed();
-
-    onTickQueueSpawn();
-
-    addTerminalLog(undefined, {
-        command: 'queue cleanup',
-        status: 'OK',
-        cpu: (Game.cpu.getUsed() - cpuStart),
-        output: 'record count: ' + _.size(this.queue),
-    })
-};
-
 Queue.prototype.getQueue = function(args) {
     args = args || {};
 
