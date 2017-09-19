@@ -12,6 +12,10 @@ var directorMining = function() {
     // init
 }
 
+_.extend(directorMining.prototype, require('lib.sources'));
+_.extend(directorMining.prototype, require('lib.minerals'));
+_.extend(directorMining.prototype, require('lib.extractors'));
+
 Object.defineProperty(directorMining.prototype, 'squad', {
     get: function() {
         if (!this.memory.squadPid) return false;
@@ -23,81 +27,77 @@ Object.defineProperty(directorMining.prototype, 'squad', {
 });
 
 directorMining.prototype.run = function() {
-    if (!Game.rooms[this.memory.workRoom]) return;
+    let room = Game.rooms[this.memory.workRoom];
+    if (!room) return;
 
     if (!this.squad) this.initSquad();
+    this.cacheRoomSources(room);
+    this.cacheRoomMinerals(room);
+    this.cacheRoomExtractors(room);
 
-    this.doSourceMining();
-    this.doMineralMining();
+    this.doSourceMining(room);
+    this.doMineralMining(room);
 
     Game.kernel.sleepProcessbyPid(this.pid, (C.DIRECTOR_SLEEP + Math.floor(Math.random() * 8)));
 };
 
-directorMining.prototype.doSourceMining = function() {
-    if (!this.memory.sourceInit) {
-        if (this.getSources()) this.memory.sourceInit = 1;
-    }
-
-    for (let i = 0; i < this.memory.sources.length; i++) {
-        let source = this.memory.sources[i];
-        this.doSourceSquadGroup(source);
-    }
-};
-
-directorMining.prototype.doMineralMining = function() {
-    if (!this.memory.mineralInit) {
-        if (this.getMineral()) this.memory.mineralInit = 1;
-    }
-
-    if (!this.memory.extractorId || !Game.getObjectById(this.memory.extractorId)) {
-        let room = Game.rooms[this.memory.workRoom];
-        let extractors = room.getExtractors();
-        if (extractors.length === 0) return;
-        this.memory.extractorId = extractors[0].id;
-    }
-
-    this.doMineralSquadGroup();
-};
-
-directorMining.prototype.doSourceSquadGroup = function(sourceRecord) {
-    let groupName = 'source' + sourceRecord.id;
-
-    let record = {
-        name: groupName,
-        task: C.TASK_SOURCE,
-        role: C.ROLE_MINER,
-        priority: 50,
-        maxSize: 9999,
-        minSize: 200,
-        limit: 1,
-        creepArgs: {
-            sourceId: sourceRecord.id,
-        },
-    };
-
-    let source = Game.getObjectById(sourceRecord.id);
-
-    if (source && source.getDropContainer()) {
-        record.creepArgs.style = 'drop';
-    } else if (this.memory.spawnRoom != this.memory.roomName) {
-        record.creepArgs.style = 'ranged';
-    }
+directorMining.prototype.doSourceMining = function(room) {
+    let sources = this.getRoomSources(room);
 
     let process = this.squad;
-
     if (!process) {
         logger.error('failed to load squad process for creep group update');
         return;
     }
 
-    process.setGroup(record);
+    for (let i = 0; i < sources; i++) {
+        let source = Game.getObjectById(sources[i]);
+        if (!source) continue;
+
+        let groupName = 'source' + source.id;
+        let style = 'default';
+
+        if (source.getDropContainer()) {
+            style = 'drop';
+        } else if (this.memory.spawnRoom != this.memory.roomName) {
+            style = 'ranged';
+        }
+
+        process.setGroup({
+            name: groupName,
+            task: C.TASK_SOURCE,
+            role: C.ROLE_MINER,
+            priority: 50,
+            maxSize: 9999,
+            minSize: 200,
+            limit: 1,
+            creepArgs: {
+                sourceId: source.id,
+                style: style,
+            },
+        });
+    }
 };
 
-directorMining.prototype.doMineralSquadGroup = function() {
-    let groupName = 'mineral';
+directorMining.prototype.doMineralMining = function(room) {
+    let minerals = this.getRoomMinerals(room);
+    let mineral = Game.getObjectById(minerals[0]);
+    if (!mineral) return;
 
-    let record = {
-        name: groupName,
+    let extractors = this.getRoomExtractors(room);
+    if (!Game.getObjectById(extractors[0])) return;
+
+    let style = 'default';
+    if (mineral.getContainer()) style = 'drop';
+
+    let process = this.squad;
+    if (!process) {
+        logger.error('failed to load squad process for creep group update');
+        return;
+    }
+
+    process.setGroup({
+        name: 'mineral',
         task: C.TASK_MINERAL,
         role: C.ROLE_MINER,
         priority: 50,
@@ -105,54 +105,11 @@ directorMining.prototype.doMineralSquadGroup = function() {
         minSize: 200,
         limit: 1,
         creepArgs: {
-            mineralId: this.memory.mineralId,
-            extractorId: this.memory.extractorId,
+            mineralId: mineral.id,
+            extractorId: extractors[0],
+            style: style,
         },
-    };
-
-    let mineral = Game.getObjectById(this.memory.mineralId);
-    if (mineral && mineral.getContainer()) {
-        record.creepArgs.style = 'drop';
-    }
-
-    let process = this.squad;
-    if (!process) {
-        logger.error('failed to load squad process for creep group update');
-        return;
-    }
-
-    process.setGroup(record);
-};
-
-directorMining.prototype.getSources = function() {
-    this.memory.sources = this.memory.sources || [];
-
-    let room = Game.rooms[this.memory.workRoom];
-    if (!room) return false;
-
-    let sources = room.getSources();
-    if (sources.length === 0) return true;
-
-    for (let i = 0; i < sources.length; i++) {
-        this.memory.sources.push({
-            id: sources[i].id,
-            pid: undefined,
-        });
-    }
-
-    return true;
-};
-
-directorMining.prototype.getMineral = function() {
-    let room = Game.rooms[this.memory.workRoom];
-    if (!room) return false;
-
-    let minerals = room.getMinerals();
-    if (minerals.length === 0) return true;
-
-    this.memory.mineralId = minerals[0].id;
-
-    return true;
+    });
 };
 
 directorMining.prototype.initSquad = function() {

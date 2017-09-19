@@ -149,7 +149,7 @@ Storage.prototype.buildRoom = function(room) {
         let storage = room.storage;
         records.storage[storage.id] = {
             id: storage.id,
-            store: _.sum(storage.store),
+            store: storage.store[RESOURCE_ENERGY],
             storeMax: storage.storeCapacity,
             pos: storage.pos,
         };
@@ -162,7 +162,7 @@ Storage.prototype.buildRoom = function(room) {
         let terminal = room.terminal;
         records.terminal[terminal.id] = {
             id: terminal.id,
-            store: _.sum(terminal.store),
+            store: terminal.store[RESOURCE_ENERGY],
             storeMax: terminal.storeCapacity,
             pos: terminal.pos,
         };

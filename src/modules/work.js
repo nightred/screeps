@@ -101,7 +101,6 @@ Work.prototype.getWorkTask = function(workTasks, creep, args) {
 
 Work.prototype.addCreep = function(creepName, id) {
     let workTask = getQueueRecord(id);
-
     if (!workTask) {
         logger.error('failed to load work task id: ' + id +
             ', when adding creep: ' + creepName);
@@ -117,7 +116,6 @@ Work.prototype.addCreep = function(creepName, id) {
 
 Work.prototype.removeCreep = function(creepName, id) {
     let work = getQueueRecord(id);
-
     if (!work) {
         logger.error('failed to load work task id" ' + id +
             ', when removing creep: ' + creepName);
@@ -125,7 +123,6 @@ Work.prototype.removeCreep = function(creepName, id) {
     }
 
     let index = work.creeps.indexOf(creepName);
-
     if (index !== -1) {
         work.creeps.splice(index, 1);
     }
@@ -135,7 +132,6 @@ Work.prototype.removeCreep = function(creepName, id) {
 
 Work.prototype.doWorkFind = function(task, room) {
     let work = workRegistry.getWork(task);
-
     if (!work) {
         logger.error('work find failed to load work task: ' + workTask.task);
         return false;
@@ -147,7 +143,6 @@ Work.prototype.doWorkFind = function(task, room) {
 Work.prototype.doFlag = function(flag) {
     if (!flag.memory.workId) {
         let flagVars = flag.name.split(':');
-
         let roomName = flag.pos.roomName;
 
         if (C.WORK_FLAG_TYPES.indexOf(flagVars[1]) == -1) {

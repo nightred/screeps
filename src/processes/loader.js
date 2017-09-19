@@ -39,6 +39,16 @@ Object.defineProperty(Loader.prototype, 'serviceCreep', {
     },
 });
 
+Object.defineProperty(Loader.prototype, 'serviceMarket', {
+    get: function() {
+        if (!this.memory.serviceMarketPid) return false;
+        return Game.kernel.getProcessByPid(this.memory.serviceMarketPid);
+    },
+    set: function(value) {
+        this.memory.serviceMarketPid = value.pid;
+    },
+});
+
 Loader.prototype.run = function() {
     // check default services have been started
     if (!this.serviceFlag) {
@@ -51,6 +61,10 @@ Loader.prototype.run = function() {
 
     if (!this.serviceCreep) {
         this.serviceCreep = Game.kernel.startProcess(this, 'services/creep', {});
+    }
+
+    if (!this.serviceMarket) {
+        this.serviceMarket = Game.kernel.startProcess(this, 'services/market', {});
     }
 };
 

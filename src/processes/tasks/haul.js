@@ -76,14 +76,13 @@ taskHaul.prototype.doTransfer = function(creep) {
 };
 
 taskHaul.prototype.doWithdraw = function(creep) {
-    if (creep.memory.containerId) {
-        this.doWithdrawFromContainer(creep);
+    if (creep.room.name != creep.memory.workRooms) {
+        creep.moveToRoom(creep.memory.workRooms);
         return;
     }
 
-    // old method
-    if (creep.room.name != creep.memory.workRooms) {
-        creep.moveToRoom(creep.memory.workRooms);
+    if (creep.memory.containerId) {
+        this.doWithdrawFromContainer(creep);
         return;
     }
 
@@ -91,13 +90,11 @@ taskHaul.prototype.doWithdraw = function(creep) {
 };
 
 taskHaul.prototype.doWithdrawFromContainer = function(creep) {
-    if (creep.room.name != creep.memory.workRooms) {
-        creep.moveToRoom(creep.memory.workRooms);
+    let container = Game.getObjectById(creep.memory.containerId);
+    if (!container) {
+        creep.memory.containerId = undefined;
         return;
     }
-
-    let container = Game.getObjectById(creep.memory.containerId);
-    if (!container) return;
 
     if (!creep.pos.inRangeTo(container, 1)) {
         creep.goto(container, {

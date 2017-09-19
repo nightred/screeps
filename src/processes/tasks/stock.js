@@ -9,96 +9,222 @@ var taskStock = function() {
     // init
 };
 
+_.extend(taskStock.prototype, require('lib.cachelinks'));
+
+Object.defineProperty(taskStock.prototype, 'state', {
+    get: function() {
+        this.memory.state = this.memory.state || 'init';
+        return this.memory.state;
+    },
+    set: function(value) {
+        this.memory.state = value;
+    },
+});
+
+Object.defineProperty(taskStock.prototype, 'marketData', {
+    get: function() {
+        Memory.world = Memory.world || {};
+        Memory.world.market = Memory.world.market || {};
+        return Memory.world.market;
+    },
+    set: function(value) {
+        Memory.world = Memory.world || {};
+        Memory.world.market = Memory.world.market || {};
+        Memory.world.market = value;
+    },
+});
+
 taskStock.prototype.run = function() {
     let creep = Game.creeps[this.memory.creepName];
-
     if (!creep) {
         Game.kernel.killProcess(this.pid);
         return;
     }
 
-    if (creep.getOffExit()) {
-        return;
-    }
+    if (creep.getOffExit()) return;
+    if (creep.isSleep()) return;
 
-    if (creep.isSleep()) {
-        creep.moveToIdlePosition();
-        return;
-    }
-
-    if (creep.manageState()) {
-        if (creep.memory.working) {
-            creep.say('🔗');
-        } else {
-            creep.say('🔋');
-            creep.memory.activity = undefined;
-        }
-    } else if (!creep.memory.working && creep.carry.energy > (creep.carryCapacity * 0.2)) {
-        creep.toggleState();
-        creep.say('🔗');
-    }
-
-    if (!creep.memory.activity) {
-        if (!this.getTask(creep))  {
-            return;
-        }
-    }
-
-    let energyInTargets = [];
-    let energyOutTargets = [];
-
-    switch (creep.memory.activity) {
-    case 'store':
-        energyInTargets = ['linkStorage',];
-        energyOutTargets = ['storage',];
-        break;
-    case 'fill':
-        energyOutTargets = ['linkStorage',];
-        energyInTargets = ['storage',];
-        break;
-    }
-
-    if (creep.memory.working) {
-        creep.doEmpty(energyOutTargets, RESOURCE_ENERGY);
-    } else {
-        creep.doFill(energyInTargets, RESOURCE_ENERGY);
-    }
-
-
-    if (creep.isSleep()) {
-        creep.memory.activity = undefined;
-
-        creep.doEmpty(['storage',], RESOURCE_ENERGY);
+    this.manageState(creep);
+    if (this.state == 'wait') {
+        creep.sleep();
+    } else if (this.state == 'filllink') {
+        this.doFillLink(creep);
+    } else if (this.state == 'emptylink') {
+        this.doEmptyLink(creep);
+    } else if (this.state == 'storestorage' || this.state == 'store') {
+        this.doStoreStorage(creep);
+    } else if (this.state == 'surplustomarket') {
+        this.doSurplusToMarket(creep);
+    } else if (this.state == 'storeterminal') {
+        this.doStoreTerminal(creep);
+    } else if (this.state == 'fillterminal') {
+        this.doFillTerminal(creep);
     }
 };
 
-/**
-* @param {Creep} creep The creep object
-**/
-taskStock.prototype.getTask = function(creep) {
-    let room = creep.room;
+taskStock.prototype.doFillLink = function(creep) {
+    let storage = creep.room.storage;
+    if (!storage) return;
 
-    if (!room.storage) {
+    if ((_.sum(creep.carry) - creep.carry[RESOURCE_ENERGY]) > 0) {
+        creep.doTransfer(storage);
         return;
     }
 
-    let linksStorage = _.filter(room.getLinks(), structure =>
-        structure.memory.type == 'storage');
-
-    if (linksStorage.length <= 0) {
+    if (creep.isEmptyEnergy()) {
+        creep.doWithdraw(storage, RESOURCE_ENERGY);
         return;
     }
 
-    let linkStorage = linksStorage[0];
+    let linksStorage = this.getRoomLinksStorage(creep.room);
+    if (linksStorage.length === 0) return;
 
-    if (linkStorage.energy > (linkStorage.energyCapacity * C.ENERGY_LINK_STORAGE_MAX)) {
-        creep.memory.activity = 'store';
+    let storageLink = Game.getObjectById(linksStorage[0]);
+    if (!storageLink) return;
+
+    let linkEnergyMax = storageLink.energyCapacity * C.LINK_STORAGE_MAX_ENERGY;
+    if (storageLink.energy > linkEnergyMax) {
+        this.state = 'emptylink';
         return;
     }
 
-    if (linkStorage.energy < (linkStorage.energyCapacity * C.ENERGY_LINK_STORAGE_MIN)) {
-        creep.memory.activity = 'fill';
+    creep.doTransfer(storageLink, RESOURCE_ENERGY);
+    this.state = 'wait';
+};
+
+taskStock.prototype.doEmptyLink = function(creep) {
+    if (!creep.isEmpty()) {
+        let storage = creep.room.storage;
+        if (!storage) return;
+
+        creep.doTransfer(storage);
         return;
+    }
+
+    let linksStorage = this.getRoomLinksStorage(creep.room);
+    if (linksStorage.length === 0) return;
+
+    let storageLink = Game.getObjectById(linksStorage[0]);
+    if (!storageLink) return;
+
+    creep.doWithdraw(storageLink, RESOURCE_ENERGY);
+    this.state = 'storestorage';
+};
+
+taskStock.prototype.doStoreStorage = function(creep) {
+    if (!creep.isEmpty()) {
+        let storage = creep.room.storage;
+        if (!storage) return;
+
+        creep.doTransfer(storage);
+        return;
+    }
+
+    this.state = 'wait';
+};
+
+taskStock.prototype.doStoreTerminal = function(creep) {
+    if (!creep.isEmpty()) {
+        let terminal = creep.room.terminal;
+        if (!terminal) return;
+
+        creep.doTransfer(terminal);
+        return;
+    }
+
+    this.state = 'wait';
+};
+
+taskStock.prototype.doSurplusToMarket = function(creep) {
+    let storage = creep.room.storage;
+    let terminal = creep.room.terminal;
+    if (!storage || !terminal) return;
+
+    if (!this.marketData[creep.room.name]) return;
+    if (!this.marketData[creep.room.name].surplus) return;
+
+    let surplus = this.marketData[creep.room.name].surplus;
+    let resources = Object.keys(surplus);
+
+    creep.doWithdraw(storage, resources[0]);
+
+    surplus[resources[0]] -= creep.carryCapacity;
+    if (surplus[resources[0]] <= 0) delete surplus[resources[0]];
+
+    this.state = 'storeterminal';
+};
+
+taskStock.prototype.doFillTerminal = function(creep) {
+    let storage = creep.room.storage;
+    if (!storage) return;
+
+    creep.doWithdraw(storage, RESOURCE_ENERGY);
+
+    this.state = 'storeterminal';
+};
+
+// check the state of the stocker
+taskStock.prototype.manageState = function(creep) {
+    if (this.state == 'init') this.state = 'wait';
+
+    if (this.state == 'wait') {
+        if (this.stateEmptyLink(creep)) return;
+        if (this.stateFillLink(creep)) return;
+        if (this.stateTransferToMarket(creep)) return;
+    }
+};
+
+taskStock.prototype.stateEmptyLink = function(creep) {
+    if (!creep.room.storage) return;
+
+    let linksStorage = this.getRoomLinksStorage(creep.room);
+    if (linksStorage.length === 0) return;
+
+    let storageLink = Game.getObjectById(linksStorage[0]);
+    if (!storageLink) return;
+
+    let linkEnergyMax = storageLink.energyCapacity * C.LINK_STORAGE_MAX_ENERGY;
+    if (storageLink.energy > linkEnergyMax) {
+        this.state = 'emptylink';
+        return true;
+    }
+};
+
+taskStock.prototype.stateFillLink = function(creep) {
+    if (!creep.room.storage) return;
+
+    let linksStorage = this.getRoomLinksStorage(creep.room);
+    if (linksStorage.length === 0) return;
+
+    let storageLink = Game.getObjectById(linksStorage[0]);
+    if (!storageLink) return;
+
+    let linkEnergyMax = storageLink.energyCapacity * C.LINK_STORAGE_MIN_ENERGY;
+    if (storageLink.energy < linkEnergyMax) {
+        this.state = 'filllink';
+        return true;
+    }
+};
+
+taskStock.prototype.stateTransferToMarket = function(creep) {
+    if (!this.marketData[creep.room.name]) return;
+    if (!this.marketData[creep.room.name].surplus) return;
+
+    if (!_.isEmpty(this.marketData[creep.room.name].surplus)) {
+        this.state = 'surplustomarket';
+        return true;
+    }
+};
+
+taskStock.prototype.stateFillTerminal = function(creep) {
+    let storage = creep.room.storage;
+    let terminal = creep.room.terminal;
+    if (!storage || !terminal) return;
+
+    if (storage.store[RESOURCE_ENERGY] < C.MARKET_STORAGE_ENERGY_MIN) return;
+    if (terminal.store[RESOURCE_ENERGY] < C.MARKET_STOCK_ENERGY) {
+        this.state = 'fillterminal';
+        return true;
     }
 };
 

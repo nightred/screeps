@@ -38,6 +38,10 @@ Constant.ENERGY_CONTAINER_MAX           = 0.9;
 Constant.ENERGY_STORAGE_SECONDARY_MIN   = 0.14;
 
 Constant.LINK_STORAGE_TRANSFER_MIN      = 0.34;
+Constant.LINK_STORAGE_MAX_ENERGY        = 0.8;
+Constant.LINK_STORAGE_MIN_ENERGY        = 0.38;
+Constant.LINK_IN_MIN_ENERGY             = 0.1;
+Constant.LINK_OUT_MAX_ENERGY            = 0.8;
 
 Constant.TERMINAL_ENERGY_MAX            = 0.2;
 
@@ -80,9 +84,23 @@ Constant.CPU_MIN_BUCKET_FLAGS           = 1000;
 Constant.QUEUE_WORK                     = 'work';
 Constant.QUEUE_SPAWN                    = 'spawn';
 
+Constant.MARKET_MAX_ENERGY              = 500000;
+Constant.MARKET_MAX_RESOURCE            = 20000;
+Constant.MARKET_MAX_BOOST               = 3000;
+Constant.MARKET_STOCK_ENERGY            = 50000;
+Constant.MARKET_STORAGE_ENERGY_MIN      = 10000;
+Constant.MARKET_MAX_COST                = 2000;
+Constant.MARKET_SURPLUS_SLEEP           = 100;
+
 Constant.WORK_FIND_SLEEP                = 12;
 
 Constant.DIRECTOR_SLEEP                 = 24;
+
+Constant.CACHE_SLEEP                    = 100;
+Constant.CACHE = {
+    STRUCTURES:     'structures',
+    MARKET:         'market',
+};
 
 Constant.ROLE_MINER                     = 'miner';
 Constant.ROLE_HARVESTER                 = 'harvester';
@@ -199,6 +217,17 @@ Constant.WORK_FLAG_TYPES = [
     Constant.WORK_SCOUTING,
     Constant.WORK_CLAIM,
     Constant.WORK_DISMANTLE,
+];
+
+Constant.RESOURCES_MINERALS = [
+    RESOURCE_HYDROGEN,
+    RESOURCE_OXYGEN,
+    RESOURCE_UTRIUM,
+    RESOURCE_KEANIUM,
+    RESOURCE_LEMERGIUM,
+    RESOURCE_ZYNTHIUM,
+    RESOURCE_CATALYST,
+    RESOURCE_GHODIUM,
 ];
 
 Constant.DIRECTIONS = {

@@ -23,25 +23,22 @@ Object.defineProperty(directorTech.prototype, 'squad', {
 });
 
 directorTech.prototype.run = function() {
-    this.createWork();
+    this.createWorkTasks();
 
     let spawnRoom = Game.rooms[this.memory.spawnRoom];
-
-    if (!spawnRoom.isInCoverage(this.memory.workRoom)) {
+    if (!spawnRoom.isInCoverage(this.memory.workRoom))
         spawnRoom.addCoverage(this.memory.workRoom);
-    }
 
     if (this.memory.spawnRoom == this.memory.workRoom) {
         if (!this.squad) this.initSquad();
-        this.doSquadSpawnLimits();
+        this.doSquadSpawnLimits(spawnRoom);
     }
 
-    Game.kernel.sleepProcessbyPid(this.pid, (C.DIRECTOR_SLEEP + Math.floor(Math.random() * 8)));
+    Game.kernel.sleepProcessbyPid(this.pid, (C.DIRECTOR_SLEEP + Math.floor(Math.random() * 20)));
 };
 
-directorTech.prototype.createWork = function() {
+directorTech.prototype.createWorkTasks = function() {
     let workRoom = Game.rooms[this.memory.workRoom];
-
     if (!workRoom) return;
 
     let findWorkTasks = [
@@ -55,9 +52,7 @@ directorTech.prototype.createWork = function() {
     }
 };
 
-directorTech.prototype.doSquadSpawnLimits = function() {
-    let spawnRoom = Game.rooms[this.memory.spawnRoom];
-
+directorTech.prototype.doSquadSpawnLimits = function(spawnRoom) {
     if (!spawnRoom || !spawnRoom.controller || !spawnRoom.controller.my) return;
 
     let minSize = 200;
@@ -81,40 +76,28 @@ directorTech.prototype.doSquadSpawnLimits = function() {
 
     if (spawnRoom.storage && spawnRoom.controller.level < 4) minSize = 200;
 
-    let creepLimit = 1;
-
-    if (!this.memory.creepLimit) {
-        let roomCount = spawnRoom.countCoverage();
-
-        if (!isNaN(roomCount)) {
-            creepLimit = roomCount;
-            if (creepLimit > 3) creepLimit = 3;
-        }
-    } else {
-        creepLimit = this.memory.creepLimit;
-    }
+    let creepLimit = spawnRoom.countCoverage();
+    if (spawnRoom.controller.level >= 6) creepLimit++
+    //if (creepLimit > 4) creepLimit = 4;
 
     let roomCoverage = spawnRoom.getCoverage();
 
-    let record = {
-        name: 'techs',
-        task: C.TASK_TECH,
-        role: C.ROLE_TECH,
-        priority: 54,
-        maxSize: maxSize,
-        minSize: minSize,
-        limit: creepLimit,
-    };
-
     let process = this.squad;
-
     if (!process) {
         logger.error('failed to load squad process for creep group update');
         return;
     }
 
     process.memory.workRooms = roomCoverage;
-    process.setGroup(record);
+    process.setGroup({
+        name: 'techs',
+        task: C.TASK_TECH,
+        role: C.ROLE_TECH,
+        priority: 58,
+        maxSize: maxSize,
+        minSize: minSize,
+        limit: creepLimit,
+    });
 };
 
 directorTech.prototype.initSquad = function() {

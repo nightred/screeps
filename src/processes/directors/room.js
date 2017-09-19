@@ -126,17 +126,27 @@ directorRoom.prototype.doSquadGroupHaulers = function() {
     let containersIn = this.getIdsContainersIn();
     if (containersIn.length === 0) return;
 
+    if (!this.memory.containersIn) this.memory.containersIn = [];
+    this.memory.containersIn = _.union(this.memory.containersIn, containersIn);
+
     let process = this.squad;
     if (!process) {
         logger.error('failed to load squad process for creep group update');
         return;
     }
 
-    process.removeGroup('haulers');
+    process.removeGroup('hauler_');
 
-    for (let i = 0; i < containersIn.length; i++) {
+    for (let i = 0; i < this.memory.containersIn.length; i++) {
+        let squadName = 'hauler_' + this.memory.containersIn[i];
+
+        if (!Game.getObjectById(this.memory.containersIn[i])) {
+            process.removeGroup(squadName);
+            continue;
+        }
+
         process.setGroup({
-            name: ('hauler_' + containersIn[i]),
+            name: squadName,
             task: C.TASK_HAUL,
             role: C.ROLE_HAULER,
             priority: 52,
@@ -145,7 +155,7 @@ directorRoom.prototype.doSquadGroupHaulers = function() {
             limit: 1,
             creepArgs: {
                 style: 'default',
-                containerId: containersIn[i],
+                containerId: this.memory.containersIn[i],
             },
         });
     }
