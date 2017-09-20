@@ -70,7 +70,8 @@ taskUpgrade.prototype.withdrawEnergy = function(creep) {
 
     if (!creep.room.storage ||
         (creep.room.controller && creep.room.controller.my &&
-        creep.room.controller.level < 4)) {
+        creep.room.controller.level < 4)
+    ) {
         targets.push('extention');
         targets.push('spawn');
     }

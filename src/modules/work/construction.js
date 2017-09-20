@@ -15,6 +15,8 @@ var taskConstruction = {
         if (!creep) { return ERR_INVALID_ARGS; }
         if (!task) { return ERR_INVALID_ARGS; }
 
+        this.memory = task;
+
         if (creep.manageState()) {
             if (creep.isWorking()) {
                 creep.say('⚙');

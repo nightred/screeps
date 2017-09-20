@@ -50,7 +50,7 @@ directorMining.prototype.doSourceMining = function(room) {
         return;
     }
 
-    for (let i = 0; i < sources; i++) {
+    for (let i = 0; i < sources.length; i++) {
         let source = Game.getObjectById(sources[i]);
         if (!source) continue;
 

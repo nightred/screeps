@@ -11,6 +11,8 @@ logger.level = C.LOGLEVEL.DEBUG;
 var taskRepair = {
 
     run: function(creep, task) {
+        this.memory = task;
+        
         if (creep.manageState()) {
             if (creep.isWorking()) {
                 creep.say('⚙');
