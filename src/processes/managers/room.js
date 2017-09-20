@@ -12,6 +12,9 @@ var RoomManager = function() {
     // init
 };
 
+_.extend(RoomManager.prototype, require('lib.cachelinks'));
+_.extend(RoomManager.prototype, require('lib.links'));
+
 Object.defineProperty(RoomManager.prototype, 'managerSpawn', {
     get: function() {
         if (!this.memory.managerSpawnPid) return false;
@@ -19,6 +22,16 @@ Object.defineProperty(RoomManager.prototype, 'managerSpawn', {
     },
     set: function(value) {
         this.memory.managerSpawnPid = value.pid;
+    },
+});
+
+Object.defineProperty(RoomManager.prototype, 'managerMarket', {
+    get: function() {
+        if (!this.memory.managerMarketPid) return false;
+        return Game.kernel.getProcessByPid(this.memory.managerMarketPid);
+    },
+    set: function(value) {
+        this.memory.managerMarketPid = value.pid;
     },
 });
 
@@ -38,35 +51,37 @@ RoomManager.prototype.run = function() {
 
         // controller room processes
         if (room.controller && room.controller.my) {
-            this.doManagers();
+            this.cacheRoomLinks(room);
             this.doLinks(room);
 
             let towers = room.getTowers();
+            if (towers.length > 0) towers.forEach((tower) => this.doTower(tower));
 
-            if (towers.length > 0) {
-                towers.forEach((tower) => this.doTower(tower));
-            }
+            this.doManagers();
         }
 
-        let defense = room.memory.defense;
-
-        if (defense && defense.active) {
-            let args = {
-                ticks: Game.time - defense.tick,
-            };
-
-            if (defense.cooldown) {
-                args.cooldown = (defense.cooldown + C.DEFENSE_COOLDOWN) - Game.time;
-            }
-
-            addDefenseVisual(room.name, args);
-        }
+        // defense status
+        this.defenseStatus(room);
 
         addTerminalLog(room.name, {
             command: 'manager',
             status: 'OK',
             cpu: (Game.cpu.getUsed() - cpuStart),
         })
+    }
+};
+
+RoomManager.prototype.defenseStatus = function(room) {
+    let defense = room.memory.defense;
+    if (defense && defense.active) {
+        let cooldown = undefined;
+        if (defense.cooldown)
+            cooldown = (defense.cooldown + C.DEFENSE_COOLDOWN) - Game.time;
+
+        addDefenseVisual(room.name, {
+            ticks: (Game.time - defense.tick),
+            cooldown: cooldown,
+        });
     }
 };
 
@@ -99,55 +114,6 @@ RoomManager.prototype.cleanLinks = function(room) {
         if (!Game.getObjectById(linkId)) {
             delete room.memory.structureLinks[linkId];
             logger.debug('clearing non-existant link: ' + linkId);
-        }
-    }
-};
-
-RoomManager.prototype.doLinks = function(room) {
-    let links = room.getLinks();
-
-    if (links.length <= 0) return;
-
-    let linksStorage = _.filter(links, structure => structure.memory.type == 'storage');
-    let linkStorage = false;
-
-    if (linksStorage.length <= 0) {
-        if (!room.storage) return;
-
-        linkStorage = Game.getObjectById(room.storage.getLinkAtRange(2));
-        if (linkStorage) linkStorage.memory.type == 'storage';
-    } else {
-        linkStorage = linksStorage[0];
-    }
-
-    if (!linkStorage) return;
-
-    if (linksStorage.length > 1) {
-        logger.warn('room: ' + room.name + ' has more then one storage link');
-    }
-
-    let linksIn = _.filter(links, structure => structure.memory.type == 'in');
-    let linksOut = _.filter(links, structure => structure.memory.type == 'out');
-
-    if (linksIn.length > 0) {
-        for (let i = 0; i < linksIn.length; i++) {
-            if (linksIn[i].energy > (linksIn[i].energyCapacity * C.ENERGY_LINK_IN_MIN) &&
-                linksIn[i].cooldown == 0) {
-                linksIn[i].transferEnergy(linkStorage);
-            }
-        }
-    }
-
-    if (
-        linksOut.length > 0 &&
-        linkStorage.cooldown == 0 &&
-        linkStorage.energy > (linkStorage.energyCapacity * C.LINK_STORAGE_TRANSFER_MIN)
-    ) {
-        for (let i = 0; i < linksOut.length; i++) {
-            if (linksOut[i].energy < (linksOut[i].energyCapacity * C.ENERGY_LINK_OUT_MAX)) {
-                linkStorage.transferEnergy(linksOut[i]);
-                break;
-            }
         }
     }
 };
@@ -270,10 +236,17 @@ RoomManager.prototype.doManagers = function() {
     let roomName = this.memory.roomName;
 
     if (!this.managerSpawn) {
-        let p = Game.kernel.startProcess(this, 'managers/spawn', {
+        let proc = Game.kernel.startProcess(this, 'managers/spawn', {
             roomName: roomName,
         });
-        this.managerSpawn = p;
+        this.managerSpawn = proc;
+    }
+
+    if (!this.managerMarket) {
+        let proc = Game.kernel.startProcess(this, 'managers/market', {
+            roomName: roomName,
+        });
+        this.managerMarket = proc;
     }
 };
 

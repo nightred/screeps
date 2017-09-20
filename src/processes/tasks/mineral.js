@@ -74,7 +74,7 @@ taskMineral.prototype.doWork = function(creep) {
         }
 
         if (!creep.pos.isEqualTo(container)) {
-            creep.goto(target, {
+            creep.goto(container, {
                 range: 0,
                 maxRooms:1,
                 reUsePath: 80,

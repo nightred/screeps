@@ -24,14 +24,12 @@ CreepService.prototype.run = function() {
 
     this.cleanCreep();
 
-    let log = {
+    addTerminalLog(undefined, {
         command: 'service creep',
         status: 'OK',
         cpu: (Game.cpu.getUsed() - cpuStart),
-    };
-    log.output = 'creep count: ' + creepCount + ' avg cpu: ' +
-        (log.cpu / creepCount).toFixed(2);
-    addTerminalLog(undefined, log)
+        output: ('creep count: ' + creepCount),
+    });
 };
 
 CreepService.prototype.doCreep = function(creep) {

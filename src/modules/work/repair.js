@@ -11,6 +11,8 @@ logger.level = C.LOGLEVEL.DEBUG;
 var taskRepair = {
 
     run: function(creep, task) {
+        this.memory = task;
+        
         if (creep.manageState()) {
             if (creep.isWorking()) {
                 creep.say('⚙');
@@ -39,14 +41,15 @@ var taskRepair = {
         }
 
         let target = Game.getObjectById(task.targetId);
-
         if (!target) {
             task.completed = true;
+            delete this.repairTable[task.targetId];
             return;
         }
 
         if (target.hits >= Math.floor(target.hitsMax * C.REPAIR_HIT_WORK_MAX)) {
             task.completed = true;
+            delete this.repairTable[task.targetId];
             return;
         }
 
@@ -70,6 +73,20 @@ var taskRepair = {
     * @param {Task} task The work task passed from the work Queue
     **/
     getEnergy: function(creep, task) {
+        let containersIn = this.getIdsContainersIn();
+        if (!containersIn || containersIn.length === 0) {
+            this.getEnergySpawn(creep, task);
+            return;
+        }
+
+        creep.doFill(['containerIn'], RESOURCE_ENERGY);
+    },
+
+    /**
+    * @param {Creep} creep The creep object
+    * @param {Task} task The work task passed from the work Queue
+    **/
+    getEnergySpawn: function(creep, task) {
         if (creep.memory.spawnRoom != creep.room.name) {
             creep.moveToRoom(creep.memory.spawnRoom);
             return;
@@ -98,58 +115,81 @@ var taskRepair = {
         room.memory.work = room.memory.work || {};
 
         let memory = room.memory.work;
-
-        if (memory.sleepRepair && memory.sleepRepair > Game.time) {
-            return;
-        }
+        if (memory.sleepRepair && memory.sleepRepair > Game.time) return;
         memory.sleepRepair = Game.time + C.WORK_FIND_SLEEP;
 
-        let targets = _.sortBy(_.filter(room.find(FIND_MY_STRUCTURES), structure =>
+        this.findMyStructures(room);
+        this.findStructures(room);
+    },
+
+    /**
+    * @param {Room} room The room object
+    **/
+    findMyStructures: function(room) {
+        let targets = _.filter(room.getMyStructures(), structure =>
             structure.hits < (structure.hitsMax * C.REPAIR_HIT_WORK_MIN) &&
             structure.structureType != STRUCTURE_RAMPART
-            ), structure => structure.hits / structure.hitsMax);
-
-        _.filter(room.find(FIND_STRUCTURES), structure =>
-            (structure.structureType == STRUCTURE_CONTAINER ||
-            structure.structureType == STRUCTURE_ROAD) &&
-            (structure.structureType != STRUCTURE_WALL &&
-            structure.structureType != STRUCTURE_RAMPART) &&
-            structure.hits < (structure.hitsMax * C.REPAIR_HIT_WORK_MIN)
-            ).forEach(structure => targets.push(structure));
-
-        if (targets.length <= 0) { return; }
+        );
 
         for (let i = 0; i < targets.length; i++) {
-            if (isQueuedWork({ targetId: targets[i].id, })) {
-                continue;
-            }
-
-            let args = {
+            this.create({
                 roomName: room.name,
                 targetId: targets[i].id,
-            };
-
-            this.create(args);
+            });
         }
+    },
 
-        return;
+    /**
+    * @param {Room} room The room object
+    **/
+    findStructures: function(room) {
+        let targets = _.filter(room.getStructures(), structure =>
+            (structure.structureType == STRUCTURE_CONTAINER ||
+            structure.structureType == STRUCTURE_ROAD) &&
+            structure.hits < (structure.hitsMax * C.REPAIR_HIT_WORK_MIN)
+        );
+
+        for (let i = 0; i < targets.length; i++) {
+            this.create({
+                roomName: room.name,
+                targetId: targets[i].id,
+            });
+        }
     },
 
     /**
     * @param {Args} Args object with values for creation
     **/
     create: function(args) {
-        let record = {
+        if (this.repairTable[args.targetId] &&
+            getQueueRecord(this.repairTable[args.targetId])
+        ) return;
+
+        let workId = addQueueRecordWork({
             workRoom: args.roomName,
             task: C.WORK_REPAIR,
             priority: 40,
             creepLimit: 1,
             targetId: args.targetId,
-        };
+        });
 
-        return addQueueRecordWork(record);
+        this.repairTable[args.targetId] = workId;
     },
-
 };
+
+_.extend(taskRepair, require('lib.containers'));
+
+Object.defineProperty(taskRepair, 'repairTable', {
+    get: function() {
+        Memory.world = Memory.world || {};
+        Memory.world.repairTable = Memory.world.repairTable || {};
+        return Memory.world.repairTable;
+    },
+    set: function(value) {
+        Memory.world = Memory.world || {};
+        Memory.world.repairTable = Memory.world.repairTable || {};
+        Memory.world.repairTable = value;
+    },
+});
 
 registerWork(C.WORK_REPAIR, taskRepair);
