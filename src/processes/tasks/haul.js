@@ -9,23 +9,23 @@ var taskHaul = function() {
     // init
 };
 
-Object.defineProperty(taskHaul.prototype, 'state', {
-    get: function() {
-        this.memory.state = this.memory.state || 'init';
-        return this.memory.state;
-    },
-    set: function(value) {
-        this.memory.state = value;
-    },
-});
+_.extend(taskHaul.prototype, require('lib.spawncreep'));
 
 taskHaul.prototype.run = function() {
-    let creep = Game.creeps[this.memory.creepName];
-    if (!creep) {
-        Game.kernel.killProcess(this.pid);
-        return;
-    }
+    this.doCreepSpawn();
 
+    for (let i = 0; i < this.creeps.length; i++) {
+        let creep = Game.creeps[this.creeps[i]];
+        if (!creep) continue;
+        this.doCreepActions(creep);
+    }
+};
+
+/**
+* @param {Creep} creep The creep object
+**/
+taskHaul.prototype.doCreepActions = function(creep) {
+    if (creep.spawning) return;
     if (creep.getOffExit()) return;
     if (creep.isSleep()) {
         creep.moveToIdlePosition();
@@ -33,9 +33,9 @@ taskHaul.prototype.run = function() {
     }
 
     this.manageState(creep);
-    if (this.state == 'transfer') {
+    if (creep.state == 'transfer') {
         this.doTransfer(creep);
-    } else if (this.state == 'withdraw') {
+    } else if (creep.state == 'withdraw') {
         this.doWithdraw(creep);
     }
 };
@@ -110,52 +110,46 @@ taskHaul.prototype.doWithdrawFromContainer = function(creep) {
 };
 
 taskHaul.prototype.manageState = function(creep) {
-    if (this.state == 'init') this.state = 'withdraw';
-
-    if (this.state == 'withdraw') {
-        if (creep.isFull()) {
-            this.state = 'transfer'
-            return;
-        }
-
-        if (creep.memory.containerId) {
-            let container = Game.getObjectById(creep.memory.containerId);
-            if (!container) return;
-            if (creep.room.controller &&
-                creep.room.controller.my &&
-                creep.room.controller.level < 4 &&
-                container.store[RESOURCE_ENERGY] === 0
-            ) {
-                this.state = 'transfer'
-                return;
-            }
-
-            if (_.sum(container.store) === 0 && !creep.isEmpty()) {
-                this.state = 'transfer'
-                return;
-            }
-        }
-
+    if (creep.state == 'init') {
+        creep.state = 'withdraw';
         return;
     }
 
-    if (this.state == 'transfer') {
-        if (creep.isEmpty()) {
-            this.state = 'withdraw'
-            return;
-        }
+    if (creep.state == 'withdraw' && this.stateTransfer(creep)) return;
+    if (creep.state == 'transfer' && this.stateWithdraw(creep)) return;
+};
 
-        if (creep.room.name == creep.memory.spawnRoom &&
-            creep.room.controller &&
-            creep.room.controller.my &&
-            creep.room.controller.level < 4 &&
-            creep.isEmptyEnergy()
-        ) {
-            this.state = 'withdraw'
-            return;
-        }
+taskHaul.prototype.stateTransfer = function(creep) {
+    if (creep.isFull() || !creep.isEmptyEnergy()) {
+        creep.state = 'transfer'
+        return true;
+    }
 
-        return;
+    if (creep.memory.containerId) {
+        let container = Game.getObjectById(creep.memory.containerId);
+        if (!container) return;
+
+        if (_.sum(container.store) === 0 && !creep.isEmpty()) {
+            creep.state = 'transfer'
+            return true;
+        }
+    }
+};
+
+taskHaul.prototype.stateWithdraw = function(creep) {
+    if (creep.isEmpty()) {
+        creep.state = 'withdraw'
+        return true;
+    }
+
+    if (creep.room.name == creep.memory.spawnRoom &&
+        creep.room.controller &&
+        creep.room.controller.my &&
+        creep.room.controller.level < 4 &&
+        creep.isEmptyEnergy()
+    ) {
+        creep.state = 'withdraw'
+        return true;
     }
 };
 

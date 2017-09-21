@@ -9,18 +9,24 @@ var taskResupply = function() {
     // init
 };
 
+_.extend(taskResupply.prototype, require('lib.spawncreep'));
+
 taskResupply.prototype.run = function() {
-    let creep = Game.creeps[this.memory.creepName];
+    this.doCreepSpawn();
 
-    if (!creep) {
-        Game.kernel.killProcess(this.pid);
-        return;
+    for (let i = 0; i < this.creeps.length; i++) {
+        let creep = Game.creeps[this.creeps[i]];
+        if (!creep) continue;
+        this.doCreepActions(creep);
     }
+};
 
-    if (creep.getOffExit()) {
-        return;
-    }
-
+/**
+* @param {Creep} creep The creep object
+**/
+taskResupply.prototype.doCreepActions = function(creep) {
+    if (creep.spawning) return;
+    if (creep.getOffExit()) return;
     if (creep.isSleep()) {
         creep.moveToIdlePosition();
         return;

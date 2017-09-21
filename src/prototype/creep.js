@@ -5,6 +5,16 @@
  *
  */
 
+Object.defineProperty(Creep.prototype, 'state', {
+    get: function() {
+        this.memory.state = this.memory.state || 'init';
+        return this.memory.state;
+    },
+    set: function(value) {
+        this.memory.state = value;
+    },
+});
+
 Creep.prototype.moveToRoom = function(roomName) {
     if (Game.cpu.bucket < 1000) { return true; }
 
@@ -391,9 +401,6 @@ Creep.prototype.goto = function(target, args) {
 
     gotoData.lastX = this.pos.x;
     gotoData.lastY = this.pos.y;
-    gotoData.destX = target.x;
-    gotoData.destY = target.y;
-    gotoData.destRoom = target.roomName;
 
     return this.moveTo(target, args);
 };

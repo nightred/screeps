@@ -75,11 +75,11 @@ CreepService.prototype.doDespawn = function(creep) {
 CreepService.prototype.cleanOldCreep = function(creepName) {
     let creepMemory = Memory.creeps[creepName];
 
-    if (creepMemory.workId) workRemoveCreep(creepName, creepMemory.workId);
-
     logger.debug('clearing non-existant creep memory name: ' + creepName +
-        ' role: ' + creepMemory.role);
-
+        ' role: ' + creepMemory.role
+    );
+    
+    if (creepMemory.workId) workRemoveCreep(creepName, creepMemory.workId);
     delete Memory.creeps[creepName];
 };
 

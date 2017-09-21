@@ -5,8 +5,8 @@
 var libSources = {
 
     cacheRoomSources: function(room) {
-        if (room.memory.initSources)
-            return;
+        if (!room) return;
+        if (room.memory.initSources) return;
 
         room.memory.sources = [];
 

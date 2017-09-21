@@ -45,21 +45,10 @@ WorkQueue.prototype.addRecord = function(args) {
         creepLimit: args.creepLimit,
     };
 
-    if (args.targetId) {
-        record.targetId = args.targetId;
-    }
-
-    if (args.message) {
-        record.message = args.message;
-    }
-
-    if (args.spawnRoom) {
-        record.spawnRoom = args.spawnRoom;
-    }
-
-    if (args.managed) {
-        record.managed = args.managed;
-    }
+    if (args.id) record.id = args.id;
+    if (args.targetId) record.targetId = args.targetId;
+    if (args.message) record.message = args.message;
+    if (args.spawnRoom) record.spawnRoom = args.spawnRoom;
 
     logger.debug('adding record, task: ' + record.task + ', priority: ' + record.priority);
 

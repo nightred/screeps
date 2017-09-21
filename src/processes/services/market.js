@@ -96,7 +96,7 @@ MarketService.prototype.doSellSurplus = function(room) {
         amt = 0;
 
         if (resource == RESOURCE_ENERGY) {
-            if (terminal.store[resource] < C.MARKET_STOCK_ENERGY) continue;
+            if (terminal.store[resource] < (C.MARKET_STOCK_ENERGY + 1000)) continue;
             amt = terminal.store[resource] - C.MARKET_STOCK_ENERGY;
         }
 
