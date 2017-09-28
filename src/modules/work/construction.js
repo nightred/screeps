@@ -148,6 +148,6 @@ var taskConstruction = {
 
 };
 
-_.extend(taskConstruction, require('lib.containers'));
+_.merge(taskConstruction, require('lib.containers'));
 
 registerWork(C.WORK_CONSTRUCTION, taskConstruction);

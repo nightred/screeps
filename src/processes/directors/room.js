@@ -12,9 +12,9 @@ var directorRoom = function() {
     // init
 }
 
-_.extend(directorRoom.prototype, require('lib.containers'));
-_.extend(directorRoom.prototype, require('lib.sources'));
-_.extend(directorRoom.prototype, require('lib.defense'));
+_.merge(directorRoom.prototype, require('lib.containers'));
+_.merge(directorRoom.prototype, require('lib.sources'));
+_.merge(directorRoom.prototype, require('lib.defense'));
 
 Object.defineProperty(directorRoom.prototype, 'directorMining', {
     get: function() {
@@ -125,7 +125,7 @@ directorRoom.prototype.doStockersTask = function() {
         this.taskStockers = process;
     }
 
-    process.spawnDetails = {
+    process.setSpawnDetails({
         spawnRoom: this.memory.spawnRoom,
         role: C.ROLE_STOCKER,
         priority: 49,
@@ -135,7 +135,7 @@ directorRoom.prototype.doStockersTask = function() {
         creepArgs: {
             workRooms: this.memory.workRoom,
         },
-    };
+    });
 };
 
 directorRoom.prototype.doHaulersTask = function() {
@@ -173,7 +173,7 @@ directorRoom.prototype.doHaulersTask = function() {
         this.taskHaulers = process;
     }
 
-    process.spawnDetails = {
+    process.setSpawnDetails({
         spawnRoom: this.memory.spawnRoom,
         role: C.ROLE_HAULER,
         priority: 52,
@@ -184,7 +184,7 @@ directorRoom.prototype.doHaulersTask = function() {
             workRooms: this.memory.workRoom,
             style: 'default',
         },
-    };
+    });
 };
 
 directorRoom.prototype.doResuppliersTask = function() {
@@ -213,7 +213,7 @@ directorRoom.prototype.doResuppliersTask = function() {
         this.taskResuppliers = process;
     }
 
-    process.spawnDetails = {
+    process.setSpawnDetails({
         spawnRoom: this.memory.spawnRoom,
         role: C.ROLE_RESUPPLY,
         priority: 10,
@@ -223,7 +223,7 @@ directorRoom.prototype.doResuppliersTask = function() {
         creepArgs: {
             workRooms: this.memory.workRoom,
         },
-    };
+    });
 };
 
 directorRoom.prototype.doUpgradersTask = function() {
@@ -260,6 +260,8 @@ directorRoom.prototype.doUpgradersTask = function() {
         creepLimit = 1;
         this.memory.rcl8 = this.memory.rcl8 ? this.memory.rcl8 : 1;
     }
+    if (spawnRoom.storage && storageEnergy < C.DIRECTOR_MIN_ENG_UPGRADERS)
+        creepLimit = 0;
 
     let process = this.taskUpgraders;
     if (!process) {
@@ -271,7 +273,7 @@ directorRoom.prototype.doUpgradersTask = function() {
         this.taskUpgraders = process;
     }
 
-    process.spawnDetails = {
+    process.setSpawnDetails({
         spawnRoom: this.memory.spawnRoom,
         role: C.ROLE_UPGRADER,
         priority: 60,
@@ -282,7 +284,7 @@ directorRoom.prototype.doUpgradersTask = function() {
             workRooms: this.memory.workRoom,
             rcl8: this.memory.rcl8,
         },
-    };
+    });
 };
 
 directorRoom.prototype.doDirectors = function() {

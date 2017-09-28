@@ -9,13 +9,13 @@ var taskReserve = function() {
     // init
 };
 
-_.extend(taskReserve.prototype, require('lib.spawncreep'));
+_.merge(taskReserve.prototype, require('lib.spawncreep'));
 
 taskReserve.prototype.run = function() {
     this.doCreepSpawn();
 
-    for (let i = 0; i < this.creeps.length; i++) {
-        let creep = Game.creeps[this.creeps[i]];
+    for (let i = 0; i < this.memory.creeps.length; i++) {
+        let creep = Game.creeps[this.memory.creeps[i]];
         if (!creep) continue;
         this.doCreepActions(creep);
     }

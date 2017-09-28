@@ -9,8 +9,8 @@ var taskStock = function() {
     // init
 };
 
-_.extend(taskStock.prototype, require('lib.cachelinks'));
-_.extend(taskStock.prototype, require('lib.spawncreep'));
+_.merge(taskStock.prototype, require('lib.cachelinks'));
+_.merge(taskStock.prototype, require('lib.spawncreep'));
 
 Object.defineProperty(taskStock.prototype, 'marketData', {
     get: function() {
@@ -28,8 +28,8 @@ Object.defineProperty(taskStock.prototype, 'marketData', {
 taskStock.prototype.run = function() {
     this.doCreepSpawn();
 
-    for (let i = 0; i < this.creeps.length; i++) {
-        let creep = Game.creeps[this.creeps[i]];
+    for (let i = 0; i < this.memory.creeps.length; i++) {
+        let creep = Game.creeps[this.memory.creeps[i]];
         if (!creep) continue;
         this.doCreepActions(creep);
     }
@@ -64,6 +64,11 @@ taskStock.prototype.doCreepActions = function(creep) {
 taskStock.prototype.doFillLink = function(creep) {
     let storage = creep.room.storage;
     if (!storage) return;
+
+    if (storage.store[RESOURCE_ENERGY] < 5000) {
+        this.state = 'wait';
+        return;
+    }
 
     if ((_.sum(creep.carry) - creep.carry[RESOURCE_ENERGY]) > 0) {
         creep.doTransfer(storage);
@@ -192,6 +197,8 @@ taskStock.prototype.stateEmptyLink = function(creep) {
 
 taskStock.prototype.stateFillLink = function(creep) {
     if (!creep.room.storage) return;
+
+    if (creep.room.storage.store[RESOURCE_ENERGY] < 5000) return;
 
     let linksStorage = this.getRoomLinksStorage(creep.room);
     if (linksStorage.length === 0) return;

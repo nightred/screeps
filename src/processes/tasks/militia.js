@@ -9,29 +9,31 @@ var taskMilitia = function() {
     // init
 };
 
+_.merge(taskMilitia.prototype, require('lib.spawncreep'));
+
 taskMilitia.prototype.run = function() {
-    let creep = Game.creeps[this.memory.creepName];
+    this.doCreepSpawn();
 
-    if (!creep) {
-        Game.kernel.killProcess(this.pid);
-        return;
+    for (let i = 0; i < this.memory.creeps.length; i++) {
+        let creep = Game.creeps[this.memory.creeps[i]];
+        if (!creep) continue;
+        this.doCreepActions(creep);
     }
+};
 
-    if (creep.getOffExit()) {
-        return;
-    }
-
+/**
+* @param {Creep} creep The creep object
+**/
+taskMilitia.prototype.doCreepActions = function(creep) {
+    if (creep.spawning) return;
+    if (creep.getOffExit()) return;
     if (creep.isSleep()) {
         creep.moveToIdlePosition();
         return;
     }
 
     if (!creep.hasWork()) {
-        let workTasks = [
-            C.WORK_DEFENSE,
-        ];
-
-        if (!creep.getWork(workTasks, {
+        if (!creep.getWork([C.WORK_DEFENSE], {
             spawnRoom: creep.memory.spawnRoom
         })) {
             creep.sleep();

@@ -9,18 +9,24 @@ var taskSource = function() {
     // init
 };
 
+_.merge(taskSource.prototype, require('lib.spawncreep'));
+
 taskSource.prototype.run = function() {
-    let creep = Game.creeps[this.memory.creepName];
+    this.doCreepSpawn();
 
-    if (!creep) {
-        Game.kernel.killProcess(this.pid);
-        return;
+    for (let i = 0; i < this.memory.creeps.length; i++) {
+        let creep = Game.creeps[this.memory.creeps[i]];
+        if (!creep) continue;
+        this.doCreepActions(creep);
     }
+};
 
-    if (creep.getOffExit()) {
-        return;
-    }
-
+/**
+* @param {Creep} creep The creep object
+**/
+taskSource.prototype.doCreepActions = function(creep) {
+    if (creep.spawning) return;
+    if (creep.getOffExit()) return;
     if (creep.isSleep()) {
         creep.moveToIdlePosition();
         return;

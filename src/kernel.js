@@ -70,7 +70,11 @@ Kernel.prototype.run = function() {
 
     let cpuStart = Game.cpu.getUsed();
 
-    let pids = Object.keys(this.processTable);
+    let pids = _.pluck(
+        _.sortBy(this.processTable, p => p.lastTick)
+    , 'pid');
+
+    //let pids = Object.keys(this.processTable);
 
     if (pids.length === 0) {
         let proc = this.startProcess(undefined, 'loader/init', {});
@@ -85,10 +89,12 @@ Kernel.prototype.run = function() {
         let procStartCPU = Game.cpu.getUsed();
 
         let procInfo = this.processTable[pid];
+        if (!procInfo.priority) procInfo.priority = 5;
 
         if (procInfo.status == 'killed') {
             delete this.processMemory[procInfo.ms];
             delete this.processTable[pid];
+            continue;
         }
 
         if (procInfo.sleep) {
@@ -114,8 +120,12 @@ Kernel.prototype.run = function() {
             logger.error(`process crashed ${procInfo.name} : ${procInfo.pid}\n${e.stack}`);
         }
 
-        procInfo.lastTick = Game.time;
         procInfo.cpuUsed = (Game.cpu.getUsed() - procStartCPU);
+
+        if (Game.cpu.getUsed() > Game.cpu.limit && Game.cpu.bucket < 5000) {
+            logger.alert('High CPU Usage detected, Bucket is low, exiting kernal early');
+            break;
+        }
     }
 
     addTerminalLog(undefined, {
@@ -137,6 +147,7 @@ Kernel.prototype.startProcess = function(parent, imageName, startMem) {
         status: 'running',
         timestamp: Game.time,
         cpuUsed: 0,
+        priority: 5,
     };
 
     this.processTable[pid] = procInfo;

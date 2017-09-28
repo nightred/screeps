@@ -83,6 +83,9 @@ directorTech.prototype.doTechsTask = function(spawnRoom) {
 
     let limit = spawnRoom.countCoverage();
     if (spawnRoom.controller.level >= 6) limit++
+    if (spawnRoom.storage &&
+        spawnRoom.storage.store[RESOURCE_ENERGY] < C.DIRECTOR_MIN_ENG_TECH
+    ) limit = 1;
     //if (limit > 4) limit = 4;
 
     let roomCoverage = spawnRoom.getCoverage();
@@ -97,7 +100,7 @@ directorTech.prototype.doTechsTask = function(spawnRoom) {
         this.taskTechs = process;
     }
 
-    process.spawnDetails = {
+    process.setSpawnDetails({
         spawnRoom: this.memory.spawnRoom,
         role: C.ROLE_TECH,
         priority: 58,
@@ -107,7 +110,7 @@ directorTech.prototype.doTechsTask = function(spawnRoom) {
         creepArgs: {
             workRooms: roomCoverage,
         },
-    };
+    });
 
 };
 

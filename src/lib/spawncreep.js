@@ -8,67 +8,74 @@ logger.level = C.LOGLEVEL.DEBUG;
 var libSpawnCreep = {
 
     doCreepSpawn: function() {
-        if (_.isEmpty(this.spawnDetails)) return;
+        this.memory.creeps = this.memory.creeps || [];
 
-        if (this.spawnDetails.sleep && this.spawnDetails.sleep > Game.time) return;
-        this.spawnDetails.sleep = Game.time + C.CREEP_SPAWN_SLEEP;
+        let spawnDetails = this.getSpawnDetails();
+        if (_.isEmpty(spawnDetails)) return;
+
+        if (spawnDetails.sleep && spawnDetails.sleep > Game.time) return;
+        spawnDetails.sleep = Game.time + C.CREEP_SPAWN_SLEEP;
 
         this.removeOldCreep();
 
-        let spawnRecord = getQueueRecord(this.spawnDetails.spawnId);
-        if (!spawnRecord && this.spawnDetails.spawnId)
-            this.spawnDetails.spawnId = undefined;
+        let spawnRecord = getQueueRecord(this.memory.spawnId);
+        if (!spawnRecord && this.memory.spawnId)
+            this.memory.spawnId = undefined;
 
         if (spawnRecord && spawnRecord.spawned) {
             logger.debug('adding creep: ' + spawnRecord.name +
                 ', role: ' + spawnRecord.role +
                 ', to process: ' + this.imageName +
                 ', pid: ' + this.pid +
-                ', removing spawn queue record: ' + spawnRecord.id
+                ', removing spawn queue record: ' + this.memory.spawnId
             );
             this.addNewCreep(spawnRecord.name);
-            delQueueRecord(this.spawnDetails.spawnId);
+            delQueueRecord(this.memory.spawnId);
+            this.memory.spawnId = undefined;
         }
 
-        if (!this.creeps.length < this.spawnDetails.limit &&
-            !this.spawnDetails.spawnId
+        if (spawnDetails.limit > 0 && !this.memory.spawnId &&
+            this.memory.creeps.length < spawnDetails.limit
         ) this.addSpawnQueue();
     },
 
     removeOldCreep: function() {
-        let creepCount = creepGroup.creeps.length - 1;
+        let creepCount = this.memory.creeps.length - 1;
         for (let i = creepCount; i >= 0; i--) {
-            if (Game.creeps[this.creeps[i]]) continue;
-            logger.debug('removing non-existant creep: ' + this.creeps[i] +
+            if (Game.creeps[this.memory.creeps[i]]) continue;
+            logger.debug('removing non-existant creep: ' + this.memory.creeps[i] +
                 ', from process: ' + this.imageName +
                 ', pid: ' + this.pid
             );
-            this.creeps.splice(i, 1);
+            this.memory.creeps.splice(i, 1);
         }
     },
 
     addNewCreep: function(creepName) {
-        if (this.creeps.indexOf(creepName) >= 0) return;
-        this.creeps.push(creepName);
+        if (this.memory.creeps.indexOf(creepName) >= 0) return;
+        this.memory.creeps.push(creepName);
     },
 
     addSpawnQueue: function() {
+        let spawnDetails = this.getSpawnDetails();
+
         let record = {
-            rooms: [ this.spawnDetails.spawnRoom, ],
-            role: this.spawnDetails.role,
-            minSize: this.spawnDetails.minSize,
-            maxSize: this.spawnDetails.maxSize,
-            priority: this.spawnDetails.priority,
+            rooms: [ spawnDetails.spawnRoom, ],
+            role: spawnDetails.role,
+            minSize: spawnDetails.minSize,
+            maxSize: spawnDetails.maxSize,
+            priority: spawnDetails.priority,
+            creepArgs: {},
         };
 
-        if (this.spawnDetails.creepArgs) {
-            for (let item in this.spawnDetails.creepArgs) {
-                record.creepArgs[item] = this.spawnDetails.creepArgs[item];
+        if (spawnDetails.creepArgs) {
+            for (let item in spawnDetails.creepArgs) {
+                record.creepArgs[item] = spawnDetails.creepArgs[item];
             };
         }
 
         let spawnId = addQueueRecordSpawn(record);
-        this.spawnDetails.spawnId = spawnId;
+        this.memory.spawnId = spawnId;
 
         logger.debug('created spawn queue record: ' + spawnId +
             ', for role: ' + record.role +
@@ -78,28 +85,16 @@ var libSpawnCreep = {
         );
     },
 
-};
-
-Object.defineProperty(libSpawnCreep, 'creeps', {
-    get: function() {
-        this.memory.creeps = this.memory.creeps || [];
-        return this.memory.creeps;
-    },
-    set: function(value) {
-        this.memory.creeps = this.memory.creeps || [];
-        this.memory.creeps = value;
-    },
-});
-
-Object.defineProperty(libSpawnCreep, 'spawnDetails', {
-    get: function() {
+    getSpawnDetails: function() {
         this.memory.spawnDetails = this.memory.spawnDetails || {};
         return this.memory.spawnDetails;
     },
-    set: function(value) {
+
+    setSpawnDetails: function(value) {
         this.memory.spawnDetails = this.memory.spawnDetails || {};
         this.memory.spawnDetails = value;
     },
-});
+
+};
 
 module.exports = libSpawnCreep;

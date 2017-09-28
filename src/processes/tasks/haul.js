@@ -9,13 +9,13 @@ var taskHaul = function() {
     // init
 };
 
-_.extend(taskHaul.prototype, require('lib.spawncreep'));
+_.merge(taskHaul.prototype, require('lib.spawncreep'));
 
 taskHaul.prototype.run = function() {
     this.doCreepSpawn();
 
-    for (let i = 0; i < this.creeps.length; i++) {
-        let creep = Game.creeps[this.creeps[i]];
+    for (let i = 0; i < this.memory.creeps.length; i++) {
+        let creep = Game.creeps[this.memory.creeps[i]];
         if (!creep) continue;
         this.doCreepActions(creep);
     }
@@ -86,7 +86,7 @@ taskHaul.prototype.doWithdraw = function(creep) {
         return;
     }
 
-    creep.doFill([ 'containerIn', ], RESOURCE_ENERGY);
+    creep.doFill([ 'containerIn', ]);
 };
 
 taskHaul.prototype.doWithdrawFromContainer = function(creep) {
@@ -121,6 +121,16 @@ taskHaul.prototype.manageState = function(creep) {
 
 taskHaul.prototype.stateTransfer = function(creep) {
     if (creep.isFull() || !creep.isEmptyEnergy()) {
+        creep.state = 'transfer'
+        return true;
+    }
+
+    if (creep.room.name == creep.memory.spawnRoom &&
+        creep.room.controller &&
+        creep.room.controller.my &&
+        creep.room.controller.level >= 6 &&
+        !creep.isEmpty()
+    ) {
         creep.state = 'transfer'
         return true;
     }

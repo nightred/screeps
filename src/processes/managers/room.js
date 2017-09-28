@@ -12,8 +12,8 @@ var RoomManager = function() {
     // init
 };
 
-_.extend(RoomManager.prototype, require('lib.cachelinks'));
-_.extend(RoomManager.prototype, require('lib.links'));
+_.merge(RoomManager.prototype, require('lib.cachelinks'));
+_.merge(RoomManager.prototype, require('lib.links'));
 
 Object.defineProperty(RoomManager.prototype, 'managerSpawn', {
     get: function() {

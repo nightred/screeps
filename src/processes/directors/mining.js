@@ -12,9 +12,9 @@ var directorMining = function() {
     // init
 }
 
-_.extend(directorMining.prototype, require('lib.sources'));
-_.extend(directorMining.prototype, require('lib.minerals'));
-_.extend(directorMining.prototype, require('lib.extractors'));
+_.merge(directorMining.prototype, require('lib.sources'));
+_.merge(directorMining.prototype, require('lib.minerals'));
+_.merge(directorMining.prototype, require('lib.extractors'));
 
 Object.defineProperty(directorMining.prototype, 'processRecords', {
     get: function() {
@@ -71,7 +71,7 @@ directorMining.prototype.doSourceMining = function(room) {
             this.processRecords[source.id] = process.pid;
         }
 
-        process.spawnDetails = {
+        process.setSpawnDetails({
             spawnRoom: this.memory.spawnRoom,
             role: C.ROLE_MINER,
             priority: 50,
@@ -79,10 +79,11 @@ directorMining.prototype.doSourceMining = function(room) {
             minSize: 200,
             limit: 1,
             creepArgs: {
+                workRooms: this.memory.workRoom,
                 sourceId: source.id,
                 style: style,
             },
-        };
+        });
     }
 };
 
@@ -101,6 +102,14 @@ directorMining.prototype.doMineralMining = function(room) {
     let style = 'default';
     if (mineral.getContainer()) style = 'drop';
 
+    let spawnRoom = Game.rooms[this.memory.spawnRoom];
+    if (!spawnRoom) return;
+
+    let creepLimit = 1;
+    if (spawnRoom.storage &&
+        spawnRoom.storage.store[RESOURCE_ENERGY] < C.DIRECTOR_MIN_ENG_MINERAL
+    ) creepLimit = 0;
+
     let process = Game.kernel.getProcessByPid(this.processRecords[mineral.id]);
     if (!process) {
         process = Game.kernel.startProcess(this, C.TASK_MINERAL, {});
@@ -111,19 +120,20 @@ directorMining.prototype.doMineralMining = function(room) {
         this.processRecords[mineral.id] = process.pid;
     }
 
-    process.spawnDetails = {
+    process.setSpawnDetails({
         spawnRoom: this.memory.spawnRoom,
         role: C.ROLE_MINER,
         priority: 85,
         maxSize: 9999,
         minSize: 200,
-        limit: 1,
+        limit: creepLimit,
         creepArgs: {
+            workRooms: this.memory.workRoom,
             mineralId: mineral.id,
             extractorId: extractors[0],
             style: style,
         },
-    };
+    });
 };
 
 registerProcess(C.DIRECTOR_MINING, directorMining);

@@ -12,9 +12,9 @@ var directorRemote = function() {
     // init
 }
 
-_.extend(directorRemote.prototype, require('lib.containers'));
-_.extend(directorRemote.prototype, require('lib.sources'));
-_.extend(directorRemote.prototype, require('lib.defense'));
+_.merge(directorRemote.prototype, require('lib.containers'));
+_.merge(directorRemote.prototype, require('lib.sources'));
+_.merge(directorRemote.prototype, require('lib.defense'));
 
 Object.defineProperty(directorRemote.prototype, 'directorMining', {
     get: function() {
@@ -164,7 +164,7 @@ directorRemote.prototype.doInterHaulers = function() {
         this.taskHaulers = process;
     }
 
-    process.spawnDetails = {
+    process.setSpawnDetails({
         spawnRoom: this.memory.spawnRoom,
         role: C.ROLE_HAULER,
         priority: 52,
@@ -175,7 +175,7 @@ directorRemote.prototype.doInterHaulers = function() {
             style: 'longhauler',
             workRooms: this.memory.workRoom,
         },
-    };
+    });
 
 };
 
@@ -191,6 +191,11 @@ directorRemote.prototype.doReserver = function() {
         limit = 0;
     }
 
+    let spawnRoom = Game.rooms[this.memory.spawnRoom];
+    if (spawnRoom && spawnRoom.storage &&
+        spawnRoom.storage.store[RESOURCE_ENERGY] < C.DIRECTOR_MIN_ENG_RESERVER
+    ) creepLimit = 0;
+
     let process = this.taskReserver;
     if (!process) {
         process = Game.kernel.startProcess(this, C.TASK_RESERVE, {});
@@ -201,7 +206,7 @@ directorRemote.prototype.doReserver = function() {
         this.taskReserver = process;
     }
 
-    process.spawnDetails = {
+    process.setSpawnDetails({
         spawnRoom: this.memory.spawnRoom,
         role: C.ROLE_CONTROLLER,
         priority: 70,
@@ -212,7 +217,7 @@ directorRemote.prototype.doReserver = function() {
             style: 'reserve',
             workRooms: this.memory.workRoom,
         },
-    };
+    });
 };
 
 directorRemote.prototype.doDirectors = function() {
