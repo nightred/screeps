@@ -5,6 +5,16 @@
  *
  */
 
+Object.defineProperty(Creep.prototype, 'state', {
+    get: function() {
+        this.memory.state = this.memory.state || 'init';
+        return this.memory.state;
+    },
+    set: function(value) {
+        this.memory.state = value;
+    },
+});
+
 Creep.prototype.moveToRoom = function(roomName) {
     if (Game.cpu.bucket < 1000) { return true; }
 
@@ -111,10 +121,8 @@ Creep.prototype.leaveWork = function() {
     }
 }
 
-Creep.prototype.getWork = function(workTasks, args) {
+Creep.prototype.getWork = function(workTasks, args = {}) {
     if (!Array.isArray(workTasks)) { return ERR_INVALID_ARGS; }
-
-    args = args || {};
 
     if (!args.ignoreRoom && !args.spawnRoom && !args.room && !args.rooms) {
         if (this.memory.workRoom) {
@@ -170,6 +178,7 @@ Creep.prototype.doTransfer = function(target, resourceType) {
 
         if (this.memory.role == C.ROLE_RESUPPLY) {
             args.ignoreCreeps = false;
+            args.reusePath = 5;
         }
 
         if (this.memory.role == C.ROLE_STOCKER) {
@@ -342,72 +351,7 @@ Creep.prototype.hasGoingTo = function(target) {
 }
 
 Creep.prototype.goto = function(target, args) {
-    if (!target) { return ERR_INVALID_ARGS; }
-    args = args || {};
-
-    if (!(target instanceof RoomPosition)) {
-        target = target.pos;
-    }
-
-    if (this.fatigue > 0) {
-        new RoomVisual(this.pos.roomName).circle(this.pos, {
-            radius: 0.3,
-            fill: 'transparent',
-            stroke: 'aqua',
-            strokeWidth: 0.2,
-            opacity: 0.25,
-        });
-        return ERR_BUSY;
-    }
-
-    if (!this.memory._goto) {
-        this.memory._goto = {};
-    }
-    let gotoData = this.memory._goto;
-
-    if (this.isStuck(gotoData.lastX, gotoData.lastY)) {
-        gotoData.stuckCount ++;
-        new RoomVisual(this.pos.roomName).circle(this.pos, {
-            radius: 0.5,
-            fill: 'transparent',
-            stroke: 'magenta',
-            strokeWidth: 0.2,
-            opacity: (gotoData.stuckCount * 0.1),
-        });
-    } else {
-        gotoData.stuckCount = 0;
-    }
-
-    if (this.memory._move && gotoData.stuckCount >= C.CREEP_STUCK_TICK) {
-        delete this.memory._move;
-        this.memory.moveTick = Game.time;
-        args.ignoreCreeps = false;
-        args.reusePath = C.CREEP_STUCK_TICK;
-    }
-
-    if (!this.memory._move) {
-        gotoData.stuckCount = 0;
-    }
-
-    gotoData.lastX = this.pos.x;
-    gotoData.lastY = this.pos.y;
-    gotoData.destX = target.x;
-    gotoData.destY = target.y;
-    gotoData.destRoom = target.roomName;
-
-    return this.moveTo(target, args);
-};
-
-Creep.prototype.isStuck = function(lastX, lastY) {
-    let stuck = false;
-
-    if (lastX !== undefined && lastY !== undefined) {
-        if (lastX == this.pos.x && lastY == this.pos.y) {
-            stuck = true;
-        }
-    }
-
-    return stuck;
+    return goto.travel(this, target, args);
 };
 
 Creep.prototype.collectDroppedEnergy = function () {
@@ -421,7 +365,7 @@ Creep.prototype.collectDroppedEnergy = function () {
     }
 
     return true;
-}
+};
 
 Creep.prototype.getDestructibleStructures = function(path) {
     if (!path || !path.length) { return ERR_INVALID_ARGS; }

@@ -12,9 +12,9 @@ var directorRoom = function() {
     // init
 }
 
-_.extend(directorRoom.prototype, require('lib.containers'));
-_.extend(directorRoom.prototype, require('lib.sources'));
-_.extend(directorRoom.prototype, require('lib.defense'));
+_.merge(directorRoom.prototype, require('lib.containers'));
+_.merge(directorRoom.prototype, require('lib.sources'));
+_.merge(directorRoom.prototype, require('lib.defense'));
 
 Object.defineProperty(directorRoom.prototype, 'directorMining', {
     get: function() {
@@ -36,13 +36,43 @@ Object.defineProperty(directorRoom.prototype, 'directorTech', {
     },
 });
 
-Object.defineProperty(directorRoom.prototype, 'squad', {
+Object.defineProperty(directorRoom.prototype, 'taskUpgraders', {
     get: function() {
-        if (!this.memory.squadPid) return false;
-        return Game.kernel.getProcessByPid(this.memory.squadPid);
+        if (!this.memory.upgradersPid) return false;
+        return Game.kernel.getProcessByPid(this.memory.upgradersPid);
     },
     set: function(value) {
-        this.memory.squadPid = value.pid;
+        this.memory.upgradersPid = value.pid;
+    },
+});
+
+Object.defineProperty(directorRoom.prototype, 'taskResuppliers', {
+    get: function() {
+        if (!this.memory.resuppliersPid) return false;
+        return Game.kernel.getProcessByPid(this.memory.resuppliersPid);
+    },
+    set: function(value) {
+        this.memory.resuppliersPid = value.pid;
+    },
+});
+
+Object.defineProperty(directorRoom.prototype, 'taskHaulers', {
+    get: function() {
+        if (!this.memory.haulersPid) return false;
+        return Game.kernel.getProcessByPid(this.memory.haulersPid);
+    },
+    set: function(value) {
+        this.memory.haulersPid = value.pid;
+    },
+});
+
+Object.defineProperty(directorRoom.prototype, 'taskStockers', {
+    get: function() {
+        if (!this.memory.stockersPid) return false;
+        return Game.kernel.getProcessByPid(this.memory.stockersPid);
+    },
+    set: function(value) {
+        this.memory.stockersPid = value.pid;
     },
 });
 
@@ -51,58 +81,64 @@ Object.defineProperty(directorRoom.prototype, 'squad', {
 **/
 directorRoom.prototype.run = function() {
     let workRoom = Game.rooms[this.memory.workRoom];
-
     if (!workRoom || !workRoom.controller || !workRoom.controller.my) return;
 
-    if (!this.squad) this.initSquad();
-
-    this.doSquadGroupUpgraders();
-    this.doSquadGroupResupply();
-    this.doSquadGroupHaulers();
-    this.doSquadGroupStockers();
+    this.doUpgradersTask();
+    this.doResuppliersTask();
+    this.doHaulersTask();
+    this.doStockersTask();
 
     this.doDefense();
 
     this.doDirectors();
 
+    // remove old squad
+    if (this.memory.squadPid) {
+        Game.kernel.killProcess(this.memory.squadPid);
+        this.memory.squadPid = undefined;
+    }
+
     Game.kernel.sleepProcessbyPid(this.pid, (C.DIRECTOR_SLEEP + Math.floor(Math.random() * 8)));
 };
 
-directorRoom.prototype.doSquadGroupStockers = function() {
+directorRoom.prototype.doStockersTask = function() {
     let workRoom = Game.rooms[this.memory.workRoom];
-
-    if (!workRoom || !workRoom.storage || !workRoom.controller || !workRoom.controller.my) {
+    if (!workRoom || !workRoom.storage ||
+        !workRoom.controller || !workRoom.controller.my
+    ) {
         return false;
     }
 
     let creepLimit = 0;
-
     if (_.filter(workRoom.getLinks(), structure =>
         structure.memory.type == 'storage').length > 0) {
         creepLimit = 1;
     }
 
-    let record = {
-        name: 'stockers',
-        task: C.TASK_STOCK,
+    let process = this.taskStockers;
+    if (!process) {
+        process = Game.kernel.startProcess(this, C.TASK_STOCK, {});
+        if (!process) {
+            logger.error('failed to create process ' + C.TASK_STOCK);
+            return;
+        }
+        this.taskStockers = process;
+    }
+
+    process.setSpawnDetails({
+        spawnRoom: this.memory.spawnRoom,
         role: C.ROLE_STOCKER,
         priority: 49,
         minSize: 200,
         maxSize: 9999,
         limit: creepLimit,
-    };
-
-    let process = this.squad;
-
-    if (!process) {
-        logger.error('failed to load squad process for creep group update');
-        return;
-    }
-
-    process.setGroup(record);
+        creepArgs: {
+            workRooms: this.memory.workRoom,
+        },
+    });
 };
 
-directorRoom.prototype.doSquadGroupHaulers = function() {
+directorRoom.prototype.doHaulersTask = function() {
     let spawnRoom = Game.rooms[this.memory.spawnRoom];
     if (!spawnRoom || !spawnRoom.controller || !spawnRoom.controller.my) return;
 
@@ -123,47 +159,36 @@ directorRoom.prototype.doSquadGroupHaulers = function() {
         maxSize = 9999;
     }
 
-    let containersIn = this.getIdsContainersIn();
-    if (containersIn.length === 0) return;
+    let creepLimit = _.filter(workRoom.getContainers(), structure =>
+        structure.memory.type == 'in'
+    ).length;
 
-    if (!this.memory.containersIn) this.memory.containersIn = [];
-    this.memory.containersIn = _.union(this.memory.containersIn, containersIn);
-
-    let process = this.squad;
+    let process = this.taskHaulers;
     if (!process) {
-        logger.error('failed to load squad process for creep group update');
-        return;
-    }
-
-    process.removeGroup('hauler_');
-
-    for (let i = 0; i < this.memory.containersIn.length; i++) {
-        let squadName = 'hauler_' + this.memory.containersIn[i];
-
-        if (!Game.getObjectById(this.memory.containersIn[i])) {
-            process.removeGroup(squadName);
-            continue;
+        process = Game.kernel.startProcess(this, C.TASK_HAUL, {});
+        if (!process) {
+            logger.error('failed to create process ' + C.TASK_HAUL);
+            return;
         }
-
-        process.setGroup({
-            name: squadName,
-            task: C.TASK_HAUL,
-            role: C.ROLE_HAULER,
-            priority: 52,
-            maxSize: maxSize,
-            minSize: minSize,
-            limit: 1,
-            creepArgs: {
-                style: 'default',
-                containerId: this.memory.containersIn[i],
-            },
-        });
+        this.taskHaulers = process;
     }
+
+    process.setSpawnDetails({
+        spawnRoom: this.memory.spawnRoom,
+        role: C.ROLE_HAULER,
+        priority: 52,
+        maxSize: maxSize,
+        minSize: minSize,
+        limit: creepLimit,
+        creepArgs: {
+            workRooms: this.memory.workRoom,
+            style: 'default',
+        },
+    });
 };
 
-directorRoom.prototype.doSquadGroupResupply = function() {
+directorRoom.prototype.doResuppliersTask = function() {
     let spawnRoom = Game.rooms[this.memory.spawnRoom];
-
     if (!spawnRoom || !spawnRoom.controller || !spawnRoom.controller.my) return;
 
     let minSize = 200;
@@ -178,29 +203,31 @@ directorRoom.prototype.doSquadGroupResupply = function() {
 
     let creepLimit = 2;
 
-    let record = {
-        name: 'resupply',
-        task: C.TASK_RESUPPLY,
+    let process = this.taskResuppliers;
+    if (!process) {
+        process = Game.kernel.startProcess(this, C.TASK_RESUPPLY, {});
+        if (!process) {
+            logger.error('failed to create process ' + C.TASK_RESUPPLY);
+            return;
+        }
+        this.taskResuppliers = process;
+    }
+
+    process.setSpawnDetails({
+        spawnRoom: this.memory.spawnRoom,
         role: C.ROLE_RESUPPLY,
         priority: 10,
         maxSize: maxSize,
         minSize: minSize,
         limit: creepLimit,
-    };
-
-    let process = this.squad;
-
-    if (!process) {
-        logger.error('failed to load squad process for creep group update');
-        return;
-    }
-
-    process.setGroup(record);
+        creepArgs: {
+            workRooms: this.memory.workRoom,
+        },
+    });
 };
 
-directorRoom.prototype.doSquadGroupUpgraders = function() {
+directorRoom.prototype.doUpgradersTask = function() {
     let spawnRoom = Game.rooms[this.memory.spawnRoom];
-
     if (!spawnRoom || !spawnRoom.controller || !spawnRoom.controller.my) return;
 
     let minSize = 200;
@@ -216,47 +243,48 @@ directorRoom.prototype.doSquadGroupUpgraders = function() {
     }
 
     let creepLimit = 2;
-    if (spawnRoom.storage && spawnRoom.controller.level < 8 && spawnRoom.controller.level >= 4) {
-        if (spawnRoom.storage.store[RESOURCE_ENERGY] < 50000 ) {
+    let storageEnergy = spawnRoom.storage.store[RESOURCE_ENERGY];
+    if (spawnRoom.storage && rlevel < 8 && rlevel >= 4) {
+        if (storageEnergy < 50000 ) {
             creepLimit = 1;
-        } else if (spawnRoom.storage.store[RESOURCE_ENERGY] < 80000 ) {
+        } else if (storageEnergy < 80000 ) {
             creepLimit = 2;
-        } else if (spawnRoom.storage.store[RESOURCE_ENERGY] < 150000 ) {
+        } else if (storageEnergy < 150000 ) {
             creepLimit = 3;
-        } else if (spawnRoom.storage.store[RESOURCE_ENERGY] < 200000 ) {
+        } else if (storageEnergy < 200000 ) {
             creepLimit = 4;
-        } else if (spawnRoom.storage.store[RESOURCE_ENERGY] >= 200000 ) {
+        } else if (storageEnergy >= 200000 ) {
             creepLimit = 5;
         }
     } else if (spawnRoom.controller.level == 8 ) {
         creepLimit = 1;
         this.memory.rcl8 = this.memory.rcl8 ? this.memory.rcl8 : 1;
     }
+    if (spawnRoom.storage && storageEnergy < C.DIRECTOR_MIN_ENG_UPGRADERS)
+        creepLimit = 0;
 
-    let record = {
-        name: 'upgraders',
-        task: C.TASK_UPGRADE,
+    let process = this.taskUpgraders;
+    if (!process) {
+        process = Game.kernel.startProcess(this, C.TASK_UPGRADE, {});
+        if (!process) {
+            logger.error('failed to create process ' + C.TASK_UPGRADE);
+            return;
+        }
+        this.taskUpgraders = process;
+    }
+
+    process.setSpawnDetails({
+        spawnRoom: this.memory.spawnRoom,
         role: C.ROLE_UPGRADER,
         priority: 60,
         maxSize: maxSize,
         minSize: minSize,
         limit: creepLimit,
-    };
-
-    if (this.memory.rcl8) {
-        record.creepArgs = {
-            rcl8: 1,
-        };
-    }
-
-    let process = this.squad;
-
-    if (!process) {
-        logger.error('failed to load squad process for creep group update');
-        return;
-    }
-
-    process.setGroup(record);
+        creepArgs: {
+            workRooms: this.memory.workRoom,
+            rcl8: this.memory.rcl8,
+        },
+    });
 };
 
 directorRoom.prototype.doDirectors = function() {

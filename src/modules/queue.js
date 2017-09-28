@@ -55,6 +55,8 @@ Queue.prototype.addRecord = function(args) {
     args = args || {};
 
     let id = getId();
+    if (args.id) id = args.id;
+    
     let record = {
         id: id,
         tick: Game.time,

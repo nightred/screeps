@@ -16,7 +16,7 @@ var CacheModule = {
         if (!this.cache[key]) {
             this.cache[key] = {
                 data: {},
-                tick: 0,
+                tick: 1,
             };
         }
 
@@ -29,8 +29,8 @@ var CacheModule = {
     },
 
     isOld: function(key) {
-        if (!this.cache[key]) return true;
-        return this.cache[key].tick + C.CACHE_SLEEP < Game.time;
+        if (!this.cache[key] || !this.cache[key].tick) return true;
+        return (this.cache[key].tick + C.CACHE_SLEEP) < Game.time;
     },
 
     markFresh: function(key) {

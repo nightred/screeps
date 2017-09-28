@@ -6,6 +6,7 @@
 global.C        = require('constants');
 global.Logger   = require('util.logger');
 global.cache    = require('modules.cache');
+global.goto     = require('modules.goto');
 
 // prototypes
 require('prototype.prototype');

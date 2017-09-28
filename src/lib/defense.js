@@ -26,8 +26,6 @@ var libDefense = {
     },
 
     doSquadDefenseSpawnLimits: function(room) {
-        if (!this.squad) return;
-
         let spawnRoom = Game.rooms[this.memory.spawnRoom];
         if (!spawnRoom || !spawnRoom.controller || !spawnRoom.controller.my) return;
 
@@ -54,20 +52,26 @@ var libDefense = {
             creepLimit = 2;
         }
 
-        let process = this.squad;
+        let process = Game.kernel.getProcessByPid(this.memory.militiaPid);
         if (!process) {
-            logger.error('failed to load squad process for defense militia');
-            return;
+            process = Game.kernel.startProcess(this, C.TASK_MILITIA, {});
+            if (!process) {
+                logger.error('failed to create process ' + C.TASK_MILITIA);
+                return;
+            }
+            this.memory.militiaPid = process.pid;
         }
 
-        process.setGroup({
-            name: 'militia',
-            task: C.TASK_MILITIA,
+        process.setSpawnDetails({
+            spawnRoom: this.memory.spawnRoom,
             role: C.ROLE_COMBAT_MILITIA,
             priority: 38,
             maxSize: maxSize,
             minSize: minSize,
             limit: creepLimit,
+            creepArgs: {
+                workRooms: this.memory.workRoom,
+            },
         });
     },
 

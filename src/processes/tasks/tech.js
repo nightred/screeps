@@ -9,18 +9,24 @@ var taskTech = function() {
     // init
 };
 
+_.merge(taskTech.prototype, require('lib.spawncreep'));
+
 taskTech.prototype.run = function() {
-    let creep = Game.creeps[this.memory.creepName];
+    this.doCreepSpawn();
 
-    if (!creep) {
-        Game.kernel.killProcess(this.pid);
-        return;
+    for (let i = 0; i < this.memory.creeps.length; i++) {
+        let creep = Game.creeps[this.memory.creeps[i]];
+        if (!creep) continue;
+        this.doCreepActions(creep);
     }
+};
 
-    if (creep.getOffExit()) {
-        return;
-    }
-
+/**
+* @param {Creep} creep The creep object
+**/
+taskTech.prototype.doCreepActions = function(creep) {
+    if (creep.spawning) return;
+    if (creep.getOffExit()) return;
     if (creep.isSleep()) {
         creep.moveToIdlePosition();
         return;
@@ -38,8 +44,9 @@ taskTech.prototype.run = function() {
         if (!creep.getWork(workTasks)) {
             creep.sleep();
             creep.say('💤');
-
             return;
+        } else {
+            creep.say('📋');
         }
     }
 

@@ -76,6 +76,12 @@ Constant.CREEP_IDLE_TIME                = 4;
 Constant.CREEP_STUCK_TICK               = 4;
 Constant.CREEP_FILL_TICKS               = 6;
 Constant.CREEP_TRAVEL_RANGE             = 4;
+Constant.CREEP_SPAWN_SLEEP              = 8;
+
+Constant.GOTO_CPU_ALERT                 = 10;
+Constant.GOTO_STUCK_COUNT               = 4;
+Constant.GOTO_MAXOPS                    = 5000;
+Constant.GOTO_MAP_CACHE                 = 50;
 
 Constant.CPU_MIN_BUCKET_MIL             = 2000;
 Constant.CPU_MIN_BUCKET_SQUAD           = 4000;
@@ -88,18 +94,23 @@ Constant.MARKET_MAX_ENERGY              = 500000;
 Constant.MARKET_MAX_RESOURCE            = 20000;
 Constant.MARKET_MAX_BOOST               = 3000;
 Constant.MARKET_STOCK_ENERGY            = 50000;
-Constant.MARKET_STORAGE_ENERGY_MIN      = 10000;
+Constant.MARKET_STORAGE_ENERGY_MIN      = 40000;
 Constant.MARKET_MAX_COST                = 2000;
 Constant.MARKET_SURPLUS_SLEEP           = 100;
 
 Constant.WORK_FIND_SLEEP                = 12;
 
 Constant.DIRECTOR_SLEEP                 = 24;
+Constant.DIRECTOR_MIN_ENG_UPGRADERS     = 12000;
+Constant.DIRECTOR_MIN_ENG_MINERAL       = 15000;
+Constant.DIRECTOR_MIN_ENG_RESERVER      = 10000;
+Constant.DIRECTOR_MIN_ENG_TECH          = 5000;
 
 Constant.CACHE_SLEEP                    = 100;
 Constant.CACHE = {
     STRUCTURES:     'structures',
     MARKET:         'market',
+    COST_MATRIX:    'costmatrix',
 };
 
 Constant.ROLE_MINER                     = 'miner';

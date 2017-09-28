@@ -106,6 +106,7 @@ global.ps = function(pid = 0) {
                 name: node.name,
                 status: node.status,
                 cpuUsed: node.cpuUsed,
+                priority: node.priority,
             });
 
             traverse(node.children, depth + 1);
@@ -121,6 +122,7 @@ global.ps = function(pid = 0) {
     output += _.padRight('', longestIndent, ' ') + ' ';
     output += _.padRight('PID', 19);
     output += _.padRight('NAME', longestName);
+    output += _.padLeft('PRI', 4);
     output += _.padLeft('STATUS', 10);
     output += _.padLeft('CPU', 7);
     output +='\n';
@@ -129,6 +131,7 @@ global.ps = function(pid = 0) {
         output += _.padRight(item.indent, longestIndent, '─') + ' ';
         output += _.padRight(item.pid, 19);
         output += _.padRight(item.name, longestName);
+        output += _.padLeft(item.priority, 4);
         output += _.padLeft(item.status, 10);
         output += _.padLeft(item.cpuUsed.toFixed(2), 7);
         output +='\n';
@@ -173,6 +176,7 @@ var printProcessTable = function(psOutput, count = 20) {
     let output = 'Process List:\n';
     output += _.padRight('PID', 19);
     output += _.padRight('NAME', longestName);
+    output += _.padLeft('PRI', 4);
     output += _.padLeft('STATUS', 10);
     output += _.padLeft('CPU', 7);
     output +='\n';
@@ -187,6 +191,7 @@ var printProcessTable = function(psOutput, count = 20) {
             let item = psOutput[pid];
             output += _.padRight(item.pid, 19);
             output += _.padRight(item.name, longestName);
+            output += _.padLeft(item.priority, 4);
             output += _.padLeft(item.status, 10);
             output += _.padLeft(item.cpuUsed.toFixed(2), 7);
             output +='\n';

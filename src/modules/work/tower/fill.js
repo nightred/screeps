@@ -86,26 +86,20 @@ var taskTowerFill = {
     **/
     find: function(room) {
         let storage = room.storage;
-
         if (storage) {
             let minEnergy = storage.storeCapacity * C.ENERGY_STORAGE_MIN_FILL_TOWER;
-
             if (storage.store[RESOURCE_ENERGY] < minEnergy) {
                 return true;
             }
         }
 
         let targets = _.filter(room.getTowers(), structure =>
-                structure.energy < (structure.energyCapacity * C.REFILL_TOWER_MIN)
-                );
-
-        if (targets.length <= 0) {
-            return true;
-        }
+            structure.energy < (structure.energyCapacity * C.REFILL_TOWER_MIN)
+        );
+        if (targets.length <= 0) return;
 
         for (let i = 0; i < targets.length; i++) {
             let tower = targets[i];
-
             if (tower.workTask) continue;
 
             tower.workTask = this.create({

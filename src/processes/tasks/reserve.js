@@ -9,44 +9,43 @@ var taskReserve = function() {
     // init
 };
 
+_.merge(taskReserve.prototype, require('lib.spawncreep'));
+
 taskReserve.prototype.run = function() {
-    let creep = Game.creeps[this.memory.creepName];
+    this.doCreepSpawn();
 
-    if (!creep) {
-        Game.kernel.killProcess(this.pid);
-        return;
+    for (let i = 0; i < this.memory.creeps.length; i++) {
+        let creep = Game.creeps[this.memory.creeps[i]];
+        if (!creep) continue;
+        this.doCreepActions(creep);
     }
+};
 
-    if (creep.getOffExit()) {
-        return;
-    }
-
+/**
+* @param {Creep} creep The creep object
+**/
+taskReserve.prototype.doCreepActions = function(creep) {
+    if (creep.spawning) return;
+    if (creep.getOffExit()) return;
     if (creep.isSleep()) {
         creep.moveToIdlePosition();
         return;
     }
 
-    if (Game.cpu.bucket < 2000) { return true; }
+    if (Game.cpu.bucket < 2000) return;
 
     if (creep.room.name != creep.memory.workRooms) {
         creep.moveToRoom(creep.memory.workRooms);
         return;
     }
 
-    if (!creep.room.controller || creep.room.controller.my) {
-        task.completed = true;
-        return;
-    }
-
     if (!creep.pos.inRangeTo(creep.room.controller, 1)) {
-        let args = {
+        creep.goto(creep.room.controller, {
             range: 1,
             reusePath: 50,
             maxRooms: 1,
             ignoreCreeps: true,
-        };
-
-        creep.goto(creep.room.controller, args);
+        });
         return;
     }
 

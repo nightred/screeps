@@ -96,7 +96,7 @@ MarketService.prototype.doSellSurplus = function(room) {
         amt = 0;
 
         if (resource == RESOURCE_ENERGY) {
-            if (terminal.store[resource] < C.MARKET_STOCK_ENERGY) continue;
+            if (terminal.store[resource] < (C.MARKET_STOCK_ENERGY + 1000)) continue;
             amt = terminal.store[resource] - C.MARKET_STOCK_ENERGY;
         }
 
@@ -136,7 +136,7 @@ MarketService.prototype.doSellSurplus = function(room) {
 MarketService.prototype.getCache = function() {
     var marketCache = cache.getData(C.CACHE.MARKET);
     if (cache.isOld(C.CACHE.MARKET)) {
-        logger.debug('rebuilding market cache');
+        let startCPU = Game.cpu.getUsed();
 
         let markets = _.filter(Game.structures, s =>
             s.structureType == STRUCTURE_TERMINAL
@@ -145,8 +145,11 @@ MarketService.prototype.getCache = function() {
             acc.push(s.room.name);
             return acc;
         }, []);
-
         cache.markFresh(C.CACHE.MARKET);
+
+        logger.debug('rebuilding market cache' +
+            ' cpu used: ' + (Game.cpu.getUsed() - startCPU)
+        );
     }
 
     return marketCache;
