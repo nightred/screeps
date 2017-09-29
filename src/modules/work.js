@@ -33,14 +33,12 @@ var Work = function() {
 
 Work.prototype.doWorkTask = function(creep) {
     let workTask = getQueueRecord(creep.memory.workId);
-
     if (!workTask) {
         creep.memory.workId = undefined;
         return;
     }
 
     let work = workRegistry.getWork(workTask.task);
-
     if (!work) {
         logger.error('failed to load work task: ' + workTask.task);
         delQueueRecord(creep.memory.workId)
@@ -48,15 +46,8 @@ Work.prototype.doWorkTask = function(creep) {
         return;
     }
 
-    if (workTask.creeps.indexOf(creep.name) === -1) {
-        if (workTask.creeps.length >= workTask.creepLimit) {
-            logger.debug('work task id: ' + creep.memory.workId +
-                ', full when adding creep: ' + creep.name);
-            return;
-        } else {
-            this.addCreep(creep.name, creep.memory.workId);
-        }
-    }
+    if (workTask.creeps.indexOf(creep.name) === -1)
+        this.addCreep(creep.name, creep.memory.workId);
 
     work.run(creep, workTask);
 
@@ -107,11 +98,20 @@ Work.prototype.addCreep = function(creepName, id) {
         return false;
     }
 
-    if (workTask.creeps.indexOf(creepName) === -1) {
-        workTask.creeps.push(creepName);
+    if (workTask.creeps.indexOf(creepName) !== -1) return;
+
+    for (let i = (workTask.creeps.length - 1); i >= 0; i--) {
+        if (!Game.creeps[workTask.creeps[i]])
+            work.creeps.splice(i, 1);
     }
 
-    return true;
+    if (workTask.creeps.length < workTask.creepLimit) {
+        workTask.creeps.push(creepName);
+    } else {
+        logger.debug('work task id: ' + creep.memory.workId +
+            ', full when adding creep: ' + creep.name
+        );
+    }
 };
 
 Work.prototype.removeCreep = function(creepName, id) {
@@ -178,11 +178,6 @@ let work = new Work();
 
 global.workRemoveCreep = function(creepName, workId) {
     work.removeCreep(creepName, workId);
-    return true;
-};
-
-global.workAddCreep = function(creepName, workId) {
-    work.addCreep(creepName, workId);
     return true;
 };
 

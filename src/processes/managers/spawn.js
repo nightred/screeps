@@ -102,11 +102,12 @@ Spawn.prototype.doSpawn = function(spawn, room) {
 
         if (getBodyCost(body) > spawnEnergy) continue;
 
-        let name = spawn.spawnCreep(body, getName(args.role), {
+        let name = getName(records[r].role);
+        let result = spawn.spawnCreep(body, name, {
             memory: memory,
         });
 
-        if (name != undefined && !(name < 0)) {
+        if (result === 0) {
             energy -= getBodyCost(body);
             records[r].spawned = true;
             records[r].name = name;

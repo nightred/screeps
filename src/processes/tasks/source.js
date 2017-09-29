@@ -11,7 +11,22 @@ var taskSource = function() {
 
 _.merge(taskSource.prototype, require('lib.spawncreep'));
 
+Object.defineProperty(taskSource.prototype, 'taskHaulers', {
+    get: function() {
+        if (!this.memory._haulersPid) return false;
+        return Game.kernel.getProcessByPid(this.memory._haulersPid);
+    },
+    set: function(value) {
+        this.memory._haulersPid = value.pid;
+    },
+});
+
 taskSource.prototype.run = function() {
+    if (!this.memory.spawnRoom || !this.memory.workRoom) {
+        Game.kernel.killProcess(this.pid);
+        return;
+    }
+
     this.doCreepSpawn();
 
     for (let i = 0; i < this.memory.creeps.length; i++) {
@@ -19,6 +34,8 @@ taskSource.prototype.run = function() {
         if (!creep) continue;
         this.doCreepActions(creep);
     }
+
+    this.doInterHaulers();
 };
 
 /**
@@ -137,6 +154,56 @@ taskSource.prototype.doDropHarvest = function(creep) {
     }
 
     creep.harvest(source);
+};
+
+taskSource.prototype.doInterHaulers = function() {
+    if (this.memory.spawnRoom !== this.memory.workRoom) return;
+    
+    if (this.memory.sleepInterHaulers && this.memory.sleepInterHaulers > Game.time)
+        return;
+    this.memory.sleepInterHaulers = Game.time + (C.DIRECTOR_SLEEP + Math.floor(Math.random() * 20));
+
+    let spawnRoom = Game.rooms[this.memory.spawnRoom];
+    if (!spawnRoom || !spawnRoom.controller || !spawnRoom.controller.my) return;
+
+    let minSize = 200;
+    let maxSize = 200;
+
+    let rlevel = spawnRoom.controller.level;
+    if (rlevel == 1 || rlevel == 2 || rlevel == 3 || rlevel == 4) {
+        maxSize = 400;
+    } else if (rlevel == 5 || rlevel == 6) {
+        minSize = 400;
+        maxSize = 600;
+    } else if (rlevel == 7 || rlevel == 8) {
+        minSize = 500;
+        maxSize = 9999;
+    }
+
+    let limit = 1;
+
+    let process = this.taskHaulers;
+    if (!process) {
+        process = Game.kernel.startProcess(this, C.TASK_HAUL, {});
+        if (!process) {
+            logger.error('failed to create process ' + C.TASK_HAUL);
+            return;
+        }
+        this.taskHaulers = process;
+    }
+
+    process.setSpawnDetails({
+        spawnRoom: this.memory.spawnRoom,
+        role: C.ROLE_HAULER,
+        priority: 52,
+        maxSize: maxSize,
+        minSize: minSize,
+        limit: limit,
+        creepArgs: {
+            style: 'longhauler',
+            workRooms: this.memory.workRoom,
+        },
+    });
 };
 
 registerProcess('tasks/source', taskSource);

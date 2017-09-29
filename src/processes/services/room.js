@@ -26,9 +26,26 @@ Object.defineProperty(ServiceRoom.prototype, 'processTable', {
 ServiceRoom.prototype.run = function() {
     let cpuStart = Game.cpu.getUsed();
 
+    let count = Object.keys(Game.rooms).length;
+
+    this.doCheckRooms();
+
+    addTerminalLog(undefined, {
+        command: 'service room',
+        status: 'OK',
+        cpu: (Game.cpu.getUsed() - cpuStart),
+        output: ('room count: ' + count),
+    });
+};
+
+ServiceRoom.prototype.doCheckRooms = function() {
+    if (this.memory.sleepCheckRooms && this.memory.sleepCheckRooms > Game.time) return;
+    this.memory.sleepCheckRooms = C.SERVICE_SLEEP + Game.time;
+
     for (let name in Game.rooms) {
         if (!this.processTable[name] ||
-            !Game.kernel.getProcessByPid(this.processTable[name])) {
+            !Game.kernel.getProcessByPid(this.processTable[name])
+        ) {
             let process = Game.kernel.startProcess(this, 'managers/room', {
                 roomName: name,
             });
@@ -38,12 +55,6 @@ ServiceRoom.prototype.run = function() {
             this.processTable[name] = process.pid;
         }
     }
-
-    addTerminalLog(undefined, {
-        command: 'service room',
-        status: 'OK',
-        cpu: (Game.cpu.getUsed() - cpuStart),
-    });
 };
 
 registerProcess('services/room', ServiceRoom);

@@ -96,4 +96,4 @@ taskFieldTech.prototype.doMine = function(creep) {
     }
 };
 
-registerProcess('tasks/fieldtech', taskFieldTech);
+registerProcess(C.JOB_FIELDTECH, taskFieldTech);

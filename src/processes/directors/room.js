@@ -92,12 +92,6 @@ directorRoom.prototype.run = function() {
 
     this.doDirectors();
 
-    // remove old squad
-    if (this.memory.squadPid) {
-        Game.kernel.killProcess(this.memory.squadPid);
-        this.memory.squadPid = undefined;
-    }
-
     Game.kernel.sleepProcessbyPid(this.pid, (C.DIRECTOR_SLEEP + Math.floor(Math.random() * 8)));
 };
 
@@ -304,25 +298,6 @@ directorRoom.prototype.doDirectors = function() {
         this.directorTech = proc;
     }
 };
-
-directorRoom.prototype.initSquad = function() {
-    let imageName = 'managers/squad';
-    let squadName = this.memory.workRoom + '_services';
-
-    let process = Game.kernel.startProcess(this, imageName, {
-        squadName: squadName,
-        spawnRoom: this.memory.spawnRoom,
-        workRooms: this.memory.workRoom,
-    });
-
-    if (!process) {
-        logger.error('failed to create process ' + imageName);
-        return;
-    }
-
-    this.squad = process;
-};
-
 
 /**
 * @param {roomName} roomName the room name

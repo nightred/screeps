@@ -37,7 +37,7 @@ var taskRepair = {
     doRepair: function(creep, task) {
         if (creep.room.name != task.workRoom) {
             creep.moveToRoom(task.workRoom);
-            return true;
+            return;
         }
 
         let target = Game.getObjectById(task.targetId);
@@ -52,14 +52,12 @@ var taskRepair = {
         }
 
         if (!creep.pos.inRangeTo(target, 3)) {
-            let args = {
+            creep.goto(target, {
                 range: 1,
                 reusePath: 50,
                 maxRooms: 1,
                 ignoreCreeps: true,
-            };
-
-            creep.goto(target, args);
+            });
             return;
         }
 

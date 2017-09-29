@@ -25,13 +25,8 @@ WorkQueue.prototype.isQueued = function(args) {
 };
 
 WorkQueue.prototype.addRecord = function(args) {
-    if (!args || !args.workRoom) {
-        return ERR_INVALID_ARGS;
-    }
-
-    if (C.WORK_TYPES.indexOf(args.task) < 0) {
-        return ERR_INVALID_ARGS;
-    }
+    if (!args || !args.workRoom) return ERR_INVALID_ARGS;
+    if (C.WORK_TYPES.indexOf(args.task) < 0) return ERR_INVALID_ARGS;
 
     args.priority = args.priority || 100;
     args.creepLimit = args.creepLimit || 0;

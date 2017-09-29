@@ -63,7 +63,10 @@ directorMining.prototype.doSourceMining = function(room) {
 
         let process = Game.kernel.getProcessByPid(this.processRecords[source.id]);
         if (!process) {
-            process = Game.kernel.startProcess(this, C.TASK_SOURCE, {});
+            process = Game.kernel.startProcess(this, C.TASK_SOURCE, {
+                spawnRoom: this.memory.spawnRoom,
+                workRoom: this.memory.workRoom,
+            });
             if (!process) {
                 logger.error('failed to create process ' + C.TASK_SOURCE);
                 return;

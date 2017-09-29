@@ -83,4 +83,4 @@ taskDismantle.prototype.doStore = function(creep) {
     creep.doEmpty(energyTargets, RESOURCE_ENERGY);
 };
 
-registerProcess('tasks/dismantle', taskDismantle);
+registerProcess(C.JOB_DISMANTLE, taskDismantle);

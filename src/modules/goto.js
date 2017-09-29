@@ -114,8 +114,12 @@ var gotoModule = {
         });
 
         let validRooms;
+        if (start.roomName !== target.roomName)
+            validRooms = this.findValidRooms(start.roomName, target.roomName, args);
 
         let callback = (roomName) => {
+            if (validRooms && !validRooms[roomName]) return false;
+
             if (this.memory.avoidRooms[roomName] && !args.allowAvoid) {
                 return false;
             }
@@ -139,8 +143,49 @@ var gotoModule = {
     },
 
     findValidRooms: function(start, target, args) {
+        _.defaults(args, {
+            restrictDistance: 16,
+            preferHighway: true,
+        });
 
-        return;
+        let validRooms = {
+            [start]: true,
+            [target]: true,
+        };
+
+        let callback = (roomName) => {
+            let parsedRoom = /^[WE]([0-9]+)[NS]([0-9]+)$/.exec(roomName);
+            let xMod = parsedRoom[1] % 10;
+            let yMod = parsedRoom[2] % 10;
+
+            if (args.preferHighway) {
+                if (xMod === 0 || yMod === 0) return 1;
+            }
+
+            if (!args.allowSK) {
+                if ((xMod >= 4 && xMod <= 6) &&
+                    (yMod >= 4 && yMod <= 6)
+                ) return 10;
+            }
+
+            if (!args.allowHostile && this.memory.avoidRooms[roomName] &&
+                roomName !== start && roomName !== target
+            ) return Number.POSITIVE_INFINITY;
+
+            return 2.5;
+        };
+
+        let route = Game.map.findRoute(start, target, {
+            routeCallback: callback,
+        });
+
+        if (!_.isArray(route)) return;
+
+        for (let record in route) {
+            validRooms[record.room] = true;
+        }
+
+        return validRooms;
     },
 
     getMap: function(room) {
