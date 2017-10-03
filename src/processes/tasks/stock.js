@@ -26,6 +26,12 @@ Object.defineProperty(taskStock.prototype, 'marketData', {
 });
 
 taskStock.prototype.run = function() {
+    if (!this.memory.spawnRoom || !this.memory.workRoom) {
+        Game.kernel.killProcess(this.pid);
+        return;
+    }
+
+    this.doSpawnDetails();
     this.doCreepSpawn();
 
     for (let i = 0; i < this.memory.creeps.length; i++) {
@@ -235,4 +241,32 @@ taskStock.prototype.stateFillTerminal = function(creep) {
     }
 };
 
-registerProcess('tasks/stock', taskStock);
+taskStock.prototype.doSpawnDetails = function() {
+    if (this.memory._sleepSpawnDetails && this.memory._sleepSpawnDetails > Game.time) return;
+    this.memory._sleepSpawnDetails = Game.time + (C.TASK_SPAWN_DETAILS_SLEEP + Math.floor(Math.random() * 20));
+
+    let workRoom = Game.rooms[this.memory.workRoom];
+    if (!workRoom || !workRoom.storage ||
+        !workRoom.controller || !workRoom.controller.my
+    ) return;
+
+    let limit = 0;
+    if (_.filter(workRoom.getLinks(), structure =>
+        structure.memory.type == 'storage').length > 0) {
+        limit = 1;
+    }
+
+    let spawnDetail = {
+        role: C.ROLE_STOCKER,
+        priority: 49,
+        spawnRoom: this.memory.spawnRoom,
+        creepArgs: {},
+        maxSize: 9999,
+        minSize: 200,
+        limit: limit,
+    };
+
+    this.setSpawnDetails(spawnDetail);
+};
+
+registerProcess(C.TASK_STOCK, taskStock);

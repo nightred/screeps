@@ -55,7 +55,7 @@ taskDismantle.prototype.doWork = function(creep) {
             C.WORK_DISMANTLE,
         ];
 
-        if (!creep.getWork(workTasks)) {
+        if (!creep.getWork(workTasks), {}) {
             creep.sleep();
             creep.say('💤');
 
@@ -83,4 +83,4 @@ taskDismantle.prototype.doStore = function(creep) {
     creep.doEmpty(energyTargets, RESOURCE_ENERGY);
 };
 
-registerProcess('tasks/dismantle', taskDismantle);
+registerProcess(C.JOB_DISMANTLE, taskDismantle);

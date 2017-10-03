@@ -15,14 +15,11 @@ Mineral.prototype.getContainer = function() {
 }
 
 Mineral.prototype.getContainerAtRange = function(size) {
-    let room = this.room;
-    let targets = room.lookForAtArea(LOOK_STRUCTURES, this.pos.y - size, this.pos.x - size, this.pos.y + size, this.pos.x + size, true);
+    let targets = this.room.lookForAtArea(LOOK_STRUCTURES, this.pos.y - size, this.pos.x - size, this.pos.y + size, this.pos.x + size, true);
     targets = _.filter(targets, target =>
         target.structure.structureType == STRUCTURE_CONTAINER
     );
-
     if (targets.length <= 0) return;
-
     targets[0].structure.memory.type = 'in';
     return targets[0].structure.id;
 }

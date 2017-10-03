@@ -78,15 +78,15 @@ var gotoModule = {
 
             gotoData.cpu = (Game.cpu.getUsed() - cpuStart);
             if (gotoData.cpu > C.GOTO_CPU_ALERT)
-                logger.alert('high cpu usage on creep: ' + creep.name +
-                    ', from: ' + creep.pos + ', to: ' + target +
-                    ', cpu used: ' + (gotoData.cpu).toFixed(2)
+                logger.alert('high cpu: ' + (gotoData.cpu).toFixed(2) +
+                    ', creep: ' + creep.name +
+                    ', from: ' + creep.pos + ', to: ' + target
                 );
 
             if (route.incomplete)
-                logger.debug('failed to find route for creep: ' + creep.name +
-                    ', from: ' + creep.pos + ', to: ' + target +
-                    ', cpu used: ' + (gotoData.cpu).toFixed(2)
+                logger.debug('failed to find route, cpu: ' + (gotoData.cpu).toFixed(2) +
+                    ', creep: ' + creep.name +
+                    ', from: ' + creep.pos + ', to: ' + target
                 );
 
             gotoData.path = serializePath(creep.pos, route.path);
@@ -114,8 +114,13 @@ var gotoModule = {
         });
 
         let validRooms;
+        if ((args.useFindRoute && start.roomName !== target.roomName) ||
+            Game.map.getRoomLinearDistance(start.roomName, target.roomName) > 2
+        ) validRooms = this.findValidRooms(start.roomName, target.roomName, args);
 
         let callback = (roomName) => {
+            if (validRooms && !validRooms[roomName]) return false;
+
             if (this.memory.avoidRooms[roomName] && !args.allowAvoid) {
                 return false;
             }
@@ -139,8 +144,49 @@ var gotoModule = {
     },
 
     findValidRooms: function(start, target, args) {
+        _.defaults(args, {
+            restrictDistance: 16,
+            preferHighway: true,
+        });
 
-        return;
+        let validRooms = {
+            [start]: true,
+            [target]: true,
+        };
+
+        let callback = (roomName) => {
+            let parsedRoom = /^[WE]([0-9]+)[NS]([0-9]+)$/.exec(roomName);
+            let xMod = parsedRoom[1] % 10;
+            let yMod = parsedRoom[2] % 10;
+
+            if (args.preferHighway) {
+                if (xMod === 0 || yMod === 0) return 1;
+            }
+
+            if (!args.allowSK) {
+                if ((xMod >= 4 && xMod <= 6) &&
+                    (yMod >= 4 && yMod <= 6)
+                ) return 10;
+            }
+
+            if (!args.allowAvoid && this.memory.avoidRooms[roomName] &&
+                roomName !== start && roomName !== target
+            ) return Number.POSITIVE_INFINITY;
+
+            return 2.5;
+        };
+
+        let route = Game.map.findRoute(start, target, {
+            routeCallback: callback,
+        });
+
+        if (!_.isArray(route)) return;
+
+        for (let record in route) {
+            validRooms[record.room] = true;
+        }
+
+        return validRooms;
     },
 
     getMap: function(room) {
@@ -169,13 +215,13 @@ var gotoModule = {
         for (let x = 0; x < 50; ++x) {
             for (let y = 0; y < 50; ++y) {
                 let cost = 2;
+                if (x == 0 || x == 49 || y == 0 || y == 49) cost = 25;
                 let terrain = Game.map.getTerrainAt(x, y, room.name);
                 if (terrain == 'wall') {
                     cost = 0xff;
                 } else if (terrain == 'swamp') {
                     cost = 5;
                 }
-                if (x == 0 || x == 49 || y == 0 || y == 49) cost = 25;
 
                 costs.set(x,y, cost);
             }
@@ -200,7 +246,7 @@ var gotoModule = {
                 construction.structureType === STRUCTURE_ROAD ||
                 construction.structureType === STRUCTURE_RAMPART
             ) continue;
-            costs.set(constuction.pos.x, construction.pos.y, 0xff);
+            costs.set(construction.pos.x, construction.pos.y, 0xff);
         }
 
         return costs;

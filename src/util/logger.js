@@ -43,7 +43,7 @@ Logger.prototype.log = function(level, message) {
         let logLevel = logLevelName[level];
 
         let output = '';
-        output += `<log severity="${logLevel}" style="${style}">`;
+        output += `<log severity="${logLevel}" style="white-space: pre-wrap;${style}">`;
         output += `[${Game.time}] [${logLevel}] ${this.prefix} ${message}`;
         output += `</log>`;
 

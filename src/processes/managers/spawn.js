@@ -87,24 +87,27 @@ Spawn.prototype.doSpawn = function(spawn, room) {
 
         if (minSize > spawnEnergy) continue;
 
-        let args = {
+        let memory = {
             spawnRoom: room.name,
             role: records[r].role
         };
 
         if (records[r].creepArgs) {
             for (let item in records[r].creepArgs) {
-                args[item] = records[r].creepArgs[item];
+                memory[item] = records[r].creepArgs[item];
             };
         }
 
-        let body = getRoleBody(records[r].role, spawnEnergy, args);
+        let body = getRoleBody(records[r].role, spawnEnergy, memory);
 
         if (getBodyCost(body) > spawnEnergy) continue;
 
-        let name = doSpawnCreep(spawn, body, args);
+        let name = getName(records[r].role);
+        let result = spawn.spawnCreep(body, name, {
+            memory: memory,
+        });
 
-        if (name != undefined && !(name < 0)) {
+        if (result === 0) {
             energy -= getBodyCost(body);
             records[r].spawned = true;
             records[r].name = name;
@@ -118,16 +121,6 @@ Spawn.prototype.doSpawn = function(spawn, room) {
             break;
         }
     }
-};
-
-/**
-* Spawn the creep
-* @param {Spawn} spawn The spawn to be used
-* @param {array} body The creep body
-* @param {Object} args Extra arguments
-**/
-var doSpawnCreep = function(spawn, body, args) {
-    return spawn.createCreep(body, getName(args.role), args);
 };
 
 /**

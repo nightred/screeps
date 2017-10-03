@@ -14,12 +14,11 @@ var CreepService = function() {
 CreepService.prototype.run = function() {
     let cpuStart = Game.cpu.getUsed();
 
-    let creepCount = 0;
+    let creepCount = Object.keys(Game.creeps).length;
 
     for (var name in Game.creeps) {
         var creep = Game.creeps[name];
         this.doCreep(creep);
-        creepCount++;
     }
 
     this.cleanCreep();
@@ -78,7 +77,7 @@ CreepService.prototype.cleanOldCreep = function(creepName) {
     logger.debug('clearing non-existant creep memory name: ' + creepName +
         ' role: ' + creepMemory.role
     );
-    
+
     if (creepMemory.workId) workRemoveCreep(creepName, creepMemory.workId);
     delete Memory.creeps[creepName];
 };

@@ -39,36 +39,35 @@ RoomManager.prototype.run = function() {
     let cpuStart = Game.cpu.getUsed();
 
     let room = Game.rooms[this.memory.roomName];
+    if (!room) return;
 
-    if (room) {
-        // clean memory
-        if (!this.memory.sleepCleanup || this.memory.sleepCleanup < Game.time) {
-            this.cleanContainers(room);
-            this.cleanTowers(room);
-            this.cleanLinks(room);
-            this.memory.sleepCleanup = C.MANAGE_MEMORY_TICKS + Game.time;
-        }
-
-        // controller room processes
-        if (room.controller && room.controller.my) {
-            this.cacheRoomLinks(room);
-            this.doLinks(room);
-
-            let towers = room.getTowers();
-            if (towers.length > 0) towers.forEach((tower) => this.doTower(tower));
-
-            this.doManagers();
-        }
-
-        // defense status
-        this.defenseStatus(room);
-
-        addTerminalLog(room.name, {
-            command: 'manager',
-            status: 'OK',
-            cpu: (Game.cpu.getUsed() - cpuStart),
-        })
+    // clean memory
+    if (!this.memory.sleepCleanup || this.memory.sleepCleanup < Game.time) {
+        this.cleanContainers(room);
+        this.cleanTowers(room);
+        this.cleanLinks(room);
+        this.memory.sleepCleanup = C.MANAGE_MEMORY_TICKS + Game.time;
     }
+
+    // controller room processes
+    if (room.controller && room.controller.my) {
+        this.cacheRoomLinks(room);
+        this.doLinks(room);
+
+        let towers = room.getTowers();
+        if (towers.length > 0) towers.forEach((tower) => this.doTower(tower));
+
+        this.doManagers();
+    }
+
+    // defense status
+    this.defenseStatus(room);
+
+    addTerminalLog(room.name, {
+        command: 'manager',
+        status: 'OK',
+        cpu: (Game.cpu.getUsed() - cpuStart),
+    });
 };
 
 RoomManager.prototype.defenseStatus = function(room) {
@@ -93,8 +92,7 @@ RoomManager.prototype.cleanContainers = function(room) {
         }
     }
 
-    var targets = room.getContainers();
-
+    let targets = room.getContainers();
     for (let target of targets) {
         if (!target.memory.type) target.memory.type = 'default';
     }
@@ -126,31 +124,28 @@ RoomManager.prototype.doTower = function(tower) {
 
 RoomManager.prototype.doTowerDefence = function(tower) {
     let targets = tower.room.getHostiles();
-
     targets = _.filter(targets, creep =>
         creep.owner &&
-        !isAlly(creep.owner.username));
-    if (!targets || targets.length == 0) { return false; }
+        !isAlly(creep.owner.username)
+    );
+
+    if (!targets || targets.length === 0) return false;
     targets = _.sortBy(targets, hostile => hostile.hits);
 
     tower.attack(targets[0]);
-
     return true
 };
 
 RoomManager.prototype.doTowerHeal = function(tower) {
     let targets = tower.room.getCreeps();
-
     if (!targets || targets.length == 0) return false;
 
     targets = _.filter(targets, creep => creep.hits < creep.hitsMax);
-
     if (!targets || targets.length == 0) return false;
 
     targets = _.sortBy(targets, creep => creep.hits);
 
     tower.heal(targets[0]);
-
     return true;
 };
 
@@ -165,7 +160,6 @@ RoomManager.prototype.doTowerRepair = function(tower) {
     }
 
     if (tower.energy < C.ENERGY_TOWER_REPAIR_MIN) return false;
-
     if (this.roomCache.length === 0) return false;
 
     let maxHits = Math.max.apply(null, this.roomCache.map(function(o) {
@@ -176,7 +170,6 @@ RoomManager.prototype.doTowerRepair = function(tower) {
         Math.abs(4 - tower.pos.getRangeTo(structure)) +
         (100 * (structure.hits / maxHits))
     );
-
     if (targets.length === 0) return false;
 
     tower.repair(targets[0]);
@@ -185,7 +178,6 @@ RoomManager.prototype.doTowerRepair = function(tower) {
 
 RoomManager.prototype.buildCache = function() {
     let room = Game.rooms[this.memory.roomName];
-
     let mod = 0;
 
     if (room.storage) {
@@ -214,7 +206,7 @@ RoomManager.prototype.buildCache = function() {
     let maxHitWall = C.WALL_HIT_MAX * mod;
 
     let structures = room.getStructures();
-    if (!structures || structures.length === 0) { return false; }
+    if (!structures || structures.length === 0) return false;
 
     _.filter(structures, structure =>
         (structure.structureType != STRUCTURE_WALL &&
@@ -233,18 +225,16 @@ RoomManager.prototype.buildCache = function() {
 };
 
 RoomManager.prototype.doManagers = function() {
-    let roomName = this.memory.roomName;
-
     if (!this.managerSpawn) {
         let proc = Game.kernel.startProcess(this, 'managers/spawn', {
-            roomName: roomName,
+            roomName: this.memory.roomName,
         });
         this.managerSpawn = proc;
     }
 
     if (!this.managerMarket) {
         let proc = Game.kernel.startProcess(this, 'managers/market', {
-            roomName: roomName,
+            roomName: this.memory.roomName,
         });
         this.managerMarket = proc;
     }

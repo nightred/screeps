@@ -46,16 +46,6 @@ Object.defineProperty(directorRemote.prototype, 'taskReserver', {
     },
 });
 
-Object.defineProperty(directorRemote.prototype, 'taskHaulers', {
-    get: function() {
-        if (!this.memory.haulersPid) return false;
-        return Game.kernel.getProcessByPid(this.memory.haulersPid);
-    },
-    set: function(value) {
-        this.memory.haulersPid = value.pid;
-    },
-});
-
 /**
 * @param {task} task the director task memory
 **/
@@ -70,7 +60,6 @@ directorRemote.prototype.run = function() {
     this.doScoutRoom();
 
     this.doReserver();
-    this.doInterHaulers();
 
     this.createWorkTasks();
     this.doDefense();
@@ -80,6 +69,11 @@ directorRemote.prototype.run = function() {
     if (this.memory.squadPid) {
         Game.kernel.killProcess(this.memory.squadPid);
         this.memory.squadPid = undefined;
+    }
+    // remove old interhaulers
+    if (this.memory.haulersPid) {
+        Game.kernel.killProcess(this.memory.haulersPid);
+        this.memory.haulersPid = undefined;
     }
 
     Game.kernel.sleepProcessbyPid(this.pid, (C.DIRECTOR_SLEEP + Math.floor(Math.random() * 20)));
@@ -134,99 +128,23 @@ directorRemote.prototype.createWorkTasks = function() {
     }
 };
 
-directorRemote.prototype.doInterHaulers = function() {
-    let spawnRoom = Game.rooms[this.memory.spawnRoom];
-    if (!spawnRoom || !spawnRoom.controller || !spawnRoom.controller.my) return;
-
-    let minSize = 200;
-    let maxSize = 200;
-
-    let rlevel = spawnRoom.controller.level;
-    if (rlevel == 1 || rlevel == 2 || rlevel == 3 || rlevel == 4) {
-        maxSize = 400;
-    } else if (rlevel == 5 || rlevel == 6) {
-        minSize = 400;
-        maxSize = 600;
-    } else if (rlevel == 7 || rlevel == 8) {
-        minSize = 500;
-        maxSize = 9999;
-    }
-
-    let limit = 2;
-
-    let process = this.taskHaulers;
-    if (!process) {
-        process = Game.kernel.startProcess(this, C.TASK_HAUL, {});
-        if (!process) {
-            logger.error('failed to create process ' + C.TASK_HAUL);
-            return;
-        }
-        this.taskHaulers = process;
-    }
-
-    process.setSpawnDetails({
-        spawnRoom: this.memory.spawnRoom,
-        role: C.ROLE_HAULER,
-        priority: 52,
-        maxSize: maxSize,
-        minSize: minSize,
-        limit: limit,
-        creepArgs: {
-            style: 'longhauler',
-            workRooms: this.memory.workRoom,
-        },
-    });
-
-};
-
 directorRemote.prototype.doReserver = function() {
-    let workRoom = Game.rooms[this.memory.workRoom];
-    if (!workRoom || !workRoom.controller) return;
-
-    let limit = 1;
-    if (!workRoom.controller.reservation ||
-        (workRoom.controller.reservation &&
-        workRoom.controller.reservation.ticksToEnd < C.CONTROLLER_RESERVE_MIN)
-    ) {
-        limit = 0;
-    }
-
-    let spawnRoom = Game.rooms[this.memory.spawnRoom];
-    if (spawnRoom && spawnRoom.storage &&
-        spawnRoom.storage.store[RESOURCE_ENERGY] < C.DIRECTOR_MIN_ENG_RESERVER
-    ) creepLimit = 0;
-
-    let process = this.taskReserver;
-    if (!process) {
-        process = Game.kernel.startProcess(this, C.TASK_RESERVE, {});
-        if (!process) {
-            logger.error('failed to create process ' + C.TASK_RESERVE);
-            return;
-        }
+    if (!this.taskReserver) {
+        let process = Game.kernel.startProcess(this, C.TASK_RESERVE, {
+            workRoom: this.memory.workRoom,
+            spawnRoom: this.memory.spawnRoom,
+        });
         this.taskReserver = process;
     }
-
-    process.setSpawnDetails({
-        spawnRoom: this.memory.spawnRoom,
-        role: C.ROLE_CONTROLLER,
-        priority: 70,
-        maxSize: 9999,
-        minSize: 0,
-        limit: limit,
-        creepArgs: {
-            style: 'reserve',
-            workRooms: this.memory.workRoom,
-        },
-    });
 };
 
 directorRemote.prototype.doDirectors = function() {
     if (!this.directorMining) {
-        let proc = Game.kernel.startProcess(this, C.DIRECTOR_MINING, {
+        let process = Game.kernel.startProcess(this, C.DIRECTOR_MINING, {
             workRoom: this.memory.workRoom,
             spawnRoom: this.memory.spawnRoom,
         });
-        this.directorMining = proc;
+        this.directorMining = process;
     }
 };
 

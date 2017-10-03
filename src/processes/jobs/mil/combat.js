@@ -138,4 +138,4 @@ taskMilCombat.prototype.doRally = function(creep) {
     creep.moveToIdlePosition();
 };
 
-registerProcess(C.TASK_MIL_COMBAT, taskMilCombat);
+registerProcess(C.JOB_MIL_COMBAT, taskMilCombat);

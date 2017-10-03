@@ -12,6 +12,12 @@ var taskResupply = function() {
 _.merge(taskResupply.prototype, require('lib.spawncreep'));
 
 taskResupply.prototype.run = function() {
+    if (!this.memory.spawnRoom || !this.memory.workRoom) {
+        Game.kernel.killProcess(this.pid);
+        return;
+    }
+
+    this.doSpawnDetails();
     this.doCreepSpawn();
 
     for (let i = 0; i < this.memory.creeps.length; i++) {
@@ -90,4 +96,41 @@ taskResupply.prototype.storeEnergy = function(creep) {
     creep.doEmpty(targets, RESOURCE_ENERGY);
 };
 
-registerProcess('tasks/resupply', taskResupply);
+taskResupply.prototype.doSpawnDetails = function() {
+    if (this.memory._sleepSpawnDetails && this.memory._sleepSpawnDetails > Game.time) return;
+    this.memory._sleepSpawnDetails = Game.time + (C.TASK_SPAWN_DETAILS_SLEEP + Math.floor(Math.random() * 20));
+
+    let spawnRoom = Game.rooms[this.memory.spawnRoom];
+    if (!spawnRoom || !spawnRoom.controller || !spawnRoom.controller.my) return;
+
+    let minSize = 200;
+    let maxSize = 200;
+
+    let rlevel = spawnRoom.controller.level;
+    if (rlevel == 4 || rlevel == 5 || rlevel == 6)  {
+        maxSize = 500;
+    } else if (rlevel == 7 || rlevel == 8) {
+        maxSize = 9999;
+    }
+
+    let limit = 1;
+
+    let spawnDetail = {
+        role: C.ROLE_RESUPPLY,
+        priority: 10,
+        spawnRoom: this.memory.spawnRoom,
+        creepArgs: {},
+        maxSize: maxSize,
+        minSize: minSize,
+        limit: limit,
+    };
+
+    if (this.memory.spawnRoom !== this.memory.workRoom) {
+        spawnDetail.creepArgs.style = 'longhauler';
+        spawnDetail.minSize = minSize;
+    }
+
+    this.setSpawnDetails(spawnDetail);
+};
+
+registerProcess(C.TASK_RESUPPLY, taskResupply);

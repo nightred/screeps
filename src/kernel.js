@@ -214,10 +214,9 @@ Kernel.prototype.createProcess = function(pid) {
 };
 
 Kernel.prototype.killProcess = function(pid) {
-    if (this.processTable[pid]) {
-        logger.debug(`killed process ${this.processTable[pid].name} : ${this.processTable[pid].pid}`);
-        this.processTable[pid].status = 'killed';
-    }
+    if (!this.processTable[pid]) return;
+    logger.debug(`killed process ${this.processTable[pid].name} : ${this.processTable[pid].pid}`);
+    this.processTable[pid].status = 'killed';
 
     for (var opid in this.processTable) {
         if (this.processTable[opid].parentPID === pid &&
@@ -225,6 +224,12 @@ Kernel.prototype.killProcess = function(pid) {
             this.killProcess(opid)
         }
     }
+};
+
+Kernel.prototype.setParent = function(pid, parentPID = 0) {
+    if (!this.processTable[pid]) return;
+    if (parentPID === undefined) parentPID = 0;
+    this.processTable[pid].parentPID = parentPID;
 };
 
 Kernel.prototype.sleepProcessbyPid = function(pid, sleepTime) {

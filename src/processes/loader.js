@@ -52,19 +52,27 @@ Object.defineProperty(Loader.prototype, 'serviceMarket', {
 Loader.prototype.run = function() {
     // check default services have been started
     if (!this.serviceFlag) {
-        this.serviceFlag = Game.kernel.startProcess(this, 'services/flag', {});
+        let process = Game.kernel.startProcess(this, 'services/flag', {});
+        //Game.kernel.setParent(process.pid);
+        this.serviceFlag = process;
     }
 
     if (!this.serviceRoom) {
-        this.serviceRoom = Game.kernel.startProcess(this, 'services/room', {});
+        let process = Game.kernel.startProcess(this, 'services/room', {});
+        //Game.kernel.setParent(process.pid);
+        this.serviceRoom = process;
     }
 
     if (!this.serviceCreep) {
-        this.serviceCreep = Game.kernel.startProcess(this, 'services/creep', {});
+        let process = Game.kernel.startProcess(this, 'services/creep', {});
+        //Game.kernel.setParent(process.pid);
+        this.serviceCreep = process;
     }
 
     if (!this.serviceMarket) {
-        this.serviceMarket = Game.kernel.startProcess(this, 'services/market', {});
+        let process = Game.kernel.startProcess(this, 'services/market', {});
+        //Game.kernel.setParent(process.pid);
+        this.serviceMarket = process;
     }
 };
 

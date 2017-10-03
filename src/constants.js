@@ -46,7 +46,7 @@ Constant.LINK_OUT_MAX_ENERGY            = 0.8;
 Constant.TERMINAL_ENERGY_MAX            = 0.2;
 
 Constant.CONTROLLER_WITHDRAW_LEVEL      = 2;
-Constant.CONTROLLER_RESERVE_MAX         = 4000;
+Constant.CONTROLLER_RESERVE_MAX         = 3000;
 Constant.CONTROLLER_RESERVE_MIN         = 1000;
 
 Constant.MANAGE_MEMORY_TICKS            = 20;
@@ -100,11 +100,15 @@ Constant.MARKET_SURPLUS_SLEEP           = 100;
 
 Constant.WORK_FIND_SLEEP                = 12;
 
+Constant.SERVICE_SLEEP                  = 8;
+
+Constant.TASK_SPAWN_DETAILS_SLEEP       = 18;
+
 Constant.DIRECTOR_SLEEP                 = 24;
 Constant.DIRECTOR_MIN_ENG_UPGRADERS     = 12000;
 Constant.DIRECTOR_MIN_ENG_MINERAL       = 15000;
-Constant.DIRECTOR_MIN_ENG_RESERVER      = 10000;
-Constant.DIRECTOR_MIN_ENG_TECH          = 5000;
+Constant.DIRECTOR_MIN_ENG_RESERVER      = 2000;
+Constant.DIRECTOR_MIN_ENG_TECH          = 4000;
 
 Constant.CACHE_SLEEP                    = 100;
 Constant.CACHE = {
@@ -144,14 +148,12 @@ Constant.ROLE_TYPES = [
     Constant.ROLE_COMBAT_MILITIA,
 ];
 
-Constant.DIRECTOR_FIELDTECH             = 'directors/fieldtech';
 Constant.DIRECTOR_MINING                = 'directors/mining';
 Constant.DIRECTOR_REMOTE                = 'directors/remote';
 Constant.DIRECTOR_ROOM                  = 'directors/room';
 Constant.DIRECTOR_TECH                  = 'directors/tech';
 
 Constant.DIRECTOR_TYPES = [
-    Constant.DIRECTOR_FIELDTECH,
     Constant.DIRECTOR_MINING,
     Constant.DIRECTOR_REMOTE,
     Constant.DIRECTOR_ROOM,
@@ -161,7 +163,6 @@ Constant.DIRECTOR_TYPES = [
 Constant.DIRECTOR_FLAG_MAP = {
     'room':         Constant.DIRECTOR_ROOM,
     'remote':       Constant.DIRECTOR_REMOTE,
-    'fieldtech':    Constant.DIRECTOR_FIELDTECH,
     'reserve':      Constant.DIRECTOR_RESERVE,
 };
 
@@ -171,13 +172,10 @@ Constant.TASK_UPGRADE                   = 'tasks/upgrade';
 Constant.TASK_HAUL                      = 'tasks/haul';
 Constant.TASK_STOCK                     = 'tasks/stock';
 Constant.TASK_TECH                      = 'tasks/tech';
-Constant.TASK_FIELDTECH                 = 'tasks/fieldtech';
 Constant.TASK_SCOUT                     = 'tasks/scout';
 Constant.TASK_RESERVE                   = 'tasks/reserve';
 Constant.TASK_MINERAL                   = 'tasks/mineral';
 Constant.TASK_MILITIA                   = 'tasks/militia';
-Constant.TASK_DISMANTLE                 = 'tasks/dismantle';
-Constant.TASK_MIL_COMBAT                = 'tasks/mil/combat';
 
 Constant.TASK_TYPES = [
     Constant.TASK_SOURCE,
@@ -186,13 +184,20 @@ Constant.TASK_TYPES = [
     Constant.TASK_HAUL,
     Constant.TASK_STOCK,
     Constant.TASK_TECH,
-    Constant.TASK_FIELDTECH,
     Constant.TASK_SCOUT,
     Constant.TASK_RESERVE,
     Constant.TASK_MINERAL,
     Constant.TASK_MILITIA,
-    Constant.TASK_DISMANTLE,
-    Constant.TASK_MIL_COMBAT,
+];
+
+Constant.JOB_FIELDTECH                  = 'jobs/fieldtech';
+Constant.JOB_DISMANTLE                  = 'jobs/dismantle';
+Constant.JOB_MIL_COMBAT                 = 'jobs/mil/combat';
+
+Constant.JOB_TYPES = [
+    Constant.JOB_FIELDTECH,
+    Constant.JOB_DISMANTLE,
+    Constant.JOB_MIL_COMBAT,
 ];
 
 Constant.WORK_TOWER_REFILL              = 'towerfill';
