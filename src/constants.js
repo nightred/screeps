@@ -46,7 +46,7 @@ Constant.LINK_OUT_MAX_ENERGY            = 0.8;
 Constant.TERMINAL_ENERGY_MAX            = 0.2;
 
 Constant.CONTROLLER_WITHDRAW_LEVEL      = 2;
-Constant.CONTROLLER_RESERVE_MAX         = 4000;
+Constant.CONTROLLER_RESERVE_MAX         = 3000;
 Constant.CONTROLLER_RESERVE_MIN         = 1000;
 
 Constant.MANAGE_MEMORY_TICKS            = 20;
@@ -102,11 +102,13 @@ Constant.WORK_FIND_SLEEP                = 12;
 
 Constant.SERVICE_SLEEP                  = 8;
 
+Constant.TASK_SPAWN_DETAILS_SLEEP       = 18;
+
 Constant.DIRECTOR_SLEEP                 = 24;
 Constant.DIRECTOR_MIN_ENG_UPGRADERS     = 12000;
 Constant.DIRECTOR_MIN_ENG_MINERAL       = 15000;
-Constant.DIRECTOR_MIN_ENG_RESERVER      = 10000;
-Constant.DIRECTOR_MIN_ENG_TECH          = 5000;
+Constant.DIRECTOR_MIN_ENG_RESERVER      = 2000;
+Constant.DIRECTOR_MIN_ENG_TECH          = 4000;
 
 Constant.CACHE_SLEEP                    = 100;
 Constant.CACHE = {

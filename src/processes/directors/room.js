@@ -56,16 +56,6 @@ Object.defineProperty(directorRoom.prototype, 'taskResuppliers', {
     },
 });
 
-Object.defineProperty(directorRoom.prototype, 'taskHaulers', {
-    get: function() {
-        if (!this.memory.haulersPid) return false;
-        return Game.kernel.getProcessByPid(this.memory.haulersPid);
-    },
-    set: function(value) {
-        this.memory.haulersPid = value.pid;
-    },
-});
-
 Object.defineProperty(directorRoom.prototype, 'taskStockers', {
     get: function() {
         if (!this.memory.stockersPid) return false;
@@ -83,202 +73,44 @@ directorRoom.prototype.run = function() {
     let workRoom = Game.rooms[this.memory.workRoom];
     if (!workRoom || !workRoom.controller || !workRoom.controller.my) return;
 
-    this.doUpgradersTask();
-    this.doResuppliersTask();
-    this.doHaulersTask();
-    this.doStockersTask();
-
     this.doDefense();
 
     this.doDirectors();
+    this.doTasks();
+
+    // remove old Haulers
+    if (this.memory.haulersPid) {
+        Game.kernel.killProcess(this.memory.haulersPid);
+        this.memory.haulersPid = undefined;
+    }
 
     Game.kernel.sleepProcessbyPid(this.pid, (C.DIRECTOR_SLEEP + Math.floor(Math.random() * 8)));
 };
 
-directorRoom.prototype.doStockersTask = function() {
-    let workRoom = Game.rooms[this.memory.workRoom];
-    if (!workRoom || !workRoom.storage ||
-        !workRoom.controller || !workRoom.controller.my
-    ) {
-        return false;
-    }
-
-    let creepLimit = 0;
-    if (_.filter(workRoom.getLinks(), structure =>
-        structure.memory.type == 'storage').length > 0) {
-        creepLimit = 1;
-    }
-
-    let process = this.taskStockers;
-    if (!process) {
-        process = Game.kernel.startProcess(this, C.TASK_STOCK, {});
-        if (!process) {
-            logger.error('failed to create process ' + C.TASK_STOCK);
-            return;
-        }
+directorRoom.prototype.doTasks = function() {
+    if (!this.taskStockers) {
+        let process = Game.kernel.startProcess(this, C.TASK_STOCK, {
+            workRoom: this.memory.workRoom,
+            spawnRoom: this.memory.spawnRoom,
+        });
         this.taskStockers = process;
     }
 
-    process.setSpawnDetails({
-        spawnRoom: this.memory.spawnRoom,
-        role: C.ROLE_STOCKER,
-        priority: 49,
-        minSize: 200,
-        maxSize: 9999,
-        limit: creepLimit,
-        creepArgs: {
-            workRooms: this.memory.workRoom,
-        },
-    });
-};
-
-directorRoom.prototype.doHaulersTask = function() {
-    let spawnRoom = Game.rooms[this.memory.spawnRoom];
-    if (!spawnRoom || !spawnRoom.controller || !spawnRoom.controller.my) return;
-
-    let workRoom = Game.rooms[this.memory.workRoom];
-    if (!workRoom) return;
-
-    let minSize = 200;
-    let maxSize = 200;
-
-    let rlevel = spawnRoom.controller.level;
-    if (rlevel == 1 || rlevel == 2)  {
-        maxSize = 300;
-    } else if (rlevel == 3 || rlevel == 4) {
-        maxSize = 400;
-    } else if (rlevel == 5 || rlevel == 6) {
-        maxSize = 500;
-    } else if (rlevel == 7 || rlevel == 8) {
-        maxSize = 9999;
-    }
-
-    let creepLimit = _.filter(workRoom.getContainers(), structure =>
-        structure.memory.type == 'in'
-    ).length;
-
-    let process = this.taskHaulers;
-    if (!process) {
-        process = Game.kernel.startProcess(this, C.TASK_HAUL, {});
-        if (!process) {
-            logger.error('failed to create process ' + C.TASK_HAUL);
-            return;
-        }
-        this.taskHaulers = process;
-    }
-
-    process.setSpawnDetails({
-        spawnRoom: this.memory.spawnRoom,
-        role: C.ROLE_HAULER,
-        priority: 52,
-        maxSize: maxSize,
-        minSize: minSize,
-        limit: creepLimit,
-        creepArgs: {
-            workRooms: this.memory.workRoom,
-            style: 'default',
-        },
-    });
-};
-
-directorRoom.prototype.doResuppliersTask = function() {
-    let spawnRoom = Game.rooms[this.memory.spawnRoom];
-    if (!spawnRoom || !spawnRoom.controller || !spawnRoom.controller.my) return;
-
-    let minSize = 200;
-    let maxSize = 200;
-
-    let rlevel = spawnRoom.controller.level;
-    if (rlevel == 4 || rlevel == 5 || rlevel == 6)  {
-        maxSize = 500;
-    } else if (rlevel == 7 || rlevel == 8) {
-        maxSize = 9999;
-    }
-
-    let creepLimit = 2;
-
-    let process = this.taskResuppliers;
-    if (!process) {
-        process = Game.kernel.startProcess(this, C.TASK_RESUPPLY, {});
-        if (!process) {
-            logger.error('failed to create process ' + C.TASK_RESUPPLY);
-            return;
-        }
+    if (!this.taskResuppliers) {
+        let process = Game.kernel.startProcess(this, C.TASK_RESUPPLY, {
+            workRoom: this.memory.workRoom,
+            spawnRoom: this.memory.spawnRoom,
+        });
         this.taskResuppliers = process;
     }
 
-    process.setSpawnDetails({
-        spawnRoom: this.memory.spawnRoom,
-        role: C.ROLE_RESUPPLY,
-        priority: 10,
-        maxSize: maxSize,
-        minSize: minSize,
-        limit: creepLimit,
-        creepArgs: {
-            workRooms: this.memory.workRoom,
-        },
-    });
-};
-
-directorRoom.prototype.doUpgradersTask = function() {
-    let spawnRoom = Game.rooms[this.memory.spawnRoom];
-    if (!spawnRoom || !spawnRoom.controller || !spawnRoom.controller.my) return;
-
-    let minSize = 200;
-    let maxSize = 9999;
-
-    let rlevel = spawnRoom.controller.level;
-    if (rlevel == 3) {
-        minSize = 300;
-    } else if (rlevel == 4 || rlevel == 5 || rlevel == 6) {
-        minSize = 400;
-    } else if (rlevel == 7 || rlevel == 8) {
-        minSize = 600;
-    }
-
-    let creepLimit = 2;
-    let storageEnergy = spawnRoom.storage.store[RESOURCE_ENERGY];
-    if (spawnRoom.storage && rlevel < 8 && rlevel >= 4) {
-        if (storageEnergy < 50000 ) {
-            creepLimit = 1;
-        } else if (storageEnergy < 80000 ) {
-            creepLimit = 2;
-        } else if (storageEnergy < 150000 ) {
-            creepLimit = 3;
-        } else if (storageEnergy < 200000 ) {
-            creepLimit = 4;
-        } else if (storageEnergy >= 200000 ) {
-            creepLimit = 5;
-        }
-    } else if (spawnRoom.controller.level == 8 ) {
-        creepLimit = 1;
-        this.memory.rcl8 = this.memory.rcl8 ? this.memory.rcl8 : 1;
-    }
-    if (spawnRoom.storage && storageEnergy < C.DIRECTOR_MIN_ENG_UPGRADERS)
-        creepLimit = 0;
-
-    let process = this.taskUpgraders;
-    if (!process) {
-        process = Game.kernel.startProcess(this, C.TASK_UPGRADE, {});
-        if (!process) {
-            logger.error('failed to create process ' + C.TASK_UPGRADE);
-            return;
-        }
+    if (!this.taskUpgraders) {
+        let process = Game.kernel.startProcess(this, C.TASK_UPGRADE, {
+            workRoom: this.memory.workRoom,
+            spawnRoom: this.memory.spawnRoom,
+        });
         this.taskUpgraders = process;
     }
-
-    process.setSpawnDetails({
-        spawnRoom: this.memory.spawnRoom,
-        role: C.ROLE_UPGRADER,
-        priority: 60,
-        maxSize: maxSize,
-        minSize: minSize,
-        limit: creepLimit,
-        creepArgs: {
-            workRooms: this.memory.workRoom,
-            rcl8: this.memory.rcl8,
-        },
-    });
 };
 
 directorRoom.prototype.doDirectors = function() {

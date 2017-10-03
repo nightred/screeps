@@ -102,7 +102,7 @@ Work.prototype.addCreep = function(creepName, id) {
 
     for (let i = (workTask.creeps.length - 1); i >= 0; i--) {
         if (!Game.creeps[workTask.creeps[i]])
-            work.creeps.splice(i, 1);
+            workTask.creeps.splice(i, 1);
     }
 
     if (workTask.creeps.length < workTask.creepLimit) {

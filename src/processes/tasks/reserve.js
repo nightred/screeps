@@ -12,6 +12,12 @@ var taskReserve = function() {
 _.merge(taskReserve.prototype, require('lib.spawncreep'));
 
 taskReserve.prototype.run = function() {
+    if (!this.memory.spawnRoom || !this.memory.workRoom) {
+        Game.kernel.killProcess(this.pid);
+        return;
+    }
+
+    this.doSpawnDetails();
     this.doCreepSpawn();
 
     for (let i = 0; i < this.memory.creeps.length; i++) {
@@ -34,8 +40,8 @@ taskReserve.prototype.doCreepActions = function(creep) {
 
     if (Game.cpu.bucket < 2000) return;
 
-    if (creep.room.name != creep.memory.workRooms) {
-        creep.moveToRoom(creep.memory.workRooms);
+    if (creep.room.name != this.memory.workRoom) {
+        creep.moveToRoom(this.memory.workRoom);
         return;
     }
 
@@ -50,6 +56,38 @@ taskReserve.prototype.doCreepActions = function(creep) {
     }
 
     creep.reserveController(creep.room.controller);
+};
+
+taskReserve.prototype.doSpawnDetails = function() {
+    if (this.memory._sleepSpawnDetails && this.memory._sleepSpawnDetails > Game.time) return;
+    this.memory._sleepSpawnDetails = Game.time + (C.TASK_SPAWN_DETAILS_SLEEP + Math.floor(Math.random() * 20));
+
+    let workRoom = Game.rooms[this.memory.workRoom];
+    if (!workRoom || !workRoom.controller) return;
+
+    let limit = 1;
+    if (workRoom.controller.reservation &&
+        workRoom.controller.reservation.ticksToEnd > C.CONTROLLER_RESERVE_MAX
+    ) limit = 0;
+
+    let spawnRoom = Game.rooms[this.memory.spawnRoom];
+    if (spawnRoom && spawnRoom.storage &&
+        spawnRoom.storage.store[RESOURCE_ENERGY] < C.DIRECTOR_MIN_ENG_RESERVER
+    ) Limit = 0;
+
+    let spawnDetail = {
+        role: C.ROLE_CONTROLLER,
+        priority: 70,
+        spawnRoom: this.memory.spawnRoom,
+        creepArgs: {
+            style: 'reserve',
+        },
+        maxSize: 9999,
+        minSize: 200,
+        limit: limit,
+    };
+
+    this.setSpawnDetails(spawnDetail);
 };
 
 registerProcess('tasks/reserve', taskReserve);

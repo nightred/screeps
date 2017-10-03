@@ -78,15 +78,15 @@ var gotoModule = {
 
             gotoData.cpu = (Game.cpu.getUsed() - cpuStart);
             if (gotoData.cpu > C.GOTO_CPU_ALERT)
-                logger.alert('high cpu usage on creep: ' + creep.name +
-                    ', from: ' + creep.pos + ', to: ' + target +
-                    ', cpu used: ' + (gotoData.cpu).toFixed(2)
+                logger.alert('high cpu: ' + (gotoData.cpu).toFixed(2) +
+                    ', creep: ' + creep.name +
+                    ', from: ' + creep.pos + ', to: ' + target
                 );
 
             if (route.incomplete)
-                logger.debug('failed to find route for creep: ' + creep.name +
-                    ', from: ' + creep.pos + ', to: ' + target +
-                    ', cpu used: ' + (gotoData.cpu).toFixed(2)
+                logger.debug('failed to find route, cpu: ' + (gotoData.cpu).toFixed(2) +
+                    ', creep: ' + creep.name +
+                    ', from: ' + creep.pos + ', to: ' + target
                 );
 
             gotoData.path = serializePath(creep.pos, route.path);
@@ -114,8 +114,9 @@ var gotoModule = {
         });
 
         let validRooms;
-        if (start.roomName !== target.roomName)
-            validRooms = this.findValidRooms(start.roomName, target.roomName, args);
+        if ((args.useFindRoute && start.roomName !== target.roomName) ||
+            Game.map.getRoomLinearDistance(start.roomName, target.roomName) > 2
+        ) validRooms = this.findValidRooms(start.roomName, target.roomName, args);
 
         let callback = (roomName) => {
             if (validRooms && !validRooms[roomName]) return false;
@@ -168,7 +169,7 @@ var gotoModule = {
                 ) return 10;
             }
 
-            if (!args.allowHostile && this.memory.avoidRooms[roomName] &&
+            if (!args.allowAvoid && this.memory.avoidRooms[roomName] &&
                 roomName !== start && roomName !== target
             ) return Number.POSITIVE_INFINITY;
 
@@ -214,13 +215,13 @@ var gotoModule = {
         for (let x = 0; x < 50; ++x) {
             for (let y = 0; y < 50; ++y) {
                 let cost = 2;
+                if (x == 0 || x == 49 || y == 0 || y == 49) cost = 25;
                 let terrain = Game.map.getTerrainAt(x, y, room.name);
                 if (terrain == 'wall') {
                     cost = 0xff;
                 } else if (terrain == 'swamp') {
                     cost = 5;
                 }
-                if (x == 0 || x == 49 || y == 0 || y == 49) cost = 25;
 
                 costs.set(x,y, cost);
             }
@@ -245,7 +246,7 @@ var gotoModule = {
                 construction.structureType === STRUCTURE_ROAD ||
                 construction.structureType === STRUCTURE_RAMPART
             ) continue;
-            costs.set(constuction.pos.x, construction.pos.y, 0xff);
+            costs.set(construction.pos.x, construction.pos.y, 0xff);
         }
 
         return costs;

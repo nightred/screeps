@@ -19,60 +19,19 @@ var libDefense = {
         }
 
         if (this.memory.workRoom == this.memory.spawnRoom) {
-            this.doSquadDefenseSpawnLimits();
+            this.doMilitiaTask();
         }
 
         this.doDefenseModeRoom(room);
     },
 
-    doSquadDefenseSpawnLimits: function(room) {
-        let spawnRoom = Game.rooms[this.memory.spawnRoom];
-        if (!spawnRoom || !spawnRoom.controller || !spawnRoom.controller.my) return;
-
-        let creepLimit = 0;
-        let minSize = 200;
-        let maxSize = 200;
-
-        let rlevel = spawnRoom.controller.level;
-        if (rlevel == 2 || rlevel == 3) {
-            minSize = 200;
-            maxSize = 300;
-            creepLimit = 1;
-        } else if (rlevel == 4 || rlevel == 5 || rlevel == 6) {
-            minSize = 200;
-            maxSize = 500;
-            creepLimit = 1;
-        } else if (rlevel == 7) {
-           minSize = 200;
-           maxSize = 800;
-           creepLimit = 1;
-        } else if (rlevel == 8) {
-            minSize = 400;
-            maxSize = 9999;
-            creepLimit = 2;
-        }
-
-        let process = Game.kernel.getProcessByPid(this.memory.militiaPid);
-        if (!process) {
-            process = Game.kernel.startProcess(this, C.TASK_MILITIA, {});
-            if (!process) {
-                logger.error('failed to create process ' + C.TASK_MILITIA);
-                return;
-            }
+    doMilitiaTask: function() {
+        if (!Game.kernel.getProcessByPid(this.memory.militiaPid)) {
+            process = Game.kernel.startProcess(this, C.TASK_MILITIA, {
+                spawnRoom: this.memory.spawnRoom,
+            });
             this.memory.militiaPid = process.pid;
         }
-
-        process.setSpawnDetails({
-            spawnRoom: this.memory.spawnRoom,
-            role: C.ROLE_COMBAT_MILITIA,
-            priority: 38,
-            maxSize: maxSize,
-            minSize: minSize,
-            limit: creepLimit,
-            creepArgs: {
-                workRooms: this.memory.workRoom,
-            },
-        });
     },
 
     doDefenseModeRoom: function(room) {

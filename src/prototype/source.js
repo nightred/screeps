@@ -24,6 +24,16 @@ Source.prototype.getDropContainer = function() {
     return this.memory.containerId;
 }
 
+Source.prototype.getContainerIn = function() {
+    if (Game.getObjectById(this.memory._containerInId))
+        return this.memory._containerInId;
+
+    let targetId = this.getContainerAtRange(2);
+    this.memory._containerInId = targetId;
+
+    return this.memory._containerInId;
+}
+
 Source.prototype.getLocalContainer = function() {
     if (Game.getObjectById(this.memory.containerId)) {
         return this.memory.containerId;
@@ -44,13 +54,12 @@ Source.prototype.getLocalContainer = function() {
 Source.prototype.getContainerAtRange = function(size) {
     let targets = this.room.lookForAtArea(LOOK_STRUCTURES, this.pos.y - size, this.pos.x - size, this.pos.y + size, this.pos.x + size, true);
     targets = _.filter(targets, target => target.structure.structureType == STRUCTURE_CONTAINER);
-
     if (targets.length > 0) {
         targets[0].structure.memory.type = 'in';
         return targets[0].structure.id;
     }
 
-    return false;
+    return;
 }
 
 Source.prototype.getLinkAtRange = function(size) {

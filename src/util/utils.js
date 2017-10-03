@@ -28,19 +28,20 @@ global.setPidStatus = function(pid, status = 'running') {
     Memory.kernel.processTable[pid].error = undefined;
 };
 
-global.restartCrashed = function() {
+global.restartCrashed = function(report = false) {
     let psOutput = _.filter(Memory.kernel.processTable, procInfo =>
         procInfo.status == 'crashed'
     );
 
     for (let i in psOutput) {
         setPidStatus(psOutput[i].pid, 'running');
+        if (report) crashReport(psOutput[i].pid);
     }
 
     printProcessTable(psOutput, Object.keys(psOutput).length);
 };
 
-global.printCrashReport = function(pid) {
+global.crashReport = function(pid) {
     let output = 'Crash report for pid: ' + pid;
     if (Memory.kernel.processTable[pid])
         output += '\n' +Memory.kernel.processTable[pid].error;
@@ -66,8 +67,13 @@ global.resetKernel = function(accept = false) {
     Memory.rooms = {};
 };
 
-global.psTop = function(count = 10, status) {
+global.psTop = function(count, status) {
     if (!Memory.kernel.processTable) return;
+
+    if (isNaN(count)) {
+        if (count !== undefined) status = count;
+        count = 10;
+    }
 
     let psOutput = JSON.parse(JSON.stringify(Memory.kernel.processTable));
 
@@ -88,6 +94,7 @@ global.ps = function(pid = 0) {
     let indent = {
         hasNextSibling:         '├',
         isLastChild:            '└',
+        hasChild:               '┬',
         ancestorHasNextSibling: '│',
         ancestorIsLastChild:    ' ',
     };
@@ -99,6 +106,7 @@ global.ps = function(pid = 0) {
             });
 
         	node.indent.push(levelMap[depth] = tree.length -1 > idx ? indent.hasNextSibling : indent.isLastChild);
+            if (node.children.length > 0) node.indent.push(indent.hasChild);
 
             psOutput.push({
                 indent: node.indent.join(''),
@@ -154,7 +162,7 @@ var processTableTree = function() {
 
         item.children = children[pid];
 
-        if (parentPID != 0) {
+        if (parentPID !== 0 && parentPID !== undefined ) {
             children[parentPID] = children[parentPID] || [];
             children[parentPID].push(item)
         } else {

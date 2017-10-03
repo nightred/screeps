@@ -22,11 +22,12 @@ Object.defineProperty(taskSource.prototype, 'taskHaulers', {
 });
 
 taskSource.prototype.run = function() {
-    if (!this.memory.spawnRoom || !this.memory.workRoom) {
+    if (!this.memory.spawnRoom || !this.memory.workRoom || !this.memory.sourceId) {
         Game.kernel.killProcess(this.pid);
         return;
     }
 
+    this.doSpawnDetails();
     this.doCreepSpawn();
 
     for (let i = 0; i < this.memory.creeps.length; i++) {
@@ -35,7 +36,7 @@ taskSource.prototype.run = function() {
         this.doCreepActions(creep);
     }
 
-    this.doInterHaulers();
+    this.doHaulers();
 };
 
 /**
@@ -70,7 +71,7 @@ taskSource.prototype.doEmpty = function(creep) {
         'storage',
     ];
 
-    let source = Game.getObjectById(creep.memory.sourceId);
+    let source = Game.getObjectById(this.memory.sourceId);
 
     if (!creep.memory.goingTo && source) {
         creep.memory.goingTo = source.getLocalContainer();
@@ -83,8 +84,8 @@ taskSource.prototype.doEmpty = function(creep) {
 * @param {Creep} creep The creep object
 **/
 taskSource.prototype.doWork = function(creep) {
-    if (creep.room.name != creep.memory.workRooms) {
-        creep.moveToRoom(creep.memory.workRooms);
+    if (creep.room.name != this.memory.workRoom) {
+        creep.moveToRoom(this.memory.workRoom);
         return;
     }
 
@@ -102,7 +103,7 @@ taskSource.prototype.doWork = function(creep) {
 * @param {Creep} creep The creep object
 **/
 taskSource.prototype.doHarvest = function(creep) {
-    let source = Game.getObjectById(creep.memory.sourceId);
+    let source = Game.getObjectById(this.memory.sourceId);
 
     if (!creep.pos.inRangeTo(source, 1)) {
         creep.goto(source, {
@@ -129,10 +130,9 @@ taskSource.prototype.doHarvest = function(creep) {
 };
 
 taskSource.prototype.doDropHarvest = function(creep) {
-    let source = Game.getObjectById(creep.memory.sourceId);
+    let source = Game.getObjectById(this.memory.sourceId);
 
     let target = Game.getObjectById(source.getDropContainer());
-
     if (!target) {
         source.clearContainer();
         creep.doDespawn();
@@ -156,54 +156,52 @@ taskSource.prototype.doDropHarvest = function(creep) {
     creep.harvest(source);
 };
 
-taskSource.prototype.doInterHaulers = function() {
-    if (this.memory.spawnRoom !== this.memory.workRoom) return;
-    
-    if (this.memory.sleepInterHaulers && this.memory.sleepInterHaulers > Game.time)
-        return;
-    this.memory.sleepInterHaulers = Game.time + (C.DIRECTOR_SLEEP + Math.floor(Math.random() * 20));
+taskSource.prototype.doSpawnDetails = function() {
+    if (this.memory._sleepSpawnDetails && this.memory._sleepSpawnDetails > Game.time) return;
+    this.memory._sleepSpawnDetails = Game.time + (C.TASK_SPAWN_DETAILS_SLEEP + Math.floor(Math.random() * 20));
 
-    let spawnRoom = Game.rooms[this.memory.spawnRoom];
-    if (!spawnRoom || !spawnRoom.controller || !spawnRoom.controller.my) return;
-
-    let minSize = 200;
-    let maxSize = 200;
-
-    let rlevel = spawnRoom.controller.level;
-    if (rlevel == 1 || rlevel == 2 || rlevel == 3 || rlevel == 4) {
-        maxSize = 400;
-    } else if (rlevel == 5 || rlevel == 6) {
-        minSize = 400;
-        maxSize = 600;
-    } else if (rlevel == 7 || rlevel == 8) {
-        minSize = 500;
-        maxSize = 9999;
+    let source = Game.getObjectById(this.memory.sourceId);
+    if (!source) return;
+    let style = 'default';
+    if (source.getDropContainer()) {
+        style = 'drop';
+    } else if (this.memory.spawnRoom != this.memory.workRoom) {
+        style = 'ranged';
     }
 
-    let limit = 1;
+    let spawnDetail = {
+        role: C.ROLE_MINER,
+        priority: 50,
+        spawnRoom: this.memory.spawnRoom,
+        creepArgs: {
+            style: style,
+        },
+        maxSize: 9999,
+        minSize: 200,
+        limit: 1,
+    };
+
+    this.setSpawnDetails(spawnDetail);
+};
+
+taskSource.prototype.doHaulers = function() {
+    if (this.memory._sleepHaulers && this.memory._sleepHaulers > Game.time) return;
+    this.memory._sleepHaulers = Game.time + (C.DIRECTOR_SLEEP + Math.floor(Math.random() * 20));
+
+    let source = Game.getObjectById(this.memory.sourceId);
+    if (!source) return;
+    let containerInID = source.getContainerIn();
+    if (!containerInID) return;
 
     let process = this.taskHaulers;
     if (!process) {
-        process = Game.kernel.startProcess(this, C.TASK_HAUL, {});
-        if (!process) {
-            logger.error('failed to create process ' + C.TASK_HAUL);
-            return;
-        }
+        process = Game.kernel.startProcess(this, C.TASK_HAUL, {
+            spawnRoom: this.memory.spawnRoom,
+            workRoom: this.memory.workRoom,
+            containerId: containerInID,
+        });
         this.taskHaulers = process;
     }
-
-    process.setSpawnDetails({
-        spawnRoom: this.memory.spawnRoom,
-        role: C.ROLE_HAULER,
-        priority: 52,
-        maxSize: maxSize,
-        minSize: minSize,
-        limit: limit,
-        creepArgs: {
-            style: 'longhauler',
-            workRooms: this.memory.workRoom,
-        },
-    });
 };
 
 registerProcess('tasks/source', taskSource);

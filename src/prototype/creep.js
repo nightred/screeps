@@ -115,14 +115,13 @@ Creep.prototype.hasWork = function() {
 }
 
 Creep.prototype.leaveWork = function() {
-    if (this.memory.workId) {
-        workRemoveCreep(this.name, this.memory.workId);
-        this.memory.workId = undefined;
-    }
+    if (!this.memory.workId) return;
+    workRemoveCreep(this.name, this.memory.workId);
+    this.memory.workId = undefined;
 }
 
 Creep.prototype.getWork = function(workTasks, args = {}) {
-    if (!Array.isArray(workTasks)) { return ERR_INVALID_ARGS; }
+    if (!Array.isArray(workTasks)) return ERR_INVALID_ARGS;
 
     if (!args.ignoreRoom && !args.spawnRoom && !args.room && !args.rooms) {
         if (this.memory.workRoom) {
@@ -133,13 +132,9 @@ Creep.prototype.getWork = function(workTasks, args = {}) {
     }
 
     let workId = getWorkTask(workTasks, this, args);
-
-    if (!workId) {
-        return false;
-    }
+    if (!workId) return false;
 
     this.memory.workId = workId;
-
     return true;
 }
 

@@ -52,18 +52,10 @@ directorMining.prototype.doSourceMining = function(room) {
 
     for (let i = 0; i < sources.length; i++) {
         let source = Game.getObjectById(sources[i]);
-        if (!source) continue;
-
-        let style = 'default';
-        if (source.getDropContainer()) {
-            style = 'drop';
-        } else if (this.memory.spawnRoom != this.memory.roomName) {
-            style = 'ranged';
-        }
-
         let process = Game.kernel.getProcessByPid(this.processRecords[source.id]);
         if (!process) {
             process = Game.kernel.startProcess(this, C.TASK_SOURCE, {
+                sourceId: source.id,
                 spawnRoom: this.memory.spawnRoom,
                 workRoom: this.memory.workRoom,
             });
@@ -73,20 +65,6 @@ directorMining.prototype.doSourceMining = function(room) {
             }
             this.processRecords[source.id] = process.pid;
         }
-
-        process.setSpawnDetails({
-            spawnRoom: this.memory.spawnRoom,
-            role: C.ROLE_MINER,
-            priority: 50,
-            maxSize: 9999,
-            minSize: 200,
-            limit: 1,
-            creepArgs: {
-                workRooms: this.memory.workRoom,
-                sourceId: source.id,
-                style: style,
-            },
-        });
     }
 };
 
@@ -102,41 +80,20 @@ directorMining.prototype.doMineralMining = function(room) {
         return;
     }
 
-    let style = 'default';
-    if (mineral.getContainer()) style = 'drop';
-
-    let spawnRoom = Game.rooms[this.memory.spawnRoom];
-    if (!spawnRoom) return;
-
-    let creepLimit = 1;
-    if (spawnRoom.storage &&
-        spawnRoom.storage.store[RESOURCE_ENERGY] < C.DIRECTOR_MIN_ENG_MINERAL
-    ) creepLimit = 0;
-
     let process = Game.kernel.getProcessByPid(this.processRecords[mineral.id]);
     if (!process) {
-        process = Game.kernel.startProcess(this, C.TASK_MINERAL, {});
+        process = Game.kernel.startProcess(this, C.TASK_MINERAL, {
+            mineralId: mineral.id,
+            extractorId: extractors[0],
+            spawnRoom: this.memory.spawnRoom,
+            workRoom: this.memory.workRoom,
+        });
         if (!process) {
             logger.error('failed to create process ' + C.TASK_MINERAL);
             return;
         }
         this.processRecords[mineral.id] = process.pid;
     }
-
-    process.setSpawnDetails({
-        spawnRoom: this.memory.spawnRoom,
-        role: C.ROLE_MINER,
-        priority: 85,
-        maxSize: 9999,
-        minSize: 200,
-        limit: creepLimit,
-        creepArgs: {
-            workRooms: this.memory.workRoom,
-            mineralId: mineral.id,
-            extractorId: extractors[0],
-            style: style,
-        },
-    });
 };
 
 registerProcess(C.DIRECTOR_MINING, directorMining);

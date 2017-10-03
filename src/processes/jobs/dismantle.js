@@ -55,7 +55,7 @@ taskDismantle.prototype.doWork = function(creep) {
             C.WORK_DISMANTLE,
         ];
 
-        if (!creep.getWork(workTasks)) {
+        if (!creep.getWork(workTasks), {}) {
             creep.sleep();
             creep.say('💤');
 

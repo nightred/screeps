@@ -62,10 +62,9 @@ Flag.prototype.doDirectorFlag = function(flag) {
         }
 
         let imageName = C.DIRECTOR_FLAG_MAP[flagVars[1]];
-
         let process = Game.kernel.startProcess(this, imageName, {});
-
-        process.flag(roomName, flagVars)
+        process.flag(roomName, flagVars);
+        //Game.kernel.setParent(process.pid);
 
         flag.memory.pid = process.pid;
         flag.memory.init = 1;

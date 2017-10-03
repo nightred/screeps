@@ -56,7 +56,7 @@ taskFieldTech.prototype.doWork = function(creep) {
             C.WORK_SIGNCONTROLLER,
         ];
 
-        if (!creep.getWork(workTasks)) {
+        if (!creep.getWork(workTasks), {}) {
             creep.sleep();
             creep.say('💤');
 

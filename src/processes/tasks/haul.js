@@ -5,6 +5,9 @@
  *
  */
 
+var logger = new Logger('[Task Haul]');
+logger.level = C.LOGLEVEL.DEBUG;
+
 var taskHaul = function() {
     // init
 };
@@ -12,6 +15,17 @@ var taskHaul = function() {
 _.merge(taskHaul.prototype, require('lib.spawncreep'));
 
 taskHaul.prototype.run = function() {
+    if (!this.memory.spawnRoom || !this.memory.workRoom || !this.memory.containerId) {
+        logger.debug('removing process missing values\n' +
+            'spawnRoom: ' + this.memory.spawnRoom +
+            ', workRoom: ' + this.memory.workRoom +
+            ', containerId: ' + this.memory.containerId
+        );
+        Game.kernel.killProcess(this.pid);
+        return;
+    }
+
+    this.doSpawnDetails();
     this.doCreepSpawn();
 
     for (let i = 0; i < this.memory.creeps.length; i++) {
@@ -52,8 +66,8 @@ taskHaul.prototype.doTransfer = function(creep) {
         }
     }
 
-    if (creep.room.name != creep.memory.spawnRoom) {
-        creep.moveToRoom(creep.memory.spawnRoom);
+    if (creep.room.name != this.memory.spawnRoom) {
+        creep.moveToRoom(this.memory.spawnRoom);
         return;
     }
 
@@ -76,23 +90,15 @@ taskHaul.prototype.doTransfer = function(creep) {
 };
 
 taskHaul.prototype.doWithdraw = function(creep) {
-    if (creep.room.name != creep.memory.workRooms) {
-        creep.moveToRoom(creep.memory.workRooms);
+    if (creep.room.name !== this.memory.workRoom) {
+        creep.moveToRoom(this.memory.workRoom);
         return;
     }
 
-    if (creep.memory.containerId) {
-        this.doWithdrawFromContainer(creep);
-        return;
-    }
-
-    creep.doFill([ 'containerIn', ]);
-};
-
-taskHaul.prototype.doWithdrawFromContainer = function(creep) {
-    let container = Game.getObjectById(creep.memory.containerId);
+    let container = Game.getObjectById(this.memory.containerId);
     if (!container) {
-        creep.memory.containerId = undefined;
+        logger.debug('container missing killing the process')
+        Game.kernel.killProcess(this.pid);
         return;
     }
 
@@ -107,60 +113,104 @@ taskHaul.prototype.doWithdrawFromContainer = function(creep) {
     }
 
     creep.doWithdraw(container);
+    creep.state = 'wait';
 };
 
 taskHaul.prototype.manageState = function(creep) {
-    if (creep.state == 'init') {
-        creep.state = 'withdraw';
-        return;
+    if (creep.state == 'init') creep.state = 'wait';
+
+    if (creep.state == 'transfer') {
+        this.stateTransferToWait(creep);
     }
 
-    if (creep.state == 'withdraw' && this.stateTransfer(creep)) return;
-    if (creep.state == 'transfer' && this.stateWithdraw(creep)) return;
-};
-
-taskHaul.prototype.stateTransfer = function(creep) {
-    if (creep.isFull() || !creep.isEmptyEnergy()) {
-        creep.state = 'transfer'
-        return true;
-    }
-
-    if (creep.room.name == creep.memory.spawnRoom &&
-        creep.room.controller &&
-        creep.room.controller.my &&
-        creep.room.controller.level >= 6 &&
-        !creep.isEmpty()
-    ) {
-        creep.state = 'transfer'
-        return true;
-    }
-
-    if (creep.memory.containerId) {
-        let container = Game.getObjectById(creep.memory.containerId);
-        if (!container) return;
-
-        if (_.sum(container.store) === 0 && !creep.isEmpty()) {
-            creep.state = 'transfer'
-            return true;
-        }
+    if (creep.state == 'wait') {
+        if (this.stateWaitToWithdraw(creep)) return;
+        if (this.stateWaitToTransfer(creep)) return;
     }
 };
 
-taskHaul.prototype.stateWithdraw = function(creep) {
+taskHaul.prototype.stateTransferToWait = function(creep) {
     if (creep.isEmpty()) {
-        creep.state = 'withdraw'
+        creep.state = 'wait';
         return true;
     }
 
-    if (creep.room.name == creep.memory.spawnRoom &&
+    if (creep.room.name == this.memory.spawnRoom &&
         creep.room.controller &&
         creep.room.controller.my &&
         creep.room.controller.level < 4 &&
         creep.isEmptyEnergy()
     ) {
-        creep.state = 'withdraw'
+        creep.state = 'wait';
         return true;
     }
+};
+
+taskHaul.prototype.stateWaitToTransfer = function(creep) {
+    if (!creep.isEmpty()) {
+        creep.state = 'transfer'
+        return true;
+    }
+};
+
+taskHaul.prototype.stateWaitToWithdraw = function(creep) {
+    if (creep.isEmpty()) {
+        creep.state = 'withdraw';
+        return true;
+    }
+
+    if (creep.room.name == this.memory.spawnRoom &&
+        creep.room.controller &&
+        creep.room.controller.my &&
+        creep.room.controller.level < 4 &&
+        creep.isEmptyEnergy()
+    ) {
+        creep.state = 'withdraw';
+        return true;
+    }
+};
+
+taskHaul.prototype.doSpawnDetails = function() {
+    if (this.memory._sleepSpawnDetails && this.memory._sleepSpawnDetails > Game.time) return;
+    this.memory._sleepSpawnDetails = Game.time + (C.TASK_SPAWN_DETAILS_SLEEP + Math.floor(Math.random() * 20));
+
+    let spawnRoom = Game.rooms[this.memory.spawnRoom];
+    if (!spawnRoom || !spawnRoom.controller || !spawnRoom.controller.my) return;
+
+    let minSize = 200;
+    let maxSize = 200;
+
+    let rlevel = spawnRoom.controller.level;
+    if (rlevel == 1 || rlevel == 2)  {
+        maxSize = 300;
+    } else if (rlevel == 3 || rlevel == 4) {
+        maxSize = 400;
+    } else if (rlevel == 5 || rlevel == 6) {
+        minSize = 400;
+        maxSize = 600;
+    } else if (rlevel == 7 || rlevel == 8) {
+        minSize = 500;
+        maxSize = 9999;
+    }
+
+    let spawnDetail = {
+        role: C.ROLE_HAULER,
+        priority: 52,
+        spawnRoom: this.memory.spawnRoom,
+        creepArgs: {
+            style: 'default',
+        },
+        maxSize: maxSize,
+        minSize: 200,
+        limit: 1,
+    };
+
+    if (this.memory.spawnRoom !== this.memory.workRoom) {
+        spawnDetail.creepArgs.style = 'longhauler';
+        spawnDetail.minSize = minSize;
+    }
+
+    this.setSpawnDetails(spawnDetail);
 };
 
 registerProcess('tasks/haul', taskHaul);
