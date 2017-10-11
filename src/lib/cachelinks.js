@@ -3,7 +3,6 @@
  */
 
 var logger = new Logger('[LibCacheLinks]');
-logger.level = C.LOGLEVEL.DEBUG;
 
 var libCacheLinks = {
 

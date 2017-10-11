@@ -6,7 +6,6 @@
  */
 
 var logger = new Logger('[Queue Spawn]');
-logger.level = C.LOGLEVEL.INFO;
 
 var SpawnQueue = function() {
     // init

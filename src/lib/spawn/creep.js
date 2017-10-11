@@ -3,7 +3,6 @@
  */
 
 var logger = new Logger('[LibSpawnCreep]');
-logger.level = C.LOGLEVEL.DEBUG;
 
 var libSpawnCreep = {
 

@@ -6,13 +6,12 @@
  */
 
 var logger = new Logger('[Task Mineral]');
-logger.level = C.LOGLEVEL.DEBUG;
 
 var taskMineral = function() {
     // init
 };
 
-_.merge(taskMineral.prototype, require('lib.spawncreep'));
+_.merge(taskMineral.prototype, require('lib.spawn.creep'));
 
 Object.defineProperty(taskMineral.prototype, 'taskHaulers', {
     get: function() {
@@ -133,7 +132,7 @@ taskMineral.prototype.doWork = function(creep) {
     }
 
     if (Memory.world.mineralDisable) return;
-    if (Game.time % 5 !== 0) return;
+    if (Game.time % 6 !== 0) return;
     creep.harvest(mineral)
 };
 

@@ -6,7 +6,6 @@
  */
 
 var logger = new Logger('[Cache]');
-logger.level = C.LOGLEVEL.DEBUG;
 
 var CacheModule = {
 

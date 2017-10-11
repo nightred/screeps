@@ -6,11 +6,10 @@
  */
 
 var logger = new Logger('[Room Manager]');
-logger.level = C.LOGLEVEL.DEBUG;
 
 var directorRoom = function() {
     // init
-}
+};
 
 _.merge(directorRoom.prototype, require('lib.containers'));
 _.merge(directorRoom.prototype, require('lib.sources'));

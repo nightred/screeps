@@ -9,7 +9,7 @@ var taskUpgrade = function() {
     // init
 };
 
-_.merge(taskUpgrade.prototype, require('lib.spawncreep'));
+_.merge(taskUpgrade.prototype, require('lib.spawn.creep'));
 
 taskUpgrade.prototype.run = function() {
     if (!this.memory.spawnRoom || !this.memory.workRoom) {
@@ -113,25 +113,29 @@ taskUpgrade.prototype.doSpawnDetails = function() {
     let limit = 2;
     let rcl8 = 0;
     let storageEnergy = 0;
-    if (spawnRoom.storage && rlevel < 8 && rlevel >= 4) {
+    if (spawnRoom.storage) {
         storageEnergy = spawnRoom.storage.store[RESOURCE_ENERGY];
-        if (storageEnergy < 50000 ) {
-            limit = 1;
-        } else if (storageEnergy < 80000 ) {
-            limit = 2;
-        } else if (storageEnergy < 150000 ) {
-            limit = 3;
-        } else if (storageEnergy < 200000 ) {
-            limit = 4;
-        } else if (storageEnergy >= 200000 ) {
-            limit = 5;
+        if (rlevel < 8 && rlevel >= 4) {
+            if (storageEnergy < C.DIRECTOR_MIN_ENG_UPGRADERS) {
+                limit = 0;
+            } else if (storageEnergy < 50000 ) {
+                limit = 1;
+            } else if (storageEnergy < 80000 ) {
+                limit = 2;
+            } else if (storageEnergy < 150000 ) {
+                limit = 3;
+            } else if (storageEnergy < 200000 ) {
+                limit = 4;
+            } else if (storageEnergy >= 200000 ) {
+                limit = 5;
+            }
         }
-    } else if (spawnRoom.controller.level == 8 ) {
+    }
+
+    if (spawnRoom.controller.level == 8 ) {
         limit = 1;
         rcl8 = 1;
     }
-    if (spawnRoom.storage && storageEnergy < C.DIRECTOR_MIN_ENG_UPGRADERS)
-        limit = 0;
 
     let spawnDetail = {
         role: C.ROLE_UPGRADER,

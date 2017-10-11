@@ -3,7 +3,6 @@
  */
 
 var logger = new Logger('[LibLinks]');
-logger.level = C.LOGLEVEL.DEBUG;
 
 var libLinks = {
 

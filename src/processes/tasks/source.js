@@ -9,7 +9,7 @@ var taskSource = function() {
     // init
 };
 
-_.merge(taskSource.prototype, require('lib.spawncreep'));
+_.merge(taskSource.prototype, require('lib.spawn.creep'));
 
 Object.defineProperty(taskSource.prototype, 'taskHaulers', {
     get: function() {

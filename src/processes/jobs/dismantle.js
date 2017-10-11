@@ -6,36 +6,58 @@
  *
  */
 
+var logger = new Logger('[Job Dismantle]');
+
 var taskDismantle = function() {
     // init
 };
 
-taskDismantle.prototype.run = function() {
-    let creep = Game.creeps[this.memory.creepName];
+_.merge(taskDismantle.prototype, require('lib.spawn.group'));
 
-    if (!creep) {
+taskDismantle.prototype.run = function() {
+    if (!this.memory.spawnRoom || !this.memory.workRoom ||
+        !this.memory.spawn || this.memory.flagTag
+    ) {
+        logger.debug('removing process, missing needed values\n' +
+            'spawnRoom: ' + this.memory.spawnRoom +
+            ', workRoom: ' + this.memory.workRoom +
+            ', spawn: ' + this.memory.spawn +
+            ', flagTag: ' + this.memory.flagTag
+        );
         Game.kernel.killProcess(this.pid);
         return;
     }
 
-    if (creep.getOffExit()) {
+    this.doCreepSpawn();
+    this.doCreepCleanup();
+
+    if (this.memory._spawnComplete && _.isEmpty(this.memory.creeps)) {
+        logger.alert('completed job, all creeps have been removed, removing process');
+        Game.kernel.killProcess(this.pid);
         return;
     }
 
-    if (creep.isSleep()) {
-        creep.moveToIdlePosition();
-        return;
+    for (let role in this.memory.creeps) {
+        for (let i = 0; i < this.memory.creeps[role].length; i++) {
+            let creep = Game.creeps[this.memory.creeps[role][i]];
+            if (!creep) continue;
+            this.doCreepActions(creep);
+        }
     }
+};
+
+/**
+* @param {Creep} creep The creep object
+**/
+taskDismantle.prototype.doCreepActions = function(creep) {
+    if (creep.spawning) return;
+    if (creep.getOffExit()) return;
 
     if (creep.manageState()) {
         if (creep.isWorking()) {
             creep.say('⚙');
-
-            creep.memory.harvestTarget = false;
         } else {
             creep.say('🔋');
-
-            creep.leaveWork();
         }
     }
 
@@ -50,37 +72,42 @@ taskDismantle.prototype.run = function() {
 * @param {Creep} creep
 **/
 taskDismantle.prototype.doWork = function(creep) {
-    if (!creep.hasWork()) {
-        let workTasks = [
-            C.WORK_DISMANTLE,
-        ];
-
-        if (!creep.getWork(workTasks), {}) {
-            creep.sleep();
-            creep.say('💤');
-
-            return;
-        }
+    if (!this.memory._targetId) this.memory._targetId = this.getFlagTargetId();
+    let target = Game.getObjectById(this.memory._targetId);
+    if (!target) {
+        this.memory._targetId = undefined;
+        return;
     }
 
-    creep.doWork();
+    if (!creep.pos.inRangeTo(target, 1)) {
+        creep.goto(target, {
+            range: 1,
+            maxRooms: 1,
+        });
+        return;
+    }
+
+    creep.dismantle(target);
+};
+
+taskDismantle.prototype.getFlagTargetId = function() {
+    let flag = Game.flags[this.memory.flagTag];
+    if (!flag) return;
+    let structure = flag.pos.getStructure();
+    if (!structure) return;
+    return structure.id;
 };
 
 /**
 * @param {Creep} creep
 **/
 taskDismantle.prototype.doStore = function(creep) {
-    if (creep.room.name != creep.memory.spawnRoom) {
-        creep.moveToRoom(creep.memory.spawnRoom);
+    if (creep.room.name !== this.memory.spawnRoom) {
+        creep.moveToRoom(this.memory.spawnRoom);
         return;
     }
 
-    let energyTargets = [
-        'storage',
-        'container',
-    ];
-
-    creep.doEmpty(energyTargets, RESOURCE_ENERGY);
+    creep.doEmpty([ 'storage', 'container', ], RESOURCE_ENERGY);
 };
 
 registerProcess(C.JOB_DISMANTLE, taskDismantle);

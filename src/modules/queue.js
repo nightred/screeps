@@ -8,7 +8,6 @@
  */
 
 var logger = new Logger('[Queue]');
-logger.level = C.LOGLEVEL.INFO;
 
 require('modules.queue.spawn');
 require('modules.queue.work');
@@ -56,7 +55,7 @@ Queue.prototype.addRecord = function(args) {
 
     let id = getId();
     if (args.id) id = args.id;
-    
+
     let record = {
         id: id,
         tick: Game.time,

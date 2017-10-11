@@ -6,13 +6,12 @@
  */
 
 var logger = new Logger('[Task Haul]');
-logger.level = C.LOGLEVEL.DEBUG;
 
 var taskHaul = function() {
     // init
 };
 
-_.merge(taskHaul.prototype, require('lib.spawncreep'));
+_.merge(taskHaul.prototype, require('lib.spawn.creep'));
 
 taskHaul.prototype.run = function() {
     if (!this.memory.spawnRoom || !this.memory.workRoom || !this.memory.containerId) {

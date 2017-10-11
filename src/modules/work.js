@@ -6,7 +6,6 @@
  */
 
 var logger = new Logger('[Work]');
-logger.level = C.LOGLEVEL.DEBUG;
 
 // registry of work
 var workRegistry = {
@@ -108,8 +107,8 @@ Work.prototype.addCreep = function(creepName, id) {
     if (workTask.creeps.length < workTask.creepLimit) {
         workTask.creeps.push(creepName);
     } else {
-        logger.debug('work task id: ' + creep.memory.workId +
-            ', full when adding creep: ' + creep.name
+        logger.debug('work task id: ' + id +
+            ', full when adding creep: ' + creepName
         );
     }
 };
@@ -206,6 +205,5 @@ require('modules.work.attack');
 require('modules.work.claim');
 require('modules.work.construction');
 require('modules.work.defense');
-require('modules.work.dismantle');
 require('modules.work.repair');
 require('modules.work.signcontroller');

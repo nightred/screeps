@@ -4,11 +4,15 @@
  */
 
 var logger = new Logger('[Utils]');
-logger.level = C.LOGLEVEL.DEBUG;
 
 require('util.visuals');
 require('util.storage');
 require('util.allies');
+
+global.ex = function(img, args = {}) {
+    if (!img) return 'unknown process';
+    return Game.kernel.startProcess(undefined, img, args);
+};
 
 global.setLinkType = function(id, type) {
     if (!id) { return ERR_INVALID_ARGS; }

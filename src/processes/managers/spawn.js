@@ -6,7 +6,6 @@
  */
 
 var logger = new Logger('[Spawn Manager]');
-logger.level = C.LOGLEVEL.DEBUG;
 
 var Spawn = function() {
     // init

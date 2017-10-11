@@ -9,7 +9,7 @@ var taskTech = function() {
     // init
 };
 
-_.merge(taskTech.prototype, require('lib.spawncreep'));
+_.merge(taskTech.prototype, require('lib.spawn.creep'));
 
 taskTech.prototype.run = function() {
     if (!this.memory.spawnRoom) {

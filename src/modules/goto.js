@@ -6,7 +6,6 @@
  */
 
 var logger = new Logger('[goto]');
-logger.level = C.LOGLEVEL.INFO;
 
 if (!Memory.world) Memory.world = {};
 if (!Memory.world.avoidRooms) Memory.world.avoidRooms = {};
@@ -35,12 +34,6 @@ var gotoModule = {
 
         let gotoData = creep.memory._goto;
 
-        if (creep.fatigue > 0) {
-            visualCircle(creep.pos, 'aqua', 0.25);
-            gotoData.tick = Game.time;
-            return ERR_BUSY;
-        }
-
         let isStuck = false;
         if (gotoData.last) {
             gotoData.last = getPos(gotoData.last);
@@ -67,6 +60,11 @@ var gotoModule = {
         ) delete gotoData.path;
 
         gotoData.tick = Game.time;
+
+        if (creep.fatigue > 0) {
+            visualCircle(creep.pos, 'aqua', 0.25);
+            return ERR_BUSY;
+        }
 
         if (!gotoData.path) {
             gotoData.dest = target;

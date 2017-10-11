@@ -5,7 +5,6 @@
  */
 
 var logger = new Logger('[Service Creep]');
-logger.level = C.LOGLEVEL.INFO;
 
 var CreepService = function() {
     // init

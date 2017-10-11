@@ -6,13 +6,12 @@
  */
 
 var logger = new Logger('[Task Militia]');
-logger.level = C.LOGLEVEL.DEBUG;
 
 var taskMilitia = function() {
     // init
 };
 
-_.merge(taskMilitia.prototype, require('lib.spawncreep'));
+_.merge(taskMilitia.prototype, require('lib.spawn.creep'));
 
 taskMilitia.prototype.run = function() {
     if (!this.memory.spawnRoom) {

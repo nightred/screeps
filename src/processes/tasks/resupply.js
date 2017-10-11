@@ -9,7 +9,7 @@ var taskResupply = function() {
     // init
 };
 
-_.merge(taskResupply.prototype, require('lib.spawncreep'));
+_.merge(taskResupply.prototype, require('lib.spawn.creep'));
 
 taskResupply.prototype.run = function() {
     if (!this.memory.spawnRoom || !this.memory.workRoom) {
@@ -83,12 +83,9 @@ taskResupply.prototype.storeEnergy = function(creep) {
     ];
 
     let storage = creep.room.storage;
-
-    if (
-        storage &&
+    if (storage &&
         storage.store[RESOURCE_ENERGY] > (storage.storeCapacity * C.ENERGY_STORAGE_SECONDARY_MIN)
     ) {
-        targets.push('terminal');
         targets.push('nuker');
         targets.push('powerspawn');
     }
@@ -113,7 +110,7 @@ taskResupply.prototype.doSpawnDetails = function() {
         maxSize = 9999;
     }
 
-    let limit = 1;
+    let limit = 2;
 
     let spawnDetail = {
         role: C.ROLE_RESUPPLY,
@@ -124,11 +121,6 @@ taskResupply.prototype.doSpawnDetails = function() {
         minSize: minSize,
         limit: limit,
     };
-
-    if (this.memory.spawnRoom !== this.memory.workRoom) {
-        spawnDetail.creepArgs.style = 'longhauler';
-        spawnDetail.minSize = minSize;
-    }
 
     this.setSpawnDetails(spawnDetail);
 };

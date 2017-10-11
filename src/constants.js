@@ -24,7 +24,6 @@ Constant.VISUALS                        = true;
 Constant.ENERGY_ROOM_WITHDRAW_MIN       = 250;
 Constant.ENERGY_CREEP_SPAWN_MIN         = 200;
 Constant.ENERGY_TOWER_REPAIR_MIN        = 301;
-Constant.ENERGY_STORAGE_MIN_FILL_TOWER  = 0.02;
 Constant.ENERGY_CONTAINER_MAX_PERCENT   = 0.9;
 Constant.ENERGY_CONTAINER_MIN_PERCENT   = 0.1 ;
 Constant.ENERGY_CONTAINER_MIN_WITHDRAW  = 100;
@@ -36,6 +35,8 @@ Constant.ENERGY_LINK_STORAGE_MAX        = 0.8;
 Constant.ENERGY_STORAGE_MAX             = 0.6;
 Constant.ENERGY_CONTAINER_MAX           = 0.9;
 Constant.ENERGY_STORAGE_SECONDARY_MIN   = 0.14;
+
+Constant.WORK_TOWER_FILL_STORAGE_MIN    = 20000;
 
 Constant.LINK_STORAGE_TRANSFER_MIN      = 0.34;
 Constant.LINK_STORAGE_MAX_ENERGY        = 0.8;
@@ -104,6 +105,8 @@ Constant.SERVICE_SLEEP                  = 8;
 
 Constant.TASK_SPAWN_DETAILS_SLEEP       = 18;
 
+Constant.MANAGER_ROOM_VISION_MAX        = 3000;
+
 Constant.DIRECTOR_SLEEP                 = 24;
 Constant.DIRECTOR_MIN_ENG_UPGRADERS     = 12000;
 Constant.DIRECTOR_MIN_ENG_MINERAL       = 15000;
@@ -127,6 +130,7 @@ Constant.ROLE_RESUPPLY                  = 'resupply';
 Constant.ROLE_STOCKER                   = 'stocker';
 Constant.ROLE_SCOUT                     = 'scout';
 Constant.ROLE_CONTROLLER                = 'controller';
+Constant.ROLE_CLAIMER                   = 'claimer';
 Constant.ROLE_COMBAT_BRAWLER            = 'combatbrawler';
 Constant.ROLE_COMBAT_SWARMER            = 'combatswarmer';
 Constant.ROLE_COMBAT_MEDIC              = 'combatmedic';
@@ -142,6 +146,7 @@ Constant.ROLE_TYPES = [
     Constant.ROLE_STOCKER,
     Constant.ROLE_SCOUT,
     Constant.ROLE_CONTROLLER,
+    Constant.ROLE_CLAIMER,
     Constant.ROLE_COMBAT_BRAWLER,
     Constant.ROLE_COMBAT_SWARMER,
     Constant.ROLE_COMBAT_MEDIC,
@@ -163,9 +168,9 @@ Constant.DIRECTOR_TYPES = [
 Constant.DIRECTOR_FLAG_MAP = {
     'room':         Constant.DIRECTOR_ROOM,
     'remote':       Constant.DIRECTOR_REMOTE,
-    'reserve':      Constant.DIRECTOR_RESERVE,
 };
 
+Constant.TASK_FIELDTECH                 = 'tasks/fieldtech';
 Constant.TASK_SOURCE                    = 'tasks/source';
 Constant.TASK_RESUPPLY                  = 'tasks/resupply';
 Constant.TASK_UPGRADE                   = 'tasks/upgrade';
@@ -178,6 +183,7 @@ Constant.TASK_MINERAL                   = 'tasks/mineral';
 Constant.TASK_MILITIA                   = 'tasks/militia';
 
 Constant.TASK_TYPES = [
+    Constant.TASK_FIELDTECH,
     Constant.TASK_SOURCE,
     Constant.TASK_RESUPPLY,
     Constant.TASK_UPGRADE,
@@ -190,14 +196,20 @@ Constant.TASK_TYPES = [
     Constant.TASK_MILITIA,
 ];
 
-Constant.JOB_FIELDTECH                  = 'jobs/fieldtech';
+Constant.TASK_FLAG_MAP = {
+    'fieldtech':    Constant.TASK_FIELDTECH,
+};
+
+Constant.JOB_CLAIM                      = 'jobs/claim';
 Constant.JOB_DISMANTLE                  = 'jobs/dismantle';
 Constant.JOB_MIL_COMBAT                 = 'jobs/mil/combat';
+Constant.JOB_MIL_BRAWLGROUP             = 'jobs/mil/brawlgroup';
 
 Constant.JOB_TYPES = [
-    Constant.JOB_FIELDTECH,
+    Constant.JOB_CLAIM,
     Constant.JOB_DISMANTLE,
     Constant.JOB_MIL_COMBAT,
+    Constant.JOB_MIL_BRAWLGROUP,
 ];
 
 Constant.WORK_TOWER_REFILL              = 'towerfill';
@@ -265,6 +277,14 @@ Constant.LOGLEVEL = {
     ERROR:  4,
     FATAL:  5,
 };
-Constant.DEFAULT_LOGLEVEL = Constant.LOGLEVEL.INFO
 
-module.exports = Constant;
+Constant.DEFAULT_LOGLEVEL = Constant.LOGLEVEL.INFO;
+
+global.C = Constant;
+
+// load the enviroment variables
+try {
+    require('env_var');
+} catch (e) {
+    console.log('failed to load enviroment variables!\n' + e.stack);
+}

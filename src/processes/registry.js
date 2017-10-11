@@ -18,6 +18,7 @@ require('processes.managers.spawn');
 require('processes.managers.squad');
 
 // tasks
+require('processes.tasks.fieldtech');
 require('processes.tasks.haul');
 require('processes.tasks.mineral');
 require('processes.tasks.militia');
@@ -36,6 +37,7 @@ require('processes.directors.room');
 require('processes.directors.tech');
 
 // jobs
+require('processes.jobs.claim');
 require('processes.jobs.dismantle');
-require('processes.jobs.fieldtech');
 require('processes.jobs.mil.combat');
+require('processes.jobs.mil.brawlgroup');

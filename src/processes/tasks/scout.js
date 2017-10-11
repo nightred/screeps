@@ -6,7 +6,6 @@
  */
 
 var logger = new Logger('[Scout]');
-logger.level = C.LOGLEVEL.INFO;
 
 var taskScout = function() {
     // init
@@ -95,9 +94,7 @@ taskScout.prototype.spawnCreep = function() {
             minSize: 200,
             maxSize: 200,
             priority: 38,
-            creepArgs: {
-                workRooms: this.memory.workRooms,
-            },
+            creepArgs: {},
         });
     }
 };

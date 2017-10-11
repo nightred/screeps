@@ -84,11 +84,9 @@ var taskTowerFill = {
     * @param {Room} room The room object
     **/
     find: function(room) {
-        let storage = room.storage;
-        if (storage) {
-            let minEnergy = storage.storeCapacity * C.ENERGY_STORAGE_MIN_FILL_TOWER;
-            if (storage.store[RESOURCE_ENERGY] < minEnergy) return;
-        }
+        if (room.storage &&
+            room.storage.store[RESOURCE_ENERGY] < C.WORK_TOWER_FILL_STORAGE_MIN
+        ) return;
 
         let targets = _.filter(room.getTowers(), structure =>
             structure.energy < (structure.energyCapacity * C.REFILL_TOWER_MIN)

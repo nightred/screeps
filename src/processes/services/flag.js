@@ -6,7 +6,6 @@
  */
 
 var logger = new Logger('[Service Flag]');
-logger.level = C.LOGLEVEL.DEBUG;
 
 var Flag = function() {
     // init
@@ -64,7 +63,7 @@ Flag.prototype.doDirectorFlag = function(flag) {
         let imageName = C.DIRECTOR_FLAG_MAP[flagVars[1]];
         let process = Game.kernel.startProcess(this, imageName, {});
         process.flag(roomName, flagVars);
-        //Game.kernel.setParent(process.pid);
+        Game.kernel.setParent(process.pid);
 
         flag.memory.pid = process.pid;
         flag.memory.init = 1;
