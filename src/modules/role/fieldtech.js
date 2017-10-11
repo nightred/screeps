@@ -12,7 +12,7 @@ var roleFieldTech = {
     * @param {number} energy The amount of energy avalible
     * @param {Object} args Extra arguments
     **/
-    getBody: function(energy, args) {
+    getBody: function(energy, args = {}) {
         let workUnits = Math.floor((energy * 0.5) / 125);
         workUnits = workUnits < 1 ? 1 : workUnits;
         workUnits = workUnits > 10 ? 10 : workUnits;

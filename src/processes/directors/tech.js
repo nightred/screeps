@@ -6,7 +6,6 @@
  */
 
 var logger = new Logger('[Tech Director]');
-logger.level = C.LOGLEVEL.DEBUG;
 
 var directorTech = function() {
     // init

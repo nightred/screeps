@@ -6,7 +6,6 @@
  */
 
 var logger = new Logger('[Squad]');
-logger.level = C.LOGLEVEL.INFO;
 
 var Squad = function() {
     // init

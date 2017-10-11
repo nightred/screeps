@@ -5,7 +5,6 @@
  */
 
 var logger = new Logger('[Role]');
-logger.level = C.LOGLEVEL.DEBUG;
 
 // registry of roles
 var roleRegistry = {
@@ -44,6 +43,7 @@ global.getRoleBody = function(roleName, energy, args) {
 // load the roles
 require('modules.role.combat.brawler');
 require('modules.role.combat.militia');
+require('modules.role.claimer');
 require('modules.role.controller');
 require('modules.role.fieldtech');
 require('modules.role.hauler');

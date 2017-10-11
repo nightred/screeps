@@ -4,7 +4,6 @@
  */
 
 var logger = new Logger('[Market Service]');
-logger.level = C.LOGLEVEL.INFO;
 
 var MarketService = function() {
     // init
@@ -96,7 +95,7 @@ MarketService.prototype.doSellSurplus = function(room) {
         amt = 0;
 
         if (resource == RESOURCE_ENERGY) {
-            if (terminal.store[resource] < (C.MARKET_STOCK_ENERGY + 1000)) continue;
+            if (terminal.store[resource] < (C.MARKET_STOCK_ENERGY + 5000)) continue;
             amt = terminal.store[resource] - C.MARKET_STOCK_ENERGY;
         }
 
@@ -119,15 +118,17 @@ MarketService.prototype.doSellSurplus = function(room) {
     for (let i = 0; i < orders.length; i++) {
         let orderAmt = orders[i].remainingAmount;
         if (orderAmt > amt) orderAmt = amt;
-        if (orderAmt <= 100) continue;
+        if (orderAmt < 500) continue;
 
         let cost = Game.market.calcTransactionCost(orderAmt, room.name, orders[i].roomName);
         if (cost > C.MARKET_MAX_COST) continue;
 
         Game.market.deal(orders[i].id, orderAmt, room.name);
 
-        logger.debug('selling ' + orderAmt + ' ' + res +
-            ' to ' + orders[i].roomName + ' at price ' + orders[i].price
+        logger.info(room.toString() + ' sold ' + orderAmt + ' ' + res +
+            ' at ' + orders[i].price +
+            ' to ' + orders[i].roomName +
+            ' used ' + cost + 'e'
         );
         break;
     }

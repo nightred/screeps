@@ -3,7 +3,6 @@
  */
 
 var logger = new Logger('[LibContainers]');
-logger.level = C.LOGLEVEL.DEBUG;
 
 var libContainers = {
 

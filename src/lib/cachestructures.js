@@ -3,7 +3,6 @@
  */
 
 var logger = new Logger('[LibCacheStructures]');
-logger.level = C.LOGLEVEL.DEBUG;
 
 var libCacheStructures = {
 

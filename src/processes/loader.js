@@ -3,7 +3,6 @@
  */
 
 var logger = new Logger('[Loader]');
-logger.level = C.LOGLEVEL.DEBUG;
 
 var Loader = function() {
     // init
@@ -53,25 +52,25 @@ Loader.prototype.run = function() {
     // check default services have been started
     if (!this.serviceFlag) {
         let process = Game.kernel.startProcess(this, 'services/flag', {});
-        //Game.kernel.setParent(process.pid);
+        Game.kernel.setParent(process.pid);
         this.serviceFlag = process;
     }
 
     if (!this.serviceRoom) {
         let process = Game.kernel.startProcess(this, 'services/room', {});
-        //Game.kernel.setParent(process.pid);
+        Game.kernel.setParent(process.pid);
         this.serviceRoom = process;
     }
 
     if (!this.serviceCreep) {
         let process = Game.kernel.startProcess(this, 'services/creep', {});
-        //Game.kernel.setParent(process.pid);
+        Game.kernel.setParent(process.pid);
         this.serviceCreep = process;
     }
 
     if (!this.serviceMarket) {
         let process = Game.kernel.startProcess(this, 'services/market', {});
-        //Game.kernel.setParent(process.pid);
+        Game.kernel.setParent(process.pid);
         this.serviceMarket = process;
     }
 };

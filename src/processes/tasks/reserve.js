@@ -9,7 +9,7 @@ var taskReserve = function() {
     // init
 };
 
-_.merge(taskReserve.prototype, require('lib.spawncreep'));
+_.merge(taskReserve.prototype, require('lib.spawn.creep'));
 
 taskReserve.prototype.run = function() {
     if (!this.memory.spawnRoom || !this.memory.workRoom) {

@@ -10,7 +10,7 @@ var taskStock = function() {
 };
 
 _.merge(taskStock.prototype, require('lib.cachelinks'));
-_.merge(taskStock.prototype, require('lib.spawncreep'));
+_.merge(taskStock.prototype, require('lib.spawn.creep'));
 
 Object.defineProperty(taskStock.prototype, 'marketData', {
     get: function() {

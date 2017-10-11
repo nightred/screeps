@@ -6,7 +6,6 @@
  */
 
 var logger = new Logger('[Room Manager]');
-logger.level = C.LOGLEVEL.DEBUG;
 
 var RoomManager = function() {
     // init
@@ -38,8 +37,16 @@ Object.defineProperty(RoomManager.prototype, 'managerMarket', {
 RoomManager.prototype.run = function() {
     let cpuStart = Game.cpu.getUsed();
 
+    if (!this.memory.lastVision) this.memory.lastVision = Game.time;
     let room = Game.rooms[this.memory.roomName];
-    if (!room) return;
+    if (!room) {
+        if (this.memory.lastVision + C.MANAGER_ROOM_VISION_MAX < Game.time) {
+            logger.info(this.memory.roomName + ' has not been had vision for extended time, removing manager');
+            Game.kernel.killProcess(this.pid);
+        }
+        return;
+    }
+    this.memory.lastVision = Game.time;
 
     // clean memory
     if (!this.memory.sleepCleanup || this.memory.sleepCleanup < Game.time) {

@@ -3,7 +3,6 @@
  */
 
 var logger = new Logger('[Defense]');
-logger.level = C.LOGLEVEL.DEBUG;
 
 var libDefense = {
 

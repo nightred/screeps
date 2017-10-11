@@ -6,7 +6,6 @@
  */
 
 var logger = new Logger('[Service Room]');
-logger.level = C.LOGLEVEL.DEBUG;
 
 var ServiceRoom = function() {
     // init

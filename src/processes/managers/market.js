@@ -4,7 +4,6 @@
  */
 
 var logger = new Logger('[Market Manager]');
-logger.level = C.LOGLEVEL.DEBUG;
 
 var MarketManager = function() {
     // init

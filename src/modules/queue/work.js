@@ -6,7 +6,6 @@
  */
 
 var logger = new Logger('[Queue Work]');
-logger.level = C.LOGLEVEL.INFO;
 
 var WorkQueue = function() {
     // init

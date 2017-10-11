@@ -5,24 +5,22 @@
  */
 
 var logger = new Logger('[Kernel]');
-logger.level = C.LOGLEVEL.INFO;
 
 var processRegistry = {
     registry: {},
 
-    register: function(name, imageName) {
-        this.registry[name] = imageName;
+    register: function(name, image) {
+        this.registry[name] = image;
     },
 
     getNewProcess: function(name) {
         if (!this.registry[name]) return;
-
         return new this.registry[name]();
     },
 };
 
-global.registerProcess = function(name, imageName) {
-    processRegistry.register(name, imageName);
+global.registerProcess = function(name, image) {
+    processRegistry.register(name, image);
     return true;
 };
 
@@ -175,9 +173,7 @@ Kernel.prototype.createProcess = function(pid) {
 
     let process = processRegistry.getNewProcess(procInfo.name);
     if (!process) {
-        logger.error(`failed to create process ${procInfo.name} : ${procInfo.pid}`);
-
-        this.killProcess(pid);
+        logger.error(`failed to create process ${procInfo.name}`);
         return;
     }
 

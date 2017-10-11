@@ -6,7 +6,6 @@
  */
 
 var logger = new Logger('[Work Repair]');
-logger.level = C.LOGLEVEL.DEBUG;
 
 var taskRepair = {
 

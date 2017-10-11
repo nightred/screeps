@@ -7,9 +7,8 @@
  */
 
 var logger = new Logger('[Storage]');
-logger.level = C.LOGLEVEL.DEBUG;
 
- /**
+/**
  * create the object for room storage objects
  **/
 var Storage = function() {
