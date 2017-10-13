@@ -21,6 +21,9 @@ Constant.VERSION_QUEUE                  = 'v3.00'
 Constant.SIM                            = false;
 Constant.VISUALS                        = true;
 
+Constant.KERNEL_MAX_CPU                 = 400;
+Constant.KERNEL_LOW_BUCKET              = 3000;
+
 Constant.ENERGY_ROOM_WITHDRAW_MIN       = 250;
 Constant.ENERGY_CREEP_SPAWN_MIN         = 200;
 Constant.ENERGY_TOWER_REPAIR_MIN        = 301;
