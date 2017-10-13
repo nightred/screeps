@@ -6,7 +6,6 @@
  */
 
 var logger = new Logger('[Service Flag]');
-logger.level = C.LOGLEVEL.DEBUG;
 
 var Flag = function() {
     // init
@@ -19,7 +18,7 @@ Flag.prototype.run = function() {
 
     let cpuStart = Game.cpu.getUsed();
 
-    this.gc();
+    this.cleanupFlags();
 
     for (let name in Game.flags) {
         let flag = Game.flags[name];
@@ -56,36 +55,31 @@ Flag.prototype.doDirectorFlag = function(flag) {
         let roomName = flag.pos.roomName;
 
         if (!C.DIRECTOR_FLAG_MAP[flagVars[1]]) {
-            logger.debug('invalid director type requested by flag: ' + flag.name);
+            logger.alert('invalid director type requested by flag: ' + flag.name);
             flag.memory.result = 'invalid director';
             return;
         }
 
         let imageName = C.DIRECTOR_FLAG_MAP[flagVars[1]];
-
         let process = Game.kernel.startProcess(this, imageName, {});
-
-        process.flag(roomName, flagVars)
+        process.flag(roomName, flagVars);
+        Game.kernel.setParent(process.pid);
 
         flag.memory.pid = process.pid;
         flag.memory.init = 1;
     }
 };
 
-Flag.prototype.gc = function() {
+Flag.prototype.cleanupFlags = function() {
     for(let name in Memory.flags) {
         if(!Game.flags[name]) {
-            if (Memory.flags[name].workId) {
+            if (Memory.flags[name].workId)
                 delQueueRecord(Memory.flags[name].jobId);
-            }
 
             logger.debug('clearing non-existant flag memory name: ' + name);
-
             delete Memory.flags[name];
         }
     }
-
-    return true;
 };
 
 registerProcess('services/flag', Flag);

@@ -2,9 +2,12 @@
  * Main Loop
  */
 
+// set constants
+require('constants');
+
 // global methods
-global.C        = require('constants');
 global.Logger   = require('util.logger');
+global.mod      = require('modules.loader');
 
 // prototypes
 require('prototype.prototype');
@@ -22,7 +25,6 @@ require('processes.registry');
 
 // init the logger
 var logger = new Logger('[Main]');
-logger.level = C.LOGLEVEL.DEBUG;
 
 module.exports.loop = function () {
     let cpuStart = Game.cpu.getUsed();

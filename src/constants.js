@@ -24,7 +24,6 @@ Constant.VISUALS                        = true;
 Constant.ENERGY_ROOM_WITHDRAW_MIN       = 250;
 Constant.ENERGY_CREEP_SPAWN_MIN         = 200;
 Constant.ENERGY_TOWER_REPAIR_MIN        = 301;
-Constant.ENERGY_STORAGE_MIN_FILL_TOWER  = 0.02;
 Constant.ENERGY_CONTAINER_MAX_PERCENT   = 0.9;
 Constant.ENERGY_CONTAINER_MIN_PERCENT   = 0.1 ;
 Constant.ENERGY_CONTAINER_MIN_WITHDRAW  = 100;
@@ -37,12 +36,18 @@ Constant.ENERGY_STORAGE_MAX             = 0.6;
 Constant.ENERGY_CONTAINER_MAX           = 0.9;
 Constant.ENERGY_STORAGE_SECONDARY_MIN   = 0.14;
 
+Constant.WORK_TOWER_FILL_STORAGE_MIN    = 20000;
+
 Constant.LINK_STORAGE_TRANSFER_MIN      = 0.34;
+Constant.LINK_STORAGE_MAX_ENERGY        = 0.8;
+Constant.LINK_STORAGE_MIN_ENERGY        = 0.38;
+Constant.LINK_IN_MIN_ENERGY             = 0.1;
+Constant.LINK_OUT_MAX_ENERGY            = 0.8;
 
 Constant.TERMINAL_ENERGY_MAX            = 0.2;
 
 Constant.CONTROLLER_WITHDRAW_LEVEL      = 2;
-Constant.CONTROLLER_RESERVE_MAX         = 4000;
+Constant.CONTROLLER_RESERVE_MAX         = 3000;
 Constant.CONTROLLER_RESERVE_MIN         = 1000;
 
 Constant.MANAGE_MEMORY_TICKS            = 20;
@@ -72,6 +77,12 @@ Constant.CREEP_IDLE_TIME                = 4;
 Constant.CREEP_STUCK_TICK               = 4;
 Constant.CREEP_FILL_TICKS               = 6;
 Constant.CREEP_TRAVEL_RANGE             = 4;
+Constant.CREEP_SPAWN_SLEEP              = 8;
+
+Constant.GOTO_CPU_ALERT                 = 10;
+Constant.GOTO_STUCK_COUNT               = 4;
+Constant.GOTO_MAXOPS                    = 5000;
+Constant.GOTO_MAP_CACHE                 = 50;
 
 Constant.CPU_MIN_BUCKET_MIL             = 2000;
 Constant.CPU_MIN_BUCKET_SQUAD           = 4000;
@@ -80,9 +91,34 @@ Constant.CPU_MIN_BUCKET_FLAGS           = 1000;
 Constant.QUEUE_WORK                     = 'work';
 Constant.QUEUE_SPAWN                    = 'spawn';
 
+Constant.MARKET_MAX_ENERGY              = 500000;
+Constant.MARKET_MAX_RESOURCE            = 20000;
+Constant.MARKET_MAX_BOOST               = 3000;
+Constant.MARKET_STOCK_ENERGY            = 50000;
+Constant.MARKET_STORAGE_ENERGY_MIN      = 40000;
+Constant.MARKET_MAX_COST                = 2000;
+Constant.MARKET_SURPLUS_SLEEP           = 100;
+
 Constant.WORK_FIND_SLEEP                = 12;
 
+Constant.SERVICE_SLEEP                  = 8;
+
+Constant.TASK_SPAWN_DETAILS_SLEEP       = 18;
+
+Constant.MANAGER_ROOM_VISION_MAX        = 3000;
+
 Constant.DIRECTOR_SLEEP                 = 24;
+Constant.DIRECTOR_MIN_ENG_UPGRADERS     = 12000;
+Constant.DIRECTOR_MIN_ENG_MINERAL       = 15000;
+Constant.DIRECTOR_MIN_ENG_RESERVER      = 2000;
+Constant.DIRECTOR_MIN_ENG_TECH          = 4000;
+
+Constant.CACHE_SLEEP                    = 100;
+Constant.CACHE = {
+    STRUCTURES:     'structures',
+    MARKET:         'market',
+    COST_MATRIX:    'costmatrix',
+};
 
 Constant.ROLE_MINER                     = 'miner';
 Constant.ROLE_HARVESTER                 = 'harvester';
@@ -94,6 +130,7 @@ Constant.ROLE_RESUPPLY                  = 'resupply';
 Constant.ROLE_STOCKER                   = 'stocker';
 Constant.ROLE_SCOUT                     = 'scout';
 Constant.ROLE_CONTROLLER                = 'controller';
+Constant.ROLE_CLAIMER                   = 'claimer';
 Constant.ROLE_COMBAT_BRAWLER            = 'combatbrawler';
 Constant.ROLE_COMBAT_SWARMER            = 'combatswarmer';
 Constant.ROLE_COMBAT_MEDIC              = 'combatmedic';
@@ -109,20 +146,19 @@ Constant.ROLE_TYPES = [
     Constant.ROLE_STOCKER,
     Constant.ROLE_SCOUT,
     Constant.ROLE_CONTROLLER,
+    Constant.ROLE_CLAIMER,
     Constant.ROLE_COMBAT_BRAWLER,
     Constant.ROLE_COMBAT_SWARMER,
     Constant.ROLE_COMBAT_MEDIC,
     Constant.ROLE_COMBAT_MILITIA,
 ];
 
-Constant.DIRECTOR_FIELDTECH             = 'directors/fieldtech';
 Constant.DIRECTOR_MINING                = 'directors/mining';
 Constant.DIRECTOR_REMOTE                = 'directors/remote';
 Constant.DIRECTOR_ROOM                  = 'directors/room';
 Constant.DIRECTOR_TECH                  = 'directors/tech';
 
 Constant.DIRECTOR_TYPES = [
-    Constant.DIRECTOR_FIELDTECH,
     Constant.DIRECTOR_MINING,
     Constant.DIRECTOR_REMOTE,
     Constant.DIRECTOR_ROOM,
@@ -132,36 +168,48 @@ Constant.DIRECTOR_TYPES = [
 Constant.DIRECTOR_FLAG_MAP = {
     'room':         Constant.DIRECTOR_ROOM,
     'remote':       Constant.DIRECTOR_REMOTE,
-    'fieldtech':    Constant.DIRECTOR_FIELDTECH,
-    'reserve':      Constant.DIRECTOR_RESERVE,
 };
 
+Constant.TASK_FIELDTECH                 = 'tasks/fieldtech';
 Constant.TASK_SOURCE                    = 'tasks/source';
 Constant.TASK_RESUPPLY                  = 'tasks/resupply';
 Constant.TASK_UPGRADE                   = 'tasks/upgrade';
 Constant.TASK_HAUL                      = 'tasks/haul';
 Constant.TASK_STOCK                     = 'tasks/stock';
 Constant.TASK_TECH                      = 'tasks/tech';
-Constant.TASK_FIELDTECH                 = 'tasks/fieldtech';
 Constant.TASK_SCOUT                     = 'tasks/scout';
 Constant.TASK_RESERVE                   = 'tasks/reserve';
+Constant.TASK_MINERAL                   = 'tasks/mineral';
 Constant.TASK_MILITIA                   = 'tasks/militia';
-Constant.TASK_DISMANTLE                 = 'tasks/dismantle';
-Constant.TASK_MIL_COMBAT                = 'tasks/mil/combat';
 
 Constant.TASK_TYPES = [
+    Constant.TASK_FIELDTECH,
     Constant.TASK_SOURCE,
     Constant.TASK_RESUPPLY,
     Constant.TASK_UPGRADE,
     Constant.TASK_HAUL,
     Constant.TASK_STOCK,
     Constant.TASK_TECH,
-    Constant.TASK_FIELDTECH,
     Constant.TASK_SCOUT,
     Constant.TASK_RESERVE,
+    Constant.TASK_MINERAL,
     Constant.TASK_MILITIA,
-    Constant.TASK_DISMANTLE,
-    Constant.TASK_MIL_COMBAT,
+];
+
+Constant.TASK_FLAG_MAP = {
+    'fieldtech':    Constant.TASK_FIELDTECH,
+};
+
+Constant.JOB_CLAIM                      = 'jobs/claim';
+Constant.JOB_DISMANTLE                  = 'jobs/dismantle';
+Constant.JOB_MIL_COMBAT                 = 'jobs/mil/combat';
+Constant.JOB_MIL_BRAWLGROUP             = 'jobs/mil/brawlgroup';
+
+Constant.JOB_TYPES = [
+    Constant.JOB_CLAIM,
+    Constant.JOB_DISMANTLE,
+    Constant.JOB_MIL_COMBAT,
+    Constant.JOB_MIL_BRAWLGROUP,
 ];
 
 Constant.WORK_TOWER_REFILL              = 'towerfill';
@@ -199,6 +247,17 @@ Constant.WORK_FLAG_TYPES = [
     Constant.WORK_DISMANTLE,
 ];
 
+Constant.RESOURCES_MINERALS = [
+    RESOURCE_HYDROGEN,
+    RESOURCE_OXYGEN,
+    RESOURCE_UTRIUM,
+    RESOURCE_KEANIUM,
+    RESOURCE_LEMERGIUM,
+    RESOURCE_ZYNTHIUM,
+    RESOURCE_CATALYST,
+    RESOURCE_GHODIUM,
+];
+
 Constant.DIRECTIONS = {
     1: [0, -1],
     2: [1, -1],
@@ -218,6 +277,14 @@ Constant.LOGLEVEL = {
     ERROR:  4,
     FATAL:  5,
 };
-Constant.DEFAULT_LOGLEVEL = Constant.LOGLEVEL.INFO
 
-module.exports = Constant;
+Constant.DEFAULT_LOGLEVEL = Constant.LOGLEVEL.INFO;
+
+global.C = Constant;
+
+// load the enviroment variables
+try {
+    require('env_var');
+} catch (e) {
+    console.log('failed to load enviroment variables!\n' + e.stack);
+}

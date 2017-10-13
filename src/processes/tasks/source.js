@@ -9,18 +9,42 @@ var taskSource = function() {
     // init
 };
 
-taskSource.prototype.run = function() {
-    let creep = Game.creeps[this.memory.creepName];
+_.merge(taskSource.prototype, require('lib.spawn.creep'));
 
-    if (!creep) {
+Object.defineProperty(taskSource.prototype, 'taskHaulers', {
+    get: function() {
+        if (!this.memory._haulersPid) return false;
+        return Game.kernel.getProcessByPid(this.memory._haulersPid);
+    },
+    set: function(value) {
+        this.memory._haulersPid = value.pid;
+    },
+});
+
+taskSource.prototype.run = function() {
+    if (!this.memory.spawnRoom || !this.memory.workRoom || !this.memory.sourceId) {
         Game.kernel.killProcess(this.pid);
         return;
     }
 
-    if (creep.getOffExit()) {
-        return;
+    this.doSpawnDetails();
+    this.doCreepSpawn();
+
+    for (let i = 0; i < this.memory.creeps.length; i++) {
+        let creep = Game.creeps[this.memory.creeps[i]];
+        if (!creep) continue;
+        this.doCreepActions(creep);
     }
 
+    this.doHaulers();
+};
+
+/**
+* @param {Creep} creep The creep object
+**/
+taskSource.prototype.doCreepActions = function(creep) {
+    if (creep.spawning) return;
+    if (creep.getOffExit()) return;
     if (creep.isSleep()) {
         creep.moveToIdlePosition();
         return;
@@ -47,7 +71,7 @@ taskSource.prototype.doEmpty = function(creep) {
         'storage',
     ];
 
-    let source = Game.getObjectById(creep.memory.sourceId);
+    let source = Game.getObjectById(this.memory.sourceId);
 
     if (!creep.memory.goingTo && source) {
         creep.memory.goingTo = source.getLocalContainer();
@@ -60,8 +84,8 @@ taskSource.prototype.doEmpty = function(creep) {
 * @param {Creep} creep The creep object
 **/
 taskSource.prototype.doWork = function(creep) {
-    if (creep.room.name != creep.memory.workRooms) {
-        creep.moveToRoom(creep.memory.workRooms);
+    if (creep.room.name != this.memory.workRoom) {
+        creep.moveToRoom(this.memory.workRoom);
         return;
     }
 
@@ -79,7 +103,7 @@ taskSource.prototype.doWork = function(creep) {
 * @param {Creep} creep The creep object
 **/
 taskSource.prototype.doHarvest = function(creep) {
-    let source = Game.getObjectById(creep.memory.sourceId);
+    let source = Game.getObjectById(this.memory.sourceId);
 
     if (!creep.pos.inRangeTo(source, 1)) {
         creep.goto(source, {
@@ -106,10 +130,9 @@ taskSource.prototype.doHarvest = function(creep) {
 };
 
 taskSource.prototype.doDropHarvest = function(creep) {
-    let source = Game.getObjectById(creep.memory.sourceId);
+    let source = Game.getObjectById(this.memory.sourceId);
 
     let target = Game.getObjectById(source.getDropContainer());
-
     if (!target) {
         source.clearContainer();
         creep.doDespawn();
@@ -131,6 +154,54 @@ taskSource.prototype.doDropHarvest = function(creep) {
     }
 
     creep.harvest(source);
+};
+
+taskSource.prototype.doSpawnDetails = function() {
+    if (this.memory._sleepSpawnDetails && this.memory._sleepSpawnDetails > Game.time) return;
+    this.memory._sleepSpawnDetails = Game.time + (C.TASK_SPAWN_DETAILS_SLEEP + Math.floor(Math.random() * 20));
+
+    let source = Game.getObjectById(this.memory.sourceId);
+    if (!source) return;
+    let style = 'default';
+    if (source.getDropContainer()) {
+        style = 'drop';
+    } else if (this.memory.spawnRoom != this.memory.workRoom) {
+        style = 'ranged';
+    }
+
+    let spawnDetail = {
+        role: C.ROLE_MINER,
+        priority: 50,
+        spawnRoom: this.memory.spawnRoom,
+        creepArgs: {
+            style: style,
+        },
+        maxSize: 9999,
+        minSize: 200,
+        limit: 1,
+    };
+
+    this.setSpawnDetails(spawnDetail);
+};
+
+taskSource.prototype.doHaulers = function() {
+    if (this.memory._sleepHaulers && this.memory._sleepHaulers > Game.time) return;
+    this.memory._sleepHaulers = Game.time + (C.DIRECTOR_SLEEP + Math.floor(Math.random() * 20));
+
+    let source = Game.getObjectById(this.memory.sourceId);
+    if (!source) return;
+    let containerInID = source.getContainerIn();
+    if (!containerInID) return;
+
+    let process = this.taskHaulers;
+    if (!process) {
+        process = Game.kernel.startProcess(this, C.TASK_HAUL, {
+            spawnRoom: this.memory.spawnRoom,
+            workRoom: this.memory.workRoom,
+            containerId: containerInID,
+        });
+        this.taskHaulers = process;
+    }
 };
 
 registerProcess('tasks/source', taskSource);

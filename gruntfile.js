@@ -13,6 +13,7 @@ module.exports = function(grunt) {
 
         meta: {
             "src": "src",
+            "env": "env",
             "dest": "build",
         },
 
@@ -21,6 +22,7 @@ module.exports = function(grunt) {
                 src: ['<%= meta.dest %>/*'],
             },
         },
+
         copy: {
             build: {
                 cwd: '<%= meta.src %>',
@@ -32,13 +34,32 @@ module.exports = function(grunt) {
                     return dest + src.replace(/\//g,'.');
                 }
             },
-            test: {
+            envlive: {
+                cwd: '<%= meta.env %>',
+                src: ['env_live.js'],
+                dest: '<%= meta.dest %>/',
+                expand: true,
+                rename: function (dest, src) {
+                    return dest + src.replace('live','var');
+                }
+            },
+            envlocal: {
+                cwd: '<%= meta.env %>',
+                src: ['env_local.js'],
+                dest: '<%= meta.dest %>/',
+                expand: true,
+                rename: function (dest, src) {
+                    return dest + src.replace('local','var');
+                }
+            },
+            local: {
                 cwd: '<%= meta.dest %>',
                 src: ['**'],
                 dest: config.deploy,
                 expand: true,
             },
         },
+
         screeps: {
             options: {
                 email:  config.screepsEmail,
@@ -58,13 +79,13 @@ module.exports = function(grunt) {
     );
 
     grunt.registerTask(
-        'deploy-test',
-        ['clean:build', 'copy:build', 'copy:test']
+        '1-deploy-local',
+        ['clean:build', 'copy:build', 'copy:envlocal', 'copy:local']
     );
 
     grunt.registerTask(
-        'deploy-live',
-        ['clean:build', 'copy:build', 'screeps:live']
+        '1-deploy-live',
+        ['clean:build', 'copy:build', 'copy:envlive', 'screeps:live']
     );
 
 }

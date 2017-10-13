@@ -2,6 +2,8 @@
  * Library for containers
  */
 
+var logger = new Logger('[LibContainers]');
+
 var libContainers = {
 
     getIdsContainersIn: function() {
@@ -19,6 +21,7 @@ var libContainers = {
             );
 
             for (let i = 0; i < containers.length; i++) {
+                if (this.memory.containersIn.indexOf(containers[i].id) >= 0) continue;
                 this.memory.containersIn.push(containers[i].id);
             }
 

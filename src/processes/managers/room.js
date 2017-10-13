@@ -6,11 +6,13 @@
  */
 
 var logger = new Logger('[Room Manager]');
-logger.level = C.LOGLEVEL.DEBUG;
 
 var RoomManager = function() {
     // init
 };
+
+_.merge(RoomManager.prototype, require('lib.cachelinks'));
+_.merge(RoomManager.prototype, require('lib.links'));
 
 Object.defineProperty(RoomManager.prototype, 'managerSpawn', {
     get: function() {
@@ -22,51 +24,70 @@ Object.defineProperty(RoomManager.prototype, 'managerSpawn', {
     },
 });
 
+Object.defineProperty(RoomManager.prototype, 'managerMarket', {
+    get: function() {
+        if (!this.memory.managerMarketPid) return false;
+        return Game.kernel.getProcessByPid(this.memory.managerMarketPid);
+    },
+    set: function(value) {
+        this.memory.managerMarketPid = value.pid;
+    },
+});
+
 RoomManager.prototype.run = function() {
     let cpuStart = Game.cpu.getUsed();
 
+    if (!this.memory.lastVision) this.memory.lastVision = Game.time;
     let room = Game.rooms[this.memory.roomName];
-
-    if (room) {
-        // clean memory
-        if (!this.memory.sleepCleanup || this.memory.sleepCleanup < Game.time) {
-            this.cleanContainers(room);
-            this.cleanTowers(room);
-            this.cleanLinks(room);
-            this.memory.sleepCleanup = C.MANAGE_MEMORY_TICKS + Game.time;
+    if (!room) {
+        if (this.memory.lastVision + C.MANAGER_ROOM_VISION_MAX < Game.time) {
+            logger.info(this.memory.roomName + ' has not been had vision for extended time, removing manager');
+            Game.kernel.killProcess(this.pid);
         }
+        return;
+    }
+    this.memory.lastVision = Game.time;
 
-        // controller room processes
-        if (room.controller && room.controller.my) {
-            this.doManagers();
-            this.doLinks(room);
+    // clean memory
+    if (!this.memory.sleepCleanup || this.memory.sleepCleanup < Game.time) {
+        this.cleanContainers(room);
+        this.cleanTowers(room);
+        this.cleanLinks(room);
+        this.memory.sleepCleanup = C.MANAGE_MEMORY_TICKS + Game.time;
+    }
 
-            let towers = room.getTowers();
+    // controller room processes
+    if (room.controller && room.controller.my) {
+        this.cacheRoomLinks(room);
+        this.doLinks(room);
 
-            if (towers.length > 0) {
-                towers.forEach((tower) => this.doTower(tower));
-            }
-        }
+        let towers = room.getTowers();
+        if (towers.length > 0) towers.forEach((tower) => this.doTower(tower));
 
-        let defense = room.memory.defense;
+        this.doManagers();
+    }
 
-        if (defense && defense.active) {
-            let args = {
-                ticks: Game.time - defense.tick,
-            };
+    // defense status
+    this.defenseStatus(room);
 
-            if (defense.cooldown) {
-                args.cooldown = (defense.cooldown + C.DEFENSE_COOLDOWN) - Game.time;
-            }
+    addTerminalLog(room.name, {
+        command: 'manager',
+        status: 'OK',
+        cpu: (Game.cpu.getUsed() - cpuStart),
+    });
+};
 
-            addDefenseVisual(room.name, args);
-        }
+RoomManager.prototype.defenseStatus = function(room) {
+    let defense = room.memory.defense;
+    if (defense && defense.active) {
+        let cooldown = undefined;
+        if (defense.cooldown)
+            cooldown = (defense.cooldown + C.DEFENSE_COOLDOWN) - Game.time;
 
-        addTerminalLog(room.name, {
-            command: 'manager',
-            status: 'OK',
-            cpu: (Game.cpu.getUsed() - cpuStart),
-        })
+        addDefenseVisual(room.name, {
+            ticks: (Game.time - defense.tick),
+            cooldown: cooldown,
+        });
     }
 };
 
@@ -78,8 +99,7 @@ RoomManager.prototype.cleanContainers = function(room) {
         }
     }
 
-    var targets = room.getContainers();
-
+    let targets = room.getContainers();
     for (let target of targets) {
         if (!target.memory.type) target.memory.type = 'default';
     }
@@ -103,55 +123,6 @@ RoomManager.prototype.cleanLinks = function(room) {
     }
 };
 
-RoomManager.prototype.doLinks = function(room) {
-    let links = room.getLinks();
-
-    if (links.length <= 0) return;
-
-    let linksStorage = _.filter(links, structure => structure.memory.type == 'storage');
-    let linkStorage = false;
-
-    if (linksStorage.length <= 0) {
-        if (!room.storage) return;
-
-        linkStorage = Game.getObjectById(room.storage.getLinkAtRange(2));
-        if (linkStorage) linkStorage.memory.type == 'storage';
-    } else {
-        linkStorage = linksStorage[0];
-    }
-
-    if (!linkStorage) return;
-
-    if (linksStorage.length > 1) {
-        logger.warn('room: ' + room.name + ' has more then one storage link');
-    }
-
-    let linksIn = _.filter(links, structure => structure.memory.type == 'in');
-    let linksOut = _.filter(links, structure => structure.memory.type == 'out');
-
-    if (linksIn.length > 0) {
-        for (let i = 0; i < linksIn.length; i++) {
-            if (linksIn[i].energy > (linksIn[i].energyCapacity * C.ENERGY_LINK_IN_MIN) &&
-                linksIn[i].cooldown == 0) {
-                linksIn[i].transferEnergy(linkStorage);
-            }
-        }
-    }
-
-    if (
-        linksOut.length > 0 &&
-        linkStorage.cooldown == 0 &&
-        linkStorage.energy > (linkStorage.energyCapacity * C.LINK_STORAGE_TRANSFER_MIN)
-    ) {
-        for (let i = 0; i < linksOut.length; i++) {
-            if (linksOut[i].energy < (linksOut[i].energyCapacity * C.ENERGY_LINK_OUT_MAX)) {
-                linkStorage.transferEnergy(linksOut[i]);
-                break;
-            }
-        }
-    }
-};
-
 RoomManager.prototype.doTower = function(tower) {
     if (this.doTowerDefence(tower)) return;
     if (this.doTowerHeal(tower)) return;
@@ -160,31 +131,28 @@ RoomManager.prototype.doTower = function(tower) {
 
 RoomManager.prototype.doTowerDefence = function(tower) {
     let targets = tower.room.getHostiles();
-
     targets = _.filter(targets, creep =>
         creep.owner &&
-        !isAlly(creep.owner.username));
-    if (!targets || targets.length == 0) { return false; }
+        !isAlly(creep.owner.username)
+    );
+
+    if (!targets || targets.length === 0) return false;
     targets = _.sortBy(targets, hostile => hostile.hits);
 
     tower.attack(targets[0]);
-
     return true
 };
 
 RoomManager.prototype.doTowerHeal = function(tower) {
     let targets = tower.room.getCreeps();
-
     if (!targets || targets.length == 0) return false;
 
     targets = _.filter(targets, creep => creep.hits < creep.hitsMax);
-
     if (!targets || targets.length == 0) return false;
 
     targets = _.sortBy(targets, creep => creep.hits);
 
     tower.heal(targets[0]);
-
     return true;
 };
 
@@ -199,7 +167,6 @@ RoomManager.prototype.doTowerRepair = function(tower) {
     }
 
     if (tower.energy < C.ENERGY_TOWER_REPAIR_MIN) return false;
-
     if (this.roomCache.length === 0) return false;
 
     let maxHits = Math.max.apply(null, this.roomCache.map(function(o) {
@@ -210,7 +177,6 @@ RoomManager.prototype.doTowerRepair = function(tower) {
         Math.abs(4 - tower.pos.getRangeTo(structure)) +
         (100 * (structure.hits / maxHits))
     );
-
     if (targets.length === 0) return false;
 
     tower.repair(targets[0]);
@@ -219,7 +185,6 @@ RoomManager.prototype.doTowerRepair = function(tower) {
 
 RoomManager.prototype.buildCache = function() {
     let room = Game.rooms[this.memory.roomName];
-
     let mod = 0;
 
     if (room.storage) {
@@ -248,7 +213,7 @@ RoomManager.prototype.buildCache = function() {
     let maxHitWall = C.WALL_HIT_MAX * mod;
 
     let structures = room.getStructures();
-    if (!structures || structures.length === 0) { return false; }
+    if (!structures || structures.length === 0) return false;
 
     _.filter(structures, structure =>
         (structure.structureType != STRUCTURE_WALL &&
@@ -267,13 +232,18 @@ RoomManager.prototype.buildCache = function() {
 };
 
 RoomManager.prototype.doManagers = function() {
-    let roomName = this.memory.roomName;
-
     if (!this.managerSpawn) {
-        let p = Game.kernel.startProcess(this, 'managers/spawn', {
-            roomName: roomName,
+        let proc = Game.kernel.startProcess(this, 'managers/spawn', {
+            roomName: this.memory.roomName,
         });
-        this.managerSpawn = p;
+        this.managerSpawn = proc;
+    }
+
+    if (!this.managerMarket) {
+        let proc = Game.kernel.startProcess(this, 'managers/market', {
+            roomName: this.memory.roomName,
+        });
+        this.managerMarket = proc;
     }
 };
 

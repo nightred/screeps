@@ -5,24 +5,22 @@
  */
 
 var logger = new Logger('[Kernel]');
-logger.level = C.LOGLEVEL.INFO;
 
 var processRegistry = {
     registry: {},
 
-    register: function(name, imageName) {
-        this.registry[name] = imageName;
+    register: function(name, image) {
+        this.registry[name] = image;
     },
 
     getNewProcess: function(name) {
         if (!this.registry[name]) return;
-
         return new this.registry[name]();
     },
 };
 
-global.registerProcess = function(name, imageName) {
-    processRegistry.register(name, imageName);
+global.registerProcess = function(name, image) {
+    processRegistry.register(name, image);
     return true;
 };
 
@@ -70,7 +68,11 @@ Kernel.prototype.run = function() {
 
     let cpuStart = Game.cpu.getUsed();
 
-    let pids = Object.keys(this.processTable);
+    let pids = _.pluck(
+        _.sortBy(this.processTable, p => p.lastTick)
+    , 'pid');
+
+    //let pids = Object.keys(this.processTable);
 
     if (pids.length === 0) {
         let proc = this.startProcess(undefined, 'loader/init', {});
@@ -85,10 +87,12 @@ Kernel.prototype.run = function() {
         let procStartCPU = Game.cpu.getUsed();
 
         let procInfo = this.processTable[pid];
+        if (!procInfo.priority) procInfo.priority = 5;
 
         if (procInfo.status == 'killed') {
             delete this.processMemory[procInfo.ms];
             delete this.processTable[pid];
+            continue;
         }
 
         if (procInfo.sleep) {
@@ -114,8 +118,12 @@ Kernel.prototype.run = function() {
             logger.error(`process crashed ${procInfo.name} : ${procInfo.pid}\n${e.stack}`);
         }
 
-        procInfo.lastTick = Game.time;
         procInfo.cpuUsed = (Game.cpu.getUsed() - procStartCPU);
+
+        if (Game.cpu.getUsed() > Game.cpu.limit && Game.cpu.bucket < 5000) {
+            logger.alert('High CPU Usage detected, Bucket is low, exiting kernal early');
+            break;
+        }
     }
 
     addTerminalLog(undefined, {
@@ -137,6 +145,7 @@ Kernel.prototype.startProcess = function(parent, imageName, startMem) {
         status: 'running',
         timestamp: Game.time,
         cpuUsed: 0,
+        priority: 5,
     };
 
     this.processTable[pid] = procInfo;
@@ -164,9 +173,7 @@ Kernel.prototype.createProcess = function(pid) {
 
     let process = processRegistry.getNewProcess(procInfo.name);
     if (!process) {
-        logger.error(`failed to create process ${procInfo.name} : ${procInfo.pid}`);
-
-        this.killProcess(pid);
+        logger.error(`failed to create process ${procInfo.name}`);
         return;
     }
 
@@ -203,10 +210,9 @@ Kernel.prototype.createProcess = function(pid) {
 };
 
 Kernel.prototype.killProcess = function(pid) {
-    if (this.processTable[pid]) {
-        logger.debug(`killed process ${this.processTable[pid].name} : ${this.processTable[pid].pid}`);
-        this.processTable[pid].status = 'killed';
-    }
+    if (!this.processTable[pid]) return;
+    logger.debug(`killed process ${this.processTable[pid].name} : ${this.processTable[pid].pid}`);
+    this.processTable[pid].status = 'killed';
 
     for (var opid in this.processTable) {
         if (this.processTable[opid].parentPID === pid &&
@@ -214,6 +220,12 @@ Kernel.prototype.killProcess = function(pid) {
             this.killProcess(opid)
         }
     }
+};
+
+Kernel.prototype.setParent = function(pid, parentPID = 0) {
+    if (!this.processTable[pid]) return;
+    if (parentPID === undefined) parentPID = 0;
+    this.processTable[pid].parentPID = parentPID;
 };
 
 Kernel.prototype.sleepProcessbyPid = function(pid, sleepTime) {

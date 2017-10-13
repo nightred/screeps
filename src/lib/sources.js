@@ -4,22 +4,21 @@
 
 var libSources = {
 
-    getSources: function() {
-        this.memory.sources = this.memory.sources || [];
+    cacheRoomSources: function(room) {
+        if (!room) return;
+        if (room.memory.initSources) return;
 
-        let room = Game.rooms[this.memory.workRoom];
-        if (!room) return false;
+        room.memory.sources = [];
 
         let sources = room.getSources();
-        if (sources.length <= 0) return true;
+        room.memory.sources = _.map(sources, r => r.id);
 
-        for (let i = 0; i < sources.length; i++) {
-            this.memory.sources.push({
-                id: sources[i].id,
-            });
-        }
+        room.memory.initSources = 1;
+    },
 
-        return true;
+    getRoomSources: function(room) {
+        room.memory.sources = room.memory.sources || [];
+        return room.memory.sources;
     },
 
 };

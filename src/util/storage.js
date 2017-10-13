@@ -7,9 +7,8 @@
  */
 
 var logger = new Logger('[Storage]');
-logger.level = C.LOGLEVEL.DEBUG;
 
- /**
+/**
  * create the object for room storage objects
  **/
 var Storage = function() {
@@ -24,14 +23,9 @@ var Storage = function() {
 * @param {Array} types The storage types
 **/
 Storage.prototype.getStore = function(creep, amount, types) {
-    if (!creep || isNaN(amount) || !Array.isArray(types)) {
-        return ERR_INVALID_ARGS;
-    }
+    if (!creep || isNaN(amount) || !Array.isArray(types)) return ERR_INVALID_ARGS;
 
-    if (this.tick < Game.time) {
-        this.rooms = {};
-        this.tick = Game.time;
-    }
+    this.refresh();
 
     if (!this.rooms[creep.room.name]) {
         if (!this.buildRoom(creep.room)) {
@@ -81,14 +75,9 @@ Storage.prototype.getStore = function(creep, amount, types) {
 * @param {Array} types The storage types
 **/
 Storage.prototype.getWithdraw = function(creep, amount, types) {
-    if (!creep || isNaN(amount) || !Array.isArray(types)) {
-        return ERR_INVALID_ARGS;
-    }
+    if (!creep || isNaN(amount) || !Array.isArray(types)) return ERR_INVALID_ARGS;
 
-    if (this.tick < Game.time) {
-        this.rooms = {};
-        this.tick = Game.time;
-    }
+    this.refresh();
 
     if (!this.rooms[creep.room.name]) {
         if (!this.buildRoom(creep.room)) {
@@ -131,25 +120,30 @@ Storage.prototype.getWithdraw = function(creep, amount, types) {
     return false;
 };
 
+Storage.prototype.refresh = function() {
+    if (this.tick < Game.time) {
+        this.rooms = {};
+        this.tick = Game.time;
+    }
+};
+
 /**
 * create a listing of the storage locations for a room
 * @param {Room} room The room to be used
 **/
 Storage.prototype.buildRoom = function(room) {
-    if (!Game.rooms[room.name]) { return false; }
+    if (!Game.rooms[room.name]) return false;
 
     this.rooms[room.name] = {};
-
     let records = this.rooms[room.name];
 
     // storage
     records.storage = {};
-
     if (room.storage) {
         let storage = room.storage;
         records.storage[storage.id] = {
             id: storage.id,
-            store: _.sum(storage.store),
+            store: storage.store[RESOURCE_ENERGY],
             storeMax: storage.storeCapacity,
             pos: storage.pos,
         };
@@ -157,12 +151,11 @@ Storage.prototype.buildRoom = function(room) {
 
     // terminal
     records.terminal = {};
-
     if (room.terminal) {
         let terminal = room.terminal;
         records.terminal[terminal.id] = {
             id: terminal.id,
-            store: _.sum(terminal.store),
+            store: terminal.store[RESOURCE_ENERGY],
             storeMax: terminal.storeCapacity,
             pos: terminal.pos,
         };
@@ -172,9 +165,7 @@ Storage.prototype.buildRoom = function(room) {
     records.container = {};
     records.containerIn = {};
     records.containerOut = {};
-
     let containers = room.getContainers();
-
     if (containers.length > 0) {
         for (let i = 0; i < containers.length; i++) {
             let record = {
@@ -201,9 +192,7 @@ Storage.prototype.buildRoom = function(room) {
     records.linkStorage = {};
     records.linkIn = {};
     records.linkOut = {};
-
     let links = room.getLinks();
-
     if (links.length > 0) {
         for (let i = 0; i < links.length; i++) {
             let record = {
@@ -228,9 +217,7 @@ Storage.prototype.buildRoom = function(room) {
 
     // spawn
     records.spawn = {};
-
     let spawns = room.getSpawns();
-
     if (spawns.length > 0) {
         for (let i = 0; i < spawns.length; i++) {
             records.spawn[spawns[i].id] = {
@@ -244,9 +231,7 @@ Storage.prototype.buildRoom = function(room) {
 
     // extention
     records.extention = {};
-
     let extentions = room.getExtensions();
-
     if (extentions.length > 0) {
         for (let i = 0; i < extentions.length; i++) {
             records.extention[extentions[i].id] = {
@@ -260,9 +245,7 @@ Storage.prototype.buildRoom = function(room) {
 
     // nuker
     records.nuker = {};
-
     let nuker = room.getNuker();
-
     if (nuker) {
         records.nuker[nuker.id] = {
             id: nuker.id,
@@ -274,9 +257,7 @@ Storage.prototype.buildRoom = function(room) {
 
     // powerspawn
     records.powerspawn = {};
-
     let powerspawn = room.getPowerSpawn();
-
     if (powerspawn) {
         records.powerspawn[powerspawn.id] = {
             id: powerspawn.id,

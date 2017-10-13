@@ -5,53 +5,51 @@
  *
  */
 
+var logger = new Logger('[Task Haul]');
+
 var taskHaul = function() {
     // init
 };
 
-taskHaul.prototype.run = function() {
-    let creep = Game.creeps[this.memory.creepName];
+_.merge(taskHaul.prototype, require('lib.spawn.creep'));
 
-    if (!creep) {
+taskHaul.prototype.run = function() {
+    if (!this.memory.spawnRoom || !this.memory.workRoom || !this.memory.containerId) {
+        logger.debug('removing process missing values\n' +
+            'spawnRoom: ' + this.memory.spawnRoom +
+            ', workRoom: ' + this.memory.workRoom +
+            ', containerId: ' + this.memory.containerId
+        );
         Game.kernel.killProcess(this.pid);
         return;
     }
 
-    if (creep.getOffExit()) {
-        return;
-    }
+    this.doSpawnDetails();
+    this.doCreepSpawn();
 
+    for (let i = 0; i < this.memory.creeps.length; i++) {
+        let creep = Game.creeps[this.memory.creeps[i]];
+        if (!creep) continue;
+        this.doCreepActions(creep);
+    }
+};
+
+/**
+* @param {Creep} creep The creep object
+**/
+taskHaul.prototype.doCreepActions = function(creep) {
+    if (creep.spawning) return;
+    if (creep.getOffExit()) return;
     if (creep.isSleep()) {
         creep.moveToIdlePosition();
         return;
     }
 
-    if (creep.manageState()) {
-        if (creep.memory.working) {
-            creep.say('🚚');
-        } else {
-            creep.say('🔋');
-        }
-    } else if (!creep.memory.working && creep.carry.energy > (creep.carryCapacity * 0.2))  {
-        creep.toggleState();
-        creep.say('🚚');
-    }
-
-    if (creep.memory.working) {
+    this.manageState(creep);
+    if (creep.state == 'transfer') {
         this.doTransfer(creep);
-    } else {
-        if (creep.memory.containerId) {
-            this.doWithdrawFromContainer(creep);
-            return;
-        }
-
-        // old method
-        if (creep.room.name != creep.memory.workRooms) {
-            creep.moveToRoom(creep.memory.workRooms);
-            return;
-        }
-
-        creep.doFill([ 'containerIn', ], RESOURCE_ENERGY);
+    } else if (creep.state == 'withdraw') {
+        this.doWithdraw(creep);
     }
 };
 
@@ -67,8 +65,8 @@ taskHaul.prototype.doTransfer = function(creep) {
         }
     }
 
-    if (creep.room.name != creep.memory.spawnRoom) {
-        creep.moveToRoom(creep.memory.spawnRoom);
+    if (creep.room.name != this.memory.spawnRoom) {
+        creep.moveToRoom(this.memory.spawnRoom);
         return;
     }
 
@@ -90,14 +88,18 @@ taskHaul.prototype.doTransfer = function(creep) {
     creep.doTransfer(storage);
 };
 
-taskHaul.prototype.doWithdrawFromContainer = function(creep) {
-    if (creep.room.name != creep.memory.workRooms) {
-        creep.moveToRoom(creep.memory.workRooms);
+taskHaul.prototype.doWithdraw = function(creep) {
+    if (creep.room.name !== this.memory.workRoom) {
+        creep.moveToRoom(this.memory.workRoom);
         return;
     }
 
-    let container = Game.getObjectById(creep.memory.containerId);
-    if (!container) return;
+    let container = Game.getObjectById(this.memory.containerId);
+    if (!container) {
+        logger.debug('container missing killing the process')
+        Game.kernel.killProcess(this.pid);
+        return;
+    }
 
     if (!creep.pos.inRangeTo(container, 1)) {
         creep.goto(container, {
@@ -109,12 +111,105 @@ taskHaul.prototype.doWithdrawFromContainer = function(creep) {
         return;
     }
 
-    if (_.sum(container.store) < container.storeCapacity * 0.15) {
-        creep.sleep();
-        return;
+    creep.doWithdraw(container);
+    creep.state = 'wait';
+};
+
+taskHaul.prototype.manageState = function(creep) {
+    if (creep.state == 'init') creep.state = 'wait';
+
+    if (creep.state == 'transfer') {
+        this.stateTransferToWait(creep);
     }
 
-    creep.doWithdraw(container);
+    if (creep.state == 'wait') {
+        if (this.stateWaitToWithdraw(creep)) return;
+        if (this.stateWaitToTransfer(creep)) return;
+    }
+};
+
+taskHaul.prototype.stateTransferToWait = function(creep) {
+    if (creep.isEmpty()) {
+        creep.state = 'wait';
+        return true;
+    }
+
+    if (creep.room.name == this.memory.spawnRoom &&
+        creep.room.controller &&
+        creep.room.controller.my &&
+        creep.room.controller.level < 4 &&
+        creep.isEmptyEnergy()
+    ) {
+        creep.state = 'wait';
+        return true;
+    }
+};
+
+taskHaul.prototype.stateWaitToTransfer = function(creep) {
+    if (!creep.isEmpty()) {
+        creep.state = 'transfer'
+        return true;
+    }
+};
+
+taskHaul.prototype.stateWaitToWithdraw = function(creep) {
+    if (creep.isEmpty()) {
+        creep.state = 'withdraw';
+        return true;
+    }
+
+    if (creep.room.name == this.memory.spawnRoom &&
+        creep.room.controller &&
+        creep.room.controller.my &&
+        creep.room.controller.level < 4 &&
+        creep.isEmptyEnergy()
+    ) {
+        creep.state = 'withdraw';
+        return true;
+    }
+};
+
+taskHaul.prototype.doSpawnDetails = function() {
+    if (this.memory._sleepSpawnDetails && this.memory._sleepSpawnDetails > Game.time) return;
+    this.memory._sleepSpawnDetails = Game.time + (C.TASK_SPAWN_DETAILS_SLEEP + Math.floor(Math.random() * 20));
+
+    let spawnRoom = Game.rooms[this.memory.spawnRoom];
+    if (!spawnRoom || !spawnRoom.controller || !spawnRoom.controller.my) return;
+
+    let minSize = 200;
+    let maxSize = 200;
+
+    let rlevel = spawnRoom.controller.level;
+    if (rlevel == 1 || rlevel == 2)  {
+        maxSize = 300;
+    } else if (rlevel == 3 || rlevel == 4) {
+        maxSize = 400;
+    } else if (rlevel == 5 || rlevel == 6) {
+        minSize = 400;
+        maxSize = 600;
+    } else if (rlevel == 7 || rlevel == 8) {
+        minSize = 500;
+        maxSize = 9999;
+    }
+
+    let spawnDetail = {
+        role: C.ROLE_HAULER,
+        priority: 52,
+        spawnRoom: this.memory.spawnRoom,
+        creepArgs: {
+            style: 'default',
+        },
+        maxSize: maxSize,
+        minSize: 200,
+        limit: 1,
+    };
+
+    if (this.memory.spawnRoom !== this.memory.workRoom) {
+        spawnDetail.creepArgs.style = 'longhauler';
+        spawnDetail.minSize = minSize;
+    }
+
+    this.setSpawnDetails(spawnDetail);
 };
 
 registerProcess('tasks/haul', taskHaul);

@@ -8,7 +8,6 @@
  */
 
 var logger = new Logger('[Queue]');
-logger.level = C.LOGLEVEL.INFO;
 
 require('modules.queue.spawn');
 require('modules.queue.work');
@@ -36,19 +35,6 @@ Object.defineProperty(Queue.prototype, 'queue', {
     },
 });
 
-Queue.prototype.onTick = function() {
-    let cpuStart = Game.cpu.getUsed();
-
-    onTickQueueSpawn();
-
-    addTerminalLog(undefined, {
-        command: 'queue cleanup',
-        status: 'OK',
-        cpu: (Game.cpu.getUsed() - cpuStart),
-        output: 'record count: ' + _.size(this.queue),
-    })
-};
-
 Queue.prototype.getQueue = function(args) {
     args = args || {};
 
@@ -68,6 +54,8 @@ Queue.prototype.addRecord = function(args) {
     args = args || {};
 
     let id = getId();
+    if (args.id) id = args.id;
+
     let record = {
         id: id,
         tick: Game.time,

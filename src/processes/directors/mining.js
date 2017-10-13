@@ -6,124 +6,93 @@
  */
 
 var logger = new Logger('[Mining Director]');
-logger.level = C.LOGLEVEL.DEBUG;
 
 var directorMining = function() {
     // init
 }
 
-Object.defineProperty(directorMining.prototype, 'squad', {
+_.merge(directorMining.prototype, require('lib.sources'));
+_.merge(directorMining.prototype, require('lib.minerals'));
+_.merge(directorMining.prototype, require('lib.extractors'));
+
+Object.defineProperty(directorMining.prototype, 'processRecords', {
     get: function() {
-        if (!this.memory.squadPid) return false;
-        return Game.kernel.getProcessByPid(this.memory.squadPid);
+        this.memory.processRecords = this.memory.processRecords || {};
+        return this.memory.processRecords;
     },
     set: function(value) {
-        this.memory.squadPid = value.pid;
+        this.memory.processRecords = this.memory.processRecords || {};
+        this.memory.processRecords = value
     },
 });
 
 directorMining.prototype.run = function() {
     let room = Game.rooms[this.memory.workRoom];
+    if (!room) return;
 
-    if (!room) {
-        return false;
-    }
+    this.cacheRoomSources(room);
+    this.cacheRoomMinerals(room);
+    this.cacheRoomExtractors(room);
 
-    if (!this.squad) {
-        this.initSquad();
-    }
+    this.doSourceMining(room);
+    this.doMineralMining(room);
 
-    if (!this.memory.sourceInit) {
-        if (this.getSources()) {
-            this.memory.sourceInit = 1;
-        }
-    }
-
-    for (let i = 0; i < this.memory.sources.length; i++) {
-        let source = this.memory.sources[i];
-        this.doSourceSquadGroup(source);
+    // remove old squad
+    if (this.memory.squadPid) {
+        Game.kernel.killProcess(this.memory.squadPid);
+        this.memory.squadPid = undefined;
     }
 
     Game.kernel.sleepProcessbyPid(this.pid, (C.DIRECTOR_SLEEP + Math.floor(Math.random() * 8)));
-
-    return true;
 };
 
-directorMining.prototype.doSourceSquadGroup = function(sourceRecord) {
-    let groupName = 'source' + sourceRecord.id;
-
-    let record = {
-        name: groupName,
-        task: C.TASK_SOURCE,
-        role: C.ROLE_MINER,
-        priority: 50,
-        maxSize: 9999,
-        minSize: 200,
-        limit: 1,
-        creepArgs: {
-            sourceId: sourceRecord.id,
-        },
-    };
-
-    let source = Game.getObjectById(sourceRecord.id);
-
-    if (source && source.getDropContainer()) {
-        record.creepArgs.style = 'drop';
-    } else if (this.memory.spawnRoom != this.memory.roomName) {
-        record.creepArgs.style = 'ranged';
-    }
-
-    let process = this.squad;
-
-    if (!process) {
-        logger.error('failed to load squad process for creep group update');
-        return;
-    }
-
-    process.setGroup(record);
-};
-
-directorMining.prototype.getSources = function() {
-    this.memory.sources = this.memory.sources || [];
-
-    let room = Game.rooms[this.memory.workRoom];
-
-    if (!room) {
-        return false;
-    }
-
-    let sources = room.getSources();
-
-    if (sources.length <= 0) {
-        return true;
-    }
+directorMining.prototype.doSourceMining = function(room) {
+    let sources = this.getRoomSources(room);
 
     for (let i = 0; i < sources.length; i++) {
-        let source = {
-            id: sources[i].id,
-            pid: undefined,
-        };
-
-        this.memory.sources.push(source);
+        let source = Game.getObjectById(sources[i]);
+        let process = Game.kernel.getProcessByPid(this.processRecords[source.id]);
+        if (!process) {
+            process = Game.kernel.startProcess(this, C.TASK_SOURCE, {
+                sourceId: source.id,
+                spawnRoom: this.memory.spawnRoom,
+                workRoom: this.memory.workRoom,
+            });
+            if (!process) {
+                logger.error('failed to create process ' + C.TASK_SOURCE);
+                return;
+            }
+            this.processRecords[source.id] = process.pid;
+        }
     }
-
-    return true;
 };
 
-directorMining.prototype.initSquad = function() {
-    let imageName = 'managers/squad';
-    let process = Game.kernel.startProcess(this, imageName, {
-        squadName: (this.memory.workRoom + '_mining'),
-        spawnRoom: this.memory.spawnRoom,
-        workRooms: this.memory.workRoom,
-    });
+directorMining.prototype.doMineralMining = function(room) {
+    let minerals = this.getRoomMinerals(room);
+    let mineral = Game.getObjectById(minerals[0]);
+    if (!mineral) return;
 
-    if (!process) {
-        logger.error('failed to create process ' + imageName);
+    let extractors = this.getRoomExtractors(room);
+    if (!Game.getObjectById(extractors[0])) {
+        if (this.processRecords[mineral.id])
+            Game.kernel.killProcess(this.processRecords[mineral.id]);
         return;
     }
 
-    this.squad = process;
+    let process = Game.kernel.getProcessByPid(this.processRecords[mineral.id]);
+    if (!process) {
+        process = Game.kernel.startProcess(this, C.TASK_MINERAL, {
+            mineralId: mineral.id,
+            extractorId: extractors[0],
+            spawnRoom: this.memory.spawnRoom,
+            workRoom: this.memory.workRoom,
+        });
+        if (!process) {
+            logger.error('failed to create process ' + C.TASK_MINERAL);
+            return;
+        }
+        this.processRecords[mineral.id] = process.pid;
+    }
 };
 
 registerProcess(C.DIRECTOR_MINING, directorMining);

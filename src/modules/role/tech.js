@@ -12,10 +12,8 @@ var roleTech = {
     * @param {number} energy The amount of energy avalible
     * @param {Object} args Extra arguments
     **/
-    getBody: function(energy, args) {
+    getBody: function(energy, args = {}) {
         if (isNaN(energy)) { return ERR_INVALID_ARGS; }
-
-        args = args || {};
 
         let workUnits = Math.floor((energy * 0.6) / 150);
         workUnits = workUnits < 1 ? 1 : workUnits;
@@ -32,7 +30,6 @@ var roleTech = {
         energy -= 100 * carryUnits;
 
         let body = [];
-
         for (let i = 0; i < workUnits; i++) {
             body.push(WORK);
         }

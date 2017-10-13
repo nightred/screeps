@@ -6,7 +6,6 @@
  */
 
 var logger = new Logger('[Queue Work]');
-logger.level = C.LOGLEVEL.INFO;
 
 var WorkQueue = function() {
     // init
@@ -25,13 +24,8 @@ WorkQueue.prototype.isQueued = function(args) {
 };
 
 WorkQueue.prototype.addRecord = function(args) {
-    if (!args || !args.workRoom) {
-        return ERR_INVALID_ARGS;
-    }
-
-    if (C.WORK_TYPES.indexOf(args.task) < 0) {
-        return ERR_INVALID_ARGS;
-    }
+    if (!args || !args.workRoom) return ERR_INVALID_ARGS;
+    if (C.WORK_TYPES.indexOf(args.task) < 0) return ERR_INVALID_ARGS;
 
     args.priority = args.priority || 100;
     args.creepLimit = args.creepLimit || 0;
@@ -45,21 +39,10 @@ WorkQueue.prototype.addRecord = function(args) {
         creepLimit: args.creepLimit,
     };
 
-    if (args.targetId) {
-        record.targetId = args.targetId;
-    }
-
-    if (args.message) {
-        record.message = args.message;
-    }
-
-    if (args.spawnRoom) {
-        record.spawnRoom = args.spawnRoom;
-    }
-
-    if (args.managed) {
-        record.managed = args.managed;
-    }
+    if (args.id) record.id = args.id;
+    if (args.targetId) record.targetId = args.targetId;
+    if (args.message) record.message = args.message;
+    if (args.spawnRoom) record.spawnRoom = args.spawnRoom;
 
     logger.debug('adding record, task: ' + record.task + ', priority: ' + record.priority);
 

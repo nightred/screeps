@@ -6,7 +6,6 @@
  */
 
 var logger = new Logger('[Work]');
-logger.level = C.LOGLEVEL.DEBUG;
 
 // registry of work
 var workRegistry = {
@@ -33,14 +32,12 @@ var Work = function() {
 
 Work.prototype.doWorkTask = function(creep) {
     let workTask = getQueueRecord(creep.memory.workId);
-
     if (!workTask) {
         creep.memory.workId = undefined;
         return;
     }
 
     let work = workRegistry.getWork(workTask.task);
-
     if (!work) {
         logger.error('failed to load work task: ' + workTask.task);
         delQueueRecord(creep.memory.workId)
@@ -48,15 +45,8 @@ Work.prototype.doWorkTask = function(creep) {
         return;
     }
 
-    if (workTask.creeps.indexOf(creep.name) === -1) {
-        if (workTask.creeps.length >= workTask.creepLimit) {
-            logger.debug('work task id: ' + creep.memory.workId +
-                ', full when adding creep: ' + creep.name);
-            return;
-        } else {
-            this.addCreep(creep.name, creep.memory.workId);
-        }
-    }
+    if (workTask.creeps.indexOf(creep.name) === -1)
+        this.addCreep(creep.name, creep.memory.workId);
 
     work.run(creep, workTask);
 
@@ -101,23 +91,30 @@ Work.prototype.getWorkTask = function(workTasks, creep, args) {
 
 Work.prototype.addCreep = function(creepName, id) {
     let workTask = getQueueRecord(id);
-
     if (!workTask) {
         logger.error('failed to load work task id: ' + id +
             ', when adding creep: ' + creepName);
         return false;
     }
 
-    if (workTask.creeps.indexOf(creepName) === -1) {
-        workTask.creeps.push(creepName);
+    if (workTask.creeps.indexOf(creepName) !== -1) return;
+
+    for (let i = (workTask.creeps.length - 1); i >= 0; i--) {
+        if (!Game.creeps[workTask.creeps[i]])
+            workTask.creeps.splice(i, 1);
     }
 
-    return true;
+    if (workTask.creeps.length < workTask.creepLimit) {
+        workTask.creeps.push(creepName);
+    } else {
+        logger.debug('work task id: ' + id +
+            ', full when adding creep: ' + creepName
+        );
+    }
 };
 
 Work.prototype.removeCreep = function(creepName, id) {
     let work = getQueueRecord(id);
-
     if (!work) {
         logger.error('failed to load work task id" ' + id +
             ', when removing creep: ' + creepName);
@@ -125,7 +122,6 @@ Work.prototype.removeCreep = function(creepName, id) {
     }
 
     let index = work.creeps.indexOf(creepName);
-
     if (index !== -1) {
         work.creeps.splice(index, 1);
     }
@@ -135,7 +131,6 @@ Work.prototype.removeCreep = function(creepName, id) {
 
 Work.prototype.doWorkFind = function(task, room) {
     let work = workRegistry.getWork(task);
-
     if (!work) {
         logger.error('work find failed to load work task: ' + workTask.task);
         return false;
@@ -147,7 +142,6 @@ Work.prototype.doWorkFind = function(task, room) {
 Work.prototype.doFlag = function(flag) {
     if (!flag.memory.workId) {
         let flagVars = flag.name.split(':');
-
         let roomName = flag.pos.roomName;
 
         if (C.WORK_FLAG_TYPES.indexOf(flagVars[1]) == -1) {
@@ -186,11 +180,6 @@ global.workRemoveCreep = function(creepName, workId) {
     return true;
 };
 
-global.workAddCreep = function(creepName, workId) {
-    work.addCreep(creepName, workId);
-    return true;
-};
-
 global.doFlagWork = function(flag) {
     work.doFlag(flag);
     return true;
@@ -216,6 +205,5 @@ require('modules.work.attack');
 require('modules.work.claim');
 require('modules.work.construction');
 require('modules.work.defense');
-require('modules.work.dismantle');
 require('modules.work.repair');
 require('modules.work.signcontroller');

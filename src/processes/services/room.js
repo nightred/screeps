@@ -6,7 +6,6 @@
  */
 
 var logger = new Logger('[Service Room]');
-logger.level = C.LOGLEVEL.DEBUG;
 
 var ServiceRoom = function() {
     // init
@@ -26,23 +25,35 @@ Object.defineProperty(ServiceRoom.prototype, 'processTable', {
 ServiceRoom.prototype.run = function() {
     let cpuStart = Game.cpu.getUsed();
 
-    for (let name in Game.rooms) {
-        if (!this.processTable[name] ||
-            !Game.kernel.getProcessByPid(this.processTable[name])) {
-            let process = Game.kernel.startProcess(this, 'managers/room', {
-                roomName: name,
-            });
+    let count = Object.keys(Game.rooms).length;
 
-            Memory.rooms[name].pid = process.pid;
-            this.processTable[name] = process.pid;
-        }
-    }
+    this.doCheckRooms();
 
     addTerminalLog(undefined, {
         command: 'service room',
         status: 'OK',
         cpu: (Game.cpu.getUsed() - cpuStart),
+        output: ('room count: ' + count),
     });
+};
+
+ServiceRoom.prototype.doCheckRooms = function() {
+    if (this.memory.sleepCheckRooms && this.memory.sleepCheckRooms > Game.time) return;
+    this.memory.sleepCheckRooms = C.SERVICE_SLEEP + Game.time;
+
+    for (let name in Game.rooms) {
+        if (!this.processTable[name] ||
+            !Game.kernel.getProcessByPid(this.processTable[name])
+        ) {
+            let process = Game.kernel.startProcess(this, 'managers/room', {
+                roomName: name,
+            });
+
+            if (!Memory.rooms[name]) Memory.rooms[name] = {};
+            Memory.rooms[name].pid = process.pid;
+            this.processTable[name] = process.pid;
+        }
+    }
 };
 
 registerProcess('services/room', ServiceRoom);

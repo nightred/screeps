@@ -6,30 +6,9 @@
  */
 
 var logger = new Logger('[Queue Spawn]');
-logger.level = C.LOGLEVEL.INFO;
 
 var SpawnQueue = function() {
     // init
-};
-
-SpawnQueue.prototype.cleanup = function() {
-    let records = _.filter(this.getQueue(), record =>
-        record.spawned
-    );
-
-    if (records.length <= 0) {
-        return true;
-    }
-
-    for(let i = 0; i < records.length; i++) {
-
-
-        if ((records[i].spawnedTime + C.SPAWN_QUEUE_DELAY) < Game.time) {
-            logger.debug('removing record, id: ' + records[i].id + ', role: ' + records[i].role + ', name: ' + records[i].name + ', spawned');
-
-            delQueueRecord(records[i].id);
-        }
-    }
 };
 
 SpawnQueue.prototype.getQueue = function() {
@@ -51,6 +30,7 @@ SpawnQueue.prototype.addRecord = function(args) {
     };
 
     if (args.minSize) record.minSize = args.minSize;
+    if (args.maxSize) record.maxSize = args.maxSize;
     if (args.creepArgs) record.creepArgs = args.creepArgs;
 
     logger.debug('adding record, role: ' + record.role + ', rooms: [' + record.rooms + '], priority: ' + record.priority);
