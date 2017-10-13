@@ -49,8 +49,9 @@ taskFieldTech.prototype.run = function() {
 taskFieldTech.prototype.doCreepActions = function(creep) {
     if (creep.spawning) return;
     if (creep.getOffExit()) return;
+    
     if (creep.isSleep()) {
-        creep.moveToIdlePosition();
+        this.doUpgrade(creep);
         return;
     }
 
@@ -62,7 +63,7 @@ taskFieldTech.prototype.doCreepActions = function(creep) {
     if (creep.manageState()) {
         if (creep.isWorking()) {
             creep.say('⚙');
-            creep.memory.harvestTarget = false;
+            creep.memory.harvestTarget = undefined;
         } else {
             creep.say('🔋');
             creep.leaveWork();
@@ -86,9 +87,9 @@ taskFieldTech.prototype.doWork = function(creep) {
             C.WORK_SIGNCONTROLLER,
         ];
 
-        if (!creep.getWork(workTasks), {
+        if (!creep.getWork(workTasks, {
             room: this.memory.workRoom,
-        }) {
+        })) {
             creep.sleep();
             creep.say('💤');
             return;
@@ -111,6 +112,11 @@ taskFieldTech.prototype.doMine = function(creep) {
 
     let source = Game.getObjectById(creep.memory.harvestTarget);
 
+    if (source.energy === 0) {
+        creep.memory.harvestTarget = undefined;
+        return;
+    }
+
     if (!creep.pos.inRangeTo(source, 1)) {
         creep.goto(source, {
             range: 1,
@@ -121,6 +127,22 @@ taskFieldTech.prototype.doMine = function(creep) {
     }
 
     creep.harvest(source);
+};
+
+/**
+* @param {Creep} creep
+**/
+taskFieldTech.prototype.doUpgrade = function(creep) {
+    if (!creep.pos.inRangeTo(creep.room.controller, 3)) {
+        creep.goto(creep.room.controller, {
+            range: 1,
+            reusePath: 30,
+            maxRooms: 1,
+        });
+        return;
+    }
+
+    creep.upgradeController(creep.room.controller);
 };
 
 taskFieldTech.prototype.doSpawnDetails = function() {

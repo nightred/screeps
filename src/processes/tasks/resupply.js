@@ -111,6 +111,7 @@ taskResupply.prototype.doSpawnDetails = function() {
     }
 
     let limit = 2;
+    if (!spawnRoom.storage) limit = 0;
 
     let spawnDetail = {
         role: C.ROLE_RESUPPLY,
