@@ -6,17 +6,17 @@
 
 var logger = new Logger('[Kernel]');
 
-var processRegistry = {
-    registry: {},
+var processRegistry = {};
 
-    register: function(name, image) {
-        this.registry[name] = image;
-    },
+processRegistry.registry = {};
 
-    getNewProcess: function(name) {
-        if (!this.registry[name]) return;
-        return new this.registry[name]();
-    },
+processRegistry.register = function(name, image) {
+    this.registry[name] = image;
+};
+
+processRegistry.getNewProcess = function(name) {
+    if (!this.registry[name]) return;
+    return new this.registry[name]();
 };
 
 global.registerProcess = function(name, image) {
@@ -67,12 +67,9 @@ Kernel.prototype.run = function() {
     });
 
     let cpuStart = Game.cpu.getUsed();
-
     let pids = _.pluck(
         _.sortBy(this.processTable, p => p.lastTick)
     , 'pid');
-
-    //let pids = Object.keys(this.processTable);
 
     if (pids.length === 0) {
         let proc = this.startProcess(undefined, 'loader/init', {});
@@ -80,14 +77,10 @@ Kernel.prototype.run = function() {
     }
 
     let pidCount = pids.length;
-
     for (let i = 0; i < pidCount; i++) {
         let pid = pids[i];
-
         let procStartCPU = Game.cpu.getUsed();
-
         let procInfo = this.processTable[pid];
-        if (!procInfo.priority) procInfo.priority = 5;
 
         if (procInfo.status == 'killed') {
             delete this.processMemory[procInfo.ms];
@@ -110,7 +103,6 @@ Kernel.prototype.run = function() {
                 logger.error(`failed to get process ${procInfo.name} : ${procInfo.pid}`);
                 continue;
             }
-
             process.run();
         } catch (e) {
             procInfo.status = 'crashed';
@@ -118,9 +110,13 @@ Kernel.prototype.run = function() {
             logger.error(`process crashed ${procInfo.name} : ${procInfo.pid}\n${e.stack}`);
         }
 
-        procInfo.cpuUsed = (Game.cpu.getUsed() - procStartCPU);
+        let usedCPU = Game.cpu.getUsed();
+        procInfo.cpuUsed = (usedCPU - procStartCPU);
 
-        if (Game.cpu.getUsed() > Game.cpu.limit && Game.cpu.bucket < 5000) {
+        if (usedCPU > C.KERNEL_MAX_CPU) {
+            logger.alert('CPU usage exceded max per tick usage, ending kernal execution early');
+            break;
+        } else if (usedCPU > Game.cpu.limit && Game.cpu.bucket < C.KERNEL_LOW_BUCKET) {
             logger.alert('High CPU Usage detected, Bucket is low, exiting kernal early');
             break;
         }
