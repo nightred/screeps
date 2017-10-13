@@ -58,16 +58,15 @@ taskUpgrade.prototype.doCreepActions = function(creep) {
 **/
 taskUpgrade.prototype.doWork = function(creep) {
     if (!creep.pos.inRangeTo(creep.room.controller, 3)) {
-        let args = {
+        creep.goto(creep.room.controller, {
             range: 1,
             reusePath: 30,
             maxRooms: 1,
-        };
-        creep.goto(creep.room.controller, args);
+        });
         return;
     }
 
-    creep.upgradeController(creep.room.controller)
+    creep.upgradeController(creep.room.controller);
 };
 
 /**

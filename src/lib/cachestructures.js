@@ -7,8 +7,8 @@ var logger = new Logger('[LibCacheStructures]');
 var libCacheStructures = {
 
     getCacheStructures: function() {
-        var globalStructures = cache.getData(C.CACHE.STRUCTURES);
-        if (cache.isOld(C.CACHE.STRUCTURES)) {
+        var globalStructures = mod.cache.getData(C.CACHE.STRUCTURES);
+        if (mod.cache.isOld(C.CACHE.STRUCTURES)) {
             logger.debug('rebuilding structure cache');
 
             globalStructures = {};
@@ -19,7 +19,7 @@ var libCacheStructures = {
                 return acc;
             }, {});
 
-            cache.markFresh(C.CACHE.STRUCTURES);
+            mod.cache.markFresh(C.CACHE.STRUCTURES);
         }
 
         return globalStructures;

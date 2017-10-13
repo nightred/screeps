@@ -346,7 +346,7 @@ Creep.prototype.hasGoingTo = function(target) {
 }
 
 Creep.prototype.goto = function(target, args) {
-    return goto.travel(this, target, args);
+    return mod.goto.travel(this, target, args);
 };
 
 Creep.prototype.collectDroppedEnergy = function () {

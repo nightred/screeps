@@ -8,8 +8,6 @@ require('constants');
 // global methods
 global.Logger   = require('util.logger');
 global.mod      = require('modules.loader');
-global.cache    = require('modules.cache');
-global.goto     = require('modules.goto');
 
 // prototypes
 require('prototype.prototype');

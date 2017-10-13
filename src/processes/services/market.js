@@ -86,6 +86,7 @@ MarketService.prototype.doRoomSurplus = function(room) {
 MarketService.prototype.doSellSurplus = function(room) {
     let terminal = room.terminal;
     if (!terminal) return;
+    if (terminal.cooldown) return;
 
     let amt = 0;
     let res;
@@ -110,12 +111,15 @@ MarketService.prototype.doSellSurplus = function(room) {
         type: ORDER_BUY,
         resourceType: res,
     });
+    if (orders.length === 0) return;
+    orders = _.sortBy(orders, order => order.price);
 
     logger.debug('trying to sell ' + amt + ' ' + res +
         ' got back ' + orders.length + ' orders'
-    )
+    );
 
-    for (let i = 0; i < orders.length; i++) {
+    let orderCount = orders.length;
+    for (let i = (orderCount - 1); i >= 0; i--) {
         let orderAmt = orders[i].remainingAmount;
         if (orderAmt > amt) orderAmt = amt;
         if (orderAmt < 500) continue;
@@ -123,20 +127,22 @@ MarketService.prototype.doSellSurplus = function(room) {
         let cost = Game.market.calcTransactionCost(orderAmt, room.name, orders[i].roomName);
         if (cost > C.MARKET_MAX_COST) continue;
 
-        Game.market.deal(orders[i].id, orderAmt, room.name);
+        let rslt = Game.market.deal(orders[i].id, orderAmt, room.name);
 
-        logger.info(room.toString() + ' sold ' + orderAmt + ' ' + res +
-            ' at ' + orders[i].price +
-            ' to ' + orders[i].roomName +
-            ' used ' + cost + 'e'
-        );
+        if (rslt === OK)
+            logger.info(room.toString() + ' sold ' + orderAmt + ' ' + res +
+                ' at ' + orders[i].price +
+                ' to ' + orders[i].roomName +
+                ' used ' + cost + 'e' +
+                ' for ' + (orders[i].price * orderAmt) + 'c'
+            );
         break;
     }
 };
 
 MarketService.prototype.getCache = function() {
-    var marketCache = cache.getData(C.CACHE.MARKET);
-    if (cache.isOld(C.CACHE.MARKET)) {
+    var marketCache = mod.cache.getData(C.CACHE.MARKET);
+    if (mod.cache.isOld(C.CACHE.MARKET)) {
         let startCPU = Game.cpu.getUsed();
 
         let markets = _.filter(Game.structures, s =>
@@ -146,7 +152,7 @@ MarketService.prototype.getCache = function() {
             acc.push(s.room.name);
             return acc;
         }, []);
-        cache.markFresh(C.CACHE.MARKET);
+        mod.cache.markFresh(C.CACHE.MARKET);
 
         logger.debug('rebuilding market cache' +
             ' cpu used: ' + (Game.cpu.getUsed() - startCPU)

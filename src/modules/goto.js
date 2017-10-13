@@ -112,9 +112,9 @@ var gotoModule = {
         });
 
         let validRooms;
-        if ((args.useFindRoute && start.roomName !== target.roomName) ||
-            Game.map.getRoomLinearDistance(start.roomName, target.roomName) > 2
-        ) validRooms = this.findValidRooms(start.roomName, target.roomName, args);
+        //if ((args.useFindRoute && start.roomName !== target.roomName) ||
+        //    Game.map.getRoomLinearDistance(start.roomName, target.roomName) > 2
+        //) validRooms = this.findValidRooms(start.roomName, target.roomName, args);
 
         let callback = (roomName) => {
             if (validRooms && !validRooms[roomName]) return false;
@@ -188,7 +188,7 @@ var gotoModule = {
     },
 
     getMap: function(room) {
-        var cacheCosts = cache.getData(C.CACHE.COST_MATRIX);
+        var cacheCosts = mod.cache.getData(C.CACHE.COST_MATRIX);
         if (!cacheCosts.costs) cacheCosts.costs = {};
         if (!cacheCosts.age) cacheCosts.age = {};
 

@@ -30,6 +30,7 @@ SpawnQueue.prototype.addRecord = function(args) {
     };
 
     if (args.minSize) record.minSize = args.minSize;
+    if (args.maxSize) record.maxSize = args.maxSize;
     if (args.creepArgs) record.creepArgs = args.creepArgs;
 
     logger.debug('adding record, role: ' + record.role + ', rooms: [' + record.rooms + '], priority: ' + record.priority);
