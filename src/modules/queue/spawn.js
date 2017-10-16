@@ -20,20 +20,20 @@ SpawnQueue.prototype.addRecord = function(args) {
     if (C.ROLE_TYPES.indexOf(args.role) < 0) { return ERR_INVALID_ARGS; }
 
     args.priority = args.priority || 100;
-    args.rooms = args.rooms || [];
 
     let record = {
         queue: C.QUEUE_SPAWN,
         role: args.role,
-        rooms: args.rooms,
+        room: args.room,
         priority: args.priority,
     };
 
-    if (args.minSize) record.minSize = args.minSize;
-    if (args.maxSize) record.maxSize = args.maxSize;
-    if (args.creepArgs) record.creepArgs = args.creepArgs;
+    if (args.creepArgs) _.assign(record.creepArgs, args.creepArgs);
 
-    logger.debug('adding record, role: ' + record.role + ', rooms: [' + record.rooms + '], priority: ' + record.priority);
+    logger.debug('adding record, role: ' + record.role +
+        ', room: ' + record.room +
+        ', priority: ' + record.priority
+    );
 
     return addQueueRecord(record);
 };

@@ -26,11 +26,11 @@ var roleResupply = {
 
         let body = [];
 
-        for (let i = 0; i < carryUnits; i++) {
+        for (var i = 0; i < carryUnits; i++) {
             body.push(CARRY);
         }
 
-        for (let i = 0; i < moveUnits; i++) {
+        for (var i = 0; i < moveUnits; i++) {
             body.push(MOVE);
         }
 

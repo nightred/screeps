@@ -36,7 +36,7 @@ Storage.prototype.getStore = function(creep, amount, types) {
 
     let target = false;
 
-    for (let i = 0; i < types.length; i++) {
+    for (var i = 0; i < types.length; i++) {
         if (!this.rooms[creep.room.name][types[i]]) { continue; }
 
         let mod = 1;
@@ -88,7 +88,7 @@ Storage.prototype.getWithdraw = function(creep, amount, types) {
 
     let target = undefined;
 
-    for (let i = 0; i < types.length; i++) {
+    for (var i = 0; i < types.length; i++) {
         if (!this.rooms[creep.room.name][types[i]]) continue;
 
         if ((types[i] == 'spawn' || types[i] == 'extention') &&
@@ -167,7 +167,7 @@ Storage.prototype.buildRoom = function(room) {
     records.containerOut = {};
     let containers = room.getContainers();
     if (containers.length > 0) {
-        for (let i = 0; i < containers.length; i++) {
+        for (var i = 0; i < containers.length; i++) {
             let record = {
                 id: containers[i].id,
                 store: _.sum(containers[i].store),
@@ -194,7 +194,7 @@ Storage.prototype.buildRoom = function(room) {
     records.linkOut = {};
     let links = room.getLinks();
     if (links.length > 0) {
-        for (let i = 0; i < links.length; i++) {
+        for (var i = 0; i < links.length; i++) {
             let record = {
                 id: links[i].id,
                 store: links[i].energy,
@@ -219,7 +219,7 @@ Storage.prototype.buildRoom = function(room) {
     records.spawn = {};
     let spawns = room.getSpawns();
     if (spawns.length > 0) {
-        for (let i = 0; i < spawns.length; i++) {
+        for (var i = 0; i < spawns.length; i++) {
             records.spawn[spawns[i].id] = {
                 id: spawns[i].id,
                 store: spawns[i].energy,
@@ -233,7 +233,7 @@ Storage.prototype.buildRoom = function(room) {
     records.extention = {};
     let extentions = room.getExtensions();
     if (extentions.length > 0) {
-        for (let i = 0; i < extentions.length; i++) {
+        for (var i = 0; i < extentions.length; i++) {
             records.extention[extentions[i].id] = {
                 id: extentions[i].id,
                 store: extentions[i].energy,

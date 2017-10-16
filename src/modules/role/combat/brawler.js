@@ -32,13 +32,13 @@ var roleCombatBrawler = {
         toughUnits = toughUnits > (moveUnits * 2) ? (moveUnits * 2) : toughUnits;
 
         let body = [];
-        for (let i = 0; i < toughUnits; i++) {
+        for (var i = 0; i < toughUnits; i++) {
             body.push(TOUGH);
         }
-        for (let i = 0; i < moveUnits; i++) {
+        for (var i = 0; i < moveUnits; i++) {
             body.push(MOVE);
         }
-        for (let i = 0; i < attackUnits; i++) {
+        for (var i = 0; i < attackUnits; i++) {
             body.push(ATTACK);
         }
 

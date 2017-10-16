@@ -43,8 +43,8 @@ jobClaim.prototype.run = function() {
         return;
     }
 
-    for (let role in this.memory.creeps) {
-        for (let i = 0; i < this.memory.creeps[role].length; i++) {
+    for (const role in this.memory.creeps) {
+        for (var i = 0; i < this.memory.creeps[role].length; i++) {
             let creep = Game.creeps[this.memory.creeps[role][i]];
             if (!creep) continue;
             this.doCreepActions(creep);

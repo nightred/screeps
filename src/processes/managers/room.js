@@ -14,16 +14,6 @@ var RoomManager = function() {
 _.merge(RoomManager.prototype, require('lib.cachelinks'));
 _.merge(RoomManager.prototype, require('lib.links'));
 
-Object.defineProperty(RoomManager.prototype, 'managerSpawn', {
-    get: function() {
-        if (!this.memory.managerSpawnPid) return false;
-        return Game.kernel.getProcessByPid(this.memory.managerSpawnPid);
-    },
-    set: function(value) {
-        this.memory.managerSpawnPid = value.pid;
-    },
-});
-
 Object.defineProperty(RoomManager.prototype, 'managerMarket', {
     get: function() {
         if (!this.memory.managerMarketPid) return false;
@@ -35,8 +25,6 @@ Object.defineProperty(RoomManager.prototype, 'managerMarket', {
 });
 
 RoomManager.prototype.run = function() {
-    let cpuStart = Game.cpu.getUsed();
-
     if (!this.memory.lastVision) this.memory.lastVision = Game.time;
     let room = Game.rooms[this.memory.roomName];
     if (!room) {
@@ -70,11 +58,11 @@ RoomManager.prototype.run = function() {
     // defense status
     this.defenseStatus(room);
 
-    addTerminalLog(room.name, {
-        command: 'manager',
-        status: 'OK',
-        cpu: (Game.cpu.getUsed() - cpuStart),
-    });
+    // remove old spawn manager
+    if (this.memory.managerSpawnPid) {
+        Game.kernel.killProcess(this.memory.managerSpawnPid);
+        this.memory.managerSpawnPid = undefined;
+    }
 };
 
 RoomManager.prototype.defenseStatus = function(room) {
@@ -92,7 +80,7 @@ RoomManager.prototype.defenseStatus = function(room) {
 };
 
 RoomManager.prototype.cleanContainers = function(room) {
-    for (let containerId in room.memory.structureContainers) {
+    for (const containerId in room.memory.structureContainers) {
         if (!Game.getObjectById(containerId)) {
             delete room.memory.structureContainers[containerId];
             logger.debug('clearing non-existant container: ' + containerId);
@@ -100,13 +88,13 @@ RoomManager.prototype.cleanContainers = function(room) {
     }
 
     let targets = room.getContainers();
-    for (let target of targets) {
+    for (const target of targets) {
         if (!target.memory.type) target.memory.type = 'default';
     }
 };
 
 RoomManager.prototype.cleanTowers = function(room) {
-    for (let towerId in room.memory.structureTowers) {
+    for (const towerId in room.memory.structureTowers) {
         if (!Game.getObjectById(towerId)) {
             delete room.memory.structureTowers[towerId];
             logger.debug('clearing non-existant tower: ' + towerId);
@@ -115,7 +103,7 @@ RoomManager.prototype.cleanTowers = function(room) {
 };
 
 RoomManager.prototype.cleanLinks = function(room) {
-    for (let linkId in room.memory.structureLinks) {
+    for (const linkId in room.memory.structureLinks) {
         if (!Game.getObjectById(linkId)) {
             delete room.memory.structureLinks[linkId];
             logger.debug('clearing non-existant link: ' + linkId);
@@ -232,13 +220,6 @@ RoomManager.prototype.buildCache = function() {
 };
 
 RoomManager.prototype.doManagers = function() {
-    if (!this.managerSpawn) {
-        let proc = Game.kernel.startProcess(this, 'managers/spawn', {
-            roomName: this.memory.roomName,
-        });
-        this.managerSpawn = proc;
-    }
-
     if (!this.managerMarket) {
         let proc = Game.kernel.startProcess(this, 'managers/market', {
             roomName: this.memory.roomName,

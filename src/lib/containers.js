@@ -20,7 +20,7 @@ var libContainers = {
                 c.memory.type = 'in'
             );
 
-            for (let i = 0; i < containers.length; i++) {
+            for (var i = 0; i < containers.length; i++) {
                 if (this.memory.containersIn.indexOf(containers[i].id) >= 0) continue;
                 this.memory.containersIn.push(containers[i].id);
             }

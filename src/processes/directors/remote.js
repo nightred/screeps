@@ -122,7 +122,7 @@ directorRemote.prototype.createWorkTasks = function() {
         C.WORK_CONSTRUCTION,
     ];
 
-    for (let i = 0; i < findWorkTasks.length; i++) {
+    for (var i = 0; i < findWorkTasks.length; i++) {
         doWorkFind(findWorkTasks[i], workRoom);
     }
 };

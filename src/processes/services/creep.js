@@ -11,23 +11,12 @@ var CreepService = function() {
 };
 
 CreepService.prototype.run = function() {
-    let cpuStart = Game.cpu.getUsed();
-
-    let creepCount = Object.keys(Game.creeps).length;
-
     for (var name in Game.creeps) {
         var creep = Game.creeps[name];
         this.doCreep(creep);
     }
 
     this.cleanCreep();
-
-    addTerminalLog(undefined, {
-        command: 'service creep',
-        status: 'OK',
-        cpu: (Game.cpu.getUsed() - cpuStart),
-        output: ('creep count: ' + creepCount),
-    });
 };
 
 CreepService.prototype.doCreep = function(creep) {
@@ -60,7 +49,7 @@ CreepService.prototype.cleanCreep = function() {
     if (this.memory.sleepCleanup && this.memory.sleepCleanup > Game.time) return;
     this.memory.sleepCleanup = C.MANAGE_MEMORY_TICKS + Game.time;
 
-    for (let creepName in Memory.creeps) {
+    for (const creepName in Memory.creeps) {
         if (!Game.creeps[creepName]) this.cleanOldCreep(creepName);
     }
 };

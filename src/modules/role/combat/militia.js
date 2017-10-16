@@ -47,19 +47,19 @@ var roleCombatMilitia = {
         moveUnits += toughUnits;
 
         let body = [];
-        for (let i = 0; i < toughUnits; i++) {
+        for (var i = 0; i < toughUnits; i++) {
             body.push(TOUGH);
         }
-        for (let i = 0; i < moveUnits; i++) {
+        for (var i = 0; i < moveUnits; i++) {
             body.push(MOVE);
         }
-        for (let i = 0; i < rangedUnits; i++) {
+        for (var i = 0; i < rangedUnits; i++) {
             body.push(RANGED_ATTACK);
         }
-        for (let i = 0; i < attackUnits; i++) {
+        for (var i = 0; i < attackUnits; i++) {
             body.push(ATTACK);
         }
-        for (let i = 0; i < healUnits; i++) {
+        for (var i = 0; i < healUnits; i++) {
             body.push(HEAL);
         }
 

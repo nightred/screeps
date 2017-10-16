@@ -53,11 +53,11 @@ var roleMiner = {
             moveUnits += 1;
         }
 
-        for (let i = 0; i < moveUnits; i++) {
+        for (var i = 0; i < moveUnits; i++) {
             body.push(MOVE);
         }
 
-        for (let i = 0; i < workUnits; i++) {
+        for (var i = 0; i < workUnits; i++) {
             body.push(WORK);
         }
 

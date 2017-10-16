@@ -24,23 +24,14 @@ taskFieldTech.prototype.run = function() {
         return;
     }
 
-    let cpuStart = Game.cpu.getUsed();
-
     this.doSpawnDetails();
     this.doCreepSpawn();
 
-    for (let i = 0; i < this.memory.creeps.length; i++) {
+    for (var i = 0; i < this.memory.creeps.length; i++) {
         let creep = Game.creeps[this.memory.creeps[i]];
         if (!creep) continue;
         this.doCreepActions(creep);
     }
-
-    addTerminalLog(this.memory.workRoom, {
-        command: 'fieldtech',
-        status: 'OK',
-        cpu: (Game.cpu.getUsed() - cpuStart),
-        output: ('pid: ' + this.pid),
-    });
 };
 
 /**
@@ -49,7 +40,7 @@ taskFieldTech.prototype.run = function() {
 taskFieldTech.prototype.doCreepActions = function(creep) {
     if (creep.spawning) return;
     if (creep.getOffExit()) return;
-    
+
     if (creep.isSleep()) {
         this.doUpgrade(creep);
         return;
@@ -152,26 +143,10 @@ taskFieldTech.prototype.doSpawnDetails = function() {
     let spawnRoom = Game.rooms[this.memory.spawnRoom];
     if (!spawnRoom || !spawnRoom.controller || !spawnRoom.controller.my) return;
 
-    let minSize = 200;
-    let maxSize = 200;
-
-    let rlevel = spawnRoom.controller.level;
-    if (rlevel == 1 || rlevel == 2 || rlevel == 3 || rlevel == 4) {
-        maxSize = 400;
-    } else if (rlevel == 5 || rlevel == 6) {
-        minSize = 400;
-        maxSize = 600;
-    } else if (rlevel == 7 || rlevel == 8) {
-        minSize = 500;
-        maxSize = 9999;
-    }
-
     this.setSpawnDetails({
         role: C.ROLE_FIELDTECH,
         priority: 58,
         spawnRoom: this.memory.spawnRoom,
-        maxSize: maxSize,
-        minSize: minSize,
         limit: 2,
         creepArgs: {},
     });

@@ -68,13 +68,13 @@ var roleCombatTank = {
         }
 
         let body = [];
-        for (let i = 0; i < toughUnits; i++) {
+        for (var i = 0; i < toughUnits; i++) {
             body.push(TOUGH);
         }
-        for (let i = 0; i < healUnits; i++) {
+        for (var i = 0; i < healUnits; i++) {
             body.push(HEAL);
         }
-        for (let i = 0; i < moveUnits; i++) {
+        for (var i = 0; i < moveUnits; i++) {
             body.push(MOVE);
         }
 

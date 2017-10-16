@@ -16,7 +16,7 @@ var Constant = {};
 Constant.USERNAME                       = 'nightred';
 
 // Versioning
-Constant.VERSION_QUEUE                  = 'v3.00'
+Constant.VERSION_QUEUE                  = 'v3.01'
 
 Constant.SIM                            = false;
 Constant.VISUALS                        = true;
@@ -65,7 +65,8 @@ Constant.SQUAD_SLEEP_NEWCREEP           = 3;
 
 Constant.SPAWN_COST_DECAY               = 200;
 Constant.SPAWN_QUEUE_DELAY              = 2;
-Constant.SPAWN_ENERGY_MAX               = 0.8;
+Constant.SPAWN_ENERGY_MAX               = 0.90;
+Constant.SPAWN_ENERGY_MIN               = 200;
 
 Constant.REPAIR_HIT_WORK_MIN            = 0.80;
 Constant.REPAIR_HIT_WORK_MAX            = 0.98;
@@ -202,6 +203,8 @@ Constant.TASK_TYPES = [
 Constant.TASK_FLAG_MAP = {
     'fieldtech':    Constant.TASK_FIELDTECH,
 };
+
+Constant.SERVICES_SPAWN                 = 'services/spawn';
 
 Constant.JOB_CLAIM                      = 'jobs/claim';
 Constant.JOB_DISMANTLE                  = 'jobs/dismantle';

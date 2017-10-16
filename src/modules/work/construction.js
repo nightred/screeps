@@ -98,7 +98,7 @@ var taskConstruction = {
         memory.sleepConstruction = Game.time + C.WORK_FIND_SLEEP;
 
         let targets = room.getConstructionSites();
-        for (let i = 0; i < targets.length; i++) {
+        for (var i = 0; i < targets.length; i++) {
             this.create({
                 roomName: room.name,
                 targetId: targets[i].id,

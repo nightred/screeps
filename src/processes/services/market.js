@@ -23,14 +23,12 @@ Object.defineProperty(MarketService.prototype, 'marketData', {
 });
 
 MarketService.prototype.run = function() {
-    let cpuStart = Game.cpu.getUsed();
-
     marketCache = this.getCache();
 
     let marketCount = 0;
     if (marketCache.rooms) {
         marketCount = marketCache.rooms.length;
-        for (let i = 0; i < marketCount; i++) {
+        for (var i = 0; i < marketCount; i++) {
             let room = Game.rooms[marketCache.rooms[i]];
             if (!room) continue;
 
@@ -38,14 +36,6 @@ MarketService.prototype.run = function() {
             this.doSellSurplus(room);
         }
     }
-
-    addTerminalLog(undefined, {
-        command: 'service market',
-        status: 'OK',
-        cpu: (Game.cpu.getUsed() - cpuStart),
-        output: ('markets: ' + marketCount),
-    });
-
 };
 
 MarketService.prototype.doRoomSurplus = function(room) {
@@ -62,7 +52,7 @@ MarketService.prototype.doRoomSurplus = function(room) {
     if (!this.marketData[room.name].surplus)
         this.marketData[room.name].surplus = {};
 
-    for (let resource in storage.store) {
+    for (const resource in storage.store) {
         if (resource == RESOURCE_ENERGY) {
             let surplus = storage.store[RESOURCE_ENERGY] - C.MARKET_MAX_ENERGY;
             if (surplus > 0) {
@@ -91,7 +81,7 @@ MarketService.prototype.doSellSurplus = function(room) {
     let amt = 0;
     let res;
 
-    for (let resource in terminal.store) {
+    for (const resource in terminal.store) {
         res = resource;
         amt = 0;
 
@@ -119,7 +109,7 @@ MarketService.prototype.doSellSurplus = function(room) {
     );
 
     let orderCount = orders.length;
-    for (let i = (orderCount - 1); i >= 0; i--) {
+    for (var i = (orderCount - 1); i >= 0; i--) {
         let orderAmt = orders[i].remainingAmount;
         if (orderAmt > amt) orderAmt = amt;
         if (orderAmt < 500) continue;

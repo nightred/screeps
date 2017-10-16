@@ -99,7 +99,7 @@ Work.prototype.addCreep = function(creepName, id) {
 
     if (workTask.creeps.indexOf(creepName) !== -1) return;
 
-    for (let i = (workTask.creeps.length - 1); i >= 0; i--) {
+    for (var i = (workTask.creeps.length - 1); i >= 0; i--) {
         if (!Game.creeps[workTask.creeps[i]])
             workTask.creeps.splice(i, 1);
     }
@@ -116,7 +116,7 @@ Work.prototype.addCreep = function(creepName, id) {
 Work.prototype.removeCreep = function(creepName, id) {
     let work = getQueueRecord(id);
     if (!work) {
-        logger.error('failed to load work task id" ' + id +
+        logger.error('failed to load work task id ' + id +
             ', when removing creep: ' + creepName);
         return true;
     }

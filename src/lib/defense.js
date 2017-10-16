@@ -89,7 +89,7 @@ var libDefense = {
 
         let alert;
 
-        for (let i = 0; i < spawns.length; i++) {
+        for (var i = 0; i < spawns.length; i++) {
             if (spawns[i].hits < (spawns[i].hitsMax / 2)) {
                 alert = true;
                 break;

@@ -27,32 +27,11 @@ require('processes.registry');
 var logger = new Logger('[Main]');
 
 module.exports.loop = function () {
-    let cpuStart = Game.cpu.getUsed();
-
     // init the kernel
     Game.kernel = new Kernel;
-
-    onTick();
-
-    addTerminalLog(undefined, {
-        command: 'init',
-        status: 'OK',
-        cpu: Game.cpu.getUsed(),
-        output: 'memory usage: ' + (RawMemory.get().length / 1024).toFixed(2) + ' KB',
-    });
-
+    
     // start the kernel
     Game.kernel.run();
 
-    addTerminalLog(undefined, {
-        command: 'main',
-        status: 'OK',
-        cpu: (Game.cpu.getUsed() - cpuStart),
-    });
-
     runVisuals();
-};
-
-var onTick = function() {
-    onTickVisuals();
 };

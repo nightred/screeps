@@ -20,7 +20,7 @@ taskUpgrade.prototype.run = function() {
     this.doSpawnDetails();
     this.doCreepSpawn();
 
-    for (let i = 0; i < this.memory.creeps.length; i++) {
+    for (var i = 0; i < this.memory.creeps.length; i++) {
         let creep = Game.creeps[this.memory.creeps[i]];
         if (!creep) continue;
         this.doCreepActions(creep);
@@ -97,24 +97,13 @@ taskUpgrade.prototype.doSpawnDetails = function() {
     let spawnRoom = Game.rooms[this.memory.spawnRoom];
     if (!spawnRoom || !spawnRoom.controller || !spawnRoom.controller.my) return;
 
-    let minSize = 200;
-    let maxSize = 9999;
-
-    let rlevel = spawnRoom.controller.level;
-    if (rlevel == 3) {
-        minSize = 300;
-    } else if (rlevel == 4 || rlevel == 5 || rlevel == 6) {
-        minSize = 400;
-    } else if (rlevel == 7 || rlevel == 8) {
-        minSize = 600;
-    }
-
     let limit = 2;
     let rcl8 = 0;
     let storageEnergy = 0;
+    let clevel = spawnRoom.controller.level;
     if (spawnRoom.storage) {
         storageEnergy = spawnRoom.storage.store[RESOURCE_ENERGY];
-        if (rlevel < 8 && rlevel >= 4) {
+        if (clevel < 8 && clevel >= 4) {
             if (storageEnergy < C.DIRECTOR_MIN_ENG_UPGRADERS) {
                 limit = 0;
             } else if (storageEnergy < 50000 ) {
@@ -131,7 +120,7 @@ taskUpgrade.prototype.doSpawnDetails = function() {
         }
     }
 
-    if (spawnRoom.controller.level == 8 ) {
+    if (clevel == 8) {
         limit = 1;
         rcl8 = 1;
     }
@@ -143,8 +132,6 @@ taskUpgrade.prototype.doSpawnDetails = function() {
         creepArgs: {
             rcl8: rcl8,
         },
-        maxSize: maxSize,
-        minSize: minSize,
         limit: limit,
     };
 

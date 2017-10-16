@@ -138,9 +138,9 @@ Room.prototype.cleanSourceHarvesters = function() {
 Room.prototype.getHarvestTarget = function() {
     let sources = [];
 
-    for (let source of this.getSources()) {
+    for (const source of this.getSources()) {
         let count = 0;
-        for (let roomCreep of this.find(FIND_MY_CREEPS)) {
+        for (const roomCreep of this.find(FIND_MY_CREEPS)) {
             if (roomCreep.memory.harvestTarget === source.id &&
                 roomCreep.memory.role == 'harvester'
                 ) {

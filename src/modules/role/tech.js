@@ -30,15 +30,15 @@ var roleTech = {
         energy -= 100 * carryUnits;
 
         let body = [];
-        for (let i = 0; i < workUnits; i++) {
+        for (var i = 0; i < workUnits; i++) {
             body.push(WORK);
         }
 
-        for (let i = 0; i < moveUnits; i++) {
+        for (var i = 0; i < moveUnits; i++) {
             body.push(MOVE);
         }
 
-        for (let i = 0; i < carryUnits; i++) {
+        for (var i = 0; i < carryUnits; i++) {
             body.push(CARRY);
         }
 

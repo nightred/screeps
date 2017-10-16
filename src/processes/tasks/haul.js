@@ -27,7 +27,7 @@ taskHaul.prototype.run = function() {
     this.doSpawnDetails();
     this.doCreepSpawn();
 
-    for (let i = 0; i < this.memory.creeps.length; i++) {
+    for (var i = 0; i < this.memory.creeps.length; i++) {
         let creep = Game.creeps[this.memory.creeps[i]];
         if (!creep) continue;
         this.doCreepActions(creep);
@@ -176,22 +176,6 @@ taskHaul.prototype.doSpawnDetails = function() {
     let spawnRoom = Game.rooms[this.memory.spawnRoom];
     if (!spawnRoom || !spawnRoom.controller || !spawnRoom.controller.my) return;
 
-    let minSize = 200;
-    let maxSize = 200;
-
-    let rlevel = spawnRoom.controller.level;
-    if (rlevel == 1 || rlevel == 2)  {
-        maxSize = 300;
-    } else if (rlevel == 3 || rlevel == 4) {
-        maxSize = 400;
-    } else if (rlevel == 5 || rlevel == 6) {
-        minSize = 400;
-        maxSize = 600;
-    } else if (rlevel == 7 || rlevel == 8) {
-        minSize = 500;
-        maxSize = 9999;
-    }
-
     let spawnDetail = {
         role: C.ROLE_HAULER,
         priority: 52,
@@ -199,14 +183,11 @@ taskHaul.prototype.doSpawnDetails = function() {
         creepArgs: {
             style: 'default',
         },
-        maxSize: maxSize,
-        minSize: 200,
         limit: 1,
     };
 
     if (this.memory.spawnRoom !== this.memory.workRoom) {
         spawnDetail.creepArgs.style = 'longhauler';
-        spawnDetail.minSize = minSize;
     }
 
     this.setSpawnDetails(spawnDetail);

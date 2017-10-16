@@ -49,7 +49,7 @@ directorMining.prototype.run = function() {
 directorMining.prototype.doSourceMining = function(room) {
     let sources = this.getRoomSources(room);
 
-    for (let i = 0; i < sources.length; i++) {
+    for (var i = 0; i < sources.length; i++) {
         let source = Game.getObjectById(sources[i]);
         let process = Game.kernel.getProcessByPid(this.processRecords[source.id]);
         if (!process) {

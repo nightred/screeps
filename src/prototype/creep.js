@@ -16,11 +16,9 @@ Object.defineProperty(Creep.prototype, 'state', {
 });
 
 Creep.prototype.moveToRoom = function(roomName) {
-    if (Game.cpu.bucket < 1000) { return true; }
-
     let target = new RoomPosition(25, 25, roomName);
     return this.goto(target, {
-        range: 24,
+        range: 8,
         reusePath: 50,
         ignoreCreeps: true,
     });
@@ -187,7 +185,7 @@ Creep.prototype.doTransfer = function(target, resourceType) {
     if (resourceType) {
         this.transfer(target, resourceType);
     } else {
-        for (let resource in this.carry) {
+        for (const resource in this.carry) {
             this.transfer(target, resource);
         }
     }
@@ -228,7 +226,7 @@ Creep.prototype.doWithdraw = function(target, resourceType) {
     if (resourceType) {
         this.withdraw(target, resourceType);
     } else {
-        for (let resource in target.store) {
+        for (const resource in target.store) {
             this.withdraw(target, resource);
         }
     }
@@ -365,7 +363,7 @@ Creep.prototype.collectDroppedEnergy = function () {
 Creep.prototype.getDestructibleStructures = function(path) {
     if (!path || !path.length) { return ERR_INVALID_ARGS; }
 
-    for (let i = 0; i < path.length; i++) {
+    for (var i = 0; i < path.length; i++) {
         let target = new RoomPosition(path[i].x, path[i].y, this.room.name).look();
         let targetIndex = _.findIndex(target, object =>
             object.structure &&
@@ -403,7 +401,7 @@ Creep.prototype.getOffExit = function() {
     }
 
     if (!moveDirections) { return false; }
-    for (let direction of moveDirections) {
+    for (const direction of moveDirections) {
         let target = this.pos.fromDirection(direction).look();
         if (_.findIndex(target, object =>
             object.type == 'creep' ||

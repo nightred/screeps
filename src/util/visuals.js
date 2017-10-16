@@ -13,32 +13,22 @@ var Visuals = function() {
     this.globalLogs = [];
 };
 
-Visuals.prototype.doReset = function() {
-    this.consoleRooms = [];
-    this.roomLogs = {};
-    this.globalLogs = [];
-};
-
 Visuals.prototype.run = function() {
+
     this.logCPU();
     this.visuals();
 };
 
 Visuals.prototype.logCPU = function() {
     this.memory.cpugraphdata.push(Game.cpu.getUsed());
-
-    if ( this.memory.cpugraphdata.length > 50 ) {
+    if (this.memory.cpugraphdata.length > 50 )
         this.memory.cpugraphdata.shift();
-    }
 };
 
 Visuals.prototype.visuals = function() {
-    if (!C.VISUALS) {
-        return true;
-    }
-
+    if (!C.VISUALS) return;
     this.graphCPU();
-    this.printLogs();
+    //this.printLogs();
 };
 
 Visuals.prototype.printLogs = function() {
@@ -55,63 +45,46 @@ Visuals.prototype.printLogs = function() {
         strokeWidth : 0.15,
 	};
 
-    if (this.consoleRooms.length == 0) {
-        return true;
-    }
-
+    if (this.consoleRooms.length == 0) return true;
     var gOutput = 'JENOVA HEAVY INDUSTRIES TERMINAL\n' +
         'Establishing Link with Terminal...\n' +
         'Link Established...\n\n' +
         'Executing Global Processes\n';
 
-    for (let i = 0; i < this.globalLogs.length; i++) {
+    for (var i = 0; i < this.globalLogs.length; i++) {
         let logEntry = this.globalLogs[i];
-
         gOutput += ' * ' + logEntry.command;
-
-        if (logEntry.cpu) {
+        if (logEntry.cpu)
             gOutput += ' [ CPU ' + logEntry.cpu.toFixed(2) + ' ]';
-        }
-
         if (logEntry.status) {
             gOutput += '... ' + logEntry.status + '\n';
         } else {
             gOutput += '...\n';
         }
-
-        if (logEntry.output) {
+        if (logEntry.output)
             gOutput += '    - ' + logEntry.output + '\n';
-        }
     }
 
-    for (let i = 0; i < this.consoleRooms.length; i++) {
+    for (var i = 0; i < this.consoleRooms.length; i++) {
         let logs = this.roomLogs[this.consoleRooms[i]];
-
         if (!logs) continue;
-
         let rv = new RoomVisual(this.consoleRooms[i]);
-
         let output = gOutput + '\nExecuting Room Processes\n';
 
-        for (let i = 0; i < logs.length; i++) {
+        for (var i = 0; i < logs.length; i++) {
             let logEntry = logs[i];
-
             output += ' * ' + logEntry.command +
                 ' [ CPU ' + logEntry.cpu.toFixed(2) + ' ]' +
                 ' ... ' + logEntry.status + '\n';
-
-            if (logEntry.output) {
+            if (logEntry.output)
                 output += '    - ' + logEntry.output + '\n';
-            }
         }
 
         let lines = output.split('\n');
-
-        for (let l = 0; l < lines.length; l++) {
+        for (var l = 0; l < lines.length; l++) {
             rv.text(lines[l], size.l, size.t + (l * (fontSize + lineSpace)), textStyle);
         }
     }
-
 };
 
 Visuals.prototype.graphCPU = function() {
@@ -170,10 +143,8 @@ Visuals.prototype.getCpuGraphColor = function(num) {
 
 Visuals.prototype.addTerminalLog = function(roomName, result) {
     if (roomName) {
-        if (!this.roomLogs[roomName]) {
+        if (!this.roomLogs[roomName])
             this.roomLogs[roomName] = [];
-        }
-
         this.roomLogs[roomName].push(result);
     } else {
         this.globalLogs.push(result);
@@ -181,8 +152,6 @@ Visuals.prototype.addTerminalLog = function(roomName, result) {
 };
 
 Visuals.prototype.addDefenseVisual = function(roomName, args) {
-    let rv = new RoomVisual(roomName);
-
     let size = {t: 4, l: 25, };
     let fontSize = 0.8;
     let lineSpace = 0.2;
@@ -198,22 +167,17 @@ Visuals.prototype.addDefenseVisual = function(roomName, args) {
 
     let output = '** Defense Mode Active **\n' +
         '** Active ' + args.ticks + ' ticks **\n';
-
-    if (args.cooldown) {
-        output += '** Cooldown ' + args.cooldown + ' remaining **';
-    }
-
+    if (args.cooldown) output += '** Cooldown ' + args.cooldown + ' remaining **';
     let lines = output.split('\n');
-
-    for (let l = 0; l < lines.length; l++) {
+    let rv = new RoomVisual(roomName);
+    for (var l = 0; l < lines.length; l++) {
         rv.text(lines[l], size.l, size.t + (l * (fontSize + lineSpace)), textStyle);
     }
 };
 
 Visuals.prototype.doFlag = function(flag) {
-    if (!this.consoleRooms[flag.pos.roomName]) {
+    if (!this.consoleRooms[flag.pos.roomName])
         this.consoleRooms.push(flag.pos.roomName);
-    }
 };
 
 let visuals = new Visuals();
@@ -237,8 +201,3 @@ global.runVisuals = function() {
     visuals.run();
     return true;
 };
-
-global.onTickVisuals = function() {
-    visuals = new Visuals();
-    return true;
-}

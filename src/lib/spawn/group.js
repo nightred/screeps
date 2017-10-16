@@ -24,7 +24,7 @@ var libSpawnGroup = {
         if (creepSpawning._sleep && creepSpawning._sleep > Game.time) return;
         creepSpawning._sleep = Game.time + C.CREEP_SPAWN_SLEEP;
 
-        for (let role in spawnDetails) {
+        for (const role in spawnDetails) {
             creeps[role] = creeps[role] || [];
 
             let spawnRecord = getQueueRecord(creepSpawning[role]);
@@ -49,10 +49,8 @@ var libSpawnGroup = {
 
             if (spawnDetails[role] > 0 && !creepSpawning[role]) {
                 let spawnId = addQueueRecordSpawn({
-                    rooms: [ this.memory.spawnRoom, ],
+                    room: this.memory.spawnRoom,
                     role: role,
-                    minSize: 200,
-                    maxSize: 9999,
                     priority: 90,
                     creepArgs: this.memory.creepArgs,
                 });
@@ -72,11 +70,11 @@ var libSpawnGroup = {
         this.memory.creeps = this.memory.creeps || {};
         let creeps = this.memory.creeps;
 
-        for (let role in creeps) {
+        for (const role in creeps) {
             creeps[role] = creeps[role] || [];
             let creepRole = creeps[role];
             let countCreep = creepRole.length;
-            for (let i = (countCreep - 1); i >= 0; i--) {
+            for (var i = (countCreep - 1); i >= 0; i--) {
                 if (Game.creeps[creepRole[i]]) continue;
                 logger.debug('removing non-existant creep: ' + creepRole[i] +
                     ', from process: ' + this.imageName +

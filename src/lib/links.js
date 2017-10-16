@@ -14,7 +14,7 @@ var libLinks = {
         if (!storageLink) return;
 
         let linksIn = this.getRoomLinksIn(room);
-        for (let i = 0; i < linksIn.length; i++) {
+        for (var i = 0; i < linksIn.length; i++) {
             let link = Game.getObjectById(linksIn[i]);
             if (!link) continue;
 
@@ -28,7 +28,7 @@ var libLinks = {
         let linkStorageMin = storageLink.energyCapacity * C.LINK_STORAGE_TRANSFER_MIN;
 
         let linksOut = this.getRoomLinksOut(room);
-        for (let i = 0; i < linksOut.length; i++) {
+        for (var i = 0; i < linksOut.length; i++) {
             if (storageLink.cooldown != 0) break;
             if (storageLink.energy < linkStorageMin) break;
 
