@@ -77,12 +77,6 @@ directorRoom.prototype.run = function() {
     this.doDirectors();
     this.doTasks();
 
-    // remove old Haulers
-    if (this.memory.haulersPid) {
-        Game.kernel.killProcess(this.memory.haulersPid);
-        this.memory.haulersPid = undefined;
-    }
-
     Game.kernel.sleepProcessbyPid(this.pid, (C.DIRECTOR_SLEEP + Math.floor(Math.random() * 8)));
 };
 
