@@ -50,7 +50,9 @@ taskStock.prototype.doCreepActions = function(creep) {
     if (creep.isSleep()) return;
 
     this.manageState(creep);
-    if (creep.state == 'wait') {
+    if (creep.state == 'init') {
+        this.doGotoWork(creep);
+    } else if (creep.state == 'wait') {
         creep.sleep();
     } else if (creep.state == 'filllink') {
         this.doFillLink(creep);
@@ -65,6 +67,23 @@ taskStock.prototype.doCreepActions = function(creep) {
     } else if (creep.state == 'fillterminal') {
         this.doFillTerminal(creep);
     }
+};
+
+taskStock.prototype.doGotoWork = function(creep) {
+    let flagName = creep.room.name + ':stocker';
+    let flag = Game.flags[flagName];
+    if (flag) {
+        if (!creep.pos.isEqualTo(flag.pos)) {
+            creep.goto(flag, {
+                range: 0,
+                reusePath: 50,
+                maxRooms: 1,
+                ignoreCreeps: true,
+            });
+            return;
+        }
+    }
+    creep.state = 'wait';
 };
 
 taskStock.prototype.doFillLink = function(creep) {
@@ -175,8 +194,6 @@ taskStock.prototype.doFillTerminal = function(creep) {
 
 // check the state of the stocker
 taskStock.prototype.manageState = function(creep) {
-    if (creep.state == 'init') creep.state = 'wait';
-
     if (creep.state == 'wait') {
         if (this.stateEmptyLink(creep)) return;
         if (this.stateFillLink(creep)) return;
