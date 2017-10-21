@@ -20,6 +20,8 @@ require('modules.work');
 
 // load kernel
 var Kernel = require('kernel');
+// load drivers
+var DrvMemory = require('drv.memory');
 // load processes
 require('processes.registry');
 
@@ -29,6 +31,8 @@ var logger = new Logger('[Main]');
 module.exports.loop = function () {
     let cpuStart = Game.cpu.getUsed();
 
+    // init the drivers
+    Game.drvMemory = new DrvMemory;
     // init the kernel
     Game.kernel = new Kernel;
 
