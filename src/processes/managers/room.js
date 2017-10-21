@@ -72,7 +72,7 @@ RoomManager.prototype.defenseStatus = function(room) {
         if (defense.cooldown)
             cooldown = (defense.cooldown + C.DEFENSE_COOLDOWN) - Game.time;
 
-        addDefenseVisual(room.name, {
+        Game.drvDisplay.addDefenseVisual(room.name, {
             ticks: (Game.time - defense.tick),
             cooldown: cooldown,
         });

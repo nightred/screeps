@@ -22,6 +22,7 @@ require('modules.work');
 var Kernel = require('kernel');
 // load drivers
 var DrvMemory = require('drv.memory');
+var DrvDisplay = require('drv.display');
 // load processes
 require('processes.registry');
 
@@ -32,11 +33,13 @@ module.exports.loop = function () {
 
     // init the drivers
     Game.drvMemory = new DrvMemory;
+    Game.drvDisplay = new DrvDisplay;
     // init the kernel
     Game.kernel = new Kernel;
-    
+
     // start the kernel
     Game.kernel.run();
 
-    runVisuals();
+    // run display output
+    Game.drvDisplay.run();
 };
