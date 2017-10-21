@@ -14,7 +14,6 @@ var gotoModule = {
 
     travel: function(creep, target, args = {}) {
         if (!target) return ERR_INVALID_ARGS;
-
         if (!(target instanceof RoomPosition)) target = target.pos;
 
         if (creep.room.controller) {
@@ -24,7 +23,6 @@ var gotoModule = {
                 this.memory.avoidRooms[creep.room.name] = undefined;
             }
         }
-
         if (!creep.memory._goto)
             creep.memory._goto = {
                 tick: Game.time,
@@ -33,11 +31,9 @@ var gotoModule = {
             };
 
         let gotoData = creep.memory._goto;
-
         let isStuck = false;
         if (gotoData.last) {
             gotoData.last = getPos(gotoData.last);
-
             if (!creep.pos.inRangeTo(gotoData.last, 0)) {
                 gotoData.stuck = 0;
             } else {
@@ -51,16 +47,12 @@ var gotoModule = {
             delete gotoData.path;
             args.ignoreCreeps = false;
         }
-
         if (!isStuck && (Game.time - gotoData.tick) > 1)
             delete gotoData.path;
-
         if (!gotoData.dest || gotoData.dest.roomName !== target.roomName ||
             gotoData.dest.x !== target.x || gotoData.dest.y !== target.y
         ) delete gotoData.path;
-
         gotoData.tick = Game.time;
-
         if (creep.fatigue > 0) {
             visualCircle(creep.pos, 'aqua', 0.25);
             return ERR_BUSY;
@@ -69,37 +61,29 @@ var gotoModule = {
         if (!gotoData.path) {
             gotoData.dest = target;
             gotoData.last = undefined;
-
             let cpuStart = Game.cpu.getUsed();
-
             let route = this.findRoute(creep.pos, target, args);
-
             gotoData.cpu = (Game.cpu.getUsed() - cpuStart);
             if (gotoData.cpu > C.GOTO_CPU_ALERT)
                 logger.alert('high cpu: ' + (gotoData.cpu).toFixed(2) +
                     ', creep: ' + creep.name +
                     ', from: ' + creep.pos + ', to: ' + target
                 );
-
             if (route.incomplete)
                 logger.debug('failed to find route, cpu: ' + (gotoData.cpu).toFixed(2) +
                     ', creep: ' + creep.name +
                     ', from: ' + creep.pos + ', to: ' + target
                 );
-
             gotoData.path = serializePath(creep.pos, route.path);
             gotoData.stuck = 0;
         }
 
         if (!gotoData.path || gotoData.path.length === 0) return ERR_NO_PATH;
-
         if (gotoData.last && gotoData.stuck === 0)
             gotoData.path = gotoData.path.substr(1);
-
         gotoData.last = creep.pos;
-
         let moveDir = parseInt(gotoData.path[0], 10);
-
+        if (gotoData.path.length == 1) delete gotoData.path;
         return creep.move(moveDir);
     },
 

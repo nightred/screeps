@@ -5,11 +5,29 @@
  *
  */
 
-Room.prototype.getSourceCount = function() {
-    if (!this.memory.sourceCount) {
-        this.memory.sourceCount = this.find(FIND_SOURCES).length;
-    }
+Room.prototype.isBuildAble = function(structureType) {
+    if (!this.controller) return false;
+    let clevel = this.controller.level;
+    if (clevel === 0) return false;
+    let buildLimit = CONTROLLER_STRUCTURES[structureType][clevel];
+    if (this.find(structure).length >= buildLimit) return false;
+    if (this.isUnderConstruction(structureType)) return false;
+    return true;
+};
 
+Room.prototype.isUnderConstruction = function(structureType) {
+    return this.getUnderConstructionCount(structureType) > 0 ? true : false;
+};
+
+Room.prototype.getUnderConstructionCount = function(structureType) {
+    return _.filter(this.find(FIND_CONSTRUCTION_SITES), site =>
+        site.structureType == structureType
+    ).length();
+};
+
+Room.prototype.getSourceCount = function() {
+    if (!this.memory.sourceCount)
+        this.memory.sourceCount = this.find(FIND_SOURCES).length;
     return this.memory.sourceCount;
 };
 
@@ -111,65 +129,46 @@ Room.prototype.getRoomLinearDistance = function(roomName) {
 }
 
 Room.prototype.getSourceCount = function() {
-    if (!this.memory.sourceCount) {
+    if (!this.memory.sourceCount)
         this.memory.sourceCount = this.getSources().length;
-    }
-
     return this.memory.sourceCount;
 };
 
 Room.prototype.cleanSourceHarvesters = function() {
     let sources = _.filter(this.getSources(), source =>
         source.memory.harvester
-        );
-    if (sources.length <= 0) { return true; }
-
+    );
+    if (sources.length <= 0) return;
     for (i = 0; i < sources.length; i++) {
         if (sources[i].memory.harvester) { continue; }
         let name = sources[i].memory.harvester;
-        if (!Game.creeps[name]) {
-            sources[i].removeHarvester();
-        }
+        if (!Game.creeps[name]) sources[i].removeHarvester();
     }
-
-    return true;
 };
 
 Room.prototype.getHarvestTarget = function() {
     let sources = [];
-
     for (const source of this.getSources()) {
         let count = 0;
         for (const roomCreep of this.find(FIND_MY_CREEPS)) {
             if (roomCreep.memory.harvestTarget === source.id &&
                 roomCreep.memory.role == 'harvester'
-                ) {
-                count++;
-            }
+            ) count++;
         }
-        if (count < C.HARVESTERS_PER_SOURCE) {
-            sources.push(source);
-        }
+        if (count < C.HARVESTERS_PER_SOURCE) sources.push(source);
     }
-
-    if (sources.length > 0) {
-        return sources[0].id;
-    }
-
+    if (sources.length > 0) return sources[0].id;
     return false;
 };
 
 Room.prototype.getSpawn = function() {
-    if (!this.memory.spawnId || this.memory.spawnId == undefined) {
+    if (!this.memory.spawnId || this.memory.spawnId == undefined)
         this.findSpawn();
-    }
-
     return this.memory.spawnId;
 };
 
 Room.prototype.findSpawn = function() {
     let targets = this.find(FIND_MY_SPAWNS);
-
     if (targets.length > 0) {
         this.memory.spawnId = targets[0].id;
     } else {
@@ -187,54 +186,38 @@ Room.prototype.getConstructionAtArea = function(pos, range) {
             true
         );
 
-        if (objects.length == 0) {
-            return false;
-        }
-
+        if (objects.length == 0) return false;
         return objects[0].constructionSite;
 };
 
 Room.prototype.getCoverage = function() {
     this.memory.roomCoverage = this.memory.roomCoverage || [];
-
     return this.memory.roomCoverage;
 };
 
 Room.prototype.addCoverage = function(roomName) {
-    if (!roomName) { return ERR_INVALID_ARGS; }
-
+    if (!roomName) return ERR_INVALID_ARGS;
     this.memory.roomCoverage = this.memory.roomCoverage || [];
-
-    if (this.memory.roomCoverage.indexOf(roomName) === -1) {
+    if (this.memory.roomCoverage.indexOf(roomName) === -1)
         this.memory.roomCoverage.push(roomName);
-    }
-
     return true;
 };
 
 Room.prototype.remCoverage = function(roomName) {
-    if (!roomName) { return ERR_INVALID_ARGS; }
-
+    if (!roomName) return ERR_INVALID_ARGS;
     this.memory.roomCoverage = this.memory.roomCoverage || [];
-
     let index = this.memory.roomCoverage.indexOf(roomName);
-
-    if (index != -1) {
-        this.memory.roomCoverage.splice(index, 1);
-    }
-
+    if (index != -1) this.memory.roomCoverage.splice(index, 1);
     return true;
 };
 
 Room.prototype.isInCoverage = function(roomName) {
     this.memory.roomCoverage = this.memory.roomCoverage || [];
-
     return (this.memory.roomCoverage.indexOf(roomName) != -1) ? true : false;
 };
 
 Room.prototype.countCoverage = function() {
     this.memory.roomCoverage = this.memory.roomCoverage || [];
-
     return this.memory.roomCoverage.length;
 };
 

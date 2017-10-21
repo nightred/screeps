@@ -14,7 +14,10 @@ var Visuals = function() {
 };
 
 Visuals.prototype.run = function() {
-
+    Memory.stats = Memory.stats || {};
+    this.memory = Memory.stats;
+    this.memory.cpugraphdata = this.memory.cpugraphdata || [];
+    
     this.logCPU();
     this.visuals();
 };
