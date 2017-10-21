@@ -5,7 +5,6 @@
 
 var logger = new Logger('[Utils]');
 
-require('util.visuals');
 require('util.storage');
 require('util.allies');
 
