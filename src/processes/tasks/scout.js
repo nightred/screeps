@@ -89,10 +89,8 @@ taskScout.prototype.spawnCreep = function() {
 
     if (!spawnRecord && !this.memory.spawnId) {
         this.memory.spawnId = addQueueRecordSpawn({
-            rooms: [ this.memory.spawnRoom, ],
+            room: this.memory.spawnRoom,
             role: C.ROLE_SCOUT,
-            minSize: 200,
-            maxSize: 200,
             priority: 38,
             creepArgs: {},
         });

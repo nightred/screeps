@@ -30,12 +30,6 @@ directorTech.prototype.run = function() {
 
     if (this.memory.spawnRoom == this.memory.workRoom) {
         this.doTechsTask(spawnRoom);
-
-        // remove old squad
-        if (this.memory.squadPid) {
-            Game.kernel.killProcess(this.memory.squadPid);
-            this.memory.squadPid = undefined;
-        }
     }
 
     Game.kernel.sleepProcessbyPid(this.pid, (C.DIRECTOR_SLEEP + Math.floor(Math.random() * 20)));
@@ -51,7 +45,7 @@ directorTech.prototype.createWorkTasks = function() {
         C.WORK_CONSTRUCTION,
     ];
 
-    for (let i = 0; i < findWorkTasks.length; i++) {
+    for (var i = 0; i < findWorkTasks.length; i++) {
         doWorkFind(findWorkTasks[i], workRoom);
     }
 };

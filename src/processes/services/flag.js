@@ -14,13 +14,9 @@ var Flag = function() {
 };
 
 Flag.prototype.run = function() {
-	if (Game.cpu.bucket < C.CPU_MIN_BUCKET_FLAGS) { return true; }
+	this.cleanupFlags();
 
-    let cpuStart = Game.cpu.getUsed();
-
-    this.cleanupFlags();
-
-    for (let name in Game.flags) {
+    for (const name in Game.flags) {
         let flag = Game.flags[name];
 
         switch (flag.color) {
@@ -37,16 +33,10 @@ Flag.prototype.run = function() {
             break;
 
         case COLOR_ORANGE:
-            doFlagVisuals(flag);
+            //doFlagVisuals(flag);
             break;
         }
     }
-
-    addTerminalLog(undefined, {
-        command: 'service flag',
-        status: 'OK',
-        cpu: (Game.cpu.getUsed() - cpuStart),
-    })
 };
 
 Flag.prototype.doDirectorFlag = function(flag) {

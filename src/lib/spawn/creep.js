@@ -40,7 +40,7 @@ var libSpawnCreep = {
 
     removeOldCreep: function() {
         let creepCount = this.memory.creeps.length - 1;
-        for (let i = creepCount; i >= 0; i--) {
+        for (var i = creepCount; i >= 0; i--) {
             if (Game.creeps[this.memory.creeps[i]]) continue;
             logger.debug('removing non-existant creep: ' + this.memory.creeps[i] +
                 ', from process: ' + this.imageName +
@@ -59,19 +59,13 @@ var libSpawnCreep = {
         let spawnDetails = this.getSpawnDetails();
 
         let record = {
-            rooms: [ spawnDetails.spawnRoom, ],
+            room: spawnDetails.spawnRoom,
             role: spawnDetails.role,
-            minSize: spawnDetails.minSize,
-            maxSize: spawnDetails.maxSize,
             priority: spawnDetails.priority,
             creepArgs: {},
         };
 
-        if (spawnDetails.creepArgs) {
-            for (let item in spawnDetails.creepArgs) {
-                record.creepArgs[item] = spawnDetails.creepArgs[item];
-            };
-        }
+        if (spawnDetails.creepArgs) _.assign(record.creepArgs, spawnDetails.creepArgs);
 
         let spawnId = addQueueRecordSpawn(record);
         this.memory.spawnId = spawnId;

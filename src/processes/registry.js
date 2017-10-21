@@ -10,11 +10,11 @@ require('processes.services.creep');
 require('processes.services.flag');
 require('processes.services.market');
 require('processes.services.room');
+require('processes.services.spawn');
 
 // managers
 require('processes.managers.market');
 require('processes.managers.room');
-require('processes.managers.spawn');
 require('processes.managers.squad');
 
 // tasks

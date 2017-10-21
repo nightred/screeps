@@ -25,7 +25,7 @@ taskMilitia.prototype.run = function() {
     this.doSpawnDetails();
     this.doCreepSpawn();
 
-    for (let i = 0; i < this.memory.creeps.length; i++) {
+    for (var i = 0; i < this.memory.creeps.length; i++) {
         let creep = Game.creeps[this.memory.creeps[i]];
         if (!creep) continue;
         this.doCreepActions(creep);
@@ -65,25 +65,14 @@ taskMilitia.prototype.doSpawnDetails = function() {
     if (!spawnRoom || !spawnRoom.controller || !spawnRoom.controller.my) return;
 
     let limit = 0;
-    let minSize = 200;
-    let maxSize = 200;
-
-    let rlevel = spawnRoom.controller.level;
-    if (rlevel == 2 || rlevel == 3) {
-        minSize = 200;
-        maxSize = 300;
+    let clevel = spawnRoom.controller.level;
+    if (clevel == 2 || clevel == 3) {
         limit = 1;
-    } else if (rlevel == 4 || rlevel == 5 || rlevel == 6) {
-        minSize = 200;
-        maxSize = 500;
+    } else if (clevel == 4 || clevel == 5 || clevel == 6) {
         limit = 1;
-    } else if (rlevel == 7) {
-       minSize = 200;
-       maxSize = 800;
+    } else if (clevel == 7) {
        limit = 1;
-    } else if (rlevel == 8) {
-        minSize = 400;
-        maxSize = 9999;
+    } else if (clevel == 8) {
         limit = 2;
     }
 
@@ -92,8 +81,6 @@ taskMilitia.prototype.doSpawnDetails = function() {
         priority: 38,
         spawnRoom: this.memory.spawnRoom,
         creepArgs: {},
-        maxSize: maxSize,
-        minSize: minSize,
         limit: limit,
     };
 

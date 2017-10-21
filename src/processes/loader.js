@@ -48,6 +48,16 @@ Object.defineProperty(Loader.prototype, 'serviceMarket', {
     },
 });
 
+Object.defineProperty(Loader.prototype, 'serviceSpawn', {
+    get: function() {
+        if (!this.memory._serviceSpawnPid) return false;
+        return Game.kernel.getProcessByPid(this.memory._serviceSpawnPid);
+    },
+    set: function(value) {
+        this.memory._serviceSpawnPid = value.pid;
+    },
+});
+
 Loader.prototype.run = function() {
     // check default services have been started
     if (!this.serviceFlag) {
@@ -72,6 +82,12 @@ Loader.prototype.run = function() {
         let process = Game.kernel.startProcess(this, 'services/market', {});
         Game.kernel.setParent(process.pid);
         this.serviceMarket = process;
+    }
+
+    if (!this.serviceSpawn) {
+        let process = Game.kernel.startProcess(this, C.SERVICES_SPAWN, {});
+        Game.kernel.setParent(process.pid);
+        this.serviceSpawn = process;
     }
 };
 

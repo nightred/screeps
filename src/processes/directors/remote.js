@@ -64,17 +64,6 @@ directorRemote.prototype.run = function() {
     this.doDefense();
     this.doDirectors();
 
-    // remove old squad
-    if (this.memory.squadPid) {
-        Game.kernel.killProcess(this.memory.squadPid);
-        this.memory.squadPid = undefined;
-    }
-    // remove old interhaulers
-    if (this.memory.haulersPid) {
-        Game.kernel.killProcess(this.memory.haulersPid);
-        this.memory.haulersPid = undefined;
-    }
-
     Game.kernel.sleepProcessbyPid(this.pid, (C.DIRECTOR_SLEEP + Math.floor(Math.random() * 20)));
 };
 
@@ -122,7 +111,7 @@ directorRemote.prototype.createWorkTasks = function() {
         C.WORK_CONSTRUCTION,
     ];
 
-    for (let i = 0; i < findWorkTasks.length; i++) {
+    for (var i = 0; i < findWorkTasks.length; i++) {
         doWorkFind(findWorkTasks[i], workRoom);
     }
 };

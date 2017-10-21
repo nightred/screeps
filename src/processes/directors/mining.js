@@ -37,19 +37,13 @@ directorMining.prototype.run = function() {
     this.doSourceMining(room);
     this.doMineralMining(room);
 
-    // remove old squad
-    if (this.memory.squadPid) {
-        Game.kernel.killProcess(this.memory.squadPid);
-        this.memory.squadPid = undefined;
-    }
-
     Game.kernel.sleepProcessbyPid(this.pid, (C.DIRECTOR_SLEEP + Math.floor(Math.random() * 8)));
 };
 
 directorMining.prototype.doSourceMining = function(room) {
     let sources = this.getRoomSources(room);
 
-    for (let i = 0; i < sources.length; i++) {
+    for (var i = 0; i < sources.length; i++) {
         let source = Game.getObjectById(sources[i]);
         let process = Game.kernel.getProcessByPid(this.processRecords[source.id]);
         if (!process) {

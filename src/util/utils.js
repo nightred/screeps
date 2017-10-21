@@ -37,7 +37,7 @@ global.restartCrashed = function(report = false) {
         procInfo.status == 'crashed'
     );
 
-    for (let i in psOutput) {
+    for (const i in psOutput) {
         setPidStatus(psOutput[i].pid, 'running');
         if (report) crashReport(psOutput[i].pid);
     }
@@ -157,7 +157,7 @@ var processTableTree = function() {
     let tree = [];
     let children = {};
 
-    for (let name in processTable) {
+    for (const name in processTable) {
         let item = processTable[name];
         let pid = item.pid;
         let parentPID = item.parentPID;
@@ -199,7 +199,7 @@ var printProcessTable = function(psOutput, count = 20) {
         ).reverse();
 
         let loopCount = 0;
-        for (let pid in psOutput) {
+        for (const pid in psOutput) {
             let item = psOutput[pid];
             output += _.padRight(item.pid, 19);
             output += _.padRight(item.name, longestName);

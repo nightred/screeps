@@ -92,7 +92,7 @@ var taskTowerFill = {
             structure.energy < (structure.energyCapacity * C.REFILL_TOWER_MIN)
         );
 
-        for (let i = 0; i < targets.length; i++) {
+        for (var i = 0; i < targets.length; i++) {
             let tower = targets[i];
             if (tower.workTask) continue;
 

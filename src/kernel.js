@@ -71,11 +71,6 @@ Object.defineProperty(Kernel.prototype, 'processMemory', {
 });
 
 Kernel.prototype.run = function() {
-    addTerminalLog(undefined, {
-        command: 'starting kernel',
-    });
-
-    let cpuStart = Game.cpu.getUsed();
     let pids = _.pluck(
         _.sortBy(this.processTable, p => p.lastTick)
     , 'pid');
@@ -86,7 +81,7 @@ Kernel.prototype.run = function() {
     }
 
     let pidCount = pids.length;
-    for (let i = 0; i < pidCount; i++) {
+    for (var i = 0; i < pidCount; i++) {
         let pid = pids[i];
         let procStartCPU = Game.cpu.getUsed();
         let procInfo = this.processTable[pid];
@@ -130,13 +125,6 @@ Kernel.prototype.run = function() {
             break;
         }
     }
-
-    addTerminalLog(undefined, {
-        command: 'kernel',
-        status: 'OK',
-        cpu: (Game.cpu.getUsed() - cpuStart),
-        output: ('process count: ' + pidCount),
-    });
 };
 
 Kernel.prototype.startProcess = function(parent, imageName, startMem) {

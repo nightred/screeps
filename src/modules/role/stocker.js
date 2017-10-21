@@ -29,11 +29,11 @@ var roleStocker = {
 
         let body = [];
 
-        for (let i = 0; i < move; i++) {
+        for (var i = 0; i < move; i++) {
             body.push(MOVE);
         }
 
-        for (let i = 0; i < carry; i++) {
+        for (var i = 0; i < carry; i++) {
             body.push(CARRY);
         }
 

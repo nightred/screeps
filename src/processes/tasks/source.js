@@ -30,7 +30,7 @@ taskSource.prototype.run = function() {
     this.doSpawnDetails();
     this.doCreepSpawn();
 
-    for (let i = 0; i < this.memory.creeps.length; i++) {
+    for (var i = 0; i < this.memory.creeps.length; i++) {
         let creep = Game.creeps[this.memory.creeps[i]];
         if (!creep) continue;
         this.doCreepActions(creep);
@@ -176,8 +176,6 @@ taskSource.prototype.doSpawnDetails = function() {
         creepArgs: {
             style: style,
         },
-        maxSize: 9999,
-        minSize: 200,
         limit: 1,
     };
 

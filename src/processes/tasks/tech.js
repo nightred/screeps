@@ -24,7 +24,7 @@ taskTech.prototype.run = function() {
     this.doSpawnDetails();
     this.doCreepSpawn();
 
-    for (let i = 0; i < this.memory.creeps.length; i++) {
+    for (var i = 0; i < this.memory.creeps.length; i++) {
         let creep = Game.creeps[this.memory.creeps[i]];
         if (!creep) continue;
         this.doCreepActions(creep);
@@ -72,29 +72,8 @@ taskTech.prototype.doSpawnDetails = function() {
     let spawnRoom = Game.rooms[this.memory.spawnRoom];
     if (!spawnRoom || !spawnRoom.controller || !spawnRoom.controller.my) return;
 
-    let minSize = 200;
-    let maxSize = 200;
-
-    let rlevel = spawnRoom.controller.level;
-    if (rlevel == 1 || rlevel == 2)  {
-        maxSize = 300;
-    } else if (rlevel == 3)  {
-        maxSize = 400;
-    } else if (rlevel == 4) {
-        minSize = 300;
-        maxSize = 400;
-    } else if (rlevel == 5 || rlevel == 6) {
-        minSize = 400;
-        maxSize = 500;
-    } else if (rlevel == 7 || rlevel == 8) {
-        minSize = 400;
-        maxSize = 9999;
-    }
-
-    if (spawnRoom.storage && spawnRoom.controller.level < 4) minSize = 200;
-
     let limit = spawnRoom.countCoverage();
-    if (spawnRoom.controller.level >= 6) limit++
+    if (spawnRoom.controller.level >= 4) limit++
     if (limit > 4) limit = 4;
     if (spawnRoom.storage &&
         spawnRoom.storage.store[RESOURCE_ENERGY] < C.DIRECTOR_MIN_ENG_TECH
@@ -105,8 +84,6 @@ taskTech.prototype.doSpawnDetails = function() {
         priority: 58,
         spawnRoom: this.memory.spawnRoom,
         creepArgs: {},
-        maxSize: maxSize,
-        minSize: minSize,
         limit: limit,
     };
 

@@ -22,7 +22,7 @@ var roleController = {
                 let claim = Math.floor(energy / 650);
                 claim = claim < 1 ? 1 : claim;
                 claim = claim > 5 ? 5 : claim;
-                for (let i = 0; i < claim; i++) {
+                for (var i = 0; i < claim; i++) {
                     body.push(CLAIM);
                     body.push(MOVE);
                 }

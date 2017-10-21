@@ -112,7 +112,7 @@ var taskRepair = {
             structure.structureType != STRUCTURE_RAMPART
         );
 
-        for (let i = 0; i < targets.length; i++) {
+        for (var i = 0; i < targets.length; i++) {
             this.create({
                 roomName: room.name,
                 targetId: targets[i].id,
@@ -130,7 +130,7 @@ var taskRepair = {
             structure.hits < (structure.hitsMax * C.REPAIR_HIT_WORK_MIN)
         );
 
-        for (let i = 0; i < targets.length; i++) {
+        for (var i = 0; i < targets.length; i++) {
             this.create({
                 roomName: room.name,
                 targetId: targets[i].id,

@@ -60,7 +60,7 @@ Queue.prototype.addRecord = function(args) {
         id: id,
         tick: Game.time,
     };
-    for (let item in args) {
+    for (const item in args) {
         record[item] = args[item];
     };
 

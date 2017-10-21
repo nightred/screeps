@@ -20,7 +20,7 @@ taskResupply.prototype.run = function() {
     this.doSpawnDetails();
     this.doCreepSpawn();
 
-    for (let i = 0; i < this.memory.creeps.length; i++) {
+    for (var i = 0; i < this.memory.creeps.length; i++) {
         let creep = Game.creeps[this.memory.creeps[i]];
         if (!creep) continue;
         this.doCreepActions(creep);
@@ -100,16 +100,6 @@ taskResupply.prototype.doSpawnDetails = function() {
     let spawnRoom = Game.rooms[this.memory.spawnRoom];
     if (!spawnRoom || !spawnRoom.controller || !spawnRoom.controller.my) return;
 
-    let minSize = 200;
-    let maxSize = 200;
-
-    let rlevel = spawnRoom.controller.level;
-    if (rlevel == 4 || rlevel == 5 || rlevel == 6)  {
-        maxSize = 500;
-    } else if (rlevel == 7 || rlevel == 8) {
-        maxSize = 9999;
-    }
-
     let limit = 2;
     if (!spawnRoom.storage) limit = 0;
 
@@ -118,8 +108,6 @@ taskResupply.prototype.doSpawnDetails = function() {
         priority: 10,
         spawnRoom: this.memory.spawnRoom,
         creepArgs: {},
-        maxSize: maxSize,
-        minSize: minSize,
         limit: limit,
     };
 

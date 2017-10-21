@@ -180,7 +180,7 @@ var gotoModule = {
 
         if (!_.isArray(route)) return;
 
-        for (let record in route) {
+        for (const record in route) {
             validRooms[record.room] = true;
         }
 
@@ -210,8 +210,8 @@ var gotoModule = {
     },
 
     addTerrainToCosts: function(room, costs) {
-        for (let x = 0; x < 50; ++x) {
-            for (let y = 0; y < 50; ++y) {
+        for (var x = 0; x < 50; ++x) {
+            for (var y = 0; y < 50; ++y) {
                 let cost = 2;
                 if (x == 0 || x == 49 || y == 0 || y == 49) cost = 25;
                 let terrain = Game.map.getTerrainAt(x, y, room.name);
@@ -228,7 +228,7 @@ var gotoModule = {
     },
 
     addStructuresToCosts: function(room, costs) {
-        for (let structure of room.getStructures()) {
+        for (const structure of room.getStructures()) {
             if (structure instanceof StructureRampart) {
                 if (!structure.my && !structure.isPublic)
                     costs.set(structure.pos.x, structure.pos.y, 0xff);
@@ -239,7 +239,7 @@ var gotoModule = {
             }
         }
 
-        for (let construction of room.getConstructionSites()) {
+        for (const construction of room.getConstructionSites()) {
             if (construction.structureType === STRUCTURE_CONTAINER ||
                 construction.structureType === STRUCTURE_ROAD ||
                 construction.structureType === STRUCTURE_RAMPART
@@ -269,8 +269,8 @@ var gotoModule = {
 
         costs = this.addCreepsToCosts(room, costs.clone());
 
-        for (let x = 0; x < 50; ++x) {
-            for (let y = 0; y < 50; ++y) {
+        for (var x = 0; x < 50; ++x) {
+            for (var y = 0; y < 50; ++y) {
                 let cost = costs.get(x,y);
                 new RoomVisual(roomName).text(cost, x, (y + 0.4), {
                     color: '#51d181',
@@ -300,7 +300,7 @@ var serializePath = function(startPos, path) {
     let serialPath = '';
     let lastPos = startPos;
 
-    for (let pos of path) {
+    for (const pos of path) {
         //new RoomVisual(pos.roomName).line(pos, lastPos, { color: 'red', lineStyle: "dashed" });
         if (pos.roomName === lastPos.roomName)
             serialPath += lastPos.getDirectionTo(pos);

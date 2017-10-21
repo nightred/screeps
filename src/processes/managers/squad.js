@@ -25,7 +25,7 @@ Object.defineProperty(Squad.prototype, 'creepGroups', {
 Squad.prototype.run = function() {
     let groups = Object.keys(this.creepGroups);
 
-    for (let i = 0; i < groups.length; i++) {
+    for (var i = 0; i < groups.length; i++) {
         let creepGroup = this.creepGroups[groups[i]];
         this.doGroupSpawn(creepGroup);
         this.doGroup(creepGroup);
@@ -33,7 +33,7 @@ Squad.prototype.run = function() {
 }
 
 Squad.prototype.doGroup = function(creepGroup) {
-    for (let i = (creepGroup.creeps.length - 1); i >= 0 ; i--) {
+    for (var i = (creepGroup.creeps.length - 1); i >= 0 ; i--) {
         let creep = Game.creeps[creepGroup.creeps[i]];
 
         if (!creep) {
@@ -80,8 +80,6 @@ Squad.prototype.setGroup = function(args) {
     if (!creepGroup.role && args.role) creepGroup.role = args.role;
 
     creepGroup.limit = args.limit;
-    if (args.minSize) creepGroup.minSize = args.minSize;
-    if (args.maxSize) creepGroup.maxSize = args.maxSize;
     if (args.creepArgs) creepGroup.creepArgs = args.creepArgs;
     if (args.priority) creepGroup.priority = args.priority;
 };
@@ -125,10 +123,8 @@ Squad.prototype.doGroupSpawn = function(creepGroup) {
 
     if (count < creepGroup.limit && !creepGroup.spawnId) {
         let record = {
-            rooms: [ this.memory.spawnRoom, ],
+            room: this.memory.spawnRoom,
             role: creepGroup.role,
-            minSize: creepGroup.minSize,
-            maxSize: creepGroup.maxSize,
             squadPid: this.pid,
             priority: creepGroup.priority,
             creepArgs: {
@@ -137,7 +133,7 @@ Squad.prototype.doGroupSpawn = function(creepGroup) {
         };
 
         if (creepGroup.creepArgs) {
-            for (let item in creepGroup.creepArgs) {
+            for (const item in creepGroup.creepArgs) {
                 record.creepArgs[item] = creepGroup.creepArgs[item];
             };
         }
