@@ -57,22 +57,18 @@ var libSpawnCreep = {
 
     addSpawnQueue: function() {
         let spawnDetails = this.getSpawnDetails();
-
-        let record = {
+        if (!spawnDetails.creepArgs) spawnDetails.creepArgs = {};
+        let spawnId = addQueueRecordSpawn({
             room: spawnDetails.spawnRoom,
             role: spawnDetails.role,
             priority: spawnDetails.priority,
-            creepArgs: {},
-        };
-
-        if (spawnDetails.creepArgs) _.assign(record.creepArgs, spawnDetails.creepArgs);
-
-        let spawnId = addQueueRecordSpawn(record);
+            creepArgs: spawnDetails.creepArgs,
+        });
         this.memory.spawnId = spawnId;
 
         logger.debug('created spawn queue: ' + spawnId +
-            ', role: ' + record.role +
-            ', spawn room: ' + record.rooms + '\n' +
+            ', role: ' + spawnDetails.role +
+            ', spawn room: ' + spawnDetails.spawnRoom + '\n' +
             'process: ' + this.imageName +
             ', pid: ' + this.pid
         );
