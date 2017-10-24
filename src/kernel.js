@@ -110,7 +110,7 @@ Kernel.prototype.run = function() {
             process.run();
         } catch (e) {
             procInfo.status = 'crashed';
-            procInfo.error = e.stack || e.toString();
+            procInfo.error = e.stack;
             logger.error(`process crashed ${procInfo.name} : ${procInfo.pid}\n${e.stack}`);
         }
 

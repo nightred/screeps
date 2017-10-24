@@ -10,7 +10,7 @@ require('util.allies');
 
 global.ex = function(img, args = {}) {
     if (!img) return 'unknown process';
-    return Game.kernel.startProcess(undefined, img, args);
+    return Game.kernel.startProcess(undefined, img, args).pid;
 };
 
 global.setLinkType = function(id, type) {
