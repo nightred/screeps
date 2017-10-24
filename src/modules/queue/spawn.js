@@ -16,26 +16,23 @@ SpawnQueue.prototype.getQueue = function() {
 };
 
 SpawnQueue.prototype.addRecord = function(args) {
-    if (!args) { return ERR_INVALID_ARGS; }
-    if (C.ROLE_TYPES.indexOf(args.role) < 0) { return ERR_INVALID_ARGS; }
-
-    args.priority = args.priority || 100;
-
-    let record = {
+    if (!args) return ERR_INVALID_ARGS;
+    if (C.ROLE_TYPES.indexOf(args.role) < 0) return ERR_INVALID_ARGS;
+    _.defaults(args, {
+        priority: 100,
+        creepArgs: {},
+    });
+    logger.debug('adding record, role: ' + args.role +
+        ', room: ' + args.room +
+        ', priority: ' + args.priority
+    );
+    return addQueueRecord({
         queue: C.QUEUE_SPAWN,
         role: args.role,
         room: args.room,
         priority: args.priority,
-    };
-
-    if (args.creepArgs) _.assign(record.creepArgs, args.creepArgs);
-
-    logger.debug('adding record, role: ' + record.role +
-        ', room: ' + record.room +
-        ', priority: ' + record.priority
-    );
-
-    return addQueueRecord(record);
+        creepArgs: args.creepArgs,
+    });
 };
 
 let spawnQueue = new SpawnQueue();

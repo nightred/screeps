@@ -45,11 +45,11 @@ SpawnService.prototype.doSpawnRun = function(spawn) {
 
     for (var i = 0; i < spawnQueue.length; i++) {
         let record = spawnQueue[i];
-        let creepMem = {
-            spawnRoom: roomName,
-            role: record.role,
-        };
-        if (record.creepArgs) _.assign(creepMem, record.creepArgs);
+        if (!record.creepArgs) record.creepArgs = {};
+        record.creepArgs.spawnRoom = roomName;
+        record.creepArgs.role = record.role;
+        let creepMem = record.creepArgs;
+        
         let body = getRoleBody(record.role, spawnEnergy, creepMem);
         let bodyCost = getBodyCost(body);
         if (bodyCost > spawnEnergy) continue;

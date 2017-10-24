@@ -7,6 +7,9 @@
 
 var logger = new Logger('[Task Haul]');
 
+const STYLE_DEFAULT = 'default';
+const STYLE_LONGHAULER = 'longhauler';
+
 var taskHaul = function() {
     // init
 };
@@ -173,24 +176,18 @@ taskHaul.prototype.doSpawnDetails = function() {
     if (this.memory._sleepSpawnDetails && this.memory._sleepSpawnDetails > Game.time) return;
     this.memory._sleepSpawnDetails = Game.time + (C.TASK_SPAWN_DETAILS_SLEEP + Math.floor(Math.random() * 20));
 
-    let spawnRoom = Game.rooms[this.memory.spawnRoom];
-    if (!spawnRoom || !spawnRoom.controller || !spawnRoom.controller.my) return;
-
-    let spawnDetail = {
+    let style = STYLE_DEFAULT;
+    if (this.memory.spawnRoom != this.memory.workRoom)
+        style = STYLE_LONGHAULER;
+    this.setSpawnDetails({
         role: C.ROLE_HAULER,
         priority: 52,
         spawnRoom: this.memory.spawnRoom,
         creepArgs: {
-            style: 'default',
+            style: style,
         },
         limit: 1,
-    };
-
-    if (this.memory.spawnRoom !== this.memory.workRoom) {
-        spawnDetail.creepArgs.style = 'longhauler';
-    }
-
-    this.setSpawnDetails(spawnDetail);
+    });
 };
 
 registerProcess('tasks/haul', taskHaul);

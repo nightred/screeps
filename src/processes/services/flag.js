@@ -33,7 +33,7 @@ Flag.prototype.run = function() {
             break;
 
         case COLOR_ORANGE:
-            //doFlagVisuals(flag);
+            Game.drvDisplay.doFlag(flag);
             break;
         }
     }

@@ -25,6 +25,15 @@ global.registerProcess = function(name, image) {
 };
 
 var Kernel = function() {
+    if (nextTick && MemoryStore && nextTick == Game.time) {
+        delete global.Memory
+        global.Memory = MemoryStore
+        RawMemory._parsed = MemoryStore
+    } else {
+        Memory;
+        global.MemoryStore = RawMemory._parsed
+    }
+    global.nextTick = Game.time + 1;
     this.processCache = {};
 };
 
@@ -101,7 +110,7 @@ Kernel.prototype.run = function() {
             process.run();
         } catch (e) {
             procInfo.status = 'crashed';
-            procInfo.error = e.stack || e.toString();
+            procInfo.error = e.stack;
             logger.error(`process crashed ${procInfo.name} : ${procInfo.pid}\n${e.stack}`);
         }
 
