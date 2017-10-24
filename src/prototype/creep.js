@@ -347,6 +347,14 @@ Creep.prototype.goto = function(target, args) {
     return mod.goto.travel(this, target, args);
 };
 
+Creep.prototype.hasGoto = function() {
+    return !!this.memory._goto;
+};
+
+Creep.prototype.resumeGoto = function() {
+    return mod.goto.resumeTravel(this);
+};
+
 Creep.prototype.collectDroppedEnergy = function () {
     let targets = _.sortBy(this.room.find(FIND_DROPPED_RESOURCES, {
         filter: resource => resource.resourceType == RESOURCE_ENERGY
@@ -409,9 +417,8 @@ Creep.prototype.getOffExit = function() {
             object.terrain == 'wall'
             ) == -1) {
             this.move(direction);
-            if (this.memory._move) {
-                delete this.memory._move;
-            }
+            if (this.memory._move) delete this.memory._move;
+            if (this.memory._goto) delete this.memory._goto;
             break;
         }
     }
