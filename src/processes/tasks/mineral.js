@@ -83,7 +83,7 @@ taskMineral.prototype.doEmpty = function(creep) {
 
     let container = Game.getObjectById(this.memory.containerId);
     if (!container) {
-        let mineral = Game.getObjectById(creep.memory.mineralId);
+        let mineral = Game.getObjectById(this.memory.mineralId);
         mineral.clearContainer();
         this.memory.containerId = undefined;
         return;
