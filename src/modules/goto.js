@@ -12,6 +12,11 @@ if (!Memory.world.avoidRooms) Memory.world.avoidRooms = {};
 
 var gotoModule = {
 
+    resumeTravel: function(creep) {
+        let dest = getPos(creep.memory._goto.dest);
+        return this.travel(creep, dest, {});
+    },
+
     travel: function(creep, target, args = {}) {
         if (!target) return ERR_INVALID_ARGS;
 
@@ -91,7 +96,10 @@ var gotoModule = {
             gotoData.stuck = 0;
         }
 
-        if (!gotoData.path || gotoData.path.length === 0) return ERR_NO_PATH;
+        if (!gotoData.path || gotoData.path.length === 0) {
+            delete creep.memory._goto;
+            return ERR_NO_PATH;
+        }
 
         if (gotoData.last && gotoData.stuck === 0)
             gotoData.path = gotoData.path.substr(1);
@@ -99,7 +107,6 @@ var gotoModule = {
         gotoData.last = creep.pos;
 
         let moveDir = parseInt(gotoData.path[0], 10);
-
         return creep.move(moveDir);
     },
 
