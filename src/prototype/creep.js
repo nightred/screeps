@@ -352,7 +352,8 @@ Creep.prototype.hasGoto = function() {
 };
 
 Creep.prototype.resumeGoto = function() {
-    return mod.goto.resumeTravel(this);
+    let result = mod.goto.resumeTravel(this);
+    return result === OK || result === ERR_TIRED;
 };
 
 Creep.prototype.collectDroppedEnergy = function () {
