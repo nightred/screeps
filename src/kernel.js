@@ -104,14 +104,18 @@ Kernel.prototype.run = function() {
         try {
             let process = this.getProcessByPid(pid);
             if (!process) {
-                logger.error(`failed to get process ${procInfo.name} : ${procInfo.pid}`);
+                logger.error('failed to get process ' + procInfo.name + ' ' + procInfo.pid);
                 continue;
             }
             process.run();
         } catch (e) {
-            procInfo.status = 'crashed';
+            if (!procInfo.crashCount) procInfo.crashCount = 0;
+            procInfo.crashCount++;
+            if (procInfo.crashCount > 5) procInfo.status = 'crashed';
             procInfo.error = e.stack;
-            logger.error(`process crashed ${procInfo.name} : ${procInfo.pid}\n${e.stack}`);
+            logger.error('process crashed ' + procInfo.name + ' ' + procInfo.pid +
+                '\n' + e.stack
+            );
         }
 
         let usedCPU = Game.cpu.getUsed();
