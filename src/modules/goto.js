@@ -60,7 +60,7 @@ var gotoModule = {
         gotoData.tick = Game.time;
         if (creep.fatigue > 0) {
             visualCircle(creep.pos, 'aqua', 0.25);
-            return ERR_BUSY;
+            return ERR_TIRED;
         }
 
         if (!gotoData.path) {
