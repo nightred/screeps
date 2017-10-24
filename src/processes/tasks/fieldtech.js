@@ -39,7 +39,9 @@ taskFieldTech.prototype.run = function() {
 **/
 taskFieldTech.prototype.doCreepActions = function(creep) {
     if (creep.spawning) return;
-    if (creep.hasGoto()) creep.resumeGoto();
+    if (creep.hasGoto()) {
+        if (creep.resumeGoto()) return;
+    }
     if (creep.room.name !== this.memory.workRoom) {
         creep.moveToRoom(this.memory.workRoom);
         return;
