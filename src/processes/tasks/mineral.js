@@ -77,7 +77,7 @@ taskMineral.prototype.doCreepActions = function(creep) {
 **/
 taskMineral.prototype.doEmpty = function(creep) {
     if (!this.memory.containerId) {
-        let mineral = Game.getObjectById(creep.memory.mineralId);
+        let mineral = Game.getObjectById(this.memory.mineralId);
         this.memory.containerId = mineral.getContainer();
     }
 
