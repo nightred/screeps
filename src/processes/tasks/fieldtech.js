@@ -39,15 +39,14 @@ taskFieldTech.prototype.run = function() {
 **/
 taskFieldTech.prototype.doCreepActions = function(creep) {
     if (creep.spawning) return;
-    if (creep.getOffExit()) return;
-
-    if (creep.isSleep()) {
-        this.doUpgrade(creep);
+    if (creep.hasGoto()) creep.resumeGoto();
+    if (creep.room.name !== this.memory.workRoom) {
+        creep.moveToRoom(this.memory.workRoom);
         return;
     }
 
-    if (creep.room.name !== this.memory.workRoom) {
-        creep.moveToRoom(this.memory.workRoom);
+    if (creep.isSleep()) {
+        this.doUpgrade(creep);
         return;
     }
 
