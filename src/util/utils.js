@@ -29,6 +29,7 @@ global.setPidStatus = function(pid, status = 'running') {
     if (!Memory.kernel.processTable[pid]) return;
     Memory.kernel.processTable[pid].status = 'running';
     Memory.kernel.processTable[pid].error = undefined;
+    Memory.kernel.processTable[pid].crashCount = undefined;
 };
 
 global.restartCrashed = function(report = false) {
