@@ -5,10 +5,17 @@
  *
  */
 
-const STATE_INIT        = 0;
-const STATE_GOTOWORK    = 1;
-const STATE_HARVEST     = 2;
-const STATE_DEPOSIT     = 3;
+const STATE_INIT            = 0;
+// creep state
+const STATE_GOTOWORK        = 1;
+const STATE_HARVEST         = 2;
+const STATE_DEPOSIT         = 3;
+// process state
+const STATE_CHECKSTORAGE    = 1;
+const STATE_BUILDCONTAINER  = 2;
+const STATE_CONSTCONTAINER  = 3;
+const STATE_BUILDLINK       = 4;
+const STATE_CONSTLINK       = 5;
 
 var taskSource = function() {
     // init
@@ -24,13 +31,33 @@ taskSource.prototype.run = function() {
 
     this.doSpawnDetails();
     this.doCreepSpawn();
-    this.getWorkPos();
-    this.doStorage();
+
+    if (this.state == STATE_CHECKSTORAGE) {
+        this.checkStorage();
+    } else if (this.state == STATE_BUILDCONTAINER) {
+        this.doBuildContainer();
+    } else if (this.state == STATE_BUILDLINK) {
+        this.doBuildLink();
+    } else if (this.state == STATE_CONSTCONTAINER) {
+        this.doConstructContainer();
+    } else if (this.state == STATE_CONSTLINK) {
+        this.doConstructLink();
+    } else if (this.state == STATE_INIT) {
+        this.getPositions();
+    }
 
     for (var i = 0; i < this.memory.creeps.length; i++) {
         let creep = Game.creeps[this.memory.creeps[i]];
         if (!creep) continue;
-        this.doCreepActions(creep);
+        if (creep.state == STATE_DEPOSIT) {
+            this.doCreepDeposit(creep);
+        } else if (creep.state == STATE_HARVEST) {
+            this.doCreepHarvest(creep);
+        } else if (creep.state == STATE_GOTOWORK) {
+            this.doCreepGotoWork(creep);
+        } else if (creep.state == 'init') {
+            this.doCreepInit(creep);
+        }
     }
 
     this.doHaulers();
@@ -39,22 +66,7 @@ taskSource.prototype.run = function() {
 /**
 * @param {Creep} creep The creep object
 **/
-taskSource.prototype.doCreepActions = function(creep) {
-    if (creep.state == STATE_DEPOSIT) {
-        this.doStateDeposit(creep);
-    } else if (creep.state == STATE_HARVEST) {
-        this.doStateHarvest(creep);
-    } else if (creep.state == STATE_GOTOWORK) {
-        this.doStateGotoWork(creep);
-    } else if (creep.state == 'init') {
-        this.doStateInit(creep);
-    }
-};
-
-/**
-* @param {Creep} creep The creep object
-**/
-taskSource.prototype.doStateDeposit = function(creep) {
+taskSource.prototype.doCreepDeposit = function(creep) {
     creep.doEmpty([
         'linkIn',
         'containerIn',
@@ -64,26 +76,21 @@ taskSource.prototype.doStateDeposit = function(creep) {
         'containerOut',
         'storage',
     ], RESOURCE_ENERGY);
-
     if (_.sum(creep.carry) === 0) creep.state = STATE_GOTOWORK;
 };
 
 /**
 * @param {Creep} creep The creep object
 **/
-taskSource.prototype.doStateHarvest = function(creep) {
+taskSource.prototype.doCreepHarvest = function(creep) {
     let source = Game.getObjectById(this.memory.sourceId);
     creep.harvest(source);
-
-    if (creep.carryCapacity === 0) return;
-    if ((creep.carryCapacity * 0.5) < _.sum(creep.carry)) {
+    if (creep.carryCapacity > 0 &&
+        (creep.carryCapacity * 0.5) < _.sum(creep.carry)
+    ) {
         if (this.memory._construction) {
             let construction = Game.getObjectById(this.memory._construction);
-            if (!construction) {
-                this.memory._construction = undefined;
-            } else {
-                creep.build(construction);
-            }
+            if (construction) creep.build(construction);
         } else {
             let link = this.link;
             if (link) {
@@ -98,8 +105,10 @@ taskSource.prototype.doStateHarvest = function(creep) {
 /**
 * @param {Creep} creep The creep object
 **/
-taskSource.prototype.doStateGotoWork = function(creep) {
-    if (creep.getOffExit()) return;
+taskSource.prototype.doCreepGotoWork = function(creep) {
+    if (creep.hasGoto()) {
+        if (creep.resumeGoto()) return;
+    }
     if (creep.room.name != this.memory.workRoom) {
         creep.moveToRoom(this.memory.workRoom);
         return;
@@ -110,29 +119,27 @@ taskSource.prototype.doStateGotoWork = function(creep) {
         logger.debug('failed to get proper work pos, PID: ' + this.pid);
         return;
     }
-    if (creep.pos.isEqualTo(workPos, 0)) {
+    if (creep.pos.isEqualTo(workPos)) {
         creep.state = STATE_HARVEST;
-        return;
+    } else {
+        creep.goto(workPos, {
+            range: 0,
+            maxRooms:1,
+            reUsePath: 80,
+            maxOps: 4000,
+            ignoreCreeps: true,
+        });
     }
-
-    creep.goto(workPos, {
-        range: 0,
-        maxRooms:1,
-        reUsePath: 80,
-        maxOps: 4000,
-        ignoreCreeps: true,
-    });
 };
 
 /**
 * @param {Creep} creep The creep object
 **/
-taskSource.prototype.doStateInit = function(creep) {
+taskSource.prototype.doCreepInit = function(creep) {
     if (!creep.spawning) creep.state = STATE_GOTOWORK;
 };
 
-taskSource.prototype.getWorkPos = function() {
-    if (this.memory._setWorkPos) return;
+taskSource.prototype.getPositions = function() {
     let source = Game.getObjectById(this.memory.sourceId);
     if (!source) return;
     let room = source.room;
@@ -146,51 +153,100 @@ taskSource.prototype.getWorkPos = function() {
     let centerPos = new RoomPosition(24, 24, source.room.name);
     let closest = centerPos.findClosestByPath(positions);
     this.workPos = closest;
-    this.memory._setWorkPos = 1;
+    if (this.memory.spawnRoom == this.memory.workRoom) {
+        let linkPos = workPos.getMostOpenInRange(1);
+        this.linkPos = linkPos;
+    }
+    this.state = STATE_CHECKSTORAGE;
 };
 
-taskSource.prototype.doStorage = function() {
-    if (this.container || this.link) return;
+taskSource.prototype.checkStorage = function() {
+    if (this.memory.spawnRoom != this.memory.workRoom) {
+        if (this.container) return;
+        this.state = STATE_BUILDCONTAINER;
+        return;
+    }
+    if (this.container) {
+        let room = Game.rooms[this.memory.workRoom];
+        if (room.controller.level >= 6) this.state = STATE_BUILDLINK;
+        return;
+    }
+    if (this.link) return;
+    this.state = STATE_BUILDCONTAINER;
+};
+
+taskSource.prototype.doBuildContainer = function() {
     let workPos = this.workPos;
-    if (!workPos) return;
+    let room = Game.rooms[this.memory.workRoom];
+    if (!room) return;
+    room.createConstructionSite(workPos, STRUCTURE_CONTAINER);
+    this.state = STATE_CONSTCONTAINER;
+};
+
+taskSource.prototype.doBuildLink = function() {
+    let linkPos = this.linkPos;
+    let room = Game.rooms[this.memory.workRoom];
+    if (!room) return;
+    if (room.controller && room.controller.my &&
+        room.controller.level >= 6 && linkPos &&
+        room.isBuildAble(STRUCTURE_LINK) &&
+        room.createConstructionSite(linkPos, STRUCTURE_LINK) === OK
+    ) {
+        let container = this.container;
+        if (container) container.destroy();
+        this.state = STATE_CONSTLINK;
+    }
+};
+
+taskSource.prototype.doConstructContainer = function() {
+    let workPos = this.workPos;
     if (!this.memory._construction) {
         let construction = workPos.getConstruction();
         if (!construction) {
-            let linkPos = this.linkPos;
-            if (linkPos) construction = linkPos.getConstruction();
-        }
-        if (construction) {
-            this.memory._construction = construction.id;
+            this.state = STATE_BUILDCONTAINER;
             return;
         }
+        this.memory._construction = construction.id;
     }
-    if (this.memory._construction && Game.getObjectById(this.memory._construction))
+    if (!Game.getObjectById(this.memory._construction)) {
+        let container = workPos.getContainer();
+        if (!container) {
+            this.state = STATE_BUILDCONTAINER;
+            return;
+        }
+        container.memory.type = 'in';
+        this.container = container;
+        this.state = STATE_CHECKSTORAGE;
         return;
-    if (this.memory._construction) {
-
     }
-    let room = Game.rooms[this.memory.workRoom];
-    if (!room) return;
-    if (this.memory.spawnRoom == this.memory.workRoom) {
-        let linkPos = this.linkPos;
-        if (!linkPos) {
-            linkPos = workPos.getMostOpenInRange(1);
-            this.linkPos = linkPos;
-        }
-        if (room.isBuildAble(STRUCTURE_LINK)) {
-            room.createConstructionSite(workPos, STRUCTURE_LINK);
+};
+
+taskSource.prototype.doConstructLink = function() {
+    let linkPos = this.linkPos;
+    if (!this.memory._construction) {
+        let construction = linkPos.getConstruction();
+        if (!construction) {
+            this.state = STATE_BUILDLINK;
             return;
         }
+        this.memory._construction = construction.id;
     }
-    room.createConstructionSite(workPos, STRUCTURE_CONTAINER);
+    if (!Game.getObjectById(this.memory._construction)) {
+        let link = linkPos.getLink();
+        if (!link) {
+            this.state = STATE_BUILDLINK;
+            return;
+        }
+        link.memory.type = 'in';
+        this.link = link;
+        this.state = STATE_CHECKSTORAGE;
+        return;
+    }
 };
 
 taskSource.prototype.doSpawnDetails = function() {
     if (this.memory._sleepSpawnDetails && this.memory._sleepSpawnDetails > Game.time) return;
     this.memory._sleepSpawnDetails = Game.time + (C.TASK_SPAWN_DETAILS_SLEEP + Math.floor(Math.random() * 20));
-
-    let source = Game.getObjectById(this.memory.sourceId);
-    if (!source) return;
 
     let style = 'default';
     if (this.container) {
@@ -199,7 +255,7 @@ taskSource.prototype.doSpawnDetails = function() {
         style = 'ranged';
     }
 
-    let spawnDetail = {
+    this.setSpawnDetails({
         role: C.ROLE_MINER,
         priority: 50,
         spawnRoom: this.memory.spawnRoom,
@@ -207,28 +263,26 @@ taskSource.prototype.doSpawnDetails = function() {
             style: style,
         },
         limit: 1,
-    };
-
-    this.setSpawnDetails(spawnDetail);
+    });
 };
 
 taskSource.prototype.doHaulers = function() {
     if (this.memory._sleepHaulers && this.memory._sleepHaulers > Game.time) return;
     this.memory._sleepHaulers = Game.time + (C.DIRECTOR_SLEEP + Math.floor(Math.random() * 20));
 
-    let source = Game.getObjectById(this.memory.sourceId);
-    if (!source) return;
-    let containerInID = source.getContainerIn();
-    if (!containerInID) return;
-
-    let process = this.taskHaulers;
-    if (!process) {
-        process = Game.kernel.startProcess(this, C.TASK_HAUL, {
+    let procHauler = this.taskHaulers;
+    let container = this.container;
+    if (!container) {
+        if (procHauler) Game.kernel.killProcess(procHauler.pid);
+        return;
+    }
+    if (!procHauler) {
+        procHauler = Game.kernel.startProcess(this, C.TASK_HAUL, {
             spawnRoom: this.memory.spawnRoom,
             workRoom: this.memory.workRoom,
-            containerId: containerInID,
+            containerId: container.id,
         });
-        this.taskHaulers = process;
+        this.taskHaulers = procHauler;
     }
 };
 
@@ -287,6 +341,16 @@ Object.defineProperty(taskSource.prototype, 'container', {
     },
     set: function(value) {
         this.memory._containerId = value.id;
+    },
+});
+
+Object.defineProperty(taskSource.prototype, 'state', {
+    get: function() {
+        this.memory._state = this.memory._state || STATE_INIT;
+        return this.memory._state;
+    },
+    set: function(value) {
+        this.memory._state = value;
     },
 });
 

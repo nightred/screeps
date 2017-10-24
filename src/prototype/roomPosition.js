@@ -96,8 +96,14 @@ RoomPosition.prototype.isOnContainer = function() {
 };
 
 RoomPosition.prototype.getContainer = function() {
-    return _.find(this.lookFor(LOOK_STRUCTURES), o =>
-        o instanceof StructureContainer
+    return _.find(this.lookFor(LOOK_STRUCTURES), structure =>
+        structure instanceof StructureContainer
+    );
+};
+
+RoomPosition.prototype.getLink = function() {
+    return _.find(this.lookFor(LOOK_STRUCTURES), structure =>
+        structure instanceof StructureLink
     );
 };
 
