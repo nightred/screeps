@@ -19,7 +19,6 @@ var gotoModule = {
 
     travel: function(creep, target, args = {}) {
         if (!target) return ERR_INVALID_ARGS;
-
         if (!(target instanceof RoomPosition)) target = target.pos;
 
         if (creep.room.controller) {
@@ -29,7 +28,6 @@ var gotoModule = {
                 this.memory.avoidRooms[creep.room.name] = undefined;
             }
         }
-
         if (!creep.memory._goto)
             creep.memory._goto = {
                 tick: Game.time,
@@ -38,11 +36,9 @@ var gotoModule = {
             };
 
         let gotoData = creep.memory._goto;
-
         let isStuck = false;
         if (gotoData.last) {
             gotoData.last = getPos(gotoData.last);
-
             if (!creep.pos.inRangeTo(gotoData.last, 0)) {
                 gotoData.stuck = 0;
             } else {
@@ -56,16 +52,12 @@ var gotoModule = {
             delete gotoData.path;
             args.ignoreCreeps = false;
         }
-
         if (!isStuck && (Game.time - gotoData.tick) > 1)
             delete gotoData.path;
-
         if (!gotoData.dest || gotoData.dest.roomName !== target.roomName ||
             gotoData.dest.x !== target.x || gotoData.dest.y !== target.y
         ) delete gotoData.path;
-
         gotoData.tick = Game.time;
-
         if (creep.fatigue > 0) {
             visualCircle(creep.pos, 'aqua', 0.25);
             return ERR_TIRED;
@@ -74,24 +66,19 @@ var gotoModule = {
         if (!gotoData.path) {
             gotoData.dest = target;
             gotoData.last = undefined;
-
             let cpuStart = Game.cpu.getUsed();
-
             let route = this.findRoute(creep.pos, target, args);
-
             gotoData.cpu = (Game.cpu.getUsed() - cpuStart);
             if (gotoData.cpu > C.GOTO_CPU_ALERT)
                 logger.alert('high cpu: ' + (gotoData.cpu).toFixed(2) +
                     ', creep: ' + creep.name +
                     ', from: ' + creep.pos + ', to: ' + target
                 );
-
             if (route.incomplete)
                 logger.debug('failed to find route, cpu: ' + (gotoData.cpu).toFixed(2) +
                     ', creep: ' + creep.name +
                     ', from: ' + creep.pos + ', to: ' + target
                 );
-
             gotoData.path = serializePath(creep.pos, route.path);
             gotoData.stuck = 0;
         }
@@ -100,12 +87,9 @@ var gotoModule = {
             delete creep.memory._goto;
             return ERR_NO_PATH;
         }
-
         if (gotoData.last && gotoData.stuck === 0)
             gotoData.path = gotoData.path.substr(1);
-
         gotoData.last = creep.pos;
-
         let moveDir = parseInt(gotoData.path[0], 10);
         return creep.move(moveDir);
     },
@@ -119,25 +103,19 @@ var gotoModule = {
         });
 
         let validRooms;
-        //if ((args.useFindRoute && start.roomName !== target.roomName) ||
-        //    Game.map.getRoomLinearDistance(start.roomName, target.roomName) > 2
-        //) validRooms = this.findValidRooms(start.roomName, target.roomName, args);
+        if ((args.useFindRoute && start.roomName !== target.roomName) ||
+            Game.map.getRoomLinearDistance(start.roomName, target.roomName) > 2
+        ) validRooms = this.findValidRooms(start.roomName, target.roomName, args);
 
         let callback = (roomName) => {
             if (validRooms && !validRooms[roomName]) return false;
-
-            if (this.memory.avoidRooms[roomName] && !args.allowAvoid) {
+            if (this.memory.avoidRooms[roomName] && !args.allowAvoid)
                 return false;
-            }
-
             let room = Game.rooms[roomName];
             if (!room) return;
-
             let costs = this.getMap(room);
-
             if (!args.ignoreCreeps)
                 costs = this.addCreepsToCosts(room, costs.clone());
-
             return costs;
         };
 
@@ -148,7 +126,7 @@ var gotoModule = {
         });
     },
 
-    findValidRooms: function(start, target, args) {
+    findValidRooms: function(start, target, args = {}) {
         _.defaults(args, {
             restrictDistance: 16,
             preferHighway: true,
@@ -158,39 +136,31 @@ var gotoModule = {
             [start]: true,
             [target]: true,
         };
-
         let callback = (roomName) => {
             let parsedRoom = /^[WE]([0-9]+)[NS]([0-9]+)$/.exec(roomName);
             let xMod = parsedRoom[1] % 10;
             let yMod = parsedRoom[2] % 10;
-
             if (args.preferHighway) {
                 if (xMod === 0 || yMod === 0) return 1;
             }
-
             if (!args.allowSK) {
                 if ((xMod >= 4 && xMod <= 6) &&
                     (yMod >= 4 && yMod <= 6)
                 ) return 10;
             }
-
             if (!args.allowAvoid && this.memory.avoidRooms[roomName] &&
                 roomName !== start && roomName !== target
             ) return Number.POSITIVE_INFINITY;
-
             return 2.5;
         };
 
         let route = Game.map.findRoute(start, target, {
             routeCallback: callback,
         });
-
         if (!_.isArray(route)) return;
-
-        for (const record in route) {
+        for (const record of route) {
             validRooms[record.room] = true;
         }
-
         return validRooms;
     },
 
@@ -227,7 +197,6 @@ var gotoModule = {
                 } else if (terrain == 'swamp') {
                     cost = 5;
                 }
-
                 costs.set(x,y, cost);
             }
         }
@@ -245,7 +214,6 @@ var gotoModule = {
                 costs.set(structure.pos.x, structure.pos.y, 0xff);
             }
         }
-
         for (const construction of room.getConstructionSites()) {
             if (construction.structureType === STRUCTURE_CONTAINER ||
                 construction.structureType === STRUCTURE_ROAD ||
@@ -253,29 +221,22 @@ var gotoModule = {
             ) continue;
             costs.set(construction.pos.x, construction.pos.y, 0xff);
         }
-
         return costs;
     },
 
     addCreepsToCosts: function(room, costs) {
         let creeps = room.find(FIND_CREEPS);
         creeps.forEach(creep => costs.set(creep.pos.x, creep.pos.y, 0xff));
-
         return costs;
     },
 
     showMap: function(roomName) {
-        if (this.memory.avoidRooms[roomName] && !args.allowAvoid) {
+        if (this.memory.avoidRooms[roomName] && !args.allowAvoid)
             return false;
-        }
-
         let room = Game.rooms[roomName];
         if (!room) return;
-
         let costs = this.getMap(room);
-
         costs = this.addCreepsToCosts(room, costs.clone());
-
         for (var x = 0; x < 50; ++x) {
             for (var y = 0; y < 50; ++y) {
                 let cost = costs.get(x,y);
@@ -285,7 +246,6 @@ var gotoModule = {
                 });
             }
         }
-
     },
 
 };
