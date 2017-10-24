@@ -127,7 +127,7 @@ taskFieldTech.prototype.doMine = function(creep) {
 taskFieldTech.prototype.doUpgrade = function(creep) {
     if (!creep.pos.inRangeTo(creep.room.controller, 3)) {
         creep.goto(creep.room.controller, {
-            range: 1,
+            range: 3,
             reusePath: 30,
             maxRooms: 1,
         });
