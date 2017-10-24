@@ -348,7 +348,7 @@ Creep.prototype.goto = function(target, args) {
 };
 
 Creep.prototype.hasGoto = function() {
-    return !!this.memory._goto;
+    return !!this.memory._goto && !!this.memory._goto.dest;
 };
 
 Creep.prototype.resumeGoto = function() {
