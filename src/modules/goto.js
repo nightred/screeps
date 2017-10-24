@@ -103,9 +103,9 @@ var gotoModule = {
         });
 
         let validRooms;
-        //if ((args.useFindRoute && start.roomName !== target.roomName) ||
-        //    Game.map.getRoomLinearDistance(start.roomName, target.roomName) > 2
-        //) validRooms = this.findValidRooms(start.roomName, target.roomName, args);
+        if ((args.useFindRoute && start.roomName !== target.roomName) ||
+            Game.map.getRoomLinearDistance(start.roomName, target.roomName) > 2
+        ) validRooms = this.findValidRooms(start.roomName, target.roomName, args);
 
         let callback = (roomName) => {
             if (validRooms && !validRooms[roomName]) return false;
