@@ -1,5 +1,5 @@
 /*
- * task Scout
+ * Scout
  *
  * boldly go where no creep has gone before
  *
@@ -7,23 +7,36 @@
 
 var logger = new Logger('[Scout]');
 
-var taskScout = function() {
+var jobScout = function() {
     // init
 };
 
-taskScout.prototype.run = function() {
-    let creep = Game.creeps[this.memory.creepName];
-    if (!creep) {
-        this.spawnCreep();
+jobScout.prototype.run = function() {
+    if (!this.memory.spawnRoom || !this.memory.workRoom) {
+        logger.debug('removing process, missing needed values\n' +
+            'spawnRoom: ' + this.memory.spawnRoom +
+            ', workRoom: ' + this.memory.workRoom
+        );
+        Game.kernel.killProcess(this.pid);
         return;
     }
 
-    this.doScouting(creep);
+    if (!this.memory._spawned) {
+        this.spawnCreep();
+    } else {
+        let creep = Game.creeps[this.memory.creepName];
+        if (!creep) {
+            logger.alert('scout job has been completed, removing process');
+            Game.kernel.killProcess(this.pid);
+            return;
+        }
+        this.doScouting(creep);
+    }
 };
 
-taskScout.prototype.doScouting = function(creep) {
+jobScout.prototype.doScouting = function(creep) {
+    if (creep.spawning) return;
     if (creep.getOffExit()) return;
-
     if (creep.room.name != this.memory.workRoom) {
         creep.moveToRoom(this.memory.workRoom);
         return;
@@ -71,16 +84,16 @@ taskScout.prototype.doScouting = function(creep) {
     }
 };
 
-taskScout.prototype.spawnCreep = function() {
+jobScout.prototype.spawnCreep = function() {
     let spawnRecord = getQueueRecord(this.memory.spawnId);
     if (!spawnRecord && this.memory.spawnId) this.memory.spawnId = undefined;
 
     if (spawnRecord && spawnRecord.spawned) {
         this.memory.creepName = spawnRecord.name;
+        this.memory._spawned = 1;
         logger.debug('adding creep ' + spawnRecord.name +
             ', to scout task for room: ' + this.memory.workRoom
         );
-
         logger.debug('removing spawn queue id: ' + spawnRecord.id +
             ', role: ' + spawnRecord.role
         );
@@ -97,4 +110,4 @@ taskScout.prototype.spawnCreep = function() {
     }
 };
 
-registerProcess('tasks/scout', taskScout);
+registerProcess(C.JOB_SCOUT, jobScout);
