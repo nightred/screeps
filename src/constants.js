@@ -181,7 +181,6 @@ Constant.TASK_UPGRADE                   = 'tasks/upgrade';
 Constant.TASK_HAUL                      = 'tasks/haul';
 Constant.TASK_STOCK                     = 'tasks/stock';
 Constant.TASK_TECH                      = 'tasks/tech';
-Constant.TASK_SCOUT                     = 'tasks/scout';
 Constant.TASK_RESERVE                   = 'tasks/reserve';
 Constant.TASK_MINERAL                   = 'tasks/mineral';
 Constant.TASK_MILITIA                   = 'tasks/militia';
@@ -192,7 +191,6 @@ Constant.TASK_TYPES = [
     Constant.TASK_RESUPPLY,
     Constant.TASK_UPGRADE,
     Constant.TASK_HAUL,
-    Constant.TASK_STOCK,
     Constant.TASK_TECH,
     Constant.TASK_SCOUT,
     Constant.TASK_RESERVE,
@@ -208,12 +206,14 @@ Constant.SERVICES_SPAWN                 = 'services/spawn';
 
 Constant.JOB_CLAIM                      = 'jobs/claim';
 Constant.JOB_DISMANTLE                  = 'jobs/dismantle';
+Constant.JOB_SCOUT                      = 'jobs/scout';
 Constant.JOB_MIL_COMBAT                 = 'jobs/mil/combat';
 Constant.JOB_MIL_BRAWLGROUP             = 'jobs/mil/brawlgroup';
 
 Constant.JOB_TYPES = [
     Constant.JOB_CLAIM,
     Constant.JOB_DISMANTLE,
+    Constant.JOB_SCOUT,
     Constant.JOB_MIL_COMBAT,
     Constant.JOB_MIL_BRAWLGROUP,
 ];

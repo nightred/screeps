@@ -68,37 +68,18 @@ directorRemote.prototype.run = function() {
 };
 
 directorRemote.prototype.doScoutRoom = function() {
-    if (this.memory.workRoomInit) return;
-
-    let workRoom = Game.rooms[this.memory.workRoom];
-    if (!workRoom) {
+    if (!Game.rooms[this.memory.workRoom]) {
         if (!this.taskScout) {
-            let proc = Game.kernel.startProcess(this, C.TASK_SCOUT, {
+            let proc = Game.kernel.startProcess(this, C.JOB_SCOUT, {
                 workRoom: this.memory.workRoom,
                 spawnRoom: this.memory.spawnRoom,
             });
-
             if (!proc) {
                 logger.error(`failed to start scout process: ${C.TASK_SCOUT}`);
                 return;
             }
-
             this.taskScout = proc;
         }
-        return;
-    }
-
-    if (this.memory.sleepScoutRoom && this.memory.sleepScoutRoom < Game.time) {
-        logger.debug('removing scout for room: ' + this.memory.workRoom);
-        let proc = this.taskScout;
-        Game.kernel.killProcess(proc.pid);
-        this.memory.workRoomInit = 1;
-        this.memory.sleepScoutRoom = undefined;
-        return;
-    }
-
-    if (!this.memory.sleepScoutRoom) {
-        this.memory.sleepScoutRoom = 2000 + Game.time;
     }
 };
 
