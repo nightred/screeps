@@ -41,3 +41,4 @@ require('processes.jobs.dismantle');
 require('processes.jobs.scout');
 require('processes.jobs.mil.combat');
 require('processes.jobs.mil.brawlgroup');
+require('processes.jobs.mil.invade');

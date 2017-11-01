@@ -209,6 +209,7 @@ Constant.JOB_DISMANTLE                  = 'jobs/dismantle';
 Constant.JOB_SCOUT                      = 'jobs/scout';
 Constant.JOB_MIL_COMBAT                 = 'jobs/mil/combat';
 Constant.JOB_MIL_BRAWLGROUP             = 'jobs/mil/brawlgroup';
+Constant.JOB_MIL_INVADE                 = 'jobs/mil/invade';
 
 Constant.JOB_TYPES = [
     Constant.JOB_CLAIM,
@@ -216,6 +217,7 @@ Constant.JOB_TYPES = [
     Constant.JOB_SCOUT,
     Constant.JOB_MIL_COMBAT,
     Constant.JOB_MIL_BRAWLGROUP,
+    Constant.JOB_MIL_INVADE,
 ];
 
 Constant.WORK_TOWER_REFILL              = 'towerfill';
