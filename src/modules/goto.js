@@ -12,12 +12,12 @@ if (!Memory.world.avoidRooms) Memory.world.avoidRooms = {};
 
 var gotoModule = {};
 
-gotoModule.resumeTravel: function(creep) {
+gotoModule.resumeTravel = function(creep) {
     let dest = getPos(creep.memory._goto.dest);
     return this.travel(creep, dest, {});
 };
 
-gotoModule.travel: function(creep, target, args = {}) {
+gotoModule.travel = function(creep, target, args = {}) {
     if (!target) return ERR_INVALID_ARGS;
     if (!(target instanceof RoomPosition)) target = target.pos;
 
@@ -94,7 +94,7 @@ gotoModule.travel: function(creep, target, args = {}) {
     return creep.move(moveDir);
 };
 
-gotoModule.findRoute: function(start, target, args) {
+gotoModule.findRoute = function(start, target, args) {
     _.defaults(args, {
         ignoreCreeps: true,
         range: 1,
@@ -128,7 +128,7 @@ gotoModule.findRoute: function(start, target, args) {
     });
 };
 
-gotoModule.findValidRooms: function(start, target, args = {}) {
+gotoModule.findValidRooms = function(start, target, args = {}) {
     _.defaults(args, {
         restrictDistance: 16,
         preferHighway: true,
@@ -166,7 +166,7 @@ gotoModule.findValidRooms: function(start, target, args = {}) {
     return validRooms;
 };
 
-gotoModule.getMap: function(room) {
+gotoModule.getMap = function(room) {
     var cached = mod.cache.getData(C.CACHE.COST_MATRIX);
     if (!cached.costs) cached.costs = {};
     if (!cached.age) cached.age = {};
@@ -185,7 +185,7 @@ gotoModule.getMap: function(room) {
     return cached.costs[room.name];
 };
 
-gotoModule.addTerrainToCosts: function(room, costs) {
+gotoModule.addTerrainToCosts = function(room, costs) {
     for (var x = 0; x < 50; ++x) {
         for (var y = 0; y < 50; ++y) {
             let cost = 2;
@@ -202,7 +202,7 @@ gotoModule.addTerrainToCosts: function(room, costs) {
     return costs;
 };
 
-gotoModule.addStructuresToCosts: function(room, costs) {
+gotoModule.addStructuresToCosts = function(room, costs) {
     for (const structure of room.getStructures()) {
         if (structure instanceof StructureRampart) {
             if (!structure.my && !structure.isPublic)
@@ -223,13 +223,13 @@ gotoModule.addStructuresToCosts: function(room, costs) {
     return costs;
 };
 
-gotoModule.addCreepsToCosts: function(room, costs) {
+gotoModule.addCreepsToCosts = function(room, costs) {
     let creeps = room.find(FIND_CREEPS);
     creeps.forEach(creep => costs.set(creep.pos.x, creep.pos.y, 0xff));
     return costs;
 };
 
-gotoModule.showMap: function(roomName) {
+gotoModule.showMap = function(roomName) {
     if (this.memory.avoidRooms[roomName] && !args.allowAvoid)
         return false;
     let room = Game.rooms[roomName];
