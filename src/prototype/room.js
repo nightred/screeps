@@ -114,7 +114,6 @@ Room.prototype.getSourceCount = function() {
     if (!this.memory.sourceCount) {
         this.memory.sourceCount = this.getSources().length;
     }
-
     return this.memory.sourceCount;
 };
 
@@ -163,13 +162,11 @@ Room.prototype.getSpawn = function() {
     if (!this.memory.spawnId || this.memory.spawnId == undefined) {
         this.findSpawn();
     }
-
     return this.memory.spawnId;
 };
 
 Room.prototype.findSpawn = function() {
     let targets = this.find(FIND_MY_SPAWNS);
-
     if (targets.length > 0) {
         this.memory.spawnId = targets[0].id;
     } else {
@@ -178,63 +175,81 @@ Room.prototype.findSpawn = function() {
 };
 
 Room.prototype.getConstructionAtArea = function(pos, range) {
-        let objects = this.lookForAtArea(
-            LOOK_CONSTRUCTION_SITES,
-            pos.y - range,
-            pos.x - range,
-            pos.y + range,
-            pos.x + range,
-            true
-        );
+    let objects = this.lookForAtArea(
+        LOOK_CONSTRUCTION_SITES,
+        pos.y - range,
+        pos.x - range,
+        pos.y + range,
+        pos.x + range,
+        true
+    );
+    if (objects.length == 0) return false;
+    return objects[0].constructionSite;
+};
 
-        if (objects.length == 0) {
-            return false;
-        }
+Room.prototype.getOpenAreaAtRange = function(range = 2) {
+    let centerPos = new RoomPosition(25, 25, this.name);
+    let avoidPoints = _.map(this.find(FIND_STRUCTURES), structure => {
+        return { pos: structure.pos, range: 3 };
+    });
 
-        return objects[0].constructionSite;
+    let result = PathFinder.search(centerPos, avoidPoints, {
+        plainCost: 1,
+        swampCost: 10,
+        flee: true,
+        roomCallback: function (roomName) {
+            let costs = new PathFinder.CostMatrix;
+            for (var x = 0; x < 50; x++) {
+                for (var y = 0; y < 50; y++) {
+                    var cost = 2;
+                    var terrain = Game.map.getTerrainAt(x, y, roomName);
+                    if (terrain == 'wall') {
+                        cost = 0xff;
+                    } else if (terrain == 'swamp') {
+                        cost = 10;
+                    }
+                    if (x == 0 || x == 49 || y == 0 || y == 49) {
+                        cost = 0xff;
+                    }
+                    costs.set(x, y, cost);
+                }
+            }
+            return costs;
+        },
+    });
+
+    if (result.incomplete || !result.path) return false;
+    return _.last(result.path);
 };
 
 Room.prototype.getCoverage = function() {
     this.memory.roomCoverage = this.memory.roomCoverage || [];
-
     return this.memory.roomCoverage;
 };
 
 Room.prototype.addCoverage = function(roomName) {
-    if (!roomName) { return ERR_INVALID_ARGS; }
-
+    if (!roomName) return ERR_INVALID_ARGS;
     this.memory.roomCoverage = this.memory.roomCoverage || [];
-
-    if (this.memory.roomCoverage.indexOf(roomName) === -1) {
+    if (this.memory.roomCoverage.indexOf(roomName) === -1)
         this.memory.roomCoverage.push(roomName);
-    }
-
     return true;
 };
 
 Room.prototype.remCoverage = function(roomName) {
-    if (!roomName) { return ERR_INVALID_ARGS; }
-
+    if (!roomName) return ERR_INVALID_ARGS;
     this.memory.roomCoverage = this.memory.roomCoverage || [];
-
     let index = this.memory.roomCoverage.indexOf(roomName);
-
-    if (index != -1) {
-        this.memory.roomCoverage.splice(index, 1);
-    }
-
+    if (index != -1) this.memory.roomCoverage.splice(index, 1);
     return true;
 };
 
 Room.prototype.isInCoverage = function(roomName) {
     this.memory.roomCoverage = this.memory.roomCoverage || [];
-
     return (this.memory.roomCoverage.indexOf(roomName) != -1) ? true : false;
 };
 
 Room.prototype.countCoverage = function() {
     this.memory.roomCoverage = this.memory.roomCoverage || [];
-
     return this.memory.roomCoverage.length;
 };
 
