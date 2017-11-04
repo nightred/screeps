@@ -31,7 +31,6 @@ MarketService.prototype.run = function() {
         for (var i = 0; i < marketCount; i++) {
             let room = Game.rooms[marketCache.rooms[i]];
             if (!room) continue;
-
             this.doRoomSurplus(room);
             this.doSellSurplus(room);
         }
@@ -78,50 +77,47 @@ MarketService.prototype.doSellSurplus = function(room) {
     if (!terminal) return;
     if (terminal.cooldown) return;
 
-    let amt = 0;
-    let res;
-
+    let sellAmt = 0;
+    let sellResource;
     for (const resource in terminal.store) {
-        res = resource;
-        amt = 0;
-
+        let amt = terminal.store[resource];
+        if (amt < C.MARKET_MIN_SALE) continue;
         if (resource == RESOURCE_ENERGY) {
-            if (terminal.store[resource] < (C.MARKET_STOCK_ENERGY + 5000)) continue;
-            amt = terminal.store[resource] - C.MARKET_STOCK_ENERGY;
+            if (amt < (C.MARKET_STOCK_ENERGY + 5000)) continue;
+            amt -= C.MARKET_STOCK_ENERGY;
+        } else if (C.RESOURCES_MINERALS.indexOf(resource) === -1) {
+            continue;
         }
-
-        if (C.RESOURCES_MINERALS.indexOf(resource) >= 0) {
-            amt = terminal.store[resource];
+        if (amt > sellAmt) {
+            sellAmt = amt;
+            sellResource = resource;
         }
     }
 
-    if (amt <= 0) return;
-
+    if (sellAmt <= 0) return;
     let orders = Game.market.getAllOrders({
         type: ORDER_BUY,
-        resourceType: res,
+        resourceType: sellResource,
     });
     if (orders.length === 0) return;
     orders = _.sortBy(orders, order => order.price);
-
-    logger.debug('trying to sell ' + amt + ' ' + res +
+    logger.debug(room.toString() +
+        ' trying to sell ' + sellAmt + ' ' + sellResource +
         ' got back ' + orders.length + ' orders'
     );
 
     let orderCount = orders.length;
     for (var i = (orderCount - 1); i >= 0; i--) {
         let orderAmt = orders[i].remainingAmount;
-        if (orderAmt > amt) orderAmt = amt;
+        if (orderAmt > sellAmt) orderAmt = sellAmt;
         if (orderAmt > C.MARKET_MAX_SALE) orderAmt = C.MARKET_MAX_SALE;
-        if (orderAmt < 500) continue;
-
+        if (orderAmt < C.MARKET_MIN_SALE) continue;
         let cost = Game.market.calcTransactionCost(orderAmt, room.name, orders[i].roomName);
         if (cost > C.MARKET_MAX_COST) continue;
-
         let rslt = Game.market.deal(orders[i].id, orderAmt, room.name);
-
         if (rslt === OK) {
-            logger.info(room.toString() + ' sold ' + orderAmt + ' ' + res +
+            logger.info(room.toString() +
+                ' sold ' + orderAmt + ' ' + sellResource +
                 ' at ' + orders[i].price +
                 ' to ' + orders[i].roomName +
                 ' used ' + cost + 'e' +
