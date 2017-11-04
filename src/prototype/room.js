@@ -189,11 +189,20 @@ Room.prototype.getConstructionAtArea = function(pos, range) {
 
 Room.prototype.getOpenAreaAtRange = function(range = 2) {
     let centerPos = new RoomPosition(25, 25, this.name);
-    let avoidPoints = _.map(this.find(FIND_STRUCTURES), structure => {
-        return { pos: structure.pos, range: 3 };
+    let avoid = _.map(this.find(FIND_STRUCTURES), structure => {
+        return { pos: structure.pos, range: range };
     });
+    for (var x = 0; x < 50; x++) {
+        for (var y = 0; y < 50; y++) {
+            var terrain = Game.map.getTerrainAt(x, y, this.name);
+            if (terrain == 'wall') {
+                var wallPos = new RoomPosition(x, y, this.name);
+                avoid.push({ pos: wallPos, range: range });
+            }
+        }
+    }
 
-    let result = PathFinder.search(centerPos, avoidPoints, {
+    let result = PathFinder.search(centerPos, avoid, {
         plainCost: 1,
         swampCost: 10,
         flee: true,
@@ -203,9 +212,7 @@ Room.prototype.getOpenAreaAtRange = function(range = 2) {
                 for (var y = 0; y < 50; y++) {
                     var cost = 2;
                     var terrain = Game.map.getTerrainAt(x, y, roomName);
-                    if (terrain == 'wall') {
-                        cost = 0xff;
-                    } else if (terrain == 'swamp') {
+                    if (terrain == 'swamp') {
                         cost = 10;
                     }
                     if (x == 0 || x == 49 || y == 0 || y == 49) {

@@ -15,11 +15,9 @@ var SpawnService = function() {
 SpawnService.prototype.run = function() {
     this.queue = getQueueSpawn();
     let queueLen = this.queue.length;
-    if (queueLen > 0) {
-        for (const i in Game.spawns) {
-            const spawn = Game.spawns[i];
-            this.doSpawnRun(spawn);
-        }
+    if (queueLen <= 0) return;
+    for (const i in Game.spawns) {
+        this.doSpawnRun(Game.spawns[i]);
     }
 };
 
@@ -49,7 +47,7 @@ SpawnService.prototype.doSpawnRun = function(spawn) {
         record.creepArgs.spawnRoom = roomName;
         record.creepArgs.role = record.role;
         let creepMem = record.creepArgs;
-        
+
         let body = getRoleBody(record.role, spawnEnergy, creepMem);
         let bodyCost = getBodyCost(body);
         if (bodyCost > spawnEnergy) continue;

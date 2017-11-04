@@ -100,7 +100,8 @@ Constant.MARKET_MAX_RESOURCE            = 20000;
 Constant.MARKET_MAX_BOOST               = 3000;
 Constant.MARKET_STOCK_ENERGY            = 50000;
 Constant.MARKET_STORAGE_ENERGY_MIN      = 40000;
-Constant.MARKET_MAX_COST                = 2000;
+Constant.MARKET_MAX_SALE                = 4000;
+Constant.MARKET_MAX_COST                = 5000;
 Constant.MARKET_SURPLUS_SLEEP           = 100;
 
 Constant.WORK_FIND_SLEEP                = 12;
@@ -209,6 +210,7 @@ Constant.JOB_DISMANTLE                  = 'jobs/dismantle';
 Constant.JOB_SCOUT                      = 'jobs/scout';
 Constant.JOB_MIL_COMBAT                 = 'jobs/mil/combat';
 Constant.JOB_MIL_BRAWLGROUP             = 'jobs/mil/brawlgroup';
+Constant.JOB_MIL_INVADE                 = 'jobs/mil/invade';
 
 Constant.JOB_TYPES = [
     Constant.JOB_CLAIM,
@@ -216,6 +218,7 @@ Constant.JOB_TYPES = [
     Constant.JOB_SCOUT,
     Constant.JOB_MIL_COMBAT,
     Constant.JOB_MIL_BRAWLGROUP,
+    Constant.JOB_MIL_INVADE,
 ];
 
 Constant.WORK_TOWER_REFILL              = 'towerfill';

@@ -16,20 +16,16 @@ var roleCombatBrawler = {
         if (isNaN(energy)) { return ERR_INVALID_ARGS; }
         args = args || {};
 
-        let attackUnits = Math.floor((energy * 0.6) / 80);
+        let attackUnits = Math.floor((energy * 0.6) / 130);
         attackUnits = attackUnits < 1 ? 1 : attackUnits;
-        attackUnits = attackUnits > 6 ? 6 : attackUnits;
-        energy -= (attackUnits * 80);
+        attackUnits = attackUnits > 10 ? 10 : attackUnits;
+        energy -= (attackUnits * 130);
+        let moveUnits = attackUnits;
 
-        let moveUnits = Math.floor((energy * 0.7) / 50);
-        moveUnits = moveUnits < 1 ? 1 : moveUnits;
-        moveUnits = moveUnits > 12 ? 12 : moveUnits;
-        energy -= (moveUnits * 50);
-
-        let toughUnits = Math.floor(energy / 10);
+        let toughUnits = Math.floor(energy / 60);
         toughUnits = toughUnits < 1 ? 1 : toughUnits;
-        toughUnits = toughUnits > 6 ? 6 : toughUnits;
-        toughUnits = toughUnits > (moveUnits * 2) ? (moveUnits * 2) : toughUnits;
+        toughUnits = toughUnits > 15 ? 15 : toughUnits;
+        moveUnits += toughUnits;
 
         let body = [];
         for (var i = 0; i < toughUnits; i++) {
