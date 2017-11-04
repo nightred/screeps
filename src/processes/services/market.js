@@ -112,6 +112,7 @@ MarketService.prototype.doSellSurplus = function(room) {
     for (var i = (orderCount - 1); i >= 0; i--) {
         let orderAmt = orders[i].remainingAmount;
         if (orderAmt > amt) orderAmt = amt;
+        if (orderAmt > C.MARKET_MAX_SALE) orderAmt = C.MARKET_MAX_SALE;
         if (orderAmt < 500) continue;
 
         let cost = Game.market.calcTransactionCost(orderAmt, room.name, orders[i].roomName);
@@ -119,14 +120,15 @@ MarketService.prototype.doSellSurplus = function(room) {
 
         let rslt = Game.market.deal(orders[i].id, orderAmt, room.name);
 
-        if (rslt === OK)
+        if (rslt === OK) {
             logger.info(room.toString() + ' sold ' + orderAmt + ' ' + res +
                 ' at ' + orders[i].price +
                 ' to ' + orders[i].roomName +
                 ' used ' + cost + 'e' +
                 ' for ' + (orders[i].price * orderAmt) + 'c'
             );
-        break;
+            break;
+        }
     }
 };
 

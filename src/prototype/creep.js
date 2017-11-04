@@ -21,6 +21,8 @@ Creep.prototype.moveToRoom = function(roomName) {
         range: 8,
         reusePath: 50,
         ignoreCreeps: true,
+        maxOps: 10000,
+        useFindRoute: true,
     });
 }
 

@@ -100,7 +100,8 @@ Constant.MARKET_MAX_RESOURCE            = 20000;
 Constant.MARKET_MAX_BOOST               = 3000;
 Constant.MARKET_STOCK_ENERGY            = 50000;
 Constant.MARKET_STORAGE_ENERGY_MIN      = 40000;
-Constant.MARKET_MAX_COST                = 2000;
+Constant.MARKET_MAX_SALE                = 4000;
+Constant.MARKET_MAX_COST                = 5000;
 Constant.MARKET_SURPLUS_SLEEP           = 100;
 
 Constant.WORK_FIND_SLEEP                = 12;

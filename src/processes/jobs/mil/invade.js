@@ -16,96 +16,70 @@ var jobMilInvade = function() {
     // init
 };
 
-_.merge(jobMilInvade.prototype, require('lib.spawn.group'));
+_.merge(jobMilInvade.prototype, require('lib.spawn.job'));
 
 jobMilInvade.prototype.run = function() {
     this.doCreepCleanup();
 
     if (this.state === STATE_ATTACK) {
-        if (_.isEmpty(this.memory.creeps)) {
-            logger.alert('completed job, all creeps have been removed or killed, removing process');
-            Game.kernel.killProcess(this.pid);
-            return;
-        }
-        this.doCreepActions();
+        this.doAttackStage();
     } else if (this.state === STATE_STAGING) {
-        if (_.isEmpty(this.memory.creeps)) {
-            logger.alert('completed job, all creeps have been removed or killed, removing process');
-            Game.kernel.killProcess(this.pid);
-            return;
-        }
-        this.doCreepActions();
+        // todo
     } else if (this.state === STATE_SPAWN) {
-        if (this.memory._spawnComplete) {
-            this.state = STATE_STAGING;
-            return;
-        }
-        this.doCreepSpawn();
+        this.doSpawnStage();
     } else if (this.state === STATE_INIT) {
-        if (!this.memory.spawnRoom || !this.memory.workRoom) {
-            logger.debug('removing process, missing needed values\n' +
-                'spawnRoom: ' + this.memory.spawnRoom +
-                ', workRoom: ' + this.memory.workRoom
-            );
-            Game.kernel.killProcess(this.pid);
-            return;
-        };
-        this.state = STATE_SPAWN;
+        this.doInit();
     }
 };
 
-jobMilInvade.prototype.doCreepStage = function() {
-    if (!this.stagePos) {
-        let stagePos = 0;
-
-        this.stagePos = stagePos;
+jobMilInvade.prototype.doAttackStage = function() {
+    if (_.isEmpty(this.memory.creeps)) {
+        logger.alert('completed job, all creeps have been removed or killed, removing process');
+        Game.kernel.killProcess(this.pid);
+        return;
     }
 
-    for (const role in this.memory.creeps) {
-        for (var i = 0; i < this.memory.creeps[role].length; i++) {
-            let creep = Game.creeps[this.memory.creeps[role][i]];
-            if (!creep) continue;
+    let flag = this.flag;
+    if (flag) this.memory.workRoom = flag.room.name;
 
-
+    let healer;
+    let brawler;
+    for (var i = 0; i < this.memory.creeps.length; i++) {
+        let creep = Game.creeps[this.memory.creeps[i]];
+        if (!creep) continue;
+        if (creep.memory.role == C.ROLE_COMBAT_MEDIC) {
+            healer = creep;
+        } else if (creep.memory.role == C.ROLE_COMBAT_BRAWLER) {
+            brawler = creep;
         }
     }
+    this.doAttacker(brawler);
+    this.doHealer(healer, brawler);
 };
 
-jobMilInvade.prototype.doCreepActions = function() {
-    for (const role in this.memory.creeps) {
-        for (var i = 0; i < this.memory.creeps[role].length; i++) {
-            let creep = Game.creeps[this.memory.creeps[role][i]];
-            if (!creep) continue;
-            if (creep.spawning) return;
-            if (creep.getOffExit()) return;
-            switch(creep.memory.role) {
-            case C.ROLE_COMBAT_MEDIC:
-                this.doHeal(creep);
-                break;
-            default:
-                this.doAttack(creep);
-            }
-        }
-    }
-};
-
-jobMilInvade.prototype.doAttack = function(creep) {
-    creep.memory.targetId = creep.memory.targetId || false;
-
-    if (!creep.memory.targetId) {
-        creep.memory.targetId = this.getTarget(creep);
+jobMilInvade.prototype.doAttacker = function(creep) {
+    if (!creep) return;
+    if (creep.getOffExit()) return;
+    if (creep.room.name !== this.memory.workRoom) {
+        creep.moveToRoom(this.memory.workRoom);
+        return;
     }
 
+    var nearCreeps = creep.pos.findInRange(FIND_HOSTILE_CREEPS, 1);
+    if (nearCreeps) {
+        creep.attack(nearCreeps[0]);
+    }
     let target = Game.getObjectById(creep.memory.targetId);
     if (!target) {
-        creep.memory.targetId = false;
-        return this.doRally(creep);
+        target = this.getTarget(creep);
+        if (!target) return this.doRally(creep);
+        creep.memory.targetId = target.id;
     }
 
-    if (creep.attack(target) == ERR_NOT_IN_RANGE) {
+
+    if (!creep.pos.inRangeTo(target, 1)) {
         let args = {
             reusePath: 10,
-            ignoreCreeps: true,
             ignoreDestructibleStructures: true,
             maxRooms: 1,
             visualizePathStyle: {
@@ -116,33 +90,34 @@ jobMilInvade.prototype.doAttack = function(creep) {
                 opacity: .2,
             },
         };
-
-        if (!target.StructureType) {
-            args.reusePath = 1;
-        }
-
+        if (!target.StructureType) args.reusePath = 1;
         creep.moveTo(target, args);
+    } else {
+        creep.attack(target);
     }
-
-    return true;
 };
 
-jobMilInvade.prototype.doHeal = function(creep) {
-    let targets = _.sortBy(_.filter(creep.room.find(FIND_MY_CREEPS), creep =>
-        creep.hits < creep.hitsMax
-        ), creep => creep.hits);
-
-    if (targets.length <= 0) {
-        return this.doRally(creep);
+jobMilInvade.prototype.doHealer = function(creep, target) {
+    if (!creep || !target) return;
+    if (creep.getOffExit()) return;
+    if (creep.room.name !== this.memory.workRoom) {
+        creep.moveToRoom(this.memory.workRoom);
+        return;
     }
-
-    targets = _.sortBy(targets, target => creep.pos.getRangeTo(target.pos));
-    if (creep.heal(targets[0]) == ERR_NOT_IN_RANGE) {
-        creep.moveTo(targets[0], { range: 1, reUsePath: 4, ignoreCreeps: true, });
-        creep.rangedHeal(targets[0]);
+    if (!creep.pos.inRangeTo(target, 1)) {
+        creep.moveTo(target, {
+            range: 1,
+            reUsePath: 4,
+            ignoreCreeps: true,
+        });
     }
-
-    return true;
+    if (target.hits < target.hitsMax) {
+        if (creep.pos.inRangeTo(target, 1)) {
+            creep.heal(target);
+        } else if (creep.pos.inRangeTo(target, 3)) {
+            creep.rangedHeal(target);
+        }
+    }
 };
 
 jobMilInvade.prototype.getTarget = function(creep) {
@@ -197,6 +172,46 @@ jobMilInvade.prototype.doRally = function(creep) {
     creep.moveToIdlePosition();
 };
 
+jobMilInvade.prototype.doSpawnStage = function() {
+    this.doCreepSpawn();
+    let allStaged = true;
+    let spawnHoldPos = this.spawnHoldPos;
+    for (var i = 0; i < this.memory.creeps.length; i++) {
+        let creep = Game.creeps[this.memory.creeps[i]];
+        if (!creep) continue;
+        if (creep.spawning) {
+            allStaged = false;
+            continue;
+        }
+        if (!creep.pos.inRangeTo(spawnHoldPos, 2)) {
+            creep.goto(spawnHoldPos, {range: 1, ignoreCreeps: false});
+            allStaged = false;
+        }
+    }
+    if (this.memory._spawnComplete && allStaged) this.state = STATE_ATTACK;
+};
+
+jobMilInvade.prototype.doInit = function() {
+    if (!this.memory.spawnRoom || !this.memory.workRoom) {
+        logger.debug('removing process, missing needed values\n' +
+            'spawnRoom: ' + this.memory.spawnRoom +
+            ', workRoom: ' + this.memory.workRoom
+        );
+        Game.kernel.killProcess(this.pid);
+        return;
+    };
+    let spawnRoom = Game.rooms[this.memory.spawnRoom];
+    if (!spawnRoom) return;
+    let spawnHoldPos = spawnRoom.getOpenAreaAtRange(3);
+    if (!spawnHoldPos) return;
+    this.spawnHoldPos = spawnHoldPos;
+    this.memory.spawn = {
+        [C.ROLE_COMBAT_BRAWLER]: 1,
+        [C.ROLE_COMBAT_MEDIC]: 1
+    };
+    this.state = STATE_SPAWN;
+};
+
 Object.defineProperty(jobMilInvade.prototype, 'flag', {
     get: function() {
         if (!this.memory.flagTag) return false;
@@ -204,7 +219,7 @@ Object.defineProperty(jobMilInvade.prototype, 'flag', {
     },
 });
 
-Object.defineProperty(taskSource.prototype, 'state', {
+Object.defineProperty(jobMilInvade.prototype, 'state', {
     get: function() {
         this.memory._state = this.memory._state || STATE_INIT;
         return this.memory._state;
@@ -214,17 +229,17 @@ Object.defineProperty(taskSource.prototype, 'state', {
     },
 });
 
-Object.defineProperty(taskSource.prototype, 'stagePos', {
+Object.defineProperty(jobMilInvade.prototype, 'spawnHoldPos', {
     get: function() {
-        if (!this.memory._stagePos) return false;
-        return getPos(this.memory._stagePos);
+        if (!this.memory._spawnHoldPos) return false;
+        return getPos(this.memory._spawnHoldPos);
     },
     set: function(value) {
         if (!(value instanceof RoomPosition)) {
             if (!value.pos) return;
             value = value.pos;
         }
-        this.memory._stagePos = value;
+        this.memory._spawnHoldPos = value;
     },
 });
 

@@ -6,7 +6,7 @@ var logger = new Logger('[LibSpawnJob]');
 
 var libSpawnJob = {};
 
-libSpawnJob.doCreepSpawn: function() {
+libSpawnJob.doCreepSpawn = function() {
     if (this.memory._spawnComplete) return;
     let spawnDetails = this.memory.spawn;
     if (_.isEmpty(spawnDetails)) {
@@ -59,7 +59,7 @@ libSpawnJob.doCreepSpawn: function() {
     }
 };
 
-libSpawnJob.doCreepCleanup: function() {
+libSpawnJob.doCreepCleanup = function() {
     this.memory.creeps = this.memory.creeps || [];
     let countCreep = this.memory.creeps.length;
     for (var i = (countCreep - 1); i >= 0; i--) {
